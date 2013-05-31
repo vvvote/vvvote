@@ -1,0 +1,467 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- BigInt.js is a bigint (or bignum) arbitrary-precision integer library in JavaScript.
+      This page demonstrates it by calling these 11 functions from BigInt.js:
+
+        bigInt2Str()
+        str2BigInt()
+        randTruePrime()
+        greater() 
+        add()
+        addInt()
+        sub()
+        mult()
+        powMod()
+        mod()
+        inverseMod()
+
+      These 11 functions then call all of the other functions in the library except eGCD_(), equals(), and millerRabin().
+  -->
+
+
+
+<head>
+<title>Big Integers in JavaScript</title>
+</head>
+<!-- <BODY background="../links/background.jpg" bgColor=#e8e8e8 link=#00c000 alink=#00c000 vlink=#004000> -->
+<BODY>
+	<script src="BigInt.js"></script>
+	<script src="rsa.js"></script>
+	<script type="text/javascript">
+		function mytests() {
+			try {
+				basis     = 10;
+				plaintext = str2bigInt('23', basis, 0);
+				bits      = 6;
+				method    = 1;
+
+				key           = RsaKeyGen(bits, method, str2bigInt('7', basis, 0));
+				bfactors      = RsablindingFactorsGen(bits, method, key.pub.n);
+				blindedtext   = rsaBlind(plaintext, bfactors, key.pub);
+				enc           = RsaEncDec(blindedtext, key.priv);
+				unblindedtext = rsaUnblind(enc, bfactors, key.pub);
+				dec           = RsaEncDec(unblindedtext, key.pub);
+				alert('plaintext: '                            + bigInt2str(plaintext    , basis) + 
+					  '\r\n verblindet: '                      + bigInt2str(blindedtext  , basis) + 
+					  '\r\n verschlüsselt (signiert): '        + bigInt2str(enc          , basis) + 
+					  '\r\n entblindet: '                      + bigInt2str(unblindedtext, basis) + 
+					  '\r\n entschlüsselt (signaturprüfung): ' + bigInt2str(dec          , basis));
+			} catch (err) {
+				alert('Fehler ' + err);
+			}
+		}
+	</script>
+	<center>
+		<TABLE border=0 cellspacing=0 cellpadding=0 width=620>
+			<tr>
+				<td align=center><font size=+3><b>Big Integers in
+							JavaScript</b></font><br> <br></td>
+			</tr>
+			<tr>
+				<td align=center><b><a href="../index.html">Home</a> | <a
+						href="../papers/index.html">Machine Learning</a> | Crypto | <a
+						href="../vrml/thumbnails/index.html">Graphics</a><br> <a
+						href="MakePass.html">Passphrase Generator</a> | <a
+						href="SelfDecrypt.html">Self-Decrypting Email</a> | <a
+						href="VisualCrypto.html">Visual Crypto</a> | BigInts </td>
+			</tr>
+		</table>
+	</center>
+	<Br>
+	<form name=nnna>
+
+		This page demonstrates a JavaScript library for arbitrary-precision
+		integers, <a href=BigInt.js>BigInt.js</a>. This page performs RSA in
+		any base. In base 95, the message can be ordinary text. Click all the
+		buttons in order to perform all the steps of RSA key generation,
+		encryption, and decryption. Or just click the DO EVERYTHING button.
+		<center>
+			<br>
+			<table border=2 cellspacing=0 cellpadding=0>
+				<tr>
+					<td>
+						<table bgColor="lightgray" border=0 cellspacing=0 cellpadding=1>
+							<tr>
+								<td align=right colspan=5><font color=black><b>Time&nbsp;(sec)</b></font></td>
+							</tr>
+							<tr>
+								<td colspan=4 align=center><input width=900 type=button
+									name=nnnb0
+									value="                                   Do everything                                        "
+									onclick="
+  //   var e=str2bigInt(document.nnna.nnne.value,currBase,0); //public exponent e
+  //  var b=parseInt(document.nnna.nnng.value,10); //number of bits
+    mytests();
+       document.nnna.nnntmp.value  ='';
+       document.nnna.nnntmq.value  ='';
+       document.nnna.nnntmn.value  ='';
+       document.nnna.nnntmphi.value='';
+       document.nnna.nnntmd.value  ='';
+       document.nnna.nnntmc.value  ='';
+       document.nnna.nnntmmp.value ='';
+       document.nnna.nnntmmpp.value='';
+       document.nnna.nnntmall.value='';
+       startTimeAll=new Date();
+       document.nnna.nnnb1.click();
+       document.nnna.nnnb2.click();
+       document.nnna.nnnb3.click();
+       document.nnna.nnnb6.click();
+       document.nnna.nnnb7.click();
+       document.nnna.nnnb8.click();
+       document.nnna.nnnb9.click();                              
+       endTimeAll=new Date();
+       document.nnna.nnntmall.value=''+(endTimeAll.getTime()-startTimeAll.getTime())/1000.0;
+     "></td>
+								<td align=center><input name=nnntmall type=text size=6></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><font color=black><b>Display
+											numbers in:</b></font></td>
+								<td>&nbsp;</td>
+								<td><select name=nnnt onchange="doSelect()">
+										<option value=2>Base 2 (binary)</option>
+										<option selected value=10>Base 10 (decimal)</option>
+										<option value=16>Base 16 (hexadecimal)</option>
+										<option value=64>Base 64 (digits, letters, "=" and
+											"_")</option>
+										<option value=95>Base 95 (all keys except TAB, ENTER)</option>
+										<option value=-1>Base 2^? (how it is stored in
+											memory)</option>
+								</select></td>
+								<td align=center><input name=nnntmBs type=text size=6></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><font color=black><b>The
+											plaintext message:</b></font></td>
+								<td align=right><font color=black><b>m=</b></font></td>
+								<td><textarea name=nnnm rows=2 cols=32></textarea></td>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><font color=black><b>The public
+											exponent:</b></font></td>
+								<td align=right><font color=black><b>e=</b></font></td>
+								<td><textarea name=nnne rows=2 cols=32></textarea></td>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><font color=black><b>p, q: <input
+											name=nnng type=text size=3 value=45> bits each
+									</b></font></td>
+								<td align=right><font color=black><font color=black><b>p=</b></font></td>
+								<td><textarea name=nnnp rows=2 cols=32></textarea><br></td>
+								<td align=center><input name=nnntmp type=text size=6></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><select name=nnns onchange="doSelect()">
+										<option selected value=1>probable primes</option>
+										<option value=2>true primes</option>
+								</select> <input type=button name=nnnb1 value="Pick primes p,q"
+									onClick="   
+      var r1,r2;
+      var e=str2bigInt(document.nnna.nnne.value,currBase,0); //public exponent e
+      var b=parseInt(document.nnna.nnng.value,10); //number of bits
+
+      if (b<5) {//generated primes must be at least 5 bits long to avoid infinite loop during generation
+        b=5;
+        document.nnna.nnng.value=b;
+      }
+
+      if (equalsInt(e,2) || equalsInt(e,1) || equalsInt(e,0)) { //e should be an odd prime
+        document.nnna.nnne.value=3;
+        e=str2bigInt(document.nnna.nnne.value,currBase,0);
+      }
+
+      document.nnna.nnntmp.value='';
+      document.nnna.nnntmq.value='';
+
+      startTime=new Date();
+      while (1) {
+        if (document.nnna.nnns.value==1) //r1=random b-bit prime (with leading 1 bit)
+          r1=randProbPrime(b);
+        else
+          r1=randTruePrime(b);  
+      
+        if (!equalsInt(mod(r1,e),1))  //the prime must not be congruent to 1 modulo e
+          break;
+      }
+      endTime=new Date();
+      document.nnna.nnnp.value=bigInt2str(r1,currBase);
+      document.nnna.nnntmp.value=''+(endTime.getTime()-startTime.getTime())/1000.0;
+
+      startTime=new Date();
+      while(1) {
+        if (document.nnna.nnns.value==1) //r2=random b-bit prime (with leading 1 bit)
+          r2=randProbPrime(b);
+        else
+          r2=randTruePrime(b);  
+        if (!equals(r1,r2) && !equalsInt(mod(r2,e),1))  //primes must be distinct and not congruent to 1 modulo e
+          break;
+      }
+      endTime=new Date();
+      document.nnna.nnnq.value=bigInt2str(r2,currBase);
+      document.nnna.nnntmq.value=''+(endTime.getTime()-startTime.getTime())/1000.0;
+    "></td>
+								<td align=right><font color=black><font color=black><b>q=</b></font></td>
+								<td><textarea name=nnnq rows=2 cols=32></textarea><br></td>
+								<td align=center><input name=nnntmq type=text size=6></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><input type=button name=nnnb2 value="p*q="
+									onclick="
+           var p1=str2bigInt(document.nnna.nnnp.value,currBase,0);
+           var p2=str2bigInt(document.nnna.nnnq.value,currBase,0);
+           var t;
+
+           document.nnna.nnntmn.value='';
+           startTime=new Date();
+           t=mult(p1,p2);
+           endTime=new Date();
+           document.nnna.nnnn.value=bigInt2str(t,currBase);
+           document.nnna.nnntmn.value=''+(endTime.getTime()-startTime.getTime())/1000.0;
+         "></td>
+								<td align=right><font color=black><b>n=</b></font></td>
+								<td><textarea name=nnnn rows=2 cols=32></textarea><br></td>
+								<td align=center><input name=nnntmn type=text size=6></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><input type=button name=nnnb3
+									value="(p-1)*(q-1)="
+									onclick="
+           var p1=str2bigInt(document.nnna.nnnp.value,currBase,0);
+           var p2=str2bigInt(document.nnna.nnnq.value,currBase,0);
+           var t;
+
+           document.nnna.nnntmphi.value='';
+           startTime=new Date();
+           t=mult(addInt(p1,-1),addInt(p2,-1));         
+           endTime=new Date();
+           document.nnna.nnnphi.value=bigInt2str(t,currBase);
+           document.nnna.nnntmphi.value=''+(endTime.getTime()-startTime.getTime())/1000.0;
+         "></td>
+								<td align=right><font color=black><b>phi=</b></font></td>
+								<td><textarea name=nnnphi rows=2 cols=32></textarea><br></td>
+								<td align=center><input name=nnntmphi type=text size=6></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><input type=button name=nnnb6
+									value="e^(-1) mod phi="
+									onclick="
+           var s;
+           var phi=str2bigInt(document.nnna.nnnphi.value,currBase,0);
+           var e  =str2bigInt(document.nnna.nnne.value,currBase,0);
+
+           document.nnna.nnntmd.value='';
+           startTime=new Date();
+           s=inverseMod(e,phi);           
+           endTime=new Date();
+           document.nnna.nnntmd.value=''+(endTime.getTime()-startTime.getTime())/1000.0;
+           if (s)  //if GCD!=1 then no inverse exists
+             document.nnna.nnnd.value=bigInt2str(s,currBase);
+           else
+             document.nnna.nnnd.value='**** e isn\'t invertible. Try a different prime e. ****';
+         "></td>
+								<td align=right><font color=black><b>d=</b></font></td>
+								<td><textarea name=nnnd rows=2 cols=32></textarea><br></td>
+								<td align=center><input name=nnntmd type=text size=6></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><input type=button name=nnnb7
+									value="m^e mod n="
+									onclick="
+           var n=str2bigInt(document.nnna.nnnn.value,currBase,0);
+           var x=str2bigInt(document.nnna.nnnm.value,currBase,0);  //x will hold answer, so it must be as large as n
+           var y=str2bigInt(document.nnna.nnne.value,currBase,0);
+           var t;
+
+           document.nnna.nnntmc.value='';
+           startTime=new Date();
+           t=powMod(x,y,n);
+           endTime=new Date();
+           document.nnna.nnnc.value=bigInt2str(t,currBase);
+           document.nnna.nnntmc.value=''+(endTime.getTime()-startTime.getTime())/1000.0;
+         
+           x=str2bigInt(document.nnna.nnnm.value,currBase,0);
+         "></td>
+								<td align=right><font color=black><b>c=</b></font></td>
+								<td><textarea name=nnnc rows=2 cols=32></textarea><br></td>
+								<td align=center><input name=nnntmc type=text size=6></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><input type=button name=nnnb8
+									value="c^d mod n="
+									onclick="
+           var n=str2bigInt(document.nnna.nnnn.value,currBase,0);
+           var c=str2bigInt(document.nnna.nnnc.value,currBase,0);
+           var d=str2bigInt(document.nnna.nnnd.value,currBase,0);
+           var m=str2bigInt(document.nnna.nnnm.value,currBase,0);
+           var t;
+
+           document.nnna.nnntmmp.value='';
+           startTime=new Date();
+           t=powMod(c,d,n);
+           endTime=new Date();
+           document.nnna.nnnmp.value=bigInt2str(t,currBase);
+           document.nnna.nnntmmp.value=''+(endTime.getTime()-startTime.getTime())/1000.0;
+
+           if (!greater(n,m))
+             document.nnna.nnnmp.value+='*** ERROR *** The message m must be less than p*q';
+         ">
+								<td align=right><font color=black><b>m'=</b></font></td>
+								<td><textarea name=nnnmp rows=2 cols=32></textarea><br></td>
+								<td align=center><input name=nnntmmp type=text size=6></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><input type=button name=nnnb9
+									value="Calculate"
+									onclick="
+           var t,P,Q;
+           var q=str2bigInt(document.nnna.nnnq.value,currBase,0);
+           var p=str2bigInt(document.nnna.nnnp.value,currBase,0);
+           var d=str2bigInt(document.nnna.nnnd.value,currBase,0);
+           var c=str2bigInt(document.nnna.nnnc.value,currBase,0);
+           var n=str2bigInt(document.nnna.nnnn.value,currBase,0);
+                      
+           document.nnna.nnntmmpp.value='';
+           startTime=new Date();
+
+           P = powMod(mod(c,p),mod(d,addInt(p,-1)),p);
+           Q = powMod(mod(c,q),mod(d,addInt(q,-1)),q);
+           if (greater(P,Q)) {
+             t=P; P=Q; Q=t;
+             t=p; p=q; q=t;
+           }
+           t = add(mult(multMod(sub(Q,P),inverseMod(p,q),q),p),P);
+
+           endTime=new Date();
+           document.nnna.nnnmpp.value=bigInt2str(t,currBase);
+           document.nnna.nnntmmpp.value=''+(endTime.getTime()-startTime.getTime())/1000.0;
+
+           if (!greater(n,c))
+             document.nnna.nnnmpp.value+='*** ERROR *** The message m must be less than p*q';
+         "></td>
+								<td align=right><font color=black><b>m''=</b></font></td>
+								<td align><textarea name=nnnmpp rows=2 cols=32></textarea><br></td>
+								<td align=center><input name=nnntmmpp type=text size=6></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right>&nbsp;</td>
+								<td align=right>&nbsp;</td>
+								<td align=center><font color=black><b>m'' uses
+											secret p and q to be faster. <br>P=c^d mod p <br>Q=c^d
+											mod q <br>m''=((Q-P)*(p^-1) mod q)*p+P</font></td>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+							</tr>
+						</table>
+			</table>
+			<br>
+		</center>
+	</form>
+
+	<script>
+		currBase = document.nnna.nnnt.value;
+		document.nnna.nnnt[5].text = "Base 2^" + bpe
+				+ " (how it is stored in memory)";
+
+		//when the selection is clicked to change base, convert all the numbers
+		function doSelect() {
+			newBase = document.nnna.nnnt.value;
+			if (newBase != currBase) {
+				document.nnna.nnntmBs.value = '';
+				startTime = new Date();
+				if (document.nnna.nnnp.value)
+					document.nnna.nnnp.value = bigInt2str(str2bigInt(
+							document.nnna.nnnp.value, currBase, 0), newBase);
+				if (document.nnna.nnnq.value)
+					document.nnna.nnnq.value = bigInt2str(str2bigInt(
+							document.nnna.nnnq.value, currBase, 0), newBase);
+				if (document.nnna.nnnn.value)
+					document.nnna.nnnn.value = bigInt2str(str2bigInt(
+							document.nnna.nnnn.value, currBase, 0), newBase);
+				if (document.nnna.nnnm.value)
+					document.nnna.nnnm.value = bigInt2str(str2bigInt(
+							document.nnna.nnnm.value, currBase, 0), newBase);
+				if (document.nnna.nnne.value)
+					document.nnna.nnne.value = bigInt2str(str2bigInt(
+							document.nnna.nnne.value, currBase, 0), newBase);
+				if (document.nnna.nnnc.value)
+					document.nnna.nnnc.value = bigInt2str(str2bigInt(
+							document.nnna.nnnc.value, currBase, 0), newBase);
+				if (document.nnna.nnnd.value)
+					document.nnna.nnnd.value = bigInt2str(str2bigInt(
+							document.nnna.nnnd.value, currBase, 0), newBase);
+				if (document.nnna.nnnmp.value)
+					document.nnna.nnnmp.value = bigInt2str(str2bigInt(
+							document.nnna.nnnmp.value, currBase, 0), newBase);
+				if (document.nnna.nnnmpp.value)
+					document.nnna.nnnmpp.value = bigInt2str(str2bigInt(
+							document.nnna.nnnmpp.value, currBase, 0), newBase);
+				if (document.nnna.nnnphi.value)
+					document.nnna.nnnphi.value = bigInt2str(str2bigInt(
+							document.nnna.nnnphi.value, currBase, 0), newBase);
+				endTime = new Date();
+				document.nnna.nnntmBs.value = ''
+						+ (endTime.getTime() - startTime.getTime()) / 1000.0;
+			}
+			currBase = newBase;
+		}
+
+		document.nnna.nnnm.value = "134841509989";
+		document.nnna.nnne.value = "65537";
+	</script>
+	The library allows addition, subtraction, multiplication, division,
+	exponentiation, and inverses modulo an arbitrary number. It has the
+	extended Euclid algorithm, and can convert between bases up to base 95.
+	It can generate both true prime numbers and probable primes (which have
+	a probability less than 2^-80 of being composite). It uses the built-in
+	JavaScript random number generator, which must be replaced for any
+	crypto or security application.
+
+	<br>
+	<br> It will run faster on a browser with a good JavaScript
+	compiler. As of 2009, that means Microsoft Internet Explorer is slow,
+	but all the other major browsers are fast (Firefox, Safari, Chrome,
+	Opera).
+
+	<br>
+	<br> It's hard to imagine any practical cryptographic use for this
+	code, other than pedagogical. As of 2009, the major browsers give
+	warning messages if it runs more than a few seconds. A web page is
+	susceptible to Man In The Middle (MITM) attacks. A MITM can modify a
+	web page as it's downloading, inserting code to capture passwords etc.
+	as they're typed, and send them back to the MITM. Even SSL adds little
+	security, since users ignore certificate warnings. This page was just
+	written for my entertainment, after seeing a
+	<!-- <a href="http://x67.deja.com/[ST_rn=ps]/getdoc.xp?AN=698881747">sci.crypt</a>. -->
+	<a
+		href="http://groups.google.com/group/sci.crypt/browse_thread/thread/f99306bb3fef3f26?hl=en">request</a>
+	for something like this on sci.crypt.
+	<br>
+	<br>
+
+
+
+	<font size=-2>(c) 2000-2009 <a href="http://www.leemon.com">Leemon
+			Baird</a></font>
+	<br>
+</body>
+</html>
