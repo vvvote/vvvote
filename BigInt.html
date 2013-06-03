@@ -27,6 +27,7 @@
 <BODY>
 	<script src="BigInt.js"></script>
 	<script src="rsa.js"></script>
+	<script src="election.js"></script>
 	<script type="text/javascript">
 		function mytests() {
 			try {
@@ -133,8 +134,8 @@
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td align=right><font color=black><b>The
-											plaintext message:</b></font></td>
+								<td align=right><font color=black>
+								<b>The plaintext message:</b></font></td>
 								<td align=right><font color=black><b>m=</b></font></td>
 								<td><textarea name=nnnm rows=2 cols=32></textarea></td>
 								<td>&nbsp;</td>
@@ -273,6 +274,33 @@
 								<td><textarea name=nnnd rows=2 cols=32></textarea><br></td>
 								<td align=center><input name=nnntmd type=text size=6></td>
 							</tr>
+<!-- Verblindung -->							
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right>
+								<input type=button name=nnnblindbt
+									value="Verblindungsfaktor="
+									onclick="
+									var currBase = parseInt(document.nnna.nnnt.value, 10);
+									var bits     = parseInt(document.nnna.nnng.value, 10); //number of bits
+									var method   = parseInt(document.nnna.nnns.value, 10);
+							           var q=str2bigInt(document.nnna.nnnq.value,currBase,0);
+							           var p=str2bigInt(document.nnna.nnnp.value,currBase,0);
+							           var d=str2bigInt(document.nnna.nnnd.value,currBase,0);
+							           var c=str2bigInt(document.nnna.nnnc.value,currBase,0);
+							        var n=str2bigInt(document.nnna.nnnn.value,currBase,0);
+
+									var bfactors = RsablindingFactorsGen(bits, method, n);
+             						document.nnna.nnnblindta.value=bigInt2str(bfactors.blind, currBase);
+                                "></td>
+								<td align=right><font color=black><b>f=</b></font></td>
+								<td><textarea name=nnnblindta rows=2 cols=32></textarea><br></td>
+								<td align=center><input name=nnnblindtime type=text size=6></td>
+							</tr>
+
+
+<!-- Verschlüsseln -->														
+
 							<tr>
 								<td>&nbsp;</td>
 								<td align=right><input type=button name=nnnb7
@@ -296,6 +324,8 @@
 								<td><textarea name=nnnc rows=2 cols=32></textarea><br></td>
 								<td align=center><input name=nnntmc type=text size=6></td>
 							</tr>
+							
+<!-- Entlüsselung -->							
 							<tr>
 								<td>&nbsp;</td>
 								<td align=right><input type=button name=nnnb8
@@ -425,7 +455,7 @@
 			currBase = newBase;
 		}
 
-		document.nnna.nnnm.value = "134841509989";
+		document.nnna.nnnm.value = "63968973195801163215134432391179753050357353181310921704973554120665174737837411182897685851838699468692942587593899818568143296355972388263883336717094610950816539287684572033";
 		document.nnna.nnne.value = "65537";
 	</script>
 	The library allows addition, subtraction, multiplication, division,
