@@ -58,14 +58,13 @@ function RsaDec(ciffertext, key) {
 	powMod(ciffertext, key.d, key.n);
 }
 
-function RsablindingFactorsGen(bits, method, n){
+function RsablindingFactorsGen(bits, n){
 	var factors = new Object();
 	// only workes correctly if 
 	// the biggest common devisor of rand and modulus equals 1.  
 
     while (true) {
-        if (method == 1) r = randProbPrime(bits);
-        else             r = randTruePrime(bits);  
+        r = randBigInt(bits, 0);
         if (!equalsInt(mod(n, r), 1)) break;
       }
 
@@ -85,3 +84,4 @@ function rsaUnblind(blindedtext, factors, key) {
 	ret = multMod(blindedtext, factors.unblind, key.n);
 	return ret;
 }
+
