@@ -290,7 +290,7 @@
 							           var c=str2bigInt(document.nnna.nnnc.value,currBase,0);
 							        var n=str2bigInt(document.nnna.nnnn.value,currBase,0);
 
-									var bfactors = RsablindingFactorsGen(bits, method, n);
+									var bfactors = RsablindingFactorsGen(bits, n);
              						document.nnna.nnnblindta.value=bigInt2str(bfactors.blind, currBase);
                                 "></td>
 								<td align=right><font color=black><b>f=</b></font></td>
@@ -365,17 +365,11 @@
                       
            document.nnna.nnntmmpp.value='';
            startTime=new Date();
-
-           P = powMod(mod(c,p),mod(d,addInt(p,-1)),p);
-           Q = powMod(mod(c,q),mod(d,addInt(q,-1)),q);
-           if (greater(P,Q)) {
-             t=P; P=Q; Q=t;
-             t=p; p=q; q=t;
-           }
-           t = add(mult(multMod(sub(Q,P),inverseMod(p,q),q),p),P);
-
+		   privkeycoeff = getHelpingNumbers(p, q, d, n);
+		   m = rsaDecrypt(c, privkeycoeff);
+		   
            endTime=new Date();
-           document.nnna.nnnmpp.value=bigInt2str(t,currBase);
+           document.nnna.nnnmpp.value=bigInt2str(m,currBase);
            document.nnna.nnntmmpp.value=''+(endTime.getTime()-startTime.getTime())/1000.0;
 
            if (!greater(n,c))
