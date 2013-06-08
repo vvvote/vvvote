@@ -3,8 +3,9 @@
  * @param electionId
  * @returns {___ballot0}
  */
-function makeBallotRaw(electionId) {
-	var ballot;
+
+function makeBallotRaw(electionId, bits) {
+	var ballot = new Object();
 	ballot.electionId = electionId;
 	ballot.votingno   = randBigInt(bits, 0);
 	ballot.salt       = randBigInt(bits, 0);
@@ -12,29 +13,40 @@ function makeBallotRaw(electionId) {
 }
 
 
-function addBallotChecksum(voteSheet) {
-	votingSheet.str        = JSON.stringify(votingSheet);
-	votingSheet.checksum   = SHA256(votingSheetStr);
+function addBallotChecksum(ballot) {
+	ballot.str        = JSON.stringify(ballot);
+	ballot.checksum   = SHA256(ballot.str);
 }
 
 
-function makeBlindSigReq(electionID, numVotingSheets, serverKeys) {
-	var ballots;
+function makeBlindSigReq(electionId, numVotingSheets, serverList) {
+	var ballots = new Object();
 	for (var i=0; i<numVotingSheets; i++) {
-		var ballot;
-		ballot.raw    = makeBallotRaw(electionId);
-		ballot.transm = addBallotChecksum(voteSheet.raw);
-		for (var j=0; j<serverkeys.length; i++) {
-			ballot.blindingf = RsablindingFactorsGen(bitSize(serverKeys[i].n) - 1, serverKeys[i].n);
-			ballot.blinded   = rsaBlind(ballot.transm.checksum, ballot.blindingf, serverKeys[i]);
+		var ballot = new Object();
+		ballot.raw    = makeBallotRaw(electionId, bitSize(serverList[i].key.n));
+		ballot.transm = addBallotChecksum(ballot.raw);
+		for (var j=0; j<serverList.length; i++) {
+			ballot.blindingf = RsablindingFactorsGen(bitSize(serverList[i].key.n) - 1, serverList[i].key.n);
+			ballot.blinded   = rsaBlind(ballot.transm.checksum, ballot.blindingf, serverList[i].key);
 		}
-		ballots[i] = ballot;
+		ballots[i]         = ballot;
 	}
 	return ballots;	
 }
 
+
+function makePermissionReq(voterId, electionId, numVotingSheets, serverList) {
+	var ballots = makeBlindSigReq(electionId, numVotingSheets, serverList);
+	var req = new Object();
+	for (var i=0; i<ballots.length; i++) {
+		req[i][blindedHash] = ballots[i].blinded;
+	}
+	req['voterId'] = voterId;
+	return JSON.stringify(req);
+}
+
 function makeUnblindedreqestedBallots(reqestedBallots, allBallots){
-	var answer;
+	var answer = new Object();
 	for (var i=0; i<reqestedBallots.length; i++) {
 		answer[i] = allBallots[reqestedBallots[i]]; 
 	}
@@ -71,6 +83,20 @@ function makeVote(ballots, numRequiredSignatures, vote) {
 	return votedballot; 
 }
 
+function getPermissionServerList() {
+	// load config
+	var slist  = new Object();
+	var server = new Object();
+	var key    = new Object();
+	server.name = 'PermissionServer1';
+	server.url  = '';
+	key.exp     = str2bigInt('65537', 10);  
+	key.n       = str2bigInt('43572702632393812002389124439062643234946865623253726132688386065774781812747', 10);
+	server.key = key; 
+	slist[0] = server;
+    return slist;	
+}
+
 
 /**
  * 
@@ -78,7 +104,7 @@ function makeVote(ballots, numRequiredSignatures, vote) {
  * @returns {___voteTransm2}
  */
 function makeVoteTransm(vote) {
-	var voteTransm;
+	var voteTransm = new Object();
 	voteTransm.electionId = vote.electionId;
 	voteTransm.votingno   = vote.votingno;
 	voteTransm.salt       = vote.salt;
