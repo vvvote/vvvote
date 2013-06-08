@@ -1,3 +1,7 @@
+<?php
+include_once 'electionGui.php';
+?>
+
 <body>
 <html>
 
