@@ -14,39 +14,93 @@ function makeBallotRaw(electionId, bits) {
 
 
 function addBallotChecksum(ballot) {
-	ballot.str        = JSON.stringify(ballot);
-	ballot.checksum   = SHA256(ballot.str);
+	var transm = new Object();
+	transm.str        = JSON.stringify(ballot);
+	transm.checksum   = SHA256(transm.str);
+	return transm;
 }
 
 
-function makeBlindSigReq(electionId, numVotingSheets, serverList) {
-	var ballots = new Object();
-	for (var i=0; i<numVotingSheets; i++) {
+/**
+ * @TODO use the smallest key size of all servers
+ * attention: the bitsize of all permission server's keys must be equal 
+ * @param electionId
+ * @param numBallots
+ * @param serverList
+ * @param forServer Nummer des Servers, für den der Req erzeugt werden soll
+ * @returns {Object}
+ */
+
+function makeBlindSigReqForFirstServer(electionId, numBallots, serverList, forServer) {
+	var ballots = new Array();
+	if (forServer == 1) {
+	for (var i=0; i<numBallots; i++) {
 		var ballot = new Object();
-		ballot.raw    = makeBallotRaw(electionId, bitSize(serverList[i].key.n));
+		ballot.raw    = makeBallotRaw(electionId, bitSize(serverList[0].key.n)); // attention: the bitsize of all permission servers must be equal
 		ballot.transm = addBallotChecksum(ballot.raw);
-		for (var j=0; j<serverList.length; i++) {
-			ballot.blindingf = RsablindingFactorsGen(bitSize(serverList[i].key.n) - 1, serverList[i].key.n);
-			ballot.blinded   = rsaBlind(ballot.transm.checksum, ballot.blindingf, serverList[i].key);
+		for (var j=0; j<serverList.length; j++) {
+			ballot.blindingf[j] = RsablindingFactorsGen(bitSize(serverList[j].key.n) - 1, serverList[j].key.n);
 		}
-		ballots[i]         = ballot;
+		ballot.blinded[0] = rsaBlind(ballot.transm.checksum, ballot.blindingf[forServer], serverList[forServer].key);
+		ballot.signer[0]  = forServer;
+		ballots[i] = ballot;
 	}
-	return ballots;	
+	return ballots;
+	}
+}
+
+function makeBlindSigReqForOtherServers(ballots, serverList, forServer) {
+	var prevSig;
+	for (ballot in ballots) {
+		if (sign in ballot.transm) {prevSig = ballot.transm.sign[ballot.transm.sign.length-1]; }
+		else                       {prevSig = ballot.transm.checksum;}
+		ballot.blinded[forServer] = rsaBlind(prevSig, ballot.blindingf[forServer], serverList[forServer].key);
+	}
 }
 
 
-function makePermissionReq(voterId, electionId, numVotingSheets, serverList) {
-	var ballots = makeBlindSigReq(electionId, numVotingSheets, serverList);
+function makePermissionReqs(voterId, secret, electionId, numBallots, serverList) {
+	var serverSeq = new Array;
+	var ballots = makeBlindSigReqForFirstServer(electionId, numBallots, serverList, nextServer);
+	for (var s=0; s<serverList.lenght; s++) {
+		var nextServer = getNextPermServer(serverSeq, serverList);
+		serverSeq[s] = nextServer;
+		makePermissionReq(voterId, secret, electionId, ballots, serverList); 
+	}
+}
+
+function makeNextPermissionReq(){
+	
+}
+
+
+function makePermissionReq(voterId, secret, electionId, ballots, serverList) {
 	var req = new Object();
 	for (var i=0; i<ballots.length; i++) {
-		req[i][blindedHash] = ballots[i].blinded;
+		req[i].blindedHash = ballots[i].blinded[ballots[i].blinded.length - 1];
 	}
 	req['voterId'] = voterId;
+	req['secret']  = secret;
 	return JSON.stringify(req);
+}
+	
+
+function getNextPermServer(serverSeq, serverList) {
+	for (var i=0; i<serverList.length; i++) { 
+		nextServer = Math.round((Math.random()*serverList.length)); // find the next random server number
+		var j = 0;
+		while (serverSeq.indexOf(nextServer) > 0 && j < serverList.length) {
+			nextServer++;
+			j++;
+			if (nextServer == serverList.lenght) {nextServer = 0;}
+		}
+		if (j == serverList.length) {return -1;}
+	}
+    return nextServer;
 }
 
 function makeUnblindedreqestedBallots(reqestedBallots, allBallots){
-	var answer = new Object();
+	var answer = new Array();
 	for (var i=0; i<reqestedBallots.length; i++) {
 		answer[i] = allBallots[reqestedBallots[i]]; 
 	}
@@ -57,14 +111,15 @@ function verifySaveElectionPermiss(serverAnsw, ballots, serverKey) {
 	// answ: array of signed: .num .blindSignatur
 	var answ     = JSON.parse(serverAnsw); // decode answer
 	for (var i=0; i<answ.length; i++) {
-		var signatur = rsaUnblind(answ.blindSignatur, ballots[answ.num].blindingf, serverKey);  // unblind
+		var signatur = rsaUnblind(answ[i].blindSignatur, ballots[answ[i].num].blindingf, serverKey);  // unblind
 		var testsign = RsaEncDec(signatur, serverKey);
-		var signOk   = equals(testsign, ballots[answ.num].transm.checksum);
-		j = ballots[answ.num].transm.blindsig.length;
-		ballots[answ.num].transm.blindsig[j] = answ.blindSignatur;  
-		ballots[answ.num].transm.sign[j]     = signatur;
-		ballots[answ.num].transm.signOk[j]   = signOk; 
+		var signOk   = equals(testsign, ballots[answ[i].num].transm.checksum);
+		j = ballots[answ.num[i]].transm.blindsig.length;
+		ballots[answ[i].num].transm.blindsig[j] = answ[i].blindSignatur;  
+		ballots[answ[i].num].transm.sign[j]     = signatur;
+		ballots[answ[i].num].transm.signOk[j]   = signOk; 
 	}
+	return ballots;
 }
 
 
@@ -85,7 +140,7 @@ function makeVote(ballots, numRequiredSignatures, vote) {
 
 function getPermissionServerList() {
 	// load config
-	var slist  = new Object();
+	var slist  = new Array();
 	var server = new Object();
 	var key    = new Object();
 	server.name = 'PermissionServer1';
