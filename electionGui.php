@@ -2,18 +2,57 @@
 <html>
 <head>
 <title>Online Election / Wahl</title>
-	<script src="BigInt.js"></script>
-	<script src="rsa.js"></script>
-	<script src="sha256.js"></script>
-	<script src="election.js"></script>
+<script src="BigInt.js"></script>
+<script src="rsa.js"></script>
+<script src="sha256.js"></script>
+<script src="election.js"></script>
+<script type="text/javascript">
+	function onGetPermClick()  {
+		election = new Object();
+		election.voterId    = document.permission.voterId.value;
+		election.secret     ='leer';
+		election.electionId = document.permission.electionId.value;
+		election.numBallots = 2;
+     	//  alert('voterID: '    + voterID +
+	    //        '\r\nelectionID: ' + electionID);
+	    election.pServerList = getPermissionServerList();
+	    
+	    var req = makeFirstPermissionReqs(election);
+	    // save req as local file in order to have a backup in case something goes wrong
+		// var req = makePermissionReq(voterId, electionId, numBallots, pServerList);
+		// alert('req: ' + req);
+		// document.permission.json.value = req;
+		
+		// var rq = new Object();
+		// rq.voterId    = 'pakki';
+		// rq.electionId = 'wahl1';
+		// var req = JSON.stringify(rq);;
+
+		var xml = new XMLHttpRequest();
+        xml.open('POST', 'testtransm.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=137098483694310', true);
+		xml.onload = function(event) {
+			document.permission.log.value = document.permission.log.value + '<-- empfangen von erstem Server: ' + xml.responseText + "\r\n\r\n";  
+			var answ = handleServerAnswer(election, xml.responseText);
+			document.permission.log.value = document.permission.log.value + '--> gesendet an ersten Server: ' + answ + "\r\n\r\n";
+		};
+//		 xml.onreadystatechange = function() {
+//		   if (xml.readyState != 4)  { return; }
+//		   var serverResponse = JSON.parse(xml.responseText);
+//		 };
+    	document.permission.log.value = document.permission.log.value + '\r\n\r\n --> gesendet an ersten Server: ' + req + "\r\n\r\n";  
+        xml.send(req);
+		return false;
+}
+	</script>
 </head>
+
 <body>
-	<!-- <script type="text/javascript">  -->
 	<br>
-	<form name=permission action="getPermission" method="get">
+	<form name=permission method="post" onsubmit="return false;">
+		<!--  action="getPermission"> -->
 
 		This page demonstrates a JavaScript library for secure online election
-		<center>
+		<div align="center">
 			<br>
 			<table border=2 cellspacing=0 cellpadding=0>
 				<tr>
@@ -35,32 +74,24 @@
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td>&nbsp;
-								<input type="hidden" name=json value="">
+								<td>&nbsp; <input type="hidden" name=json value="">
 								</td>
-								<td><input type="submit" name=reqPermiss value="Request ballot"   
-								    onclick="
-									var voterID    = document.permission.voterId.value;
-								    var electionID = document.permission.electionId.value;
-								    var numVotingSheets = 2;
-								    alert('voterID: '    + voterID +
-										  'electionID: ' + electionID);
-								    var pServerList = getPermissionServerList();
-								    
-									var req = makePermissionReq(voterID, electionID, numVotingSheets, pServerList);
-									alert('req: ' + req);
-									document.permission.json.value = req;
-									return true;
-									"
-								>
+								<td><input type="submit" name=reqPermiss value="Request ballot"
+									onclick="onGetPermClick();">
 								</td>
 								<td>&nbsp;</td>
-							</tr>
+						
 						</table>
 					</td>
 				</tr>
+				</tr>
+				<tr>
+					<td>
+					<textarea name=log rows=20 cols=80>Log:</textarea>
+					</td>
+				</tr>
 			</table>
-		</center>
+		</div>
 	</form>
 
 </body>
