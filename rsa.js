@@ -80,9 +80,9 @@ function RsablindingFactorsGen(bits, n){
 	return factors; 
 }
 
-function rsaBlind(plaintext, factors, key) {
+function rsaBlind(plaintextHex, factors, key) {
 	var ret;
-	ret = multMod(plaintext, powMod(factors.blind, key.exp, key.n), key.n);
+	ret = multMod(str2bigInt(plaintextHex, 16), powMod(factors.blind, key.exp, key.n), key.n);
 	return ret;
 }
 
