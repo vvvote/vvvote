@@ -79,7 +79,17 @@ class election {
 		global $numSignBallots; //contains an arry saying the x-th server has to sign y ballots
 		// load requested ballots($voterId, $electionId)
 		// verify content of the ballot
-		// calculate hash
+		$i = 0;
+		$raw = array();
+		$raw['electionId'] = $voterReq["ballots"][$i]['electionId'];
+		$raw['votingno'  ] = $voterReq["ballots"][$i]['votingno'];
+		$raw['salt'      ] = $voterReq["ballots"][$i]['salt'];
+		$str = json_encode($raw);
+		$hashByMe = hash('sha256', $str);
+		return $hashByMe;
+		$raw['hash'      ] = 1;
+		$ballot['raw'][electionId] = 1;
+				// calculate hash
 		// unblind the hash
 		// test  if calculated hash matches the given hash (transmitted in the message 'pickBallots', if not first signing server: verify the sigs of previous servers
 		$i = 0;
@@ -104,7 +114,7 @@ class election {
 	}
 
 	function signBallotsEvent($voterReq) {
-		return signBallots($voterReq);
+		return $this->signBallots($voterReq);
 	}
 
 	function handlePermissionReq($req) {

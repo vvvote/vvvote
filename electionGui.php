@@ -27,13 +27,19 @@
 		// rq.voterId    = 'pakki';
 		// rq.electionId = 'wahl1';
 		// var req = JSON.stringify(rq);;
-
+		var purl = 'testtransm.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=137098483694310';
 		var xml = new XMLHttpRequest();
-        xml.open('POST', 'testtransm.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=137098483694310', true);
+        xml.open('POST', purl, true);
 		xml.onload = function(event) {
 			document.permission.log.value = document.permission.log.value + '<-- empfangen von erstem Server: ' + xml.responseText + "\r\n\r\n";  
-			var answ = handleServerAnswer(election, xml.responseText);
-			document.permission.log.value = document.permission.log.value + '--> gesendet an ersten Server: ' + answ + "\r\n\r\n";
+			var req2 = handleServerAnswer(election, xml.responseText);
+			var xml2 = new XMLHttpRequest();
+			xml2.open('POST', purl, true);
+			xml2.onload = function(event) {
+				document.permission.log.value = document.permission.log.value + '<-- empfangen von erstem Server: ' + xml2.responseText + "\r\n\r\n";
+				}
+			document.permission.log.value = document.permission.log.value + '--> gesendet an ersten Server: ' + req2 + "\r\n\r\n";
+			xml2.send(req2);
 		};
 //		 xml.onreadystatechange = function() {
 //		   if (xml.readyState != 4)  { return; }

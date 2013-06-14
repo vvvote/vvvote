@@ -14,8 +14,12 @@ function makeBallotRaw(electionId, bits) {
 
 
 function addBallothash(ballot) {
+	var tmp = new Object();
+	tmp.electionId = ballot.electionId;
+	tmp.votingno   = bigInt2str(ballot.votingno, base);
+	tmp.salt       = bigInt2str(ballot.salt, base)
 	var transm = new Object();
-	transm.str        = JSON.stringify(ballot);
+	transm.str        = JSON.stringify(tmp);
 	transm.hash   = SHA256(transm.str);
 	return transm;
 }
@@ -153,6 +157,7 @@ function unblindBallotsEvent(election, requestedBallots) {
 // bigInt2str
 
 function disclose(election, requestedBallots, ballots, forServer) {
+	// @TODO make sure to never disclose all ballots
 	var transm = Object();
 	transm.ballots = new Array();
 	for (var i=0; i<requestedBallots.length; i++) {
