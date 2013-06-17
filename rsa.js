@@ -47,17 +47,6 @@ function RsaEncDec(plaintext, key){
 	return powMod(plaintext, key.exp, key.n);
 }
 
-
-function RsaEnc(plaintext, key){
-	if (!greater(key.n, plaintext)) { throw ("RsaEnc(): modulus must be greater than plaintext");}
-	return powMod(plaintext, key.e, key.n);
-}
-
-function RsaDec(ciffertext, key) {
-	if (!greater(key.n, ciffertext)) { throw ("RsaDec(): modulus must be greater than ciffertext");}
-	powMod(ciffertext, key.d, key.n);
-}
-
 /**
  * Generate blinding and according unblindung factors
  * Use the factors in blind() and unblind()
@@ -75,20 +64,20 @@ function RsablindingFactorsGen(bits, n){
         if (!equalsInt(mod(n, r), 1)) break;
       }
 
-	factors.blind   = r;
-	factors.unblind = inverseMod(r, n);
+	factors.blind   = str2bigInt('27', 10); // @TODO put r here back after debugging finished
+	factors.unblind = inverseMod(factors.blind, n);
 	return factors; 
 }
 
-function rsaBlind(plaintextHex, factors, key) {
+function rsaBlind(plaintextBigInt, factors, key) {
 	var ret;
-	ret = multMod(str2bigInt(plaintextHex, 16), powMod(factors.blind, key.exp, key.n), key.n);
+	ret = multMod(plaintextBigInt, powMod(factors.blind, key.exp, key.n), key.n);
 	return ret;
 }
 
-function rsaUnblind(blindedtext, factors, key) {
+function rsaUnblind(blindedtextBigInt, factors, key) {
 	var ret;
-	ret = multMod(blindedtext, factors.unblind, key.n);
+	ret = multMod(blindedtextBigInt, factors.unblind, key.n);
 	return ret;
 }
 

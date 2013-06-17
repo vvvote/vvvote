@@ -7,8 +7,8 @@
 function makeBallotRaw(electionId, bits) {
 	var ballot = new Object();
 	ballot.electionId = electionId;
-	ballot.votingno   = randBigInt(bits, 0);
-	ballot.salt       = randBigInt(bits, 0);
+	ballot.votingno   = str2bigInt('1', 10); // randBigInt(bits, 0); TODO: after debugging use rand 
+	ballot.salt       = str2bigInt('6', 10); // randBigInt(bits, 0); TODO: after debugging use rand
 	return ballot;
 }
 
@@ -17,10 +17,10 @@ function addBallothash(ballot) {
 	var tmp = new Object();
 	tmp.electionId = ballot.electionId;
 	tmp.votingno   = bigInt2str(ballot.votingno, base);
-	tmp.salt       = bigInt2str(ballot.salt, base)
+	tmp.salt       = bigInt2str(ballot.salt, base);
 	var transm = new Object();
 	transm.str        = JSON.stringify(tmp);
-	transm.hash   = SHA256(transm.str);
+	transm.hash   = SHA256(transm.str); // returns an hex-encoded string
 	return transm;
 }
 
@@ -46,9 +46,19 @@ function makeBlindSigReqForFirstServer(election, forServer) {
 		ballot.blindingf = new Array();
 		for (var j=0; j<election.pServerList.length; j++) {
 			ballot.blindingf[j] = RsablindingFactorsGen(bitSize(election.pServerList[j].key.n) - 1, election.pServerList[j].key.n);
+			var kw = bigInt2str(ballot.blindingf[j].unblind, 10); // TODO remove
+			var kw2 = kw;
 		}
 		ballot.blindedHash    = new Array();
-		ballot.blindedHash[0] = rsaBlind(ballot.transm.hash, ballot.blindingf[forServer], election.pServerList[forServer].key);
+		ballot.blindedHash[0] = rsaBlind(str2bigInt(ballot.transm.hash, 16), ballot.blindingf[forServer], election.pServerList[forServer].key);
+		
+		ballot.blindedHashStr = bigInt2str(ballot.blindedHash[0], 10);
+		ballot.signedBlinded  = powMod(ballot.blindedHash[0], election.pServerList[forServer].key.exppriv, election.pServerList[forServer].key.n);
+		ballot.signedBlindedStr  = bigInt2str(ballot.signedBlinded, 10);
+		ballot.unblindedHash = rsaUnblind(ballot.signedBlinded, ballot.blindingf[forServer], election.pServerList[forServer].key);
+		ballot.unblindedHashStr =  bigInt2str(ballot.unblindedHash, 10);
+		ballot.verifyStr     = bigInt2str(RsaEncDec(ballot.unblindedHash, election.pServerList[forServer].key), 10);
+		ballot.verifyStrHex  = bigInt2str(RsaEncDec(ballot.unblindedHash, election.pServerList[forServer].key), 16);
 		ballot.sigBy     = new Array();
 		ballot.sigBy[0]  = forServer;
 		ballots[i]       = ballot;
@@ -168,6 +178,8 @@ function disclose(election, requestedBallots, ballots, forServer) {
 		transm.ballots[i].hash       = ballots[requestedBallots[i]].transm.hash;
 		transm.ballots[i].unblindf   = bigInt2str(ballots[requestedBallots[i]].blindingf[forServer].unblind, base);
 		transm.ballots[i].blindedHash = bigInt2str(ballots[requestedBallots[i]].blindedHash[election.xthServer], base); // TODO this is not needed to transmitt remove it before release
+		// var blindedHashSig = RsaEncDec(str2bigInt(transm.ballots[i].blindedHash, 16), key.exppriv);
+		// var unblindedHashSig = (str2bigInt(transm.ballots[i].blindedHash, 16), key.exppriv);
 		if (ballots[requestedBallots[i]].transm.sigs) {
 			for (var s=0; s<ballots[requestedBallots[i]].transm.sigs.length; s++) {
 				transm.ballots[i].sigs[j]       = bigInt2str(ballots[requestedBallots[i]].transm.sigs[j], base);
@@ -244,7 +256,8 @@ function getPermissionServerList() {
 	server.name = 'PermissionServer1';
 	server.url  = '';
 	key.exp     = str2bigInt('65537', 10);  
-	key.n       = str2bigInt('43572702632393812002389124439062643234946865623253726132688386065774781812747', 10);
+	key.exppriv = str2bigInt('1210848652924603682067059225216507591721623093360649636835216974832908320027478419932929', 10); //@TODO remove this bvefore release, only needed for debugging
+	key.n       = str2bigInt('3061314256875231521936149233971694238047219365778838596523218800777964389804878111717657', 10);
 	key.serverId = server.name;
 	server.key = key; 
 	slist[0] = server;

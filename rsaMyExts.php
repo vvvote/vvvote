@@ -17,6 +17,15 @@ require_once 'Crypt/RSA.php';
 // }
 
 class rsaMyExts extends Crypt_RSA {
+	/**
+	 * 
+	 * @param unknown $p prime 1
+	 * @param unknown $q prime 2
+	 * @param unknown $d private key exponent
+	 * @param unknown $e public key exponent
+	 * @param unknown $n modulus
+	 * @return array of keys
+	 */
 	function rsaGetHelpingNumbers($p, $q, $d, $e, $n) {
 		// see http://en.wikipedia.org/wiki/RSA_%28algorithm%29#Using_the_Chinese_remainder_algorithm
 		// p and q: the primes from the key generation,
@@ -41,6 +50,31 @@ class rsaMyExts extends Crypt_RSA {
 				'publickey'  => $this->_convertPublicKey($n, $e),
 				'partialkey' => false
 		);
+	}
+	
+	static function mulMod($f1, $f2, $mod) {
+		$tmp = bcmul($f1->value, $f2->value);
+		$ret = new Math_BigInteger();
+		$ret->value = bcmod($tmp, $mod->value);
+		return $ret;
+	}
+	
+	function rsaBlind($cleartextBigInt, $blindf) {
+		$tmp = $this->_rsasp1($blindf);
+		$ret = $this->mulMod($tmp, $cleartextBigInt, $this->modulus);
+		// JS: $ret = multMod(plaintextBigInt, powMod(factors.blind, key.exp, key.n), key.n);
+		
+		// does not work: $ret->value =  $ret->_multiplyReduce($tmp->value,  $cleartextBigInt->value, $this->modulus->value, MATH_BIGINTEGER_MONTGOMERY); //MATH_BIGINTEGER_MONTGOMERY);
+		
+		return $ret;
+	}
+	
+	
+	function rsaUnblind($blindedBigInt, $unblindf) {
+		// does not work: $ret->_multiplyReduce($tmp->value, $unblindf->value, $this->modulus->value, MATH_BIGINTEGER_MONTGOMERY); //MATH_BIGINTEGER_MONTGOMERY);
+		// JS: $ret = multMod($blindedtext, $unblindf, $n);
+		$ret = $this->mulMod($blindedBigInt, $unblindf, $this->modulus);
+		return $ret;
 	}
 }
 ?>
