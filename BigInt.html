@@ -32,19 +32,37 @@
 		function mytests() {
 			try {
 				basis     = 10;
-				plaintext = str2bigInt('23', basis, 0);
+				plaintext = str2bigInt('111881100786669678354985113031250102428201936531021089478736348049610191091596', 10);
 				bits      = 6;
 				method    = 1;
+				
+				exppriv   = str2bigInt('1210848652924603682067059225216507591721623093360649636835216974832908320027478419932929', 10);
+				exppubl   = str2bigInt('65537', 10);
+				n         = str2bigInt('3061314256875231521936149233971694238047219365778838596523218800777964389804878111717657', 10);
+				var privatekey = new Object(), publickey = new Object(), keys = new Object();
 
-				key           = RsaKeyGen(bits, method, str2bigInt('7', basis, 0));
-				bfactors      = RsablindingFactorsGen(bits, method, key.pub.n);
-				blindedtext   = rsaBlind(plaintext, bfactors, key.pub);
-				enc           = RsaEncDec(blindedtext, key.priv);
-				unblindedtext = rsaUnblind(enc, bfactors, key.pub);
-				dec           = RsaEncDec(unblindedtext, key.pub);
-				alert('plaintext: '                            + bigInt2str(plaintext    , basis) + 
+				privatekey.n   = n;
+				privatekey.exp = exppriv;
+				publickey.n    = n;
+				publickey.exp  = exppubl;
+				keys.priv      = privatekey;
+				keys.pub       = publickey;
+
+				
+				// keys           = RsaKeyGen(bits, method, str2bigInt('7', basis));
+				// bfactors      = RsablindingFactorsGen(bits, keys.pub.n);
+				bfactors = new Object();
+				bfactors.blind= str2bigInt('27', 10);
+				bfactors.unblind = str2bigInt('6455215204799083259613203620601873071843980092333885352990872009744412120407', 10)
+				blindedtext   = rsaBlind(plaintext, bfactors, keys.pub);
+				enc           = RsaEncDec(blindedtext, keys.priv);
+				unblindedtext = rsaUnblind(enc, bfactors, keys.pub);
+				dec           = RsaEncDec(unblindedtext, keys.pub);
+				alert('plaintext: '                            + bigInt2str(plaintext, basis)  +
+					  '\r\n Verblindungsfaktor: '              + bigInt2str(bfactors.blind, basis)  +
 					  '\r\n verblindet: '                      + bigInt2str(blindedtext  , basis) + 
 					  '\r\n verschlüsselt (signiert): '        + bigInt2str(enc          , basis) + 
+					  '\r\n Entblinungsfaktor: '                + bigInt2str(bfactors.unblind, basis)  +
 					  '\r\n entblindet: '                      + bigInt2str(unblindedtext, basis) + 
 					  '\r\n entschlüsselt (signaturprüfung): ' + bigInt2str(dec          , basis));
 			} catch (err) {
@@ -292,11 +310,31 @@
 
 									var bfactors = RsablindingFactorsGen(bits, n);
              						document.nnna.nnnblindta.value=bigInt2str(bfactors.blind, currBase);
+             						document.nnna.nnnunblindta.value=bigInt2str(bfactors.unblind, currBase);
                                 "></td>
 								<td align=right><font color=black><b>f=</b></font></td>
 								<td><textarea name=nnnblindta rows=2 cols=32></textarea><br></td>
 								<td align=center><input name=nnnblindtime type=text size=6></td>
 							</tr>
+<!-- unblindfaktor -->							
+								<td>&nbsp;</td>
+								<td align=right>
+								<input type=button name=nnnblindbt
+									value="Entblindungsfaktor="
+									onclick="
+									var currBase = parseInt(document.nnna.nnnt.value, 10);
+									var method   = parseInt(document.nnna.nnns.value, 10);
+							           var q=str2bigInt(document.nnna.nnnq.value,currBase,0);
+							           var p=str2bigInt(document.nnna.nnnp.value,currBase,0);
+							           var d=str2bigInt(document.nnna.nnnd.value,currBase,0);
+							           var c=str2bigInt(document.nnna.nnnc.value,currBase,0);
+							        var n=str2bigInt(document.nnna.nnnn.value,currBase,0);
+							alert('unfertig');
+             						document.nnna.nnnunblindta.value=bigInt2str(bfactors.unblind, currBase);
+                                "></td>
+								<td align=right><font color=black><b>f=</b></font></td>
+								<td><textarea name=nnnunblindta rows=2 cols=32></textarea><br></td>
+								<td align=center><input name=nnnblindtime type=text size=6></td>
 
 
 <!-- Verschlüsseln -->														

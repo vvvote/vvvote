@@ -74,23 +74,84 @@ class election {
 	}
 
 	function signBallots($voterReq) {
+		$verified = $this->verifyBallots($voterReq);
+		if (! $verified) {$e = error('Ballot verification failed. I will not sign a ballot.'); }
+		// sign ballots
+		return $verified; // TODO return signed ballots
+	}
+	
+	function verifySig($hash, $sig, $server) {
+		$pubkey = $pServerKeys[$server];
+		$rsa = new rsaMyExts();
+		$rsa->loadKey($pubkey); // TODO 
+		$hashBI = new Math_BigInteger($hash, 16);
+		$verify = $rsa->_rsaep($hashBI);
+		return $hashBI->equals($verify);
+	}
+	
+	function verifyBallots($voterReq) {
 		// $voterReq: .ballots[] .electionId .VoteId .blindedHash[] .serversAlreadySigned[]
+		global $base;
 		global $serverkey;
-		global $numSignBallots; //contains an arry saying the x-th server has to sign y ballots
-		// load requested ballots($voterId, $electionId)
+		global $numSignBallots; //contains an array saying the x-th server has to sign y ballots
+		// verify if user is allowed to vote and status of communication (done: pickBallots, next: signBallots) is correct
+		// load requested hashes from database ($voterId, $electionId) in $requestedballots['num'][i] $requestedballots['blindedhash'][i]
 		// verify content of the ballot
-		$i = 0;
-		$raw = array();
-		$raw['electionId'] = $voterReq["ballots"][$i]['electionId'];
-		$raw['votingno'  ] = $voterReq["ballots"][$i]['votingno'];
-		$raw['salt'      ] = $voterReq["ballots"][$i]['salt'];
-		$str = json_encode($raw);
-		$hashByMe = hash('sha256', $str);
-		return $hashByMe;
+		$rsa = new rsaMyExts();
+		$rsa->loadKey($serverkey['privatekey']);
+		$rsapub = new rsaMyExts();
+		$rsapub->loadKey($serverkey['publickey']);
+		for ($i=0; $i<count($voterReq["ballots"]); $i++) {
+			// verify electionID
+			if ($voterReq["ballots"][$i]['electionId'] != $this->electionId)               {
+				$e = error("electionID is wrong"); return $e;
+			}
+			// verify if the sent ballot was requested
+/*			$kw = in_array($voterReq['ballots'][$i].['ballotno'], $requestedballots['num']);
+			if ($kw >= 0) {
+				$requestedballots['sent'][$kw] = true;
+			} else {
+				$e = error("A Ballot was sent for verification purpose that was not requested");
+			}
+*/			// verify hash
+			$raw = array();
+			$raw['electionId'] = $voterReq["ballots"][$i]['electionId'];
+			$raw['votingno'  ] = $voterReq["ballots"][$i]['votingno'];
+			$raw['salt'      ] = $voterReq["ballots"][$i]['salt'];
+			$str = json_encode($raw);
+			$hashByMe = hash('sha256', $str);
+			$hashByMeBigInt = new Math_BigInteger($hashByMe, 16);
+			$blindedHashFromDatabase    = new Math_BigInteger($voterReq["ballots"][$i]['blindedHash'], $base); // @TODO: load this hash from database
+			$signedblindedHash          = $rsa->_rsasp1($blindedHashFromDatabase);
+			$unblindf                   = new Math_BigInteger($voterReq["ballots"][$i]['unblindf'], $base);
+			$unblindedHash              = $rsa->rsaUnblind($signedblindedHash, $unblindf);
+			$verifyHash                 = $rsapub->_rsasp1($unblindedHash);
+			$unblindethashFromDatabaseStr = $verifyHash->toHex();
+			$hashOk = $hashByMeBigInt->equals($verifyHash); //($hashByMe == $unblindethashFromDatabaseStr);
+			if (!$hashOk) {
+				$e = error("hash wrong"); return $e;
+			}
+			// verify if votingId is unique
+			// load $allvotingno from database
+			// if (array_search($raw['votingno'], $allvotingno) == false) {$e = error("Voting number allocated"); return $e;}
+
+			//
+		}
+		// verify if all requested ballots were sent
+/*		for ($i=0; $i<count($requestedballots["num"]); $i++) {
+			if (! $requestedballots['sent']) {
+				$e = error("Not all requested ballots were sent for verification. Ballots $requestedballots[num][$i] is missing.");
+			}
+		}
+*/
+		// verify sigs of earlier servers if present
+		
+		return array($hashByMe, $unblindethashFromDatabaseStr);
+
+		// sign some ballots
 		$raw['hash'      ] = 1;
 		$ballot['raw'][electionId] = 1;
-				// calculate hash
-		// unblind the hash
+		
 		// test  if calculated hash matches the given hash (transmitted in the message 'pickBallots', if not first signing server: verify the sigs of previous servers
 		$i = 0;
 		while ($i < count($voterReq['ballots']) ) {
@@ -120,8 +181,8 @@ class election {
 	function handlePermissionReq($req) {
 		$voterReq = json_decode($req, true); //, $options=JSON_BIGINT_AS_STRING); // decode $req
 		$result = array();
-	//	print "voterReq\n";
-	//	print_r($voterReq);
+		//	print "voterReq\n";
+		//	print_r($voterReq);
 		// $this.verifysyntax($result);
 		// $this.verifyuser($voterReq['voterid'], $voterReq['secret']);
 		// get state the user is in for the selected election
