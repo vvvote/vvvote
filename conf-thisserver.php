@@ -9,5 +9,21 @@ $n         = new Math_BigInteger('3061314256875231521936149233971694238047219365
 
 $rsa       = new rsaMyExts();
 $serverkey = $rsa->rsaGetHelpingNumbers($p, $q, $exppriv, $exppubl, $n);
+$thisServerNum = 0;
+
+define('USE_PDO',0);  // 1: Zugriff via PDO; 0: zugrif via mysql_ bzw. mssql_
+define('DB_TYP','MySQL'); // MySQL oder MSSQL
+
+if (DB_TYP=='MySQL') {
+	define('DB_HOST','localhost');
+	define('DB_USER','root');
+	define('DB_NAME','election');
+	define('DB_PASSWORD','geheim');
+} else {
+	define('DB_HOST','localhost,1433');
+	define('DB_USER','sa');
+	define('DB_NAME','master');
+	define('DB_PASSWORD','geheim');
+}
 
 ?>
