@@ -4,11 +4,17 @@
  * @returns {___ballot0}
  */
 
+
 function makeBallotRaw(electionId, bits) {
 	var ballot = new Object();
 	ballot.electionId = electionId;
-	ballot.votingno   = str2bigInt('1', 10); // randBigInt(bits, 0); TODO: after debugging use rand 
-	ballot.salt       = str2bigInt('6', 10); // randBigInt(bits, 0); TODO: after debugging use rand
+	if (random) {
+		ballot.votingno   = randBigInt(bits, 0);  
+		ballot.salt       = randBigInt(bits, 0);
+	} else {
+		ballot.votingno   = str2bigInt('1', 10); 
+		ballot.salt       = str2bigInt('6', 10);
+	}
 	return ballot;
 }
 
@@ -38,20 +44,23 @@ function addBallothash(ballot) {
 function makeBlindSigReqForFirstServer(election, forServer) {
 	//var electionId, numBallots, serverList;
 	var ballots = new Array();
-	if (election.xthServer == 0) {
 	for (var i=0; i<election.numBallots; i++) {
-		var ballot = new Object();
-		ballot.raw    = makeBallotRaw(election.electionId, bitSize(election.pServerList[0].key.n)); // attention: the bitsize of all permission servers must be equal
-		ballot.transm = addBallothash(ballot.raw);
-		ballot.blindingf = new Array();
-		for (var j=0; j<election.pServerList.length; j++) {
-			ballot.blindingf[j] = RsablindingFactorsGen(bitSize(election.pServerList[j].key.n) - 1, election.pServerList[j].key.n);
-			var kw = bigInt2str(ballot.blindingf[j].unblind, 10); // TODO remove
-			var kw2 = kw;
+		if (election.xthServer == 0) {
+			var ballot = new Object();
+			ballot.raw    = makeBallotRaw(election.electionId, bitSize(election.pServerList[0].key.n)); // attention: the bitsize of all permission servers must be equal
+			ballot.transm = addBallothash(ballot.raw);
+			ballot.transm.ballotno = i;
+			ballot.blindingf = new Array();
+			for (var j=0; j<election.pServerList.length; j++) {
+				ballot.blindingf[j] = RsablindingFactorsGen(bitSize(election.pServerList[j].key.n) - 1, election.pServerList[j].key.n);
+				var kw = bigInt2str(ballot.blindingf[j].unblind, 10); // TODO remove
+			}
+			ballot.blindedHash    = new Array();
+		} else {
+			ballot = election.ballots[i];
 		}
-		ballot.blindedHash    = new Array();
-		ballot.blindedHash[0] = rsaBlind(str2bigInt(ballot.transm.hash, 16), ballot.blindingf[forServer], election.pServerList[forServer].key);
-		
+		ballot.blindedHash[election.xthServer] = rsaBlind(str2bigInt(ballot.transm.hash, 16), ballot.blindingf[forServer], election.pServerList[forServer].key);
+
 		ballot.blindedHashStr = bigInt2str(ballot.blindedHash[0], 10);
 		ballot.signedBlinded  = powMod(ballot.blindedHash[0], election.pServerList[forServer].key.exppriv, election.pServerList[forServer].key.n);
 		ballot.signedBlindedStr  = bigInt2str(ballot.signedBlinded, 10);
@@ -65,7 +74,10 @@ function makeBlindSigReqForFirstServer(election, forServer) {
 	}
 	election.ballots = ballots;
 	return ballots;
-	}
+}
+
+function makeBlindSigForNextServers(election, forServer) {
+	
 }
 
 function makeBlindSigReqForOtherServers(ballots, serverList, forServer) {
@@ -81,8 +93,8 @@ function makeBlindSigReqForOtherServers(ballots, serverList, forServer) {
 function makeFirstPermissionReqs(election) {
 	// voterId, secret, electionId, numBallots, serverList
 	//global base;
-	election.pServerSeq = new Array();
-	election.xthServer = 0;
+	if (election.xthServer) { election.xthServer++; }
+	else                    { election.xthServer = 0; }
 	var forServer = getNextPermServer(election); 
 	var ballots   = makeBlindSigReqForFirstServer(election, forServer); 
 	var req = new Object();
@@ -111,8 +123,7 @@ function makePermissionReqs(voterId, secret, electionId, numBallots, serverList)
 }
 */
 
-function makeNextPermissionReq(){
-	
+function makeNextPermissionReq(election, data){
 }
 
 /**
@@ -138,6 +149,12 @@ function makePermissionReq(voterId, secret, electionId, ballots, serverList) {
 	return JSON.stringify(req);
 }
 
+function reqSigsNextpServerEvent(election, data) {
+	// verify the received sigs
+	return verifySaveElectionPermiss(election, data);
+	// makePermuissionReqs
+}
+
 function handleServerAnswer(election, dataString) {
 	var data = JSON.parse(dataString);
 	if ('errorno' in data) {
@@ -146,6 +163,12 @@ function handleServerAnswer(election, dataString) {
 		switch (data.cmd) {
 		case 'unblindBallots':
 			ret = unblindBallotsEvent(election, data);
+			break;
+		case 'reqSigsNextpServer':
+			ret = reqSigsNextpServerEvent(election, data);
+			break;
+		case 'savePermission':
+			//
 			break;
 
 		default:
@@ -180,6 +203,7 @@ function disclose(election, requestedBallots, ballots, forServer) {
 		transm.ballots[i].blindedHash = bigInt2str(ballots[requestedBallots[i]].blindedHash[election.xthServer], base); // TODO this is not needed to transmitt remove it before release
 		// var blindedHashSig = RsaEncDec(str2bigInt(transm.ballots[i].blindedHash, 16), key.exppriv);
 		// var unblindedHashSig = (str2bigInt(transm.ballots[i].blindedHash, 16), key.exppriv);
+		transm.ballots[i].ballotno = requestedBallots[i];
 		if (ballots[requestedBallots[i]].transm.sigs) {
 			for (var s=0; s<ballots[requestedBallots[i]].transm.sigs.length; s++) {
 				transm.ballots[i].sigs[j]       = bigInt2str(ballots[requestedBallots[i]].transm.sigs[j], base);
@@ -193,6 +217,7 @@ function disclose(election, requestedBallots, ballots, forServer) {
 
 function getNextPermServer(election) {
 	// var serverSeq, pServerList;
+	if (!election.pServerSeq) {election.pServerSeq = new Array();}
 	for (var i=0; i<election.pServerList.length; i++) { 
 		nextServer = Math.round((Math.random()*(election.pServerList.length - 1))); // find the next random server number
 		var j = 0;
@@ -215,20 +240,33 @@ function makeUnblindedreqestedBallots(reqestedBallots, allBallots){
 	return JSON.stringify(answer);
 }
 
-function verifySaveElectionPermiss(serverAnsw, ballots, serverKey) {
+function verifySaveElectionPermiss(election, answ) {
+	var prevServer = election.pServerSeq[election.pServerSeq.length-1];
+	var serverKey  = election.pServerList[prevServer].key;
 	// answ: array of signed: .num .blindSignatur .serverId
-	var answ     = JSON.parse(serverAnsw); // decode answer
-	for (var i=0; i<answ.length; i++) {
-		var signatur = rsaUnblind(answ[i].blindSignatur, ballots[answ[i].num].blindingf, serverKey);  // unblind
+	// var answ     = JSON.parse(serverAnsw); // decode answer
+	for (var i=0; i<answ.ballots.length; i++) {
+		var blindedSig = str2bigInt(answ.ballots[i].sigs.slice(-1)[0].sig, base);
+		var signatur = rsaUnblind(blindedSig, election.ballots[answ.ballots[i].ballotno].blindingf[prevServer], serverKey);  // unblind
 		var testsign = RsaEncDec(signatur, serverKey);
-		var signOk   = equals(testsign, ballots[answ[i].num].transm.hash);
-		j = ballots[answ.num[i]].transm.blindsig.length;
-		ballots[answ[i].num].transm.blindsig[j] = answ[i].blindSignatur;  
-		ballots[answ[i].num].transm.sigs[j]     = signatur;
-        ballots[answ[i].num].transm.sigBy[j]    = serverKey.serverId;
-		ballots[answ[i].num].transm.signOk[j]   = signOk; 
+		var myhash   = str2bigInt(election.ballots[answ.ballots[i].ballotno].transm.hash, 16);
+		var signOk   = equals(testsign, myhash);
+		if (election.ballots[answ.ballots[i].ballotno].transm.sig) {
+			j = election.ballots[answ.ballots[i].ballotno].transm.sig.length;	
+		} else {
+			election.ballots[answ.ballots[i].ballotno].transm.sigs     = new Array();
+			election.ballots[answ.ballots[i].ballotno].transm.blindsig = new Array();
+			election.ballots[answ.ballots[i].ballotno].transm.sigBy    = new Array();
+			election.ballots[answ.ballots[i].ballotno].transm.signOk   = new Array();
+			j = 0;
+		}
+		
+		election.ballots[answ.ballots[i].ballotno].transm.blindsig[j] = answ.ballots[i].sigs.slice(-1)[0].sig;  
+		election.ballots[answ.ballots[i].ballotno].transm.sigs[j]     = bigInt2str(signatur, base);
+		election.ballots[answ.ballots[i].ballotno].transm.sigBy[j]    = serverKey.serverId;
+		election.ballots[answ.ballots[i].ballotno].transm.signOk[j]   = signOk; 
 	}
-	return ballots;
+	return election.ballots;
 }
 
 
@@ -249,6 +287,7 @@ function makeVote(ballots, numRequiredSignatures, vote) {
 
 function getPermissionServerList() {
 	// load config
+	random = true;
 	base = 16; // basis used to encode/decode bigInts
 	var slist  = new Array();
 	var server = new Object();

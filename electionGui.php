@@ -12,7 +12,7 @@
 		election.voterId    = document.permission.voterId.value;
 		election.secret     ='leer';
 		election.electionId = document.permission.electionId.value;
-		election.numBallots = 2;
+		election.numBallots = 5;
      	//  alert('voterID: '    + voterID +
 	    //        '\r\nelectionID: ' + electionID);
 	    election.pServerList = getPermissionServerList();
@@ -37,6 +37,7 @@
 			xml2.open('POST', purl, true);
 			xml2.onload = function(event) {
 				document.permission.log.value = document.permission.log.value + '<-- empfangen von erstem Server: ' + xml2.responseText + "\r\n\r\n";
+				var req3 = handleServerAnswer(election, xml2.responseText);
 				}
 			document.permission.log.value = document.permission.log.value + '--> gesendet an ersten Server: ' + req2 + "\r\n\r\n";
 			xml2.send(req2);

@@ -12,11 +12,6 @@ include_once 'BigInt.html';
 include_once 'Crypt/RSA.php';
 if (!class_exists('Math_BigInteger')) { require_once('Math/BigInteger.php'); }
 include_once 'rsaMyExts.php';
-	
-$test = bcmod('1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', '7');
-print "$test";
-
-
 
 
 $rsa       = new rsaMyExts();

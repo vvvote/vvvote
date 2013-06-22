@@ -16,10 +16,17 @@ header("Content-type: text/plain");
 // echo "\n\n:: Data received as \"raw\" (text/plain encoding) ::\n\n";
 if (isset($HTTP_RAW_POST_DATA)) { 
  // echo $HTTP_RAW_POST_DATA;
-$el = new election($electionId);
-$result = $el->handlePermissionReq($HTTP_RAW_POST_DATA);
+
+	$el = new election($electionId, 
+			$numVerifyBallots, 
+			$numSignBallots, 
+			$pServerKeys, 
+			$serverkey, 
+			$numAllBallots,
+			$thisServerNum);
+	$result = $el->handlePermissionReq($HTTP_RAW_POST_DATA);
 // print "\r\n";
-print "$result"; 
+	print "$result";
 }
 
 // echo "\n\n:: Files received ::\n\n";
