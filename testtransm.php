@@ -17,13 +17,13 @@ header("Content-type: text/plain");
 if (isset($HTTP_RAW_POST_DATA)) { 
  // echo $HTTP_RAW_POST_DATA;
 
-	$el = new election($electionId, 
+	$el = new Election($electionId, 
 			$numVerifyBallots, 
 			$numSignBallots, 
 			$pServerKeys, 
 			$serverkey, 
 			$numAllBallots,
-			$thisServerNum);
+			$thisServerName);
 	$result = $el->handlePermissionReq($HTTP_RAW_POST_DATA);
 // print "\r\n";
 	print "$result";

@@ -7,7 +7,34 @@
 <script src="sha256.js"></script>
 <script src="election.js"></script>
 <script type="text/javascript">
-	function onGetPermClick()  {
+
+function handleXmlAnswer(xml) {
+	document.permission.log.value = document.permission.log.value + '<-- empfangen von ' + (election.xthServer +1) + '. Server: ' + xml.responseText + "\r\n\r\n";
+	var result = handleServerAnswer(election, xml.responseText);
+	// TODO check maximal loops = numServers
+	switch (result.action) {
+	case 'send':
+	  var xml2 = new XMLHttpRequest();
+	  xml2.open('POST', purl, true);
+	  xml2.onload = function() { handleXmlAnswer(xml2); }; // quasi resursiv
+	  document.permission.log.value = document.permission.log.value + '--> gesendet an ' + (election.xthServer +1) + '. Server: ' + result.data + "\r\n\r\n";
+	  xml2.send(result.data);
+	  break;
+	case 'savePermission':
+		alert('fertig. Wahlzettel speichern! Wahlzettelinhalt: \n '+ result.data);
+	    break;
+	case 'serverError':
+		alert('Server rejected the request \n '+ result.erroNo + "\n" + result.errorText);
+		break;
+	case 'clientError':
+		alert('Client found error:\n '+ result.errorText);
+	    break;
+	default:
+		alert('handleXmlAnswer(): Internal program error, got unknown action: ' + result.action);
+	}
+};
+
+function onGetPermClick()  {
 		election = new Object();
 		election.voterId    = document.permission.voterId.value;
 		election.secret     ='leer';
@@ -17,7 +44,7 @@
 	    //        '\r\nelectionID: ' + electionID);
 	    election.pServerList = getPermissionServerList();
 	    
-	    var req = makeFirstPermissionReqs(election);
+	    req = makeFirstPermissionReqs(election);
 	    // save req as local file in order to have a backup in case something goes wrong
 		// var req = makePermissionReq(voterId, electionId, numBallots, pServerList);
 		// alert('req: ' + req);
@@ -27,26 +54,15 @@
 		// rq.voterId    = 'pakki';
 		// rq.electionId = 'wahl1';
 		// var req = JSON.stringify(rq);;
-		var purl = 'testtransm.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=137098483694310';
+		purl = 'testtransm.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=137098483694310';
 		var xml = new XMLHttpRequest();
         xml.open('POST', purl, true);
-		xml.onload = function(event) {
-			document.permission.log.value = document.permission.log.value + '<-- empfangen von erstem Server: ' + xml.responseText + "\r\n\r\n";  
-			var req2 = handleServerAnswer(election, xml.responseText);
-			var xml2 = new XMLHttpRequest();
-			xml2.open('POST', purl, true);
-			xml2.onload = function(event) {
-				document.permission.log.value = document.permission.log.value + '<-- empfangen von erstem Server: ' + xml2.responseText + "\r\n\r\n";
-				var req3 = handleServerAnswer(election, xml2.responseText);
-				}
-			document.permission.log.value = document.permission.log.value + '--> gesendet an ersten Server: ' + req2 + "\r\n\r\n";
-			xml2.send(req2);
-		};
+		xml.onload = function() { handleXmlAnswer(xml);};
 //		 xml.onreadystatechange = function() {
 //		   if (xml.readyState != 4)  { return; }
 //		   var serverResponse = JSON.parse(xml.responseText);
 //		 };
-    	document.permission.log.value = document.permission.log.value + '\r\n\r\n --> gesendet an ersten Server: ' + req + "\r\n\r\n";  
+    	document.permission.log.value = document.permission.log.value + '\r\n\r\n --> gesendet an 1. Server: ' + req + "\r\n\r\n";  
         xml.send(req);
 		return false;
 }
