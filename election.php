@@ -1,24 +1,43 @@
 <?php
 
-class election {
+class WrongRequestException extends Exception {
+	var $errorno;
+	var $errortxt;
+	function __construct($errorno_, $errortxt_){
+		$this->errorno  = $errorno_;
+		$this->errortxt = $errortxt_;
+	}
+}
+
+
+class Election {
 	var $electionId; // = 'wahl1';
     var $numVerifyBallots;
     var $numSignBallots; 
     var $pServerKeys;
     var $serverkey;
     var $numAllBallots;
-    var $thisServerNum;
+    var $thisServerName;
     
-	function __construct($electionId_, $numVerifyBallots_, $numSignBallots_, $pServerKeys_, $serverkey_, $numAllBallots_, $thisServerNum_) {
+	function __construct($electionId_, $numVerifyBallots_, $numSignBallots_, $pServerKeys_, $serverkey_, $numAllBallots_, $thisServerName_) {
 		$this->electionId       = $electionId_;
 		$this->numVerifyBallots = $numVerifyBallots_;
 		$this->numSignBallots   = $numSignBallots_;
 		$this->pServerKeys      = $pServerKeys_;
 		$this->serverkey        = $serverkey_;
 		$this->numAllBallots    = $numAllBallots_;
-		$this->thisServerNum    = $thisServerNum_;
+		$this->thisServerName   = $thisServerName_;
 	}
 
+	function throwException($errorno, $errortxt, $data) {
+		global $debug;
+		if ($debug) {
+			$errortxt = $errortxt . "\n" . $data . "\n";
+			debug_print_backtrace();
+		}
+		throw new WrongRequestException($errorno, $errortxt);
+	}
+	
 	function isInVoterList($voterId) {
 		return $voterId == 'pakki' || $voterId == 'melanie';
 	}
@@ -29,24 +48,23 @@ class election {
 		return true;
 	}
 
-	function isPermitted($voterID, $electionID_, $threadId) {
-		$errorno = 0;
-		$text    = 'ok';
-		if ($this->electionId != $electionID_) {
-			$text    = "No voting permission is given for election $electionID_, only $this->electionId is accepted";
-			$errorno = 1;
-		}
+	function isPermitted($voterID, $electionID_, $threadId) { // TODO save req in database and check if first req
 		$inlist = $this->isInVoterList($voterID);
-		if (!$inlist) {
-			$text    = "Voter $voterReq.voterId is not in the list of allowed voters.<br>";
-			$errorno = 2;
+		if (!$inlist) { 
+			$this->throwException(1, "Error: check of credentials failed", "isPermitted: Voter $voterReq.voterId is not in the list of allowed voters.");
 		}
+		
+		// TODO check credentials e.g. password etc.
+		
+		if ($this->electionId != $electionID_) {
+			$this->throwException(2, 'Error: wrong electionID', "isPermitted: No voting permission is given for election $electionID_, only $this->electionId is accepted");
+		}
+		
 		$firstVote = $this->isFirstVote($voterID, $electionID_, $threadId);
 		if (!$firstVote) {
-			$text    = "Voter $voterReq[voterId] already got a voting permission from this server.<br>";
-			$errorno = 3;
+			$this->throwException(3, "Error: This voter is already a voting permission given for the election $this->electionId If you lost your permission use the recover button.", "isPermitted: $voterReq[voterId] already got a voting permission from this server.");
 		}
-		return array('errorno' => $errorno, 'text' => $text);
+		return true;
 	}
 	/**
 	 * randomly chooses $numPick out of $numBallots
@@ -54,7 +72,8 @@ class election {
 	 * @param $numBallots number of total ballots
 	 * @return number array of randomly choosen different numbers
 	 */
-	function pickBallots($numPick, $numBallots) {
+	function pickBallots($numPick, $numBallots, $notallowednumbers = array()) {
+		// TODO use array_rand
 		$picked = array();
 		for ($i=0; $i<$numPick; $i++) {
 			$r = rand(0, $numBallots - 1);
@@ -74,10 +93,7 @@ class election {
 	function pickBallotsEvent($voterReq) {
 		$numPick = $this->numVerifyBallots[$voterReq['xthServer']];
 		$permitted = $this->isPermitted($voterReq['voterId'], $voterReq['electionId'], 1); // @TODO substitude ThreadId for 1
-		if ($permitted['errorno'] != 0) {
-			return $permitted;
-		}
-		$numBallots = count($voterReq['blindedHash']);
+		$numBallots = count($voterReq['ballots']); // TODO take from config?
 		$requestBallots['picked'] = $this->pickBallots($numPick, $numBallots);
 		$requestBallots['cmd'] = 'unblindBallots';
 		// save requested Ballots(voterId, electionId);
@@ -93,32 +109,44 @@ class election {
 		$newnum = count($ballot['sigs']);
 		$blindedHash = new Math_BigInteger($ballot['blindedHash'], 16);
 		$ballot['sigs'][$newnum]['sig'] = $rsa->_rsasp1($blindedHash)->toHex();
-		$ballot['sigs'][$newnum]['serverno'] = $this->thisServerNum;
+		$ballot['sigs'][$newnum]['sigBy'] = $this->thisServerName;
 		if (!isset($ballot['sigs'][$newnum]['serSig'])) {
 			$ballot['sigs'][$newnum]['serSig'] = $blindedHash->toHex();
 		}
-		$ballot['sigs'][$newnum]['serSigPrev'] = $ballot['sigs'][$newnum]['serSig'];
 		$tmp = new Math_BigInteger($ballot['sigs'][$newnum]['serSig'], 16);
 		$ballot['sigs'][$newnum]['serSig']     = $rsa->_rsasp1($tmp)->toHex();
 		return $ballot;
 	}
 	
 	function signBallots($voterReq) {
-		if (isset($voterReq['ballots']["sigs"])) {
-			$xtserver = count($voterReq['ballots']["sigs"]);
+		if (isset($voterReq['ballots'][0]['sigs'])) { // TODO take from DB instead of voterReq, from voterReq is not working because sigs are not sent in disclosing event
+			$xtserver = count($voterReq['ballots'][0]["sigs"]);
 		} else {
 			$xtserver = 0;
 		}
-		$numBallots = count($voterReq['ballots']);
-		$picked = $this->pickBallots($this->numSignBallots[$xtserver], $numBallots);
+		$numBallots = count($voterReq['ballots']); // TODO think about it: from DB from config?
+		$allowedBallots = array();
+		// load all ballots sent in first req from $this->voterId $this->electionId from DB
+		$ballotsFromDB = $voterReq['ballots']; // TODO replace $voterReq['ballots'] with the picked ballots saved in datebase 			// TODO $ballot['sigs']        = json_decode($sigsFromDB);
+		foreach ($ballotsFromDB as $ballot) { 
+		// TODO use this if $ballotsFromDB is loaded from DB: 	if ( isset($ballot['sigs']) && ($ballot['reqDisclosed'])) { 
+				array_push($allowedBallots, $ballot['ballotno']-1);
+		//	}
+		}
+		if (count($allowedBallots) < 1) {$this->throwException(300, "Error: no non-disclosed ballots left to sign", "signBallots: " . json_encode($allowedBallots));}
+		$picked = $this->pickBallots($this->numSignBallots[$xtserver], count($allowedBallots));
+		// $pickedtmp = $this->pickBallots($this->numSignBallots[$xtserver], count($allowedBallots));
+		// $picked = array();
+		// foreach ($pickedtmp as $num => $p) {
+		//	$picked[$num] = $allowedBallots[$p];
+		// }
 		$ballots = array();
 		for ($i=0; $i<count($picked); $i++) {
 			$ballot = array();
-			$ballot['ballotno'] = $voterReq['ballots'][$picked[$i]]['ballotno']; // TODO take this from database
-			// TODO $blindedHashFromDB = select blindedHash sigs from ballots by electionId, VoterId, $picked[$i]
-			$blindedHashFromDB = $voterReq['ballots'][$picked[$i]]['blindedHash']; // TODO never use the data from the user, load from DB 
-			// TODO $ballot['sigs']        = json_decode($sigsFromDB);
-			$ballot['sigs'] = array(); // $voterReq["ballots"][$picked[$i]]['blindedHash']; // TODO never use the data from the user, load from DB
+			$ballot['ballotno'] = $ballotsFromDB[$picked[$i]]['ballotno']; 
+			$blindedHashFromDB = $ballotsFromDB[$picked[$i]]['blindedHash'];
+			if (isset ($ballotsFromDB[$picked[$i]]['sigs'])) { $ballot['sigs'] = array_slice($ballotsFromDB[$picked[$i]]['sigs'], 0, null ,true); }
+	  		else                                             { $ballot['sigs'] = array();                                   }
 			$ballot['blindedHash'] = $blindedHashFromDB;
 			$ballot = $this->signBallot($ballot);
 			$ballots[$i] = $ballot;
@@ -129,8 +157,8 @@ class election {
 	
 	function signBallotsEvent($voterReq) {
 		// verify ballots
-		$verified = $this->verifyBallots($voterReq);
-		if (! $verified) {$e = error('Ballot verification failed. I will not sign a ballot.'); }
+		$verified = $this->verifyBallots($voterReq); // TODO make $verified a boolean
+		if (! $verified) { $this->throwException(300, 'Error: Ballot verification failed. I will not sign a ballot.', "voterreq: \n" . json_encode($voterReq));} // TODO: for debugging purpose only: add loaded ballots here 
 		
 		// sign ballots
 		$signedBallots = $this->signBallots($voterReq);
@@ -138,13 +166,13 @@ class election {
 		
 		$ret = array();
 		$ret['ballots'] = $signedBallots;
-		if (count($ret['ballots'][0]['sigs']) == count($this->pServerKeys) -2) {
+		if (count($ret['ballots'][0]['sigs']) >= count($this->pServerKeys) ) {
 			$ret['cmd'] = 'savePermission';
 		} else {
 			$ret['cmd'] = 'reqSigsNextpServer';
 		}
 		
-		return $ret; // TODO return signed ballots
+		return $ret; 
 	}
 	
 	
@@ -164,13 +192,20 @@ class election {
 	 */
 	
 	
-	function verifySig($hash, $sig, $server) {
-		$pubkey = $pServerKeys[$server];
+	function verifySig($hash, $sig, $servername) {
+		$f = -1;
+		foreach ($this->pServerKeys as $num => $s) {
+		  if ($s['name'] == $servername) { $f = $num; }	
+		}
+		if ($f == -1) {$this->throwException(200, "Error: signature verifcation failed", "verifySig: Server $servername given in signature not found");}
+		$pubkey = $this->pServerKeys[$f];
 		$rsa = new rsaMyExts();
-		$rsa->loadKey($pubkey); // TODO 
+		$rsa->loadKey($pubkey);  
 		$hashBI = new Math_BigInteger($hash, 16);
-		$verify = $rsa->_rsaep($sig);
-		return array ('sigok' => $hashBI->equals($verify), 'prevsig' => $verify);
+		$sigBI = new Math_BigInteger($sig, 16);
+		$verify = $rsa->_rsaep($sigBI);
+		if (!$hashBI->equals($verify)) {$this->throwException(201, "Error: signature verifcation failed", "verifySig: Server $servername, given hash: $hash, calculated hash: " . $verify->toHex());}
+		return true;
 	}
 	
 	function verifyBallots($voterReq) {
@@ -180,7 +215,7 @@ class election {
 		// verify if user is allowed to vote and status of communication (done: pickBallots, next: signBallots) is correct
 		// load requested hashes from database ($voterId, $electionId) in $requestedballots['num'][i] $requestedballots['blindedhash'][i]
 		// verify content of the ballot
-		// verify if the correct number of ballots was sent: if (count($voterReq["ballots"]) != $this->numVerifyBallots) { $e = error('not the correct number of ballots sent'); }
+		// verify if the correct number of ballots was sent: if (count($voterReq["ballots"]) != $this->numVerifyBallots) { throwException('not the correct number of ballots sent'); }
 		$tmpret = array();
 		$rsa = new rsaMyExts();
 		$rsa->loadKey($this->serverkey['privatekey']);
@@ -189,14 +224,14 @@ class election {
 		for ($i=0; $i<count($voterReq["ballots"]); $i++) {
 			// verify electionID
 			if ($voterReq["ballots"][$i]['electionId'] != $this->electionId)               {
-				$e = error("electionID is wrong"); return $e;
+				$this->throwException(210, 'Error: electionID is wrong', "expected electionID: $this->electionId, received electionID in ballot $i: " . $voterReq['ballots'][$i]['electionId']);
 			}
 			// verify if the sent ballot was requested
 /*			$kw = in_array($voterReq['ballots'][$i].['ballotno'], $requestedballots['num']);
 			if ($kw >= 0) {
 				$requestedballots['sent'][$kw] = true;
 			} else {
-				$e = error("A Ballot was sent for verification purpose that was not requested");
+				$this->throwException(211, "A Ballot was sent for verification purpose that was not requested", "verifyBallots: not requested ballot: " . $voterReq['ballots'][$i].['ballotno']);
 			}
 */			// verify hash
 			$raw = array();
@@ -214,65 +249,70 @@ class election {
 			$unblindethashFromDatabaseStr = $verifyHash->toHex();
 			$hashOk = $hashByMeBigInt->equals($verifyHash); 
 			if (!$hashOk) {
-				$e = error("hash wrong"); return $e;
+				$this->throwException(212, "Error: hash wrong", "hash from signature: " . $verifyHash->toHex() . "calculated hash: $hashByMe");
 			}
-			// verify sigs from previous servers .ballots.sigs: .sig(encryptet previous sig or hash if first sig) .serverno (number of the siging server in order to identify the correct public key)
+			// verify sigs from previous servers .ballots.sigs: .sig(encryptet previous sig or hash if first sig) .sigBy (number of the siging server in order to identify the correct public key)
 			if (isset($voterReq["ballots"][$i]['sigs'])) {
-				foreach ($voterReq["ballots"][$i]['sigs'] as $nums => $sig) {
-					if ($num == 0) {$prevsig = $hash;} 
-					$result = $this->verifySig($prevsig, $sig['sig'], $sig['serverno']);
-					if (!$result['sigok']) { $e = error('Signature of previous server is wrong.'); }
-					$prevsig = $result['prevsig']; // TODO use 2 arrays: one in which the hash is recursively encrypted and one containing all the encrypted states after each signature
+				foreach ($voterReq["ballots"][$i]['sigs'] as $num => $sig) {
+					if ($num == 0) {$prevsig = $hashByMe;} 
+					// $result = $this->verifySig($prevsig, $sig['serSig'], $sig['sigBy']);
+					// if (!$result['sigok']) { $e = 'Signature of previous server in serSig is wrong.'; return $e;}
+					// $prevsig = $result['prevsig']; // TODO serSig / sigs use 2 arrays: one in which the hash is recursively encrypted and one containing all the encrypted states after each signature
+					$this->verifySig($hashByMe, $sig['sig'], $sig['sigBy']);
 				}
 			}
 			$tmpret[$i] = $hashOk;
 			
 			// verify if votingId is unique
 			   // load $allvotingno from database
-			   // if (array_search($raw['votingno'], $allvotingno) == false) {$e = error("Voting number allocated"); return $e;}
+			   // if (array_search($raw['votingno'], $allvotingno) == false) {$e = throwException... error("Voting number allocated"); return $e;}
 
 			//
 		}
 		// verify if all requested ballots were sent
 /*		for ($i=0; $i<count($requestedballots["num"]); $i++) {
 			if (! $requestedballots['sent']) {
-				$e = error("Not all requested ballots were sent for verification. Ballots $requestedballots[num][$i] is missing.");
+				$e = throwExeption...("Not all requested ballots were sent for verification. Ballots $requestedballots[num][$i] is missing.");
 			}
 		}
 */
-		// verify sigs of earlier servers if present
 		
 		return array($tmpret, $hashByMe, $unblindethashFromDatabaseStr);
 	}
 
+	
 	function handlePermissionReq($req) {
-		$voterReq = json_decode($req, true); //, $options=JSON_BIGINT_AS_STRING); // decode $req
-		$result = array();
-		//	print "voterReq\n";
-		//	print_r($voterReq);
-		// $this.verifysyntax($result);
-		// $this.verifyuser($voterReq['voterid'], $voterReq['secret']);
-		// get state the user is in for the selected election
-		switch ($voterReq['cmd']) {
-			case 'pickBallots':
-				$result = $this->pickBallotsEvent($voterReq);
-				break;
-			case 'signBallots':
-				$result = $this->signBallotsEvent($voterReq);
-				break;
-					
-			default:
-				;
-				break;
+		try {
+			$voterReq = json_decode($req, true); //, $options=JSON_BIGINT_AS_STRING); // decode $req
+			if ($voterReq == null) { // json could not be decoded
+				$this->throwException(100, 'Error while decoding JSON request', $req);
+			}
+			$result = array();
+			//	print "voterReq\n";
+			//	print_r($voterReq);
+			// $this.verifysyntax($result);
+			// $this.verifyuser($voterReq['voterid'], $voterReq['secret']);
+			// get state the user is in for the selected election
+			switch ($voterReq['cmd']) {
+				case 'pickBallots':
+					$result = $this->pickBallotsEvent($voterReq);
+					break;
+				case 'signBallots':
+					$result = $this->signBallotsEvent($voterReq);
+					break;
+
+				default:
+					;
+					break;
+			}
+		} catch (WrongRequestException $e) {
+			$result = array('cmd' => 'error', 'errorTxt' => $e->errortxt, 'errorNo' => $e->errorno);
 		}
 		$ret = json_encode($result);
 		return $ret;
 	}
 	// everything is ok, construct answer
 }
-
-
-
 
 
 ?>
