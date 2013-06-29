@@ -42,7 +42,6 @@ function addBallothash(ballot) {
  */
 
 function makeBallots(election, forServer) {
-	//var electionId, numBallots, serverList;
 	var ballots = new Array();
 	for (var i=0; i<election.numBallots; i++) {
 		var ballot = new Object();
@@ -53,7 +52,6 @@ function makeBallots(election, forServer) {
 			ballot.blindingf = new Array();
 			for (var j=0; j<election.pServerList.length; j++) {
 				ballot.blindingf[j] = RsablindingFactorsGen(bitSize(election.pServerList[j].key.n) - 1, election.pServerList[j].key.n);
-				var kw = bigInt2str(ballot.blindingf[j].unblind, 10); // TODO remove
 			}
 			ballot.blindedHash = new Array();
 		} else {
@@ -75,17 +73,6 @@ function makeBallots(election, forServer) {
 	election.ballots = ballots;
 	return ballots;
 }
-
-/* nicht verwendet
-function makeBlindSigReqForOtherServers(ballots, serverList, forServer) {
-	var prevSig;
-	for (ballot in ballots) {
-		if (sigs in ballot.transm) {prevSig = ballot.transm.sigs[ballot.transm.sigs.length - 1]; }
-		else                       {prevSig = ballot.transm.hash;}
-		ballot.blinded[forServer] = rsaBlind(prevSig, ballot.blindingf[forServer], serverList[forServer].key);
-	}
-}
-*/
 
 
 function makePermissionReqs(election) {
@@ -116,19 +103,6 @@ function makePermissionReqs(election) {
 	return req;
 }
 
-/*
-
-function makePermissionReqs(voterId, secret, electionId, numBallots, serverList) {
-	var serverSeq = new Array;
-	var ballots = makeBlindSigReqForFirstServer(electionId, numBallots, serverList, nextServer);
-	for (var s=0; s<serverList.lenght; s++) {
-		var nextServer = getNextPermServer(serverSeq, serverList);
-		serverSeq[s] = nextServer;
-		makePermissionReq(voterId, secret, electionId, ballots, serverList); 
-	}
-	return JSON.stringify(req);
-}
-*/
 
 /**
  * adds the credentials to the request Object
@@ -143,22 +117,8 @@ function addCredentials(election, req) {
 	return req;
 }
 
-/* nicht verwendet --> weg damit
-function makePermissionReq(voterId, secret, electionId, ballots, serverList) {
-	var req = new Object();
-	for (var i=0; i<ballots.length; i++) {
-		req.blindedHash[i] = ballots[i].blinded[ballots[i].blinded.length - 1];
-	}
-	req['voterId'] = voterId;
-	req['secret']  = secret;
-	return JSON.stringify(req);
-}
-*/
-
 function reqSigsNextpServerEvent(election, data) {
-	// verify the received sigs
 	verifySaveElectionPermiss(election, data);
-	//	makePermuissionReqs
 	return makePermissionReqs(election);
 }
 
@@ -168,41 +128,18 @@ function makeFirstPermissionReqs(election) {
 	return JSON.stringify(ret);
 }
 
-function handleServerAnswer(election, dataString) {
-	try {
-	var data = JSON.parse(dataString);
-	} catch (e) {
-		return Object({'action':'clientError', 'errorText': "could not JSON decode: (" + e + ") \n" + dataString});
+function savePermissionEvent(election, data) {
+	verifySaveElectionPermiss(election, data); // TODO return an error if verification failed
+	ret = new Array();
+	for (var i=0; i<election.ballots.length; i++) {
+		if ('sigs' in election.ballots[i].transm) {
+			if (election.ballots[i].transm.sigs.length == election.pServerList.length) {
+				ret.push(election.ballots[i].transm);
+			}
+		};
 	}
-	var ret;
-	switch (data.cmd) {
-	case 'unblindBallots':
-		ret = unblindBallotsEvent(election, data);
-		break;
-	case 'reqSigsNextpServer':
-		if (election.xthServer < (election.pServerList.length -1)) {
-			ret = reqSigsNextpServerEvent(election, data);
-		} else {
-			alert ('fertisch');
-			return Object({'action':'clientError', 'errorText': "I already got enough sigs but server said: 'more sigs needed': \n" + dataString});
-		}
-		break;
-	case 'savePermission':
-		// create the string to be saved 
-		ballotFileContent = '';
-		return Object({'action':'savePermission', 'data': ballotFileContent});
-		break;
-	case 'error':
-		return Object({'action':'serverError', 'errorText': data.errorTxt, 'errorNo': data.errorNo});
-	default:
-		return Object({'action':'clientError', 'errorText': "unknown server cmd: " + data.cmd});
-	break;
-	}
-	addCredentials(election, ret);
-	send = JSON.stringify(ret);
-	return Object({'action':'send', 'data':send});
+	return JSON.stringify(ret);
 }
-
 
 function unblindBallotsEvent(election, requestedBallots) {
 	var ret = disclose(election, requestedBallots.picked, election.ballots, election.pServerSeq[election.pServerSeq.length - 1]);
@@ -272,7 +209,9 @@ function verifySaveElectionPermiss(election, answ) {
 	var serverKey  = election.pServerList[prevServer].key;
 	// answ: array of signed: .num .blindSignatur .serverId
 	// var answ     = JSON.parse(serverAnsw); // decode answer
+	var sigsOk;
 	for (var i=0; i<answ.ballots.length; i++) {
+		// TODO think about: this only checks the newest sig
 		var blindedSig = str2bigInt(answ.ballots[i].sigs.slice(-1)[0].sig, base);
 		var signatur = rsaUnblind(blindedSig, election.ballots[answ.ballots[i].ballotno].blindingf[prevServer], serverKey);  // unblind
 		var testsign = RsaEncDec(signatur, serverKey);
@@ -290,20 +229,12 @@ function verifySaveElectionPermiss(election, answ) {
 		election.ballots[answ.ballots[i].ballotno].transm.sigs[j].sigBy    = serverKey.serverId;
 		election.ballots[answ.ballots[i].ballotno].transm.sigs[j].sigOk    = sigOk;
 		election.ballots[answ.ballots[i].ballotno].transm.sigs[j].serSig   = answ.ballots[i].sigs.slice(-1)[0].serSig; //TODO unblind
+		if (i == 0) {sigsOk = sigOk;            }
+		else        {sigsOk = (sigsOk && sigOk);}
+		
 	}
-	/*  election.php
-	 *  $ballot['sigs'][$newnum]['sig'] = $rsa->_rsasp1($blindedHash)->toHex();
-		$ballot['sigs'][$newnum]['serverno'] = $this->thisServerNum;
-
-	  	if (!isset($ballot['sigs'][$newnum]['serSig'])) {
-			$ballot['sigs'][$newnum]['serSig'] = $blindedHash->toHex();
-		}
-		$ballot['sigs'][$newnum]['serSigPrev'] = $ballot['sigs'][$newnum]['serSig'];
-		$tmp = new Math_BigInteger($ballot['sigs'][$newnum]['serSig'], 16);
-		$ballot['sigs'][$newnum]['serSig']     = $rsa->_rsasp1($tmp)->toHex();
-
-	 */
-	return election.ballots;
+	
+	return sigsOk;
 }
 
 
@@ -336,6 +267,41 @@ function makeVoteTransm(vote) {
 	voteTransm.vote       = vote;
 	return voteTransm;
 }
+
+function handleServerAnswer(election, dataString) {
+	try {
+	var data = JSON.parse(dataString);
+	} catch (e) {
+		return Object({'action':'clientError', 'errorText': "could not JSON decode: (" + e + ") \n" + dataString});
+	}
+	var ret;
+	switch (data.cmd) {
+	case 'unblindBallots':
+		ret = unblindBallotsEvent(election, data);
+		break;
+	case 'reqSigsNextpServer':
+		if (election.xthServer < (election.pServerList.length -1)) {
+			ret = reqSigsNextpServerEvent(election, data);
+		} else {
+			return Object({'action':'clientError', 'errorText': "I already got enough sigs but server said: 'more sigs needed': \n" + dataString});
+		}
+		break;
+	case 'savePermission':
+		// create the string to be saved 
+		ballotFileContent = savePermissionEvent(election, data);
+		return Object({'action':'savePermission', 'data': ballotFileContent});
+		break;
+	case 'error':
+		return Object({'action':'serverError', 'errorText': data.errorTxt, 'errorNo': data.errorNo});
+	default:
+		return Object({'action':'clientError', 'errorText': "unknown server cmd: " + data.cmd});
+	break;
+	}
+	addCredentials(election, ret);
+	send = JSON.stringify(ret);
+	return Object({'action':'send', 'data':send});
+}
+
 
 /**
  * config
