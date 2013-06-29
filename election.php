@@ -110,10 +110,9 @@ class Election {
 		$blindedHash = new Math_BigInteger($ballot['blindedHash'], 16);
 		$ballot['sigs'][$newnum]['sig'] = $rsa->_rsasp1($blindedHash)->toHex();
 		$ballot['sigs'][$newnum]['sigBy'] = $this->thisServerName;
-		if (!isset($ballot['sigs'][$newnum]['serSig'])) {
-			$ballot['sigs'][$newnum]['serSig'] = $blindedHash->toHex();
-		}
-		$tmp = new Math_BigInteger($ballot['sigs'][$newnum]['serSig'], 16);
+		if ($newnum === 0) { $prevSig = $blindedHash->toHex();                 } // TODO Think about: blindedHash correct?
+		else               { $prevSig = $ballot['sigs'][$newnum -1]['serSig']; }
+		$tmp = new Math_BigInteger($prevSig, 16);
 		$ballot['sigs'][$newnum]['serSig']     = $rsa->_rsasp1($tmp)->toHex();
 		return $ballot;
 	}

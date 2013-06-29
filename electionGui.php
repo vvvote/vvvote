@@ -22,6 +22,7 @@ function handleXmlAnswer(xml) {
 	  break;
 	case 'savePermission':
 		alert('fertig. Wahlzettel speichern! Wahlzettelinhalt: \n '+ result.data);
+		saveAs(result.data, 'ballots.json');
 	    break;
 	case 'serverError':
 		alert('Server rejected the request \n '+ result.erroNo + "\n" + result.errorText);
@@ -54,7 +55,7 @@ function onGetPermClick()  {
 		// rq.voterId    = 'pakki';
 		// rq.electionId = 'wahl1';
 		// var req = JSON.stringify(rq);;
-		purl = 'testtransm.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=137098483694310';
+		purl = 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=137098483694310';
 		var xml = new XMLHttpRequest();
         xml.open('POST', purl, true);
 		xml.onload = function() { handleXmlAnswer(xml);};
@@ -107,10 +108,8 @@ function onGetPermClick()  {
 						</table>
 					</td>
 				</tr>
-				</tr>
 				<tr>
-					<td>
-					<textarea name=log rows=20 cols=80>Log:</textarea>
+					<td><textarea name=log rows=20 cols=80>Log:</textarea>
 					</td>
 				</tr>
 			</table>
