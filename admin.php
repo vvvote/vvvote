@@ -9,6 +9,8 @@
 		<input type="submit" , value="Import list of voters" name="importVoterList">
 		<br> 
 		<input type="submit" , value="Test: check credentials" name="checkCredentials">
+		<br> 
+		<input type="submit" , value="Delete database content" name="DeleteDatabaseContent">
 		
 	</form>
 
@@ -36,10 +38,17 @@ if ((isset($_GET['importVoterList' ])) || (isset($_POST['importVoterList' ]))) {
 }
 
 if ((isset($_GET['checkCredentials' ])) || (isset($_POST['checkCredentials' ]))) {
-  $db = new Db(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX);
+  $db = new Db(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX, DB_TYP);
   $ok = $db->checkCredentials('wahl1', 'pakkis', 'pakkis');
   print "<br>\n ok? ";
   print_r($ok);
+}
+
+
+if ((isset($_GET['DeleteDatabaseContent' ])) || (isset($_POST['DeleteDatabaseContent' ]))) {
+	$db = new Db(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX, DB_TYP);
+	$ok = $db->resetDb();
+	print "<br>\n Deleted the content of the database";
 }
 
 // for database debugging use phpMyAdmin or the like

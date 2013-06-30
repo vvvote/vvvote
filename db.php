@@ -116,13 +116,14 @@ class Db {
 	}
 
 	/**
-	 * Delete the content of all tables except credentials
+	 * Delete the content of all tables 
 	 */
 	function resetDb() {
-		foreach ($this->evtables as $table) {
+		foreach (self::$evtables as $table) {
 			$tablename = $this->prefix . $table;
-			$sql = "DELETE * FROM $tablename";
+			$sql = "DELETE FROM $tablename";
 			$this->connection->exec($sql);
+			// print_r($this->connection->errorInfo());
 		}
 	}
 
