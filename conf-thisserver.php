@@ -12,14 +12,15 @@ $serverkey = $rsa->rsaGetHelpingNumbers($p, $q, $exppriv, $exppubl, $n);
 $thisServerName = 'PermissionServer1';
 $debug     = true;
 
-define('USE_PDO',0);  // 1: Zugriff via PDO; 0: zugrif via mysql_ bzw. mssql_
-define('DB_TYP','MySQL'); // MySQL oder MSSQL
+define('USE_PDO', 0);  // 1: Zugriff via PDO; 0: zugrif via mysql_ bzw. mssql_
+define('DB_TYP','mysql'); // MySQL oder MSSQL
+define('DB_PREFIX', 'server1_');
 
-if (DB_TYP=='MySQL') {
+if (DB_TYP=='mysql') {
 	define('DB_HOST','localhost');
 	define('DB_USER','root');
-	define('DB_NAME','election');
-	define('DB_PASSWORD','geheim');
+	define('DB_NAME','election_server1');
+	define('DB_PASSWORD','bernAl821');
 } else {
 	define('DB_HOST','localhost,1433');
 	define('DB_USER','sa');
