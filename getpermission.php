@@ -1,5 +1,6 @@
 <?php
 require_once 'Crypt/RSA.php';
+require_once 'db.php';
 require_once 'election.php';
 
 require_once 'conf-allservers.php';
@@ -16,14 +17,15 @@ header("Content-type: text/plain");
 // echo "\n\n:: Data received as \"raw\" (text/plain encoding) ::\n\n";
 if (isset($HTTP_RAW_POST_DATA)) { 
  // echo $HTTP_RAW_POST_DATA;
-
+	$db = new Db(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX, DB_TYP);
 	$el = new Election($electionId, 
 			$numVerifyBallots, 
 			$numSignBallots, 
 			$pServerKeys, 
 			$serverkey, 
 			$numAllBallots,
-			$thisServerName);
+			$thisServerName,
+			$db);
 	$result = $el->handlePermissionReq($HTTP_RAW_POST_DATA);
 // print "\r\n";
 	print "$result";

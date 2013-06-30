@@ -1,5 +1,7 @@
 <?php
 
+require_once 'db.php';
+
 class WrongRequestException extends Exception {
 	var $errorno;
 	var $errortxt;
@@ -18,8 +20,9 @@ class Election {
     var $serverkey;
     var $numAllBallots;
     var $thisServerName;
+    var $db;
     
-	function __construct($electionId_, $numVerifyBallots_, $numSignBallots_, $pServerKeys_, $serverkey_, $numAllBallots_, $thisServerName_) {
+	function __construct($electionId_, $numVerifyBallots_, $numSignBallots_, $pServerKeys_, $serverkey_, $numAllBallots_, $thisServerName_, $db) {
 		$this->electionId       = $electionId_;
 		$this->numVerifyBallots = $numVerifyBallots_;
 		$this->numSignBallots   = $numSignBallots_;
@@ -27,19 +30,20 @@ class Election {
 		$this->serverkey        = $serverkey_;
 		$this->numAllBallots    = $numAllBallots_;
 		$this->thisServerName   = $thisServerName_;
+		$this->db               = $db;
 	}
 
 	function throwException($errorno, $errortxt, $data) {
 		global $debug;
 		if ($debug) {
 			$errortxt = $errortxt . "\n" . $data . "\n";
-			debug_print_backtrace();
+			// debug_print_backtrace();
 		}
 		throw new WrongRequestException($errorno, $errortxt);
 	}
 	
-	function isInVoterList($voterId) {
-		return $voterId == 'pakki' || $voterId == 'melanie';
+	function isInVoterList($voterId, $secret) {
+		return $this->db->checkCredentials($this->electionId, $voterId, $secret);
 	}
 
 	function isFirstVote($voterID, $electionID, $threadId) {
@@ -48,13 +52,11 @@ class Election {
 		return true;
 	}
 
-	function isPermitted($voterID, $electionID_, $threadId) { // TODO save req in database and check if first req
-		$inlist = $this->isInVoterList($voterID);
+	function isPermitted($voterID, $secret, $electionID_, $threadId) { // TODO save req in database and check if first req
+		$inlist = $this->isInVoterList($voterID, $secret);
 		if (!$inlist) { 
-			$this->throwException(1, "Error: check of credentials failed", "isPermitted: Voter $voterReq.voterId is not in the list of allowed voters.");
+			$this->throwException(1, "Error: check of credentials failed", "isPermitted: Voter $voterID is not in the list of allowed voters or the secret is wrong.");
 		}
-		
-		// TODO check credentials e.g. password etc.
 		
 		if ($this->electionId != $electionID_) {
 			$this->throwException(2, 'Error: wrong electionID', "isPermitted: No voting permission is given for election $electionID_, only $this->electionId is accepted");
@@ -92,7 +94,7 @@ class Election {
 
 	function pickBallotsEvent($voterReq) {
 		$numPick = $this->numVerifyBallots[$voterReq['xthServer']];
-		$permitted = $this->isPermitted($voterReq['voterId'], $voterReq['electionId'], 1); // @TODO substitude ThreadId for 1
+		$permitted = $this->isPermitted($voterReq['voterId'], $voterReq['secret'], $voterReq['electionId'], 1); // @TODO substitude ThreadId for 1
 		$numBallots = count($voterReq['ballots']); // TODO take from config?
 		$requestBallots['picked'] = $this->pickBallots($numPick, $numBallots);
 		$requestBallots['cmd'] = 'unblindBallots';
@@ -296,12 +298,13 @@ class Election {
 				case 'pickBallots':
 					$result = $this->pickBallotsEvent($voterReq);
 					break;
+					
 				case 'signBallots':
 					$result = $this->signBallotsEvent($voterReq);
 					break;
 
 				default:
-					;
+					$this->throwException(101, 'Error unknown command', $req);
 					break;
 			}
 		} catch (WrongRequestException $e) {
