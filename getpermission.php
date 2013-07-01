@@ -4,7 +4,10 @@ require_once 'db.php';
 require_once 'election.php';
 
 require_once 'conf-allservers.php';
-require_once 'conf-thisserver.php';
+
+// TODO remove this lines before release
+if ($_SERVER['HTTP_HOST'] == 'www.webhod.ra') { require_once 'conf-thisserver.php';}
+else                                          { require_once 'conf-thisserver2.php';}
 
 header("Content-type: text/plain");
 

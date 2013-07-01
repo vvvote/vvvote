@@ -13,7 +13,7 @@
 
 function savePermission(ballot) {
 	var bb = new Blob([ballot]);
-	saveAs(bb, "test_file.txt");
+	saveAs(bb, "signed_ballot.txt");
 }
 
 function loadPermissionFile() {
@@ -28,7 +28,8 @@ function handleXmlAnswer(xml) {
 	switch (result.action) {
 	case 'send':
 	  var xml2 = new XMLHttpRequest();
-	  xml2.open('POST', purl, true);
+	  var serverno = election.pServerSeq.slice(-1)[0];
+	  xml2.open('POST', election.pServerList[serverno].url, true);
 	  xml2.onload = function() { handleXmlAnswer(xml2); }; // quasi resursiv
 	  document.permission.log.value = document.permission.log.value + '--> gesendet an ' + (election.xthServer +1) + '. Server: ' + result.data + "\r\n\r\n";
 	  xml2.send(result.data);
@@ -69,9 +70,13 @@ function onGetPermClick()  {
 		// rq.voterId    = 'pakki';
 		// rq.electionId = 'wahl1';
 		// var req = JSON.stringify(rq);;
-		purl = 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=137098483694310';
+		purl = new Array();
+		purl[0] = 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
+		purl[1] = 'http://www2.webhod.ra/vvvote2/getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
+		
 		var xml = new XMLHttpRequest();
-        xml.open('POST', purl, true);
+		var serverno = election.pServerSeq.slice(-1)[0];
+		xml.open('POST', election.pServerList[serverno].url, true);
 		xml.onload = function() { handleXmlAnswer(xml);};
 //		 xml.onreadystatechange = function() {
 //		   if (xml.readyState != 4)  { return; }

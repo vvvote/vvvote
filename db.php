@@ -15,7 +15,6 @@ class Db {
 
 	var $connection;
 	var $prefix;
-	var $dbname;
 	static $evtables = array(); // ev = election and voter tables
 
 	// $dbtype = mysqlnd
@@ -63,7 +62,7 @@ class Db {
 			$colname   = $table;
 			$tablename = $this->prefix . $table;
 			$sql = "CREATE TABLE $tablename (
-			ElectionId varchar(100) NOT NULL,
+			electionId varchar(100) NOT NULL,
 			voterId varchar(100) NOT NULL,
 			$colname varchar(10000) NOT NULL,
 			id int not null auto_increment,
@@ -79,7 +78,7 @@ class Db {
 
 	/**
 	 * Sets the list of voters and credentials
-	 * @param array $voterlist[]['electionId']['voterID']['secret']
+	 * @param array $voterlist[number]['electionId']['voterID']['secret']
 	 */
 	function importVoterListFromArray($voterlist) {
 		print_r($voterlist);
@@ -128,32 +127,38 @@ class Db {
 	}
 
 	function _save($electionId, $voterId, $tablename, $colname, $forjson) {
-		$saveStr = json_encode($json);
-		$statmnt = $this->connection->prepare("INSERT INTO :tablename (electionId, voterId, :colname) VALUES (:electionId, :voterId, :json)");
-		$statmnt->bindValue(':tablename' , $this->prefix . $tablename);
+		$saveStr = json_encode($forjson);
+		$tname = $this->prefix . $tablename;
+		$statmnt = $this->connection->prepare("INSERT INTO $tname (electionId, voterId, $colname) VALUES (:electionId, :voterId, :json)");
+		// $statmnt->bindValue(':tablename' , $this->prefix . $tablename);
 		$statmnt->bindValue(':electionId', $electionId);
 		$statmnt->bindValue(':voterId'   , $voterId);
-		$statmnt->bindValue(':colname'   , $colname);
-		return $statmnt->execute();
+//		$statmnt->bindValue(':colname'   , $colname);
+		$statmnt->bindValue(':json'      , $saveStr);
+		$ret = $statmnt->execute();
+		$status = $this->connection->errorInfo();
+		return $ret;
 	}
 
 	function _load($electionId, $voterId, $tablename, $colname) {
-		$statmnt = $this->connection->prepare('SELECT :colname FROM :tablename WHERE (electionId = :electionId AND voterId  = :voterId  )');
-		$statmnt->bindValue(':tablename' , $this->prefix . $tablename);
+		$tname = $this->prefix . $tablename;
+		$statmnt = $this->connection->prepare("SELECT $colname FROM $tname WHERE (electionId = :electionId AND voterId  = :voterId  )");
 		$statmnt->bindValue(':electionId', $electionId);
 		$statmnt->bindValue(':voterId'   , $voterId);
-		$statmnt->bindValue(':colname'   , $colname);
+		$status = $statmnt->execute();
 		$got = $statmnt->fetchAll();
 		if ($got === false) return false;
+		$ret = array();
 		foreach ($got as $num => $gotrow) {
-			$ret[$num] = json_decode($gotrow);
+			$ret[$num] = json_decode($gotrow[0], true);
 		}
+		
 		return $ret;
 	}
 
 
-	function saveBlindedHashes($electionId, $voterId, $jsonblindedHashes) {
-		return $this->_save($electionId, $voterId, 'blindedHashes', 'blindedHashes', $jsonblindedHashes);
+	function saveBlindedHashes($electionId, $voterId, $blindedHashesForJSON) {
+		return $this->_save($electionId, $voterId, 'blindedHashes', 'blindedHashes', $blindedHashesForJSON);
 		/*		$statemnt = $this->connection->prepare('INSERT INTO blindedHashes (electionId, voterId, jsonHash) VALUES (:electionId, :voterId, :jsonHash)');
 		 $statemnt->bindValue(':electionId', $electionId);
 		$statemnt->bindValue(':voterId'   , $voterId);

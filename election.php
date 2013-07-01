@@ -22,7 +22,7 @@ class Election {
     var $thisServerName;
     var $db;
     
-	function __construct($electionId_, $numVerifyBallots_, $numSignBallots_, $pServerKeys_, $serverkey_, $numAllBallots_, $thisServerName_, $db) {
+	function __construct($electionId_, $numVerifyBallots_, $numSignBallots_, array $pServerKeys_, $serverkey_, $numAllBallots_, $thisServerName_, Db $db) {
 		$this->electionId       = $electionId_;
 		$this->numVerifyBallots = $numVerifyBallots_;
 		$this->numSignBallots   = $numSignBallots_;
@@ -55,7 +55,7 @@ class Election {
 	function isPermitted($voterID, $secret, $electionID_, $threadId) { // TODO save req in database and check if first req
 		$inlist = $this->isInVoterList($voterID, $secret);
 		if (!$inlist) { 
-			$this->throwException(1, "Error: check of credentials failed", "isPermitted: Voter $voterID is not in the list of allowed voters or the secret is wrong.");
+			$this->throwException(1, "Error: check of credentials failed", "isPermitted: Voter $voterID is not in the list of allowed voters.");
 		}
 		
 		if ($this->electionId != $electionID_) {
@@ -93,12 +93,16 @@ class Election {
 	}
 
 	function pickBallotsEvent($voterReq) {
-		$numPick = $this->numVerifyBallots[$voterReq['xthServer']];
 		$permitted = $this->isPermitted($voterReq['voterId'], $voterReq['secret'], $voterReq['electionId'], 1); // @TODO substitude ThreadId for 1
+		// TODO check if this is the first req for picking ballots
+		$numPick = $this->numVerifyBallots[$voterReq['xthServer']];
 		$numBallots = count($voterReq['ballots']); // TODO take from config?
 		$requestBallots['picked'] = $this->pickBallots($numPick, $numBallots);
 		$requestBallots['cmd'] = 'unblindBallots';
 		// save requested Ballots(voterId, electionId);
+		$toSave = array('requestedBallots' => $requestBallots['picked'], 
+				        'blindedHashes'    => $voterReq['ballots']);
+		$this->db->saveBlindedHashes($this->electionId, $voterReq['voterId'], $toSave);
 		return $requestBallots;
 	}
 	/**
@@ -205,8 +209,8 @@ class Election {
 		$hashBI = new Math_BigInteger($hash, 16);
 		$sigBI = new Math_BigInteger($sig, 16);
 		$verify = $rsa->_rsaep($sigBI);
-		if (!$hashBI->equals($verify)) {$this->throwException(201, "Error: signature verifcation failed", "verifySig: Server $servername, given hash: $hash, calculated hash: " . $verify->toHex());}
-		return true;
+		if ($hashBI->equals($verify)) { return true; }
+		$this->throwException(201, "Error: signature verifcation failed", "verifySig: Server $servername, given hash: $hash, calculated hash: " . $verify->toHex());
 	}
 	
 	function verifyBallots($voterReq) {
@@ -228,13 +232,17 @@ class Election {
 				$this->throwException(210, 'Error: electionID is wrong', "expected electionID: $this->electionId, received electionID in ballot $i: " . $voterReq['ballots'][$i]['electionId']);
 			}
 			// verify if the sent ballot was requested
-/*			$kw = in_array($voterReq['ballots'][$i].['ballotno'], $requestedballots['num']);
+			$blindedHashesFromDB = $this->db->loadBlindedHashes($this->electionId, $voterReq['voterId']);
+			if (count($blindedHashesFromDB) > 1) {$this->throwException(301, 'more than one request for ballots sent', "All requested ballots: " . print_r($blindedHashesFromDB, true));}
+			if (count($blindedHashesFromDB) < 1) {$this->throwException(302, 'Sign request without request for disclosing ballots', "All requested ballots: " . print_r($blindedHashesFromDB, true)); }
+			$blindedHashesFromDB = $blindedHashesFromDB[0]; 
+			$kw = in_array($voterReq['ballots'][$i]['ballotno'], $blindedHashesFromDB['requestedBallots']);
 			if ($kw >= 0) {
 				$requestedballots['sent'][$kw] = true;
 			} else {
-				$this->throwException(211, "A Ballot was sent for verification purpose that was not requested", "verifyBallots: not requested ballot: " . $voterReq['ballots'][$i].['ballotno']);
+				$this->throwException(211, "A Ballot was sent for verification purpose that was not requested", "verifyBallots: not requested ballot: " . $voterReq['ballots'][$i]['ballotno'] . "requested ballots: " . print_r($blindedHashesFromDB['requestedBallots'], true));
 			}
-*/			// verify hash
+			// verify hash
 			$raw = array();
 			$raw['electionId'] = $voterReq["ballots"][$i]['electionId'];
 			$raw['votingno'  ] = $voterReq["ballots"][$i]['votingno'];
@@ -242,7 +250,9 @@ class Election {
 			$str = json_encode($raw);
 			$hashByMe = hash('sha256', $str);
 			$hashByMeBigInt = new Math_BigInteger($hashByMe, 16);
-			$blindedHashFromDatabase    = new Math_BigInteger($voterReq["ballots"][$i]['blindedHash'], $base); // @TODO: load this hash from database
+			$blindedHashFromDatabaseTest= new Math_BigInteger($voterReq["ballots"][$i]['blindedHash'], $base);
+			// $kw = $blindedHashesFromDB['blindedHashes'][$voterReq['ballots'][$i]['ballotno']]['blindedHash'];
+			$blindedHashFromDatabase    = new Math_BigInteger($blindedHashesFromDB['blindedHashes'][$voterReq['ballots'][$i]['ballotno']]['blindedHash'], $base); 
 			$signedblindedHash          = $rsa->_rsasp1($blindedHashFromDatabase);
 			$unblindf                   = new Math_BigInteger($voterReq["ballots"][$i]['unblindf'], $base);
 			$unblindedHash              = $rsa->rsaUnblind($signedblindedHash, $unblindf);
@@ -259,10 +269,12 @@ class Election {
 					// $result = $this->verifySig($prevsig, $sig['serSig'], $sig['sigBy']);
 					// if (!$result['sigok']) { $e = 'Signature of previous server in serSig is wrong.'; return $e;}
 					// $prevsig = $result['prevsig']; // TODO serSig / sigs use 2 arrays: one in which the hash is recursively encrypted and one containing all the encrypted states after each signature
-					$this->verifySig($hashByMe, $sig['sig'], $sig['sigBy']);
+					$this->verifySig($hashByMe, $sig['sig'], $sig['sigBy']); // throws an exception if not ok
 				}
 			}
 			$tmpret[$i] = $hashOk;
+			if ($i == 0) { $ret = $hashOk;         }
+			else         { $ret = $ret && $hashOk; }
 			
 			// verify if votingId is unique
 			   // load $allvotingno from database
@@ -277,8 +289,8 @@ class Election {
 			}
 		}
 */
-		
-		return array($tmpret, $hashByMe, $unblindethashFromDatabaseStr);
+		// array($tmpret, $hashByMe, $unblindethashFromDatabaseStr);
+		return $ret;
 	}
 
 	
