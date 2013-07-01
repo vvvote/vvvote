@@ -17,7 +17,10 @@
 </body>
 
 <?php
-require_once 'conf-thisserver.php';
+// TODO remove these lines before release
+if ($_SERVER['HTTP_HOST'] == 'www.webhod.ra') { require_once 'conf-thisserver.php';}
+else                                          { require_once 'conf-thisserver2.php';}
+
 require_once 'db.php';
 
 if ((isset($_GET['createTables' ])) || (isset($_POST['createTables' ]))) {
