@@ -118,7 +118,7 @@ function addCredentials(election, req) {
 }
 
 function reqSigsNextpServerEvent(election, data) {
-	verifySaveElectionPermiss(election, data);
+	verifySaveElectionPermiss(election, data); // TODO issue an error if verifaction failed
 	return makePermissionReqs(election);
 }
 
@@ -185,7 +185,7 @@ function getNextPermServer(election) {
 	for (var i=0; i<election.pServerList.length; i++) { 
 		nextServer = Math.round((Math.random()*(election.pServerList.length - 1))); // find the next random server number
 		var j = 0;
-		while (election.pServerSeq.indexOf(nextServer) > 0 && j < election.pServerList.length) {
+		while (election.pServerSeq.indexOf(nextServer) >= 0 && j < election.pServerList.length) {
 			nextServer++;
 			j++;
 			if (nextServer == election.pServerList.length) {nextServer = 0;};
@@ -209,9 +209,9 @@ function verifySaveElectionPermiss(election, answ) {
 	var serverKey  = election.pServerList[prevServer].key;
 	// answ: array of signed: .num .blindSignatur .serverId
 	// var answ     = JSON.parse(serverAnsw); // decode answer
-	var sigsOk;
+	var sigsOk = false;
 	for (var i=0; i<answ.ballots.length; i++) {
-		// TODO think about: this only checks the newest sig
+		// TODO think about: this only checks the newest sigs
 		var blindedSig = str2bigInt(answ.ballots[i].sigs.slice(-1)[0].sig, base);
 		var signatur = rsaUnblind(blindedSig, election.ballots[answ.ballots[i].ballotno].blindingf[prevServer], serverKey);  // unblind
 		var testsign = RsaEncDec(signatur, serverKey);

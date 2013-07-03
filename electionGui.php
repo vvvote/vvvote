@@ -22,7 +22,8 @@ function loadPermissionFile() {
 
 
 function handleXmlAnswer(xml) {
-	document.permission.log.value = document.permission.log.value + '<-- empfangen von ' + (election.xthServer +1) + '. Server: ' + xml.responseText + "\r\n\r\n";
+	var serverno = election.pServerSeq.slice(-1)[0];
+	document.permission.log.value = document.permission.log.value + '<-- empfangen von ' + (election.xthServer +1) + ' (' + election.pServerList[serverno].url + ') Server: ' + xml.responseText + "\r\n\r\n";
 	var result = handleServerAnswer(election, xml.responseText);
 	// TODO check maximal loops = numServers
 	switch (result.action) {
@@ -31,12 +32,12 @@ function handleXmlAnswer(xml) {
 	  var serverno = election.pServerSeq.slice(-1)[0];
 	  xml2.open('POST', election.pServerList[serverno].url, true);
 	  xml2.onload = function() { handleXmlAnswer(xml2); }; // quasi resursiv
-	  document.permission.log.value = document.permission.log.value + '--> gesendet an ' + (election.xthServer +1) + '. Server: ' + result.data + "\r\n\r\n";
+	  document.permission.log.value = document.permission.log.value + '--> gesendet an ' + (election.xthServer +1) + ' (' + election.pServerList[serverno].url + ') Server: ' + result.data + "\r\n\r\n";
 	  xml2.send(result.data);
 	  break;
 	case 'savePermission':
 		alert('fertig. Wahlzettel speichern! Wahlzettelinhalt: \n '+ result.data);
-		savePermission(result.data)
+		savePermission(result.data);
 		// saveAs(result.data, 'ballots.json');
 	    break;
 	case 'serverError':
@@ -70,19 +71,20 @@ function onGetPermClick()  {
 		// rq.voterId    = 'pakki';
 		// rq.electionId = 'wahl1';
 		// var req = JSON.stringify(rq);;
-		purl = new Array();
-		purl[0] = 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
-		purl[1] = 'http://www2.webhod.ra/vvvote2/getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
+	//	purl = new Array();
+	//	purl[0] = 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
+	//	purl[1] = 'http://www2.webhod.ra/vvvote2/getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 		
 		var xml = new XMLHttpRequest();
-		var serverno = election.pServerSeq.slice(-1)[0];
-		xml.open('POST', election.pServerList[serverno].url, true);
+		//var serverno = getNextPermServer(election);
+		var url = election.pServerList[election.pServerSeq.slice(-1)[0]].url;
+		xml.open('POST', url, true);
 		xml.onload = function() { handleXmlAnswer(xml);};
 //		 xml.onreadystatechange = function() {
 //		   if (xml.readyState != 4)  { return; }
 //		   var serverResponse = JSON.parse(xml.responseText);
 //		 };
-    	document.permission.log.value = document.permission.log.value + '\r\n\r\n --> gesendet an 1. Server: ' + req + "\r\n\r\n";  
+    	document.permission.log.value = document.permission.log.value + '\r\n\r\n --> gesendet an 1. Server (' + url + '): ' + req + "\r\n\r\n";  
         xml.send(req);
 		return false;
 }

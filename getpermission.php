@@ -10,6 +10,9 @@ if ($_SERVER['HTTP_HOST'] == 'www.webhod.ra') { require_once 'conf-thisserver.ph
 else                                          { require_once 'conf-thisserver2.php';}
 
 header("Content-type: text/plain");
+header('Access-Control-Allow-Origin: *', false);
+// header("Access-Control-Allow-Origin: http://www.webhod.ra", false);
+// header("Access-Control-Allow-Origin: http://www2.webhod.ra", false);
 
 // echo ":: data received via GET ::\n\n";
 // print_r($_GET);
