@@ -9,7 +9,7 @@ $n         = new Math_BigInteger('3061314256875231521936149233971694238047219365
 
 $rsa       = new rsaMyExts();
 $serverkey = $rsa->rsaGetHelpingNumbers($p, $q, $exppriv, $exppubl, $n);
-$thisServerName = 'PermissionServer1';
+$thisServerName = 'PermissionServer0';
 $debug     = true;
 
 define('USE_PDO', 0);  // 1: Zugriff via PDO; 0: zugrif via mysql_ bzw. mssql_
