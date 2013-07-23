@@ -1,0 +1,72 @@
+@CHARSET "ISO-8859-1";
+/***** Corporate Identity *****/
+body {
+	background-color: grey; /* color outside the content */
+	padding: 0.4em;
+}
+
+div#all { /* base definition for all content */
+	width: 60em;
+	background-color: white;
+	margin: 0 auto; /* center all divs */
+}
+
+div#ci {
+	background-color: orange;
+	color: #0B0B61;
+	text-align: center;
+	font-size: 18px;
+	min-height: 150px;
+	padding: 0.4em;
+}
+
+div#ci h1 {
+	font-size: 24px;
+	color: #0B0B61;
+}
+
+/*** Content ***/
+div#content {
+	padding: 0.4em;
+}
+
+div#content h1 {
+	color: orange;
+}
+
+
+/*** Steps ****/
+div#steps {
+	float: right;
+	width: 20em;
+	border: 2px solid #0B0B61;
+	padding: 0.4em;
+}
+
+div#steps h1 {
+	font-size: 1.2em;
+	color: orange;
+}
+span.curr {
+  font-weight: bold;
+}
+
+/*** Navigation bar ***/
+div#nav {
+	background-color: #0B0B61;
+	text-align: center;
+	color: white;
+	display: block;
+	padding: 0.4em;
+}
+
+div#nav a {
+	text-align: center;
+	color: white;
+	/* font: 1em/220% serif; */
+	padding: 0.4em;
+}
+
+div#nav a:hover {
+	background: black;
+}

@@ -371,7 +371,46 @@ class Election {
 		$ret = json_encode($result);
 		return $ret;
 	}
-	// everything is ok, construct answer
+
+	function storeVoteEvent($voterReq) {
+		// decrypt vote?
+		// check if the voting is open for the given electionId (period in time) 
+		// check if enough sigs from permission servers are sent along with the vote
+		// check if first vote with this voting number
+		// store vote in database 
+		// send the signed vote back?
+	}
+	
+	
+	function handleTallyReq($req) {
+		try {
+			$voterReq = json_decode($req, true); //, $options=JSON_BIGINT_AS_STRING); // decode $req
+			if ($voterReq == null) { // json could not be decoded
+				$this->throwException(100, 'Error while decoding JSON request', $req);
+			}
+			$result = array();
+			//	print "voterReq\n";
+			//	print_r($voterReq);
+			// $this.verifysyntax($result);
+			// $this.verifyuser($voterReq['voterid'], $voterReq['secret']);
+			// get state the user is in for the selected election
+			switch ($voterReq['cmd']) {
+				case 'storeVote':
+					$result = $this->storeVoteEvent($voterReq);
+					break;
+
+				default:
+					$this->throwException(101, 'Error unknown command', $req);
+					break;
+			}
+		} catch (WrongRequestException $e) {
+			$result = array('cmd' => 'error', 'errorTxt' => $e->errortxt, 'errorNo' => $e->errorno);
+		}
+		$ret = json_encode($result);
+		return $ret;
+
+	}
+
 }
 
 
