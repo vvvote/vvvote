@@ -1,4 +1,4 @@
-vvvote
+VVVote
 ======
 
 Online voting system
