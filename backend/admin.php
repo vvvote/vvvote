@@ -4,13 +4,13 @@
 <body>
 	<h1>Administrate the voting permission server</h1>
 	<form action="">
-		<input type="submit" , value="Create Tables" name="createTables">
+		<input type="submit" value="Create Tables" name="createTables">
 		<br> 
-		<input type="submit" , value="Import list of voters" name="importVoterList">
+		<input type="submit" value="Import list of voters" name="importVoterList">
 		<br> 
-		<input type="submit" , value="Test: check credentials" name="checkCredentials">
+		<input type="submit" value="Test: check credentials" name="checkCredentials">
 		<br> 
-		<input type="submit" , value="Delete database content" name="DeleteDatabaseContent">
+		<input type="submit" value="Delete database content" name="DeleteDatabaseContent">
 		
 	</form>
 
@@ -24,7 +24,9 @@ require_once 'modules-auth/user-passw-list/dbAuth.php';
 require_once 'modules-election/blindedvoter/dbBlindedVoter.php';
 
 if ((isset($_GET['createTables' ])) || (isset($_POST['createTables' ]))) {
-	$db = new Db(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX, DB_TYP, true);
+	$dbauth = new DbAuth($dbInfos);
+	$dbblindedvoter = new DbBlindedVoter($dbInfos);
+	$dbpublishonlytelly = new DbPublishOnlyTelly($dbInfos);
 	echo  "fertig. Database tables created";
 }
 
@@ -41,10 +43,10 @@ if ((isset($_GET['importVoterList' ])) || (isset($_POST['importVoterList' ]))) {
 }
 
 if ((isset($_GET['checkCredentials' ])) || (isset($_POST['checkCredentials' ]))) {
-  $db = new Db(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX, DB_TYP);
-  $ok = $db->checkCredentials('wahl1', 'pakkis', 'pakkis');
-  print "<br>\n ok? ";
-  print_r($ok);
+	$dbauth = new DbAuth($dbInfos);
+	$ok = $dbauth->checkCredentials('wahl1', 'pakkis', 'pakkis');
+  	print "<br>\n ok? ";
+  	print_r($ok);
 }
 
 
