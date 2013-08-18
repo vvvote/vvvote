@@ -18,8 +18,7 @@
 
 <?php
 // TODO remove these lines before release
-if ($_SERVER['HTTP_HOST'] == 'www.webhod.ra') { require_once 'conf-thisserver.php';}
-else                                          { require_once 'conf-thisserver2.php';}
+require_once 'conf-thisserver.php';
 
 require_once 'modules-auth/user-passw-list/dbAuth.php';
 require_once 'modules-election/blindedvoter/dbBlindedVoter.php';

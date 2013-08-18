@@ -7,8 +7,7 @@ require_once 'modules-auth/user-passw-list/auth.php';
 require_once 'conf-allservers.php';
 
 // TODO remove this lines before release
-if ($_SERVER['HTTP_HOST'] == 'www.webhod.ra') { require_once 'conf-thisserver.php';}
-else                                          { require_once 'conf-thisserver2.php';}
+require_once 'conf-thisserver.php';
 
 header("Content-type: text/plain");
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
