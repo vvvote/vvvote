@@ -10,8 +10,7 @@ require_once __DIR__ . '/modules-tally/publishonly/tally.php';
 require_once 'conf-allservers.php';
 
 // TODO remove the HOST-if in case not testing locally
-if ($_SERVER['HTTP_HOST'] == 'www.webhod.ra') { require_once 'conf-thisserver.php';}
-else                                          { require_once 'conf-thisserver2.php';}
+require_once 'conf-thisserver.php';
 
 
 
