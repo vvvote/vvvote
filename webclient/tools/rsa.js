@@ -24,7 +24,13 @@ function getRandomPrime(bits, method, e) {
       }
       return r;
 }
-
+/**
+ * 
+ * @param bits n will have roughly twice as much bits as given here
+ * @param method 1: probable prime, 2: true prime
+ * @param e public exponent, usually set to 65537
+ * @returns {___keys2}
+ */
 function RsaKeyGen(bits, method, e) {
 	var privatekey = new Object(), publickey = new Object(), keys = new Object();
 	p = getRandomPrime(bits, method, e);
@@ -32,14 +38,51 @@ function RsaKeyGen(bits, method, e) {
 	n = mult(p, q);
 	phi = mult(addInt(p, -1), addInt(q, -1));
 	d = inverseMod(e, phi);
-	if (! d) { throw ("RSAKeyGen(): e is not invertable, try a different e");}
+	if (! d) { throw ("RSAKeyGen(): e is not invertable, try a different e");} // TODO use Exception class
 	privatekey.n   = n;
-	privatekey.exp = e;
+	privatekey.exp = d;
+	privatekey.p   = p;
+	privatekey.q   = q;
 	publickey.n    = n;
-	publickey.exp  = d;
+	publickey.exp  = e;
 	keys.priv      = privatekey;
 	keys.pub       = publickey;
 	return keys;
+}
+
+/**
+ * converts bigInts in the key to hex-encoded strings (actually it uses the global var base)
+ * @param kp Object key
+ * @returns key par with hex encoded big ints; use stringify to get a string
+ * 
+ */
+function keypair2str(kp) {
+	var ret = new Object();
+	ret.priv = key2str(kp.priv);
+	ret.pub  = key2str(kp.pub);
+	return ret;
+}
+
+/**
+ * converts bigInts in the key to hex-encoded strings
+ * @param kp Object key
+ * @returns kp with hex-encoded bigInts
+ */
+function key2str(k) {
+	var ret = new Object();
+	ret.n = bigInt2str(k.n, base);
+	ret.exp = bigInt2str(k.exp, base);
+	if ('p' in k) ret.p = bigInt2str(k.p, base);
+	if ('q' in k) ret.q = bigInt2str(k.q, base);
+	return ret;
+}
+
+function str2key(str) {
+	var a = str.split(' ');
+	var key = {};
+	key.n = str2bigInt(a[0], 16);
+	key.exp = str2bigInt(a[1], 16);
+	return key;
 }
 
 function RsaEncDec(plaintext, key){

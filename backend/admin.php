@@ -21,7 +21,8 @@
 if ($_SERVER['HTTP_HOST'] == 'www.webhod.ra') { require_once 'conf-thisserver.php';}
 else                                          { require_once 'conf-thisserver2.php';}
 
-require_once 'db.php';
+require_once 'modules-auth/user-passw-list/dbAuth.php';
+require_once 'modules-election/blindedvoter/dbBlindedVoter.php';
 
 if ((isset($_GET['createTables' ])) || (isset($_POST['createTables' ]))) {
 	$db = new Db(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX, DB_TYP, true);
@@ -35,7 +36,7 @@ if ((isset($_GET['importVoterList' ])) || (isset($_POST['importVoterList' ]))) {
 			0 => array('electionId' => $electionId, 'voterId' => 'pakki'  , 'secret' => 'pakki'),
 			1 => array('electionId' => $electionId, 'voterId' => 'melanie', 'secret' => 'melanie')
 			);
-	$db = new Db(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX, DB_TYP);
+	$db = new DbAuth($dbInfos);
 	$db->importVoterListFromArray($voterlist);
 
 }
@@ -49,7 +50,7 @@ if ((isset($_GET['checkCredentials' ])) || (isset($_POST['checkCredentials' ])))
 
 
 if ((isset($_GET['DeleteDatabaseContent' ])) || (isset($_POST['DeleteDatabaseContent' ]))) {
-	$db = new Db(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX, DB_TYP);
+	$db = new DbBlindedVoter($dbInfos);
 	$ok = $db->resetDb();
 	print "<br>\n Deleted the content of the database";
 }

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>VVVote</title>
+<style type="text/css">
+@import url(standard.css);
+/* evtl. seitenspezifische CSS-Definitionen */
+</style>
+
+<script src="tests.js"></script>
+<script src="exception.js"></script>
+<script src="tools/url.js"></script>
+<script src="getelectionconfig.js"></script>
+<!-- the following "<script>" is used as heredoc replacement -->
+<script  id="authUserPasswHtml" type="mumpiz">
+<div id="auth">
+	<form name="permission" method="post" onsubmit="return false;">
+		<!--  action="getPermission"> -->
+        Als Ergebnis dieses Schrittes erhalten Sie einen Wahlzettel, den Sie speichern müssen und zur Stimmabgabe später wieder laden müssen.
+		Der Stimmzettel berechtigt zur Stimmabgabe - geben Sie ihn also nicht weiter! Er ist anonym, d.h. es kann nicht festgestellt werden, wem er gehört.
+		<div align="center">
+			<br>
+			<table>
+				<tr>
+					<td>
+						<table>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><font color=black> <b>ElectionId:</b>
+								</font></td>
+								<td><input name=electionId value="wahl1"></td>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><font color=black> <b>VoterId:</b>
+								</font></td>
+								<td><div id="divvoterid">
+										<input name=voterId value="pakki">
+									</div></td>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td align=right><b>Secret:</b></td>
+								<td><input name=secret value="pakki"></td>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td><input type="submit" name=reqPermiss
+									value="Request ballot" onclick="onGetPermClick();"></td>
+								<td>&nbsp;</td>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td><textarea name="log" rows=20 cols=80>Log:</textarea></td>
+				</tr>
+				<tr>
+					<td><input type="file" id="savefile" /></td>
+				</tr>
+			</table>
+		</div>
+	</form>
+<p><h2>Weitere technische Information</h2><br>
+Der Wahlzettel ist digital von mindestens 2 Servern unterschrieben. Diese Unterschrift führt dazu, dass der Wahlzettel bei der Stimmabgabe akzeptiert wird.<br>
+Der Wahlzettel enthält eine eindeutige Wahlzettelnummer, die nur Ihr Computer kennt - sie wurde von Ihrem Computer erzeugt und verschlüsselt, bevor die Server den Wahlzettel unterschrieben haben, und danach auf Ihrem Computer entschlüsselt (Man spricht von &quot;Blinded Signature&quot;). Die Server kennen daher die Wahlzettelnummer nicht.<br>
+Man kann sich das so vorstellen:<br> 
+Ihr Computer schreibt auf den Wahlzettel die Wahlzettelnummer, die er sich selbst &quot;ausdenkt&quot; (Zufallszahl). Dieser Wahlzettel wird zusammen mit einem Blatt Kohlepapier in einen Umschlag gelegt und an den Server geschickt. 
+Der Server unterschreibt außen auf dem Umschlag (wenn Sie wahlberechtigt sind), so dass sich die Unterschrift durch das Kohlepapier auf Ihren Wahlzettel überträgt. Ohne den Umschlag geöffnet zu haben (was der Server nicht kann, weil er den dafür notwendigen Schlüssel nicht kennt), schickt er den Brief an Ihren Computer zurück.
+Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und hält einen vom Server unterschriebenen Wahlzettel in der Hand, deren Nummer der Server nicht kennt.  
+</p>
+</div>
+</script>
+
+
+<script src="modules-auth/user-passw-list/module.js"></script>
+<script src="tools/BigInt.js"></script>
+<script src="tools/rsa.js"></script>
+<script src="tools/sha256.js"></script>
+<script src="tools/filehandling.js"></script>
+<script src="modules-election/blinded-voter/module.js"></script>
+<script src="modules-election/blinded-voter/module-backend.js"></script>
+<script src="modules-tally/publish-only/module.js"></script>
+
+<!-- Crypto-tool -->
+<script type="text/javascript" src="tools/jsrsasign-master/ext/jsbn.js"></script>
+<script type="text/javascript" src="tools/jsrsasign-master/ext/jsbn2.js"></script>
+<script type="text/javascript" src="tools/jsrsasign-master/ext/prng4.js"></script>
+<script type="text/javascript" src="tools/jsrsasign-master/ext/rng.js"></script>
+<script type="text/javascript" src="tools/jsrsasign-master/ext/rsa.js"></script>
+<script type="text/javascript" src="tools/jsrsasign-master/ext/rsa2.js"></script>
+<script type="text/javascript" src="tools/jsrsasign-master/ext/base64.js"></script>
+
+<!-- geprüft, sind notwendig ######## es wird eval() verwendet #########
+#base64: wegen rstring2hex() -->
+<script type="text/javascript" src="tools/jsrsasign-master/base64x-1.1.js"></script>
+<script type="text/javascript" src="tools/jsrsasign-master/crypto-1.1.js"></script>
+<script type="text/javascript" src="tools/jsrsasign-master/core.js"></script>
+<script type="text/javascript" src="tools/jsrsasign-master/sha256.js"></script>
+
+<script type="text/javascript" src="tools/jsrsasign-master/rsasign-1.2.js"></script>
+<!-- Crypto-tool Ende -->
+
+<script type="text/javascript">
+	// var maincontent = '<object type="text/html" width="800" height="700" data="modules-auth/user-passw-list/module.html"></object>'; 
+	// var maincontent = '<object type="text/html" width="800" height="700" data="getelectionconfig.html"></object>';
+	
+	function userlog(log) {
+	  var element = document.getElementById('logtextarea'); 
+	  element.value = element.value + log;
+	}	
+
+	var maincontent = GetElectionConfig.getMainContent();
+
+	function onStep1CallBack(config) {
+		// alert("got elcetion config: " + JSON.stringify(config));
+		// TODO check config.error
+		startStep2(config);
+	}
+
+	function loadMainContent(content) {
+		var element = document.getElementById("loadedmaincontent");
+		element.innerHTML = content; // '<object type="text/html" width="800" height="700" data="modules-auth/user-passw-list/module.html"></object>';
+		//document.write('<h1>TEST</h1>');
+	}
+	function setStep(step) {
+		var element = document.getElementById('step1'); // + step-1);
+		element.removeAttribute('class')
+		element = document.getElementById("step" + step);
+		element.setAttribute('class', 'curr');
+		var stepstr;
+		switch (step) {
+		 	case 1: stepstr = 'Schritt 1: Wahlunterlagen holen'; break;
+			case 2: stepstr = 'Schritt 2: Autorisierung'; break;
+			case 3: stepstr = 'Schritt 3: Abstimmen'; break;
+			case 4: stepstr = 'Schritt 4: Abstimmsergebnis holen'; break;
+			default: break; // TODO throw program error
+		}
+		element = document.getElementById('steptitle');
+		element.textContent = stepstr;
+	}
+	
+	
+	function startUserPassw(config) {
+		mainContentUserPassw = UserPasswList.getMainContent();
+		loadMainContent(mainContentUserPassw);
+		setStep(2);
+	}
+
+	function startStep2(config) {
+		startStep4(config);
+		/*
+		switch (config.auth) {
+		case 'userPassw':
+			startUserPassw(config);
+			break;
+		default:
+			// TODO throw some error
+		}
+		*/
+	}
+	
+	function startPublishOnlyVote(config) {
+		election = new BlindedVoterElection('election', permissionLoaded); // use global namespace because
+		telly = new PublishOnlyTelly(election);
+		var mc = telly.getMainContent();
+		var me = this;
+		mc = mc + '<p><input disabled="disabled" id="sendvote" type="submit" '+
+		          'value="abstimmen!" ' + 
+		          'onclick="sendVote(event);" >';
+// TODO when made to an object instead of globals:      'onclick="function(event) {me.sendVote(event);};" >';
+	    loadMainContent(mc);
+	    setStep(3);
+	}
+	
+	function sendVote(event) {
+		// alert('jetzt wird die Stimme gesendet');
+		telly.sendVote();
+	}
+	
+	function permissionLoaded(ok){
+		var element = document.getElementById('sendvote');
+		element.disabled = !ok;
+	}
+	
+	function startStep3(config){
+		switch (config.telly) {
+		case 'publishOnly':
+			startPublishOnlyVote();
+			break;
+		default:
+				// TODO throw some error
+		}
+	}
+	
+	function showResultPublishOnlyVote(config) {
+		setStep(4);
+		var element = document.getElementById("loadedmaincontent");
+		election = new BlindedVoterElection('election', permissionLoaded, config); // use global namespace because
+		telly = new PublishOnlyTelly(election, config, element);
+		telly.handleUserClickGetAllVotes(loadMainContent);
+	}
+
+	function startStep4(config){
+		switch (config.telly) {
+		case 'publishOnly':
+			showResultPublishOnlyVote(config);
+			break;
+		default:
+				// TODO throw some error
+		}
+	}
+</script>
+
+</head>
+
+<body onload="//test();">
+	<div id="all">
+		<div id="ci">
+			<img id="logoimg" alt="Logo" src="logo125x149.svg" align="left">
+			<h1>VVVote</h1>
+			Online Wahl: Geheime und nachvollziehbare Abstimmungen
+		</div>
+
+		<div id="nav">
+			<a href=".">Neue Wahl anlegen</a> &nbsp;&nbsp;&nbsp; <a href=".">An
+				Abstimmung teilnehmen</a> &nbsp;&nbsp;&nbsp; <a href=".">Abstimmunsergebnis
+				abrufen</a>
+		</div>
+
+		<div id="steps">
+			<h1>Vorgehensweise</h1>
+			<ul>
+				<li><span id="step1" class="curr">Schritt 1: Wahlunterlagen holen</span></li>
+				<li><span id="step2">Schritt 2: Autorisierung</span></li>
+				<li><span id="step3"><a onclick="startStep3();">Schritt 3: Stimme abgeben</a></span></li>
+				<li><span id="step4"><a onclick="startStep4();">Schritt 4: Abstimmungsergebnis holen</a></span></li>
+			</ul>
+
+		</div>
+		<div id="maincontent">
+			<h1 id="steptitle">Schritt 1: Wahlunterlagen holen</h1>
+			<!-- this div is replaced by the html of the according auth-module -->
+			<div id="loadedmaincontent">
+			<script type="text/javascript">
+				document.write(maincontent);
+			</script>
+			</div>
+		</div>
+		<div id="log" name ="log">
+			<h1>Log:</h1>
+			<textarea id="logtextarea" name="log"></textarea>
+
+		</div>
+	</div>
+</body>
+</html>
