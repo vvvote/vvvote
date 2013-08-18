@@ -1,11 +1,12 @@
 <?php
+require_once 'Math/BigInteger.php';
 $electionId = 'wahl1';
 
 // number of ballots the servers have to sign 0: first signing server, 1: second signing server...
 // last server always must be set to 1.
 //     $numBallots = 2; 
 $numSignBallots   = array(0 => 3, 1 => 1);  
-$numVerifyBallots = array(0 => 3, 1 => 1);
+$numVerifyBallots = array(0 => 3, 1 => 2);
 
 $pServerKey1 = array(
 		'name'     => 'PermissionServer1',

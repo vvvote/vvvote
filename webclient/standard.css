@@ -3,6 +3,7 @@
 body {
 	background-color: grey; /* color outside the content */
 	padding: 0.4em;
+	font-family: serif;
 }
 
 div#all { /* base definition for all content */
@@ -25,18 +26,24 @@ div#ci h1 {
 	color: #0B0B61;
 }
 
-/*** Content ***/
-div#content {
-	padding: 0.4em;
+/*** curr **/
+span.curr {
+  font-weight: bold;
 }
 
-div#content h1 {
+/*** Content ***/
+div#maincontent {
+	padding: 1em;
+}
+
+div#maincontent h1 {
 	color: orange;
 }
 
 
 /*** Steps ****/
 div#steps {
+	margin: 1em;
 	float: right;
 	width: 20em;
 	border: 2px solid #0B0B61;
@@ -47,9 +54,7 @@ div#steps h1 {
 	font-size: 1.2em;
 	color: orange;
 }
-span.curr {
-  font-weight: bold;
-}
+
 
 /*** Navigation bar ***/
 div#nav {
@@ -63,10 +68,23 @@ div#nav {
 div#nav a {
 	text-align: center;
 	color: white;
-	/* font: 1em/220% serif; */
 	padding: 0.4em;
+	font-family: sans-serif;
 }
 
 div#nav a:hover {
 	background: black;
 }
+
+/*** Log ***/
+div#log {
+	padding: 1em;
+}
+div#log h1 {
+	font-size: 0.8em;
+}
+div#log textarea {
+  width: 70em;
+  height: 20em;	
+}
+

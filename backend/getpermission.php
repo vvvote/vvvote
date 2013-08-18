@@ -1,7 +1,8 @@
 <?php
 require_once 'Crypt/RSA.php';
-require_once 'db.php';
-require_once 'election.php';
+require_once 'modules-db/dbMySql.php'; 
+require_once 'modules-election/blindedvoter/election.php';
+require_once 'modules-auth/user-passw-list/auth.php';
 
 require_once 'conf-allservers.php';
 
@@ -23,15 +24,16 @@ header('Access-Control-Allow-Origin: *', false); // this allows any cross-site s
 // echo "\n\n:: Data received as \"raw\" (text/plain encoding) ::\n\n";
 if (isset($HTTP_RAW_POST_DATA)) { 
  // echo $HTTP_RAW_POST_DATA;
-	$db = new Db(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX, DB_TYP);
+	//$db = new DbMySql(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX, DB_TYP);
+	$auth = new UserPasswAuth($dbInfos);
 	$el = new Election($electionId, 
 			$numVerifyBallots, 
 			$numSignBallots, 
 			$pServerKeys, 
 			$serverkey, 
 			$numAllBallots,
-			$thisServerName,
-			$db);
+			$dbInfos,
+			$auth);
 	$result = $el->handlePermissionReq($HTTP_RAW_POST_DATA);
 // print "\r\n";
 	print "$result";
