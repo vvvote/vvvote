@@ -9,6 +9,10 @@ class WrongRequestException extends Exception {
 		$this->errortxt = $errortxt_;
 	}
 	
+	function __toString() {
+		return $this->errorno . ': ' . $this->errortxt;
+	}
+	
 	
 	static function throwException($errorno, $errortxt, $data) {
 		global $debug;

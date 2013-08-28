@@ -9,14 +9,16 @@
 </style>
 
 <script src="tests.js"></script>
+<script src="config/config.js"></script>
 <script src="exception.js"></script>
+<script src="tools/mixed.js"></script>
 <script src="tools/url.js"></script>
 <script src="getelectionconfig.js"></script>
 <!-- the following "<script>" is used as heredoc replacement -->
 <script  id="authUserPasswHtml" type="mumpiz">
 <div id="auth">
 	<form name="permission" method="post" onsubmit="return false;">
-		<!--  action="getPermission"> -->
+		<!--  action="getPe"> -->
         Als Ergebnis dieses Schrittes erhalten Sie einen Wahlzettel, den Sie speichern müssen und zur Stimmabgabe später wieder laden müssen.
 		Der Stimmzettel berechtigt zur Stimmabgabe - geben Sie ihn also nicht weiter! Er ist anonym, d.h. es kann nicht festgestellt werden, wem er gehört.
 		<div align="center">
@@ -58,9 +60,6 @@
 				</tr>
 				<tr>
 					<td><textarea name="log" rows=20 cols=80>Log:</textarea></td>
-				</tr>
-				<tr>
-					<td><input type="file" id="savefile" /></td>
 				</tr>
 			</table>
 		</div>
@@ -114,8 +113,9 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 	  element.value = element.value + log;
 	}	
 
-	var maincontent = GetElectionConfig.getMainContent();
-
+	var maincontent = ''; //GetElectionConfig.getMainContent();
+	// maincontent = startVoting();
+	
 	function onStep1CallBack(config) {
 		// alert("got elcetion config: " + JSON.stringify(config));
 		// TODO check config.error
@@ -128,10 +128,12 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 		//document.write('<h1>TEST</h1>');
 	}
 	function setStep(step) {
-		var element = document.getElementById('step1'); // + step-1);
-		element.removeAttribute('class')
-		element = document.getElementById("step" + step);
-		element.setAttribute('class', 'curr');
+		var element;
+		for (var i=1; i<=4; i++) {
+			element = document.getElementById('step' + i); // + step-1);
+			if (i == step) {element.setAttribute('class', 'curr');}
+			else            {element.removeAttribute('class')}
+		}
 		var stepstr;
 		switch (step) {
 		 	case 1: stepstr = 'Schritt 1: Wahlunterlagen holen'; break;
@@ -152,27 +154,29 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 	}
 
 	function startStep2(config) {
-		startStep4(config);
-		/*
-		switch (config.auth) {
+		// startStep4(config);
+				switch (config.auth) {
 		case 'userPassw':
 			startUserPassw(config);
 			break;
 		default:
 			// TODO throw some error
 		}
-		*/
+		
 	}
 	
-	function startPublishOnlyVote(config) {
-		election = new BlindedVoterElection('election', permissionLoaded); // use global namespace because
+	sendVoteHtml = '<p><input disabled="disabled" id="sendvote" type="submit" '+
+    'value="abstimmen!" ' + 
+    'onclick="sendVote(event);" >';
+ //	var me = this;
+ // TODO when made to an object instead of globals:      'onclick="function(event) {me.sendVote(event);};" >';
+	
+	function startPublishOnlyVote(config, needElection) {
+		var mc = '';
+		if (needElection) {mc = mc + BlindedVoterElection.getPermissionHtml('election')}
 		telly = new PublishOnlyTelly(election);
-		var mc = telly.getMainContent();
-		var me = this;
-		mc = mc + '<p><input disabled="disabled" id="sendvote" type="submit" '+
-		          'value="abstimmen!" ' + 
-		          'onclick="sendVote(event);" >';
-// TODO when made to an object instead of globals:      'onclick="function(event) {me.sendVote(event);};" >';
+		mc = mc + telly.getMainContent();
+		mc = mc + sendVoteHtml;
 	    loadMainContent(mc);
 	    setStep(3);
 	}
@@ -183,14 +187,23 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 	}
 	
 	function permissionLoaded(ok){
-		var element = document.getElementById('sendvote');
-		element.disabled = !ok;
+		if (ok) {
+			telly = new PublishOnlyTelly(election, election.config, document.getElementById('loadedmaincontent'));
+			var mc = telly.getMainContent();
+			mc = mc + sendVoteHtml;
+			loadMainContent(mc);
+			var element = document.getElementById('sendvote');
+			element.disabled = !ok;
+			setStep(3);
+	} else {
+			alert('Wahlschein ungültig');
+		}
 	}
 	
-	function startStep3(config){
+	function startStep3(config, needElection){
 		switch (config.telly) {
 		case 'publishOnly':
-			startPublishOnlyVote();
+			startPublishOnlyVote(config, needElection);
 			break;
 		default:
 				// TODO throw some error
@@ -214,11 +227,52 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 				// TODO throw some error
 		}
 	}
+	
+	function startVoting(load) {
+		election = new BlindedVoterElection('election', permissionLoaded); // use global namespace because
+		var mc = '<h2>Wahlunterlagen holen</h2>'+
+		         '<p><ul><li>Ich habe noch keinen Wahlschein</li>' +
+				 '<li>für die Wahl wird kein Wahlschein benötigt</li>' +
+				 '<li>Ich weiß nicht, ob für die Wahl ein Wahlschein benötigt wird</li></ul>';
+		mc = mc + GetElectionConfig.getMainContent('gotElectionConfigForVoting') + '</p>';
+		mc = mc + '<p></p>&nbsp;<p></p>';
+		mc = mc + '<h2>Ich habe bereits einen Wahlschein</h2><br>';
+		mc = mc + '' + BlindedVoterElection.getPermissionHtml('election') + '';
+		if (load) {loadMainContent(mc); }
+		return mc;
+	}
+	
+	function gotElectionConfigForTelly(config) {
+		switch (config.telly) {
+		case 'publishOnly':
+			showResultPublishOnlyVote(config);
+			break;
+		default:
+				// TODO throw some error
+		}
+	}
+	
+	function gotElectionConfigForVoting(config) {
+		config.phase = 'generatePermissions';
+		switch (config.phase) {
+		case 'generatePermissions':
+			startStep2(config);
+			break;
+		case 'voting':
+			startStep3(config, true);		
+		}
+	}
+	
+	function startLoadingResult() {
+		var mc = GetElectionConfig.getMainContent('gotElectionConfigForTelly');
+		loadMainContent(mc);
+		currAction = 'getResult'; // this is used in order to determine what should happen after the config was loaded
+	}
 </script>
 
 </head>
 
-<body onload="//test();">
+<body onload="startVoting(true); //test();">
 	<div id="all">
 		<div id="ci">
 			<img id="logoimg" alt="Logo" src="logo125x149.svg" align="left">
@@ -227,9 +281,9 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 		</div>
 
 		<div id="nav">
-			<a href=".">Neue Wahl anlegen</a> &nbsp;&nbsp;&nbsp; <a href=".">An
-				Abstimmung teilnehmen</a> &nbsp;&nbsp;&nbsp; <a href=".">Abstimmunsergebnis
-				abrufen</a>
+			 <a onclick=""                      >Neue Wahl anlegen</a> &nbsp;&nbsp;&nbsp;
+			 <a onclick="startVoting(true);"    >An Abstimmung teilnehmen</a> &nbsp;&nbsp;&nbsp; 
+			 <a onclick="startLoadingResult();" >Abstimmunsergebnis abrufen</a>
 		</div>
 
 		<div id="steps">

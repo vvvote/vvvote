@@ -18,7 +18,7 @@
 
 <?php
 // TODO remove these lines before release
-require_once 'conf-thisserver.php';
+require_once 'config/conf-thisserver.php';
 
 require_once 'modules-auth/user-passw-list/dbAuth.php';
 require_once 'modules-election/blindedvoter/dbBlindedVoter.php';
@@ -37,6 +37,9 @@ if ((isset($_GET['importVoterList' ])) || (isset($_POST['importVoterList' ]))) {
 			0 => array('electionId' => $electionId, 'voterId' => 'pakki'  , 'secret' => 'pakki'),
 			1 => array('electionId' => $electionId, 'voterId' => 'melanie', 'secret' => 'melanie')
 			);
+	for ($i=0; $i<50; $i++) {
+		array_push($voterlist, array('electionId' => $electionId, 'voterId' => "user$i", 'secret' => "user$i"));
+	}
 	$db = new DbAuth($dbInfos);
 	$db->importVoterListFromArray($voterlist);
 
@@ -44,7 +47,7 @@ if ((isset($_GET['importVoterList' ])) || (isset($_POST['importVoterList' ]))) {
 
 if ((isset($_GET['checkCredentials' ])) || (isset($_POST['checkCredentials' ]))) {
 	$dbauth = new DbAuth($dbInfos);
-	$ok = $dbauth->checkCredentials('wahl1', 'pakkis', 'pakkis');
+	$ok = $dbauth->checkCredentials('wahl1', 'pakki', 'pakki');
   	print "<br>\n ok? ";
   	print_r($ok);
 }

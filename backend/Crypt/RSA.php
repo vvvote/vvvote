@@ -2223,7 +2223,7 @@ class Crypt_RSA {
         // if $m is larger than two million terrabytes and you're using sha1, PKCS#1 suggests a "Label too long" error
         // be output.
 
-        $emLen = ($emBits + 1) >> 3; // ie. ceil($emBits / 8)
+        $emLen = ceil($emBits / 8); // by pfeffer, was: // ($emBits + 1) >> 3; // ie. ceil($emBits / 8)
         $sLen = $this->sLen == false ? $this->hLen : $this->sLen;
 
         $mHash = $this->hash->hash($m);
@@ -2261,8 +2261,19 @@ class Crypt_RSA {
         // if $m is larger than two million terrabytes and you're using sha1, PKCS#1 suggests a "Label too long" error
         // be output.
 
-        $emLen = ($emBits + 1) >> 3; // ie. ceil($emBits / 8);
-        $sLen = $this->sLen == false ? $this->hLen : $this->sLen;
+        $emLen = ceil($emBits / 8); // by pfeffer, has been: ($emBits + 1) >> 3; // ie. ceil($emBits / 8);
+        switch ($this->sLen) {
+        	case -1:
+        		$sLen = $this->hLen;
+        		break;
+        	case -2: // added by Pfeffer for compability with jsrsasign
+        		$sLen = $emLen - $this->hLen - 2;
+        		break;
+        	default:
+        		if ($this->sLen >=0)   {$sLen = $this->sLen;}
+        		else {      		    $sLen = $this->hLen;}
+        }
+        // commented out by Pfeffer because replaced by switch: $sLen = $this->sLen == false ? $this->hLen : $this->sLen;
 
         $mHash = $this->hash->hash($m);
         if ($emLen < $this->hLen + $sLen + 2) {
@@ -2270,13 +2281,14 @@ class Crypt_RSA {
         }
 
         if ($em[strlen($em) - 1] != chr(0xBC)) {
+        	$nhex = $this->modulus->toHex();
             return false;
         }
 
         $maskedDB = substr($em, 0, -$this->hLen - 1);
         $h = substr($em, -$this->hLen - 1, $this->hLen);
         $temp = chr(0xFF << ($emBits & 7));
-        if ((~$maskedDB[0] & $temp) != $temp) {
+        if ((~$maskedDB[0] & $temp) != $temp) { // check in no. 6 in http://tools.ietf.org/html/rfc3447#page-40
             return false;
         }
         $dbMask = $this->_mgf1($h, $emLen - $this->hLen - 1);
@@ -2284,7 +2296,7 @@ class Crypt_RSA {
         $db[0] = ~chr(0xFF << ($emBits & 7)) & $db[0];
         $temp = $emLen - $this->hLen - $sLen - 2;
         if (substr($db, 0, $temp) != str_repeat(chr(0), $temp) || ord($db[$temp]) != 1) {
-            return false;
+            return false;   // check in no. 10 in http://tools.ietf.org/html/rfc3447#page-40
         }
         $salt = substr($db, $temp + 1); // should be $sLen long
         $m2 = "\0\0\0\0\0\0\0\0" . $mHash . $salt;
@@ -2332,14 +2344,21 @@ class Crypt_RSA {
     {
         // Length checking
 
-        if (strlen($s) != $this->k) {
+        if (strlen($s) > $this->k) {
             user_error('Invalid signature', E_USER_NOTICE);
             return false;
         }
+        
+      //   add leading zeros if missing added by Pfeffer
+       while (strlen($s) < $this->k) {
+        	$s = chr(0) . $s;
+       }
+        
 
         // RSA verification
-
-        $modBits = 8 * $this->k;
+ 		
+        $tmp = $this->modulus->toBits();
+        $modBits = strlen($tmp);// by Pfeffer, has been: 8 * $this->k;
 
         $s2 = $this->_os2ip($s);
         $m2 = $this->_rsavp1($s2);
@@ -2347,7 +2366,8 @@ class Crypt_RSA {
             user_error('Invalid signature', E_USER_NOTICE);
             return false;
         }
-        $em = $this->_i2osp($m2, $modBits >> 3);
+        $tmp = $modBits / 8; // by pfeffer, has been: $modBits >> 3
+        $em = $this->_i2osp($m2, ceil($tmp));
         if ($em === false) {
             user_error('Invalid signature', E_USER_NOTICE);
             return false;

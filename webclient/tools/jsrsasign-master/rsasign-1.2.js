@@ -80,7 +80,7 @@ function _rsasign_getHexPaddedDigestInfoForString(s, keySize, hashAlg) {
 
 function _zeroPaddingOfSignature(hex, bitLength) {
     var s = "";
-    var nZero = bitLength / 4 - hex.length;
+    var nZero = Math.ceil(bitLength / 8) * 2 - hex.length; // changed by pfeffer, has been: var nZero = bitLength / 4 - hex.length;
     for (var i = 0; i < nZero; i++) {
 	s = s + "0";
     }
@@ -144,10 +144,22 @@ function _rsasign_signStringPSS(s, hashAlg, sLen) {
     var hHash = hashFunc(rstrtohex(s));
     var mHash = hextorstr(hHash);
     var hLen = mHash.length;
-    var emBits = this.n.bitLength() - 1;
+    var emBits = this.n.bitLength() -1; // removed by Pfeffer: - 1;
     var emLen = Math.ceil(emBits / 8);
     var i;
 
+    switch (sLen) {
+    case -1:
+    	sLen = hLen; // same as hash length
+    	break;
+    case -2:
+    	sLen = emLen - hLen - 2; // maximum
+    	break;
+    case 0: break;
+    default:
+    	throw "invalid salt length";
+    }
+/*
     if (sLen === -1) {
         sLen = hLen; // same as hash length
     } else if ((sLen === -2) || (sLen === undefined)) {
@@ -155,7 +167,7 @@ function _rsasign_signStringPSS(s, hashAlg, sLen) {
     } else if (sLen < -2) {
         throw "invalid salt length";
     }
-
+*/
     if (emLen < (hLen + sLen + 2)) {
         throw "data too long";
     }
@@ -191,9 +203,17 @@ function _rsasign_signStringPSS(s, hashAlg, sLen) {
     }
 
     maskedDB.push(0xbc);
-
-    return _zeroPaddingOfSignature(this.doPrivate(new BigInteger(maskedDB)).toString(16),
-				   this.n.bitLength());
+    var x = String.fromCharCode.apply(String, maskedDB);
+    var xBi = str2bigInt(x, 256);
+    var y = this.d.toString(16);
+    var yBi = str2bigInt(y, 16);
+    var n = this.n.toString(16);
+    var nBi = str2bigInt(n, 16);
+    var erg = powMod(xBi, yBi, nBi);
+    var ergHex1 = bigInt2str(erg, 16);
+    var ergHex2 = _zeroPaddingOfSignature(this.doPrivate(new BigInteger(maskedDB)).toString(16),
+			   this.n.bitLength());
+    return ergHex1; 
 }
 
 // ========================================================================
@@ -293,7 +313,7 @@ function _rsasign_verifyStringPSS(sMsg, hSig, hashAlg, sLen) {
     var hHash = hashFunc(rstrtohex(sMsg));
     var mHash = hextorstr(hHash);
     var hLen = mHash.length;
-    var emBits = this.n.bitLength() - 1;
+    var emBits = this.n.bitLength() -1; // Pfeffer: removed: - 1;
     var emLen = Math.ceil(emBits / 8);
     var i;
 

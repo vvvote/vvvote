@@ -87,7 +87,7 @@ function onGetPermClick()  {
 /**
  * @param varname the name of the global var that holds the instance of this object. It is used for HTML code to call back.
  */
-var BlindedVoterElection = function (varname, onpermloaded, config) {
+var BlindedVoterElection = function (varname, onpermloaded, config) { // TODO save and load config in permission file
 	this.varname = varname; // the name of the global var that holds the instance of this object. It is used for HTML code to call back. 
 	this.callOnPermLoaded = onpermloaded;
 	this.permission = {};
@@ -103,9 +103,9 @@ var BlindedVoterElection = function (varname, onpermloaded, config) {
  * provide HTML code to be presented in step 3 (voting)
  *  
  */
-BlindedVoterElection.prototype.getPermissionHtml = function() {
+BlindedVoterElection.getPermissionHtml = function(varname) {
 	return 'Bitte laden Sie die Datei, in der Ihr Wahlschein gespeichert ist:<br>'+
-	'<input type="file" id="loadfile" accept="text/plain" onchange="' + this.varname +'.loadPermFile(event);"/>';
+	'<input type="file" id="loadfile" accept="text/plain" onchange="' + varname +'.loadPermFile(event);"/>';
 };
 
 /**
@@ -151,9 +151,16 @@ BlindedVoterElection.prototype.checkPerm = function() {
 
 BlindedVoterElection.prototype.signVote = function (vote) {
 	var votestr = vote;
-	var publickey = str2key(this.permission.transm.signed.votingno);
-	var privatekey = this.permission.keypair.priv; 
-	var rsa = new RSAKey();
+	var privatekeyarray = this.permission.keypair.priv;
+	var hash = SHA256(vote);
+	var hashBi = str2bigInt(hash, 16);
+	var privatekey = arrayStr2key(privatekeyarray);
+	var sigBI = RsaEncDec(hashBi, privatekey);
+	var sig = bigInt2str(sigBI, 16);
+	
+	// var publickey = str2key(this.permission.transm.signed.votingno);
+/*	scheiß library ist fehlerhaft: Die PSS-Signatur ist nur manchmal korrekt.
+ * var rsa = new RSAKey();
 	var coeffs = getHelpingNumbers(str2bigInt(privatekey.p, 16), str2bigInt(privatekey.q, 16), str2bigInt(privatekey.exp, 16), str2bigInt(privatekey.n, 16));
 	rsa.setPrivateEx(privatekey.n, 
 			bigInt2str(publickey.exp, 16), 
@@ -163,7 +170,12 @@ BlindedVoterElection.prototype.signVote = function (vote) {
 			bigInt2str(coeffs.d_P, 16), 
 			bigInt2str(coeffs.d_Q, 16), 
 			bigInt2str(coeffs.q_inv, 16)); //  RSASetPrivateEx(N,E,D,P,Q,DP,DQ,C)
-	var sig = rsa.signStringPSS(votestr, 'sha256', -2); // TODO sLen? salt length (-1 or -2) 
+	var sig = rsa.signStringPSS(votestr, 'sha256', 0); // TODO sLen? salt length (-1 or -2) 
+	Test:
+	var verified = rsa.verifyPSS(votestr, sig, 'sha256', 0);
+	if (verified) alert('unterschrift korrekt');
+	*/
+	
 	signedvote = {};
 	signedvote.vote = votestr;
 	signedvote.sig  = sig;
@@ -173,3 +185,23 @@ BlindedVoterElection.prototype.signVote = function (vote) {
 	return transm;
 };
 
+
+BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
+	var pubkeystr = vote.permission.signed.votingno;
+	var pubkey = str2key(pubkeystr);
+	// var rsa = new RSAKey();
+	// rsa.setPublic(bigInt2str(pubkey.n, 16), bigInt2str(pubkey.exp, 16));
+	var voteitself = vote.vote.vote;
+	var sig = vote.vote.sig;
+	try {
+		// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
+		var sigOk = rsaVerifySig(voteitself, sig, pubkey);
+		if (sigOk) {
+			alert('Die Unterschrift is korrekt');
+		} else {
+			alert('Die Unterschrift ist nicht korrekt');
+		}
+	} catch (e) {
+		alert("Fehler beim überprüfen der Signatur:\n" + e);
+	}
+};

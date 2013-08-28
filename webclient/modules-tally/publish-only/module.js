@@ -16,7 +16,7 @@ var PublishOnlyTelly = function (election, config, showResultElement) { // TODO 
 PublishOnlyTelly.prototype.getMainContent = function() {
 //	var element = document.getElementById('PublishOnlyTellyHtml'); // this is in index.html in order to have a substitute for heredoc
 //	ret = element.innerHTML
-	var ret = this.election.getPermissionHtml();
+	var ret = ''; // this.election.getPermissionHtml();
 	ret = ret + '\n<p>\n'; // TODO present options from config
 	ret = ret + 'Ihre Stimme: <input type="text" name="vote" id="vote" value="Alternative A">';
 	ret = ret + '\n</p>\n';
@@ -78,14 +78,13 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 	  xml2.onload = function() { callbackFunction.call(callbackObject, xml2); }; 
 	  userlog('--> gesendet an Server ' + (url) + ': ' + data + "\r\n\r\n");
 	  xml2.send(data);
-
 }
 
 // TODO move this to tools or so
 function parseServerAnswer(xml) {
 	if (xml.status != 200) {
 		userlog("\n<--- empfangen:\n " + xml.status);
-		ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: ' + xml.status);
+		throw new ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: ' + xml.status);
 	}
 	try {
 		userlog("\n<--- empfangen:\n" + xml.responseText);
@@ -93,39 +92,65 @@ function parseServerAnswer(xml) {
 		return data;
 	} catch (e) {
 		// defined in exception.js
-		ErrorInServerAnswer(2001, 'Error: could not JSON decode the server answer', 'Got from server: ' + xml.responseText);
+		throw new ErrorInServerAnswer(2001, 'Error: could not JSON decode the server answer', 'Got from server: ' + xml.responseText);
 	}
 }
 
 
 PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
+	var votesOnly = new Array();
 	try {
 		var data = parseServerAnswer(xml);
 		if (data.cmd != 'verifyCountVotes') {
-			ErrorInServerAnswer(2002, 'Error: Expected >verifyCountVotes<', 'Got from server: ' + data.cmd);
+			throw new ErrorInServerAnswer(2003, 'Error: Expected >verifyCountVotes<', 'Got from server: ' + data.cmd);
 		} 
+		this.votes = data.data;
 		// process data
-		var htmlcode = '<table>';
-		htmlcode = htmlcode + '<td>' + 'Stimme'                  + '</td>'; 
-		htmlcode = htmlcode + '<td> <span style="font: 30%">' + 'Stimmnummer' + '</span></td>'; 
-		for (var i=0; i<data.data.length ;i++) {
+		var me = this;
+		var htmlcode = '<div id="allvotes"><table>';
+		htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + 'Stimme'                  + '</th>'; 
+		htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</span></th></thead>';
+		htmlcode = htmlcode + '<tbody>';
+		for (var i=0; i<data.data.length; i++) {
 			htmlcode = htmlcode + '<tr>';
-			htmlcode = htmlcode + '<td>' + data.data[i].vote.vote                  + '</td>'; 
-			htmlcode = htmlcode + '<td> <span style="font: 30%">' + data.data[i].permission.signed.votingno + '</span></td>'; 
-			htmlcode = htmlcode + '<td> <button>Verify Signatures</button>' /* + data.data[i].permission.sigs[0].sig   */  + '</td>'; 
+			htmlcode = htmlcode + '<td> <span id="vote">' + data.data[i].vote.vote                  + '</span></td>'; 
+			htmlcode = htmlcode + '<td> <span id="votingno">' + data.data[i].permission.signed.votingno + '</span></td>'; 
+			// TODO substitude election for this.varname
+			htmlcode = htmlcode + '<td> <button onclick="telly.handleUserClickVerifySig(' + i +');" >Verify Signatures</button>' + '</td>'; 
 //			htmlcode = htmlcode + '<td>' + data.data[i].permission.signed.salt     + '</td>'; 
 			htmlcode = htmlcode + '</tr>';
+			// TODO add to votes only if sigOk
+			votesOnly[i] = data.data[i].vote.vote;
 		}
-		htmlcode = htmlcode + '</table>';
-		this.resultElement.innerHTML = htmlcode;
+		htmlcode = htmlcode + '</tbody></table></div>';
 	} catch (e) {
 		if (e instanceof MyException ) {e.alert();}
 		else {throw e;}
 	}
-};
-
-
-PublishOnlyTelly.prototype.handleUserClick = function () {
 	
+	var freqs = getFrequencies(votesOnly);
+	freqs.sort(function(a, b) {return b.freq - a.freq;});
+	var numVotes = votesOnly.length;
+	var htmlcode2 = '<div id="freq"><table>';
+	htmlcode2 = htmlcode2 + '<thead>';
+	htmlcode2 = htmlcode2 + '<th class="optionHead"  >' + 'Option'         + '</th>'; 
+	htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Stimmen' + '</th>';
+	htmlcode2 = htmlcode2 + '</thead><tfoot>';
+	htmlcode2 = htmlcode2 + '<tr><td>Gesamt</td>';
+	htmlcode2 = htmlcode2 + '<td class="numVotes">' + numVotes+ '</td>';
+	htmlcode2 = htmlcode2 + '</tfoot><tbody>';
+	for (var i=0; i<freqs.length; i++) {
+		htmlcode2 = htmlcode2 + '<tr>';
+		htmlcode2 = htmlcode2 + '<td class="option"  >' + freqs[i].option + '</td>'; 
+		htmlcode2 = htmlcode2 + '<td class="numVotes">' + freqs[i].freq   + '</td>'; 
+		htmlcode2 = htmlcode2 + '</tr>';
+	}
+	htmlcode2 = htmlcode2 + '</tbody>';
+	htmlcode2 = htmlcode2 + '</table></div>';
+
+	this.resultElement.innerHTML = htmlcode2 + '<br> <br>\n\n' + htmlcode;
 };
 
+PublishOnlyTelly.prototype.handleUserClickVerifySig = function (no) {
+	this.election.verifyVoteSigs(this.votes[no]);
+};

@@ -4,17 +4,27 @@ require_once 'dbBlindedVoter.php';
 require_once 'exception.php'; // I dont know why this works - the files are in different directories but this way php finds both
 require_once 'crypt.php';
 
+/**
+ * Class that implements the blinded voter scheme
+ *
+ * errorno start at 1 and
+ * errorno start at 100 and 200 and 300 and 1000 and 400
+ * 
+ * @author r
+ *
+ */
 
 class Election {
 	var $electionId; // = 'wahl1';
 	var $numVerifyBallots;
 	var $numSignBallots;
 	var $numAllBallots;
+	var $numSigsRequiered;
 	var $db;
 	var $auth;
 	var $crypt;
 
-	function __construct($electionId_, $numVerifyBallots_, $numSignBallots_, array $pServerKeys_, $serverkey_, $numAllBallots_, $dbInfos, Auth $auth_) {
+	function __construct($electionId_, $numVerifyBallots_, $numSignBallots_, array $pServerKeys_, $serverkey_, $numAllBallots_, $numSigsRequiered_, $dbInfos, Auth $auth_) {
 		$this->electionId       = $electionId_;
 		$this->numVerifyBallots = $numVerifyBallots_;
 		$this->numSignBallots   = $numSignBallots_;
@@ -22,6 +32,7 @@ class Election {
 		$this->db               = new DbBlindedVoter($dbInfos);
 		$this->auth				= $auth_;
 		$this->crypt            = new Crypt($pServerKeys_, $serverkey_);
+		$this->numSigsRequiered = $numSigsRequiered_;
 		
 	}
 
@@ -282,6 +293,24 @@ class Election {
 		return $ret;
 	}
 
+	/**
+	 * This functin is called from telly to check if the
+	 * vote should be accepted
+	 * @param unknown $vote
+	 * @return boolean
+	 */
+	function verifyPermission($vote) {
+		if (! isset($vote['permission']['sigs']) ) {
+			WrongRequestException::throwException(400, "Error: permission does not have a signature from a permission server", "verifyPermission: complete vote: " . print_r($vote, true));
+			return false;
+		}
+		if (count($vote['permission']['sigs']) < $this->numSigsRequiered) {
+			WrongRequestException::throwException(401, "Error: permission does not have the requiered number of signatures from permission servers", "verifyPermission: requiered number of sigs from permission servers: " . $this->numSigsRequiered . 'number of sigs received: ' . count($vote['sigs']));
+			return false;
+		}
+		$str = $this->ballot2strForSig($vote['permission']['signed']);
+		return $this->crypt->verifySigs($str, $vote['permission']['sigs']);
+	}
 
 	function handlePermissionReq($req) {
 		try {
