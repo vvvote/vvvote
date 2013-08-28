@@ -85,9 +85,33 @@ function str2key(str) {
 	return key;
 }
 
+function arrayStr2key(arraystr) {
+	var key = {};
+	key.n = str2bigInt(arraystr.n, 16);
+	key.exp = str2bigInt(arraystr.exp, 16);
+	key.p = str2bigInt(arraystr.p, 16);
+	key.q = str2bigInt(arraystr.q, 16);
+	return key;
+}
+
 function RsaEncDec(plaintext, key){
 	if (!greater(key.n, plaintext)) { throw ("RsaEncDec(): modulus " + key.n + " must be greater than plaintext" + plaintext);}
 	return powMod(plaintext, key.exp, key.n);
+}
+
+/**
+ * 
+ * @param plaintext string 
+ * @param sig hex encoded big integer
+ * @param key valid key
+ * @returns
+ */
+function rsaVerifySig(plaintext, sig, key) {
+	var sigBi = str2bigInt(sig, 16);
+	var hashFromSigBi = RsaEncDec(sigBi, key);
+	var hash = SHA256(plaintext);
+	var hashBi = str2bigInt(hash, 16);
+	return equals(hashBi, hashFromSigBi);
 }
 
 /**

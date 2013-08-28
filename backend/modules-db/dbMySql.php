@@ -188,14 +188,19 @@ class DbMySql { // TODO dbBase
 	}
 */
 	
-	function load($where, $tablename, $colname) {
-		$tname = $this->prefix . $tablename;
+	function _makewherestr($where) {
 		$wherestr = 'WHERE (';
 		foreach ($where as $name => $cond) {
 			if (substr($wherestr, -1, 1) != '(' ) $wherestr = $wherestr . ' AND ';
 			$wherestr = $wherestr . $name . ' = :' . $name;
 		}
 		$wherestr = $wherestr . ')';
+		return $wherestr;
+	}
+	
+	function load($where, $tablename, $colname) {
+		$wherestr = $this->_makewherestr($where);
+		$tname = $this->prefix . $tablename;
 		$statmnt = $this->connection->prepare("SELECT $colname FROM $tname $wherestr");
 		foreach ($where as $name => $cond) {
 			$statmnt->bindValue(":$name", $cond);
@@ -210,9 +215,26 @@ class DbMySql { // TODO dbBase
 		}
 		return $ret;
 	}
+	
+	function summarize($where, $groupby, $func, $funccol, $tablename, $colname) {
+		$wherestr = $this->_makewherestr($where);
+		$tname = $this->prefix . $tablename;
+		$statmnt = $this->connection->prepare("SELECT $colname, $func($funccol) FROM $tname $wherestr GROUP BY $groupby");
+		foreach ($where as $name => $cond) {
+			$statmnt->bindValue(":$name", $cond);
+		}
+		$status = $statmnt->execute();
+		$got = $statmnt->fetchAll();
+		if ($got === false) return false;
+		$ret = array();
+		foreach ($got as $num => $gotrow) {
+			$ret[$num] = json_decode($gotrow[0], true);
+			if ($ret[$num] == null) $ret[$num] = $gotrow[0]; // it's not JSON encoded
+		}
+		return $ret;
+		
+	}
 
-	
-	
 	function prepare($statement) {
 		return $this->connection->prepare($statement);
 	}

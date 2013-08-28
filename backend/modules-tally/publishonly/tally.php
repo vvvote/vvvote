@@ -20,9 +20,11 @@ require_once __DIR__ . '/dbPublishOnlyTally.php';
 class PublishOnlyTelly {
 	var $db;
 	var $crypt;
-	function __construct($dbInfo, Crypt $crypt) {
+	var $election;
+	function __construct($dbInfo, Crypt $crypt, Election $election_) {
 		$this->db = new DbPublishOnlyTelly($dbInfo);
 		$this->crypt = $crypt;
+		$this->election = $election_;
 	}
 	
 	function isFirstVote($electionId, $votingno) { // TODO make sure that this is called only after the sigs have been checked
@@ -36,10 +38,13 @@ class PublishOnlyTelly {
 	*/
 	
 	function sigsOk($vote) {
-		// check the sigs of the permission servers
-		
-		$this->crypt->verifySigs($text, $arrayOfSigs);
 		// check the sig of the voter on the vote
+		$votersigOk = $this->crypt->verifyVoterSig($vote);
+		if (! ($votersigOk === true) ) return false;
+		// check the sigs of the permission servers
+		$permissionSigsOk = $this->election->verifyPermission($vote);
+		
+		return  ($votersigOk && $permissionSigsOk);
 	}
 	
 	/**
@@ -47,8 +52,8 @@ class PublishOnlyTelly {
 	 * return false if storing of the vote failed
 	 * @param unknown $vote
 	 */
-	function store($electionId, $votingno, $voterreq) {
-		return $this->db->storeVote($electionId, $votingno, $voterreq);
+	function store($electionId, $votingno, $vote, $voterreq) {
+		return $this->db->storeVote($electionId, $votingno, $vote, $voterreq);
 	}
 	
 	/*
@@ -83,24 +88,42 @@ class PublishOnlyTelly {
 	function storeVoteEvent($voterReq) {
 		// $vote = $this->decrypVoterReq($voterReq);
 		// check if the voting is open for the given electionId (period in time)
-		// check if enough sigs from permission servers are sent along with the vote
-		$electionId = $voterReq['permission']['signed']['electionId'];
-		$votingno   = $voterReq['permission']['signed']['votingno'];
-		
+		try {
+			$electionId = $voterReq['permission']['signed']['electionId'];
+			$votingno   = $voterReq['permission']['signed']['votingno'];
+			$vote       = $voterReq['vote']['vote'];
+		} catch (OutOfBoundsException $e) {
+			WrongRequestException::throwException(1102, 'The request ist missing >electionId< and/or >votingno<', "complete request: " . print_r($voterReq, true));
+		} catch (OutOfRangeException $e) {
+			WrongRequestException::throwException(1103, 'The request ist missing >electionId< and/or >votingno<', "complete request: " . print_r($voterReq, true));
+		}
 		$isfirstv = $this->isFirstVote($electionId, $votingno);
 		if (! $isfirstv) {
-			WrongRequestException::throwException(2000, ' For this election, a vote from you is already stored', "Election: $electionId, Voting number $votingno"); 
+			WrongRequestException::throwException(1102, 'For this election, a vote from you is already stored', "Election: $electionId, Voting number $votingno");
 		}
-        $this->store($electionId, $votingno, $voterReq);
+		try {
+			$ok = $this->sigsOk($voterReq);
+			if ($ok) {
+				$this->store($electionId, $votingno, $vote, $voterReq);
+			} else WrongRequestException::throwException(1104, 'Signature verification failed.', ''); ;
+		} catch (Exception $e) {
+			WrongRequestException::throwException(1104, 'Signature verification failed.', "details: " . $e->__toString() ); ;
+		}
 		// TODO sign the vote
-		return json_encode(array('cmd' => 'saveYourCountedVote')); // TODO sent the signed vote back
+		return array('cmd' => 'saveYourCountedVote'); // TODO sent the signed vote back
 	}
-	
+
 	function getAllVotesEvent($voterReq) {
 		// TODO check if client is allowed to see the election result (e.g. was allowed to vote / did vote himself)
 		// TODO check if voting phase has ended
 		// TODO check in election config database if only election admin can see all votes
 		$allvotes = $this->db->getVotes($voterReq['electionId']);
+		$result = $this->db->getResult($voterReq['electionId']);
+		/* TODO move this to a new function getResult / EndElection
+		foreach ($allvotes as $vote) {
+			$this->sigsOk($vote);
+		}
+		*/
 		$ret = array ('data' => $allvotes, 'cmd' => 'verifyCountVotes');
 		return $ret;
 	}

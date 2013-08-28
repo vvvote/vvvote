@@ -76,6 +76,11 @@ class DbBase {
 		return $this->connection->load($where, $tablename, $colname);
 	}
 	
+	function summarize($where, $groupby, $func, $funccol, $tablename, $colname) {
+		return $this->connection->summarize($where, $groupby, $func, $funccol, $tablename, $colname);
+	}
+	
+	
 	/**
 	 * Load $volname in table $tablename for $electionId and $voterId
 	 * returns false if not successfull, json decoded array otherwise

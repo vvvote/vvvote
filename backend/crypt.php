@@ -59,6 +59,10 @@ class Crypt {
 	 */
 	function verifySigHash($hash, $sig, $servername) {
 		$pubkey = $this->getServerKey($servername);
+		return static::verifySigKey($hash, $sig, $pubkey);
+	}
+
+	static function verifySigKey($hash, $sig, $pubkey) {
 		$rsa = new rsaMyExts();
 		$rsa->loadKey($pubkey);
 		$hashBI = new Math_BigInteger($hash, 16);
@@ -69,6 +73,7 @@ class Crypt {
 		}
 		WrongRequestException::throwException(1001, "Error: signature verifcation failed", "verifySig: Server $servername, given hash: $hash, calculated hash: " . $verify->toHex());
 	}
+
 	
 	static function verifyHash($text, $hash) {
 		$hashByMe = hash('sha256', $text);
@@ -81,10 +86,14 @@ class Crypt {
 		$hashByMe = hash('sha256', $text);
 		return $this->verifySigHash($hashByMe, $sig, $servername);
 	}
+	
 
+	
 	function verifySigs($text, array $arrayOfSigs) {
+		$ok = array();
 		foreach ($arrayOfSigs as $num => $sig) {
-			$this->verifySigText($text, $sig['sig'], $sig['sigBy']); // throws an exception if not ok
+			$ok[$num] = $this->verifySigText($text, $sig['sig'], $sig['sigBy']); // throws an exception if not ok
+			if (! $ok) { return false; }
 			// if ($num == 0) {
 			//	$prevsig = $hashByMe;
 			// }
@@ -92,8 +101,39 @@ class Crypt {
 			// if (!$result['sigok']) { $e = 'Signature of previous server in serSig is wrong.'; return $e;}
 			// $prevsig = $result['prevsig']; // TODO serSig
 		}
+		return $ok === array_pad(array(), count($arrayOfSigs), true);
+	}
+	
+	// TODO move this to a more reasonable place - election?
+	static function verifyVoterSig($vote) {
+		$text = $vote['vote']['vote'];
+		$sig  = $vote['vote']['sig'];
+		$pubkeystr = $vote['permission']['signed']['votingno'];
+		//return $this->verifyPss($text, $sig, $pubkeystr);
+		$pubkeyarray = explode(' ', $pubkeystr);
+		$pubkey      = array(
+				'n'   => new Math_BigInteger($pubkeyarray[0], 16),
+				'e'   => new Math_BigInteger($pubkeyarray[1], 16));
+		$hashByMe = hash('sha256', $text);
+		return static::verifySigKey($hashByMe, $sig, $pubkey);
 	}
 
+	
+
+	function verifyPss($text, $sig, $pubkeystr) {
+		$pubkeyarray = explode(' ', $pubkeystr);
+		$rsa = new rsaMyExts();
+		$rsa->loadKey(array('n' => new Math_BigInteger($pubkeyarray[0], 16), 
+				            'e' => new Math_BigInteger($pubkeyarray[1], 16)));
+		$rsa->setHash('sha256');
+		$rsa->setMGFHash('sha256');
+		$rsa->setSignatureMode(CRYPT_RSA_SIGNATURE_PSS);
+		$rsa->setSaltLength(0);
+		$sigBigInt = new Math_BigInteger($sig, 16); 
+		$sigBin = $rsa->_i2osp($sigBigInt, ceil(strlen($sig) /2));
+		$sigOk = $rsa->verify($text, $sigBin); 
+		return $sigOk;
+	}
 	/**
 	 * 
 	 * @param unknown $text string
