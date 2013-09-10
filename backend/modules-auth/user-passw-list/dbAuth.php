@@ -30,21 +30,9 @@ class DbAuth extends DbBase {
 		}
 	}
 	
-	function checkCredentials($electionId, $voterId, $secret) { // TODO use $this->load
-		$tname = $this->prefix . 'up_credentials';
-		$sql  = "select up_credentials FROM $tname WHERE (electionId = :electionId AND voterId = :voterId)";
-		$stmnt = $this->connection->prepare($sql);
-		$stmnt->bindValue(':electionId', $electionId);
-		$stmnt->bindValue(':voterId'   , $voterId);
-		$stmnt->execute();
-		// print_r($stmnt);
-		$secretFromDb = $stmnt->fetch();
-		// print "<br>\n secretFromDb: ";
-		// print_r($secretFromDb);
-		if ($secretFromDb === false)  {
-			return false;
-		}
-		if ($secretFromDb['up_credentials'] === $secret) {
+	function checkCredentials($electionId, $voterId, $secret) { 
+		$secretFromDb = $this->loadElectionVoter($electionId, $voterId, 'up_credentials', 'up_credentials');	
+		if ($secretFromDb[0] === $secret) {
 			return true;
 		}
 		return false;

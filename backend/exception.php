@@ -4,13 +4,18 @@
 class WrongRequestException extends Exception {
 	var $errorno;
 	var $errortxt;
-	function __construct($errorno_, $errortxt_){
+	function __construct($errorno_, $errortxt_) {
 		$this->errorno  = $errorno_;
 		$this->errortxt = $errortxt_;
 	}
 	
 	function __toString() {
 		return $this->errorno . ': ' . $this->errortxt;
+	}
+	
+	function makeServerAnswer() {
+		$ret = Array('cmd' => 'error', 'errorno' => $this->errorno, 'errortxt' => $this->errortxt);
+		return $ret;
 	}
 	
 	

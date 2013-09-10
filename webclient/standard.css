@@ -40,6 +40,11 @@ div#maincontent h1 {
 	color: orange;
 }
 
+div#auth label {
+	display: inline-block; 
+	width: 15em;
+}
+
 
 /*** Steps ****/
 div#steps {

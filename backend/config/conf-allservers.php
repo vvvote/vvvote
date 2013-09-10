@@ -9,22 +9,24 @@ $numSignBallots   = array(0 => 3, 1 => 1);
 $numVerifyBallots = array(0 => 3, 1 => 2);
 $numPSigsRequiered = 2;
 
+$pServerKey0 = array(
+		'name'     => 'PermissionServer0',
+		'modulus'  => new Math_BigInteger('3061314256875231521936149233971694238047219365778838596523218800777964389804878111717657', 10),
+		'exponent' => new Math_BigInteger('65537', 10)
+);
+
 $pServerKey1 = array(
 		'name'     => 'PermissionServer1',
 		'modulus'  => new Math_BigInteger('3061314256875231521936149233971694238047219365778838596523218800777964389804878111717657', 10),
 		'exponent' => new Math_BigInteger('65537', 10)
 );
 
-$pServerKey2 = array(
-		'name'     => 'PermissionServer2',
-		'modulus'  => new Math_BigInteger('3061314256875231521936149233971694238047219365778838596523218800777964389804878111717657', 10),
-		'exponent' => new Math_BigInteger('65537', 10)
+$pServerKeys = array(
+		0 => $pServerKey0,
+		1 => $pServerKey1
 );
 
-$pServerKeys = array(
-		0 => $pServerKey1,
-		1 => $pServerKey2
-);
+$configUrlBase = 'http://www.webhod.ra/vvvote2/backend'; // without trailing slash
 
 $base = 16;
 $numAllBallots = 5;
