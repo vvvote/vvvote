@@ -18,20 +18,23 @@ function GetElectionConfig(url, serverkeys, gotConfig) {
 GetElectionConfig.prototype = {
 		reqestElectionConfig: function () {
 			var me = this;
-			var xml = new XMLHttpRequest();
-			xml.open('GET', this.url, true);
-			xml.onload = function() { me.handleXmlAnswer(xml);};
+			myXmlSend(this.url, '', me, this.handleXmlAnswer);
+//			var xml = new XMLHttpRequest();
+//			xml.open('GET', this.url, true);
+//			xml.onload = function() { me.handleXmlAnswer(xml);};
 			// not used, using GET, var req = JSON.stringify(query);
 			// xml.send(req);
 			// xml.setRequestHeader("User-Agent","vvvote"); // remove the browser ID in order to garant anonymity
 			// xml.setRequestHeader("Origin","vvvote"); // remove the browser ID in order to garant anonymity
 			// For security behaviour of all browsers see http://code.google.com/p/browsersec/wiki/Part2#Same-origin_policy_for_XMLHttpRequest
-			xml.send();
+//			xml.send();
 			// TODO Cross site scripting from local file is prohibited in chrome and in FireFox but works in Internet Explorer
 		},
 
 		handleXmlAnswer: function (xml) {
-			var config = JSON.parse(xml.responseText);
+			var config = parseServerAnswer(xml);
+			// TODO use try{} catch for JSON parse and throw a controlled error
+			   //var config = JSON.parse(xml.responseText);
 			// TODO error handling
 			// TODO verify the hash
 			this.onGotConfig(config);
@@ -49,7 +52,7 @@ GetElectionConfig.getMainContent = function(gotconfig) {
 		'<div id="divElectionUrl">'+
 		'<form>'+
 		'Wahl-URL: '+
-		'<input size="120" name="electionUrl" id="electionUrlId" type="text" value="http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=aaaaaaa">'+
+		'<input style="width:60em" name="electionUrl" id="electionUrlId" type="text" value="http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=34b71852f90d9c469530d27743da27c34b6795a30c7ef38cb016c613b134d76b">'+
 		'<input type="button" name="getelectionconfig" value="Hole Wahlunterlagen"'+ 
 		   'onclick="'+
 		      'var a = document.getElementById(\'electionUrlId\');' + 

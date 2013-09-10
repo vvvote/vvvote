@@ -3,6 +3,8 @@
  * @returns {Array}
  */
 
+newElectionUrl = 'http://www.webhod.ra/vvvote2/backend/newelection.php'; // TODO mehrere? 
+
 function getPermissionServerList() {
 	// load config
 	random = true;

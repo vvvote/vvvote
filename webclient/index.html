@@ -18,9 +18,6 @@
 <script  id="authUserPasswHtml" type="mumpiz">
 <div id="auth">
 	<form name="permission" method="post" onsubmit="return false;">
-		<!--  action="getPe"> -->
-        Als Ergebnis dieses Schrittes erhalten Sie einen Wahlzettel, den Sie speichern müssen und zur Stimmabgabe später wieder laden müssen.
-		Der Stimmzettel berechtigt zur Stimmabgabe - geben Sie ihn also nicht weiter! Er ist anonym, d.h. es kann nicht festgestellt werden, wem er gehört.
 		<div align="center">
 			<br>
 			<table>
@@ -76,7 +73,21 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 </script>
 
 
+<!-- the following "<script>" is used as heredoc replacement -->
+<script  id="newElectionHtml" type="mumpiz">
+	<h1>Neue Abstimmung anlegen</h1>
+	<input type="text" id="electionId"> 
+    	<label for="electionId">Name der Wahl</label> 
+ 	<br>
+	<input type="text" id="givenPassword">
+    	<label for="givenPassword">Wahlpasswort</label>
+	<br>
+	<input type="button" onclick="handleNewElectionButton();" value="Neue Abstimmung anlegen">		
+
+</script>
+
 <script src="modules-auth/user-passw-list/module.js"></script>
+<script src="modules-auth/shared-passw/module.js"></script>
 <script src="tools/BigInt.js"></script>
 <script src="tools/rsa.js"></script>
 <script src="tools/sha256.js"></script>
@@ -108,12 +119,16 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 	// var maincontent = '<object type="text/html" width="800" height="700" data="modules-auth/user-passw-list/module.html"></object>'; 
 	// var maincontent = '<object type="text/html" width="800" height="700" data="getelectionconfig.html"></object>';
 	
+	var element = document.getElementById('newElectionHtml'); // heredoc replacement
+	newElectionHtml = element.innerHTML;
+
+	
 	function userlog(log) {
 	  var element = document.getElementById('logtextarea'); 
 	  element.value = element.value + log;
 	}	
 
-	var maincontent = ''; //GetElectionConfig.getMainContent();
+	// var maincontent = ''; //GetElectionConfig.getMainContent();
 	// maincontent = startVoting();
 	
 	function onStep1CallBack(config) {
@@ -127,18 +142,19 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 		element.innerHTML = content; // '<object type="text/html" width="800" height="700" data="modules-auth/user-passw-list/module.html"></object>';
 		//document.write('<h1>TEST</h1>');
 	}
+	
 	function setStep(step) {
 		var element;
 		for (var i=1; i<=4; i++) {
 			element = document.getElementById('step' + i); // + step-1);
 			if (i == step) {element.setAttribute('class', 'curr');}
-			else            {element.removeAttribute('class')}
+			else           {element.removeAttribute('class')}
 		}
 		var stepstr;
 		switch (step) {
-		 	case 1: stepstr = 'Schritt 1: Wahlunterlagen holen'; break;
-			case 2: stepstr = 'Schritt 2: Autorisierung'; break;
-			case 3: stepstr = 'Schritt 3: Abstimmen'; break;
+		 	case 1: stepstr = 'Schritt 1: Wahlunterlagen holen';   break;
+			case 2: stepstr = 'Schritt 2: Autorisierung';          break;
+			case 3: stepstr = 'Schritt 3: Abstimmen';              break;
 			case 4: stepstr = 'Schritt 4: Abstimmsergebnis holen'; break;
 			default: break; // TODO throw program error
 		}
@@ -147,22 +163,32 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 	}
 	
 	
-	function startUserPassw(config) {
-		mainContentUserPassw = UserPasswList.getMainContent();
-		loadMainContent(mainContentUserPassw);
-		setStep(2);
-	}
-
 	function startStep2(config) {
 		// startStep4(config);
-				switch (config.auth) {
-		case 'userPassw':
-			startUserPassw(config);
+		var mc = '';
+		var mclast = '';
+		switch (config.blinding) {
+		case 'blindedVoter':
+			mc = BlindedVoterElection.getStep2Html();
+			mclast =  BlindedVoterElection.getStep2HtmlDetails();
 			break;
 		default:
-			// TODO throw some error
+			alert('The election requieres election module >' + config.blinding + "< which is not supported by this client.\nUse a compatible client.");
+			break;			
 		}
 		
+	switch (config.auth) {
+		case 'userPassw':
+			mc = mc + UserPasswList.getMainContent(config);
+			break;
+		case 'sharedPassw':
+			mc = mc + SharedPasswAuth.getMainContent(config);
+			break;
+		default:
+			alert('The election requieres authorisation module >' + config.auth + "< which is not supported by this client.\nUse a compatible client.");
+		}
+	loadMainContent(mc + mclast);
+	setStep(2);
 	}
 	
 	sendVoteHtml = '<p><input disabled="disabled" id="sendvote" type="submit" '+
@@ -268,6 +294,47 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 		loadMainContent(mc);
 		currAction = 'getResult'; // this is used in order to determine what should happen after the config was loaded
 	}
+	
+	
+	function handleNewElection() {
+		loadMainContent(newElectionHtml);
+		// TODO set steps
+	}
+	
+	function handleNewElectionButton() {
+		var ret = {};
+		var element = document.getElementById('electionId');
+		ret.electionId = element.value;
+		ret.authModule = 'sharedPassw';
+		ret.authData = {};
+		var element = document.getElementById('givenPassword');
+		ret.authData.sharedPassw = element.value;
+		this.config = ret;
+		var data = JSON.stringify(ret);
+		var me = this;
+		myXmlSend(newElectionUrl, data, me, handleNewElectionAnswer);
+	}
+	
+	function getAuthModuleStatic(config) {
+		var a;
+		switch (config.authModule) {
+		case 'userPassw':    a = UserPasswList;   break;
+		case 'sharedPassw':  a = SharedPasswAuth; break;
+		default:
+			alert('The election requieres authorisation module >' + config.auth + "< which is not supported by this client.\nUse a compatible client.");
+		}
+		return a;
+	}
+	
+	function handleNewElectionAnswer(xml) {
+		var data = parseServerAnswer(xml);
+		var a = getAuthModuleStatic(this.config);
+		var ahtml = a.getConfigObtainedHtml();
+		var mc = '<p>Der Link zur Wahl ist: ' + data.configUrl + '</p>' + 
+		'<p>Speichern Sie den Link und geben Sie ihn an alle Wahlberechtigten weiter.' +
+		ahtml +	'</p>';
+		loadMainContent(mc);
+	}
 </script>
 
 </head>
@@ -281,7 +348,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 		</div>
 
 		<div id="nav">
-			 <a onclick=""                      >Neue Wahl anlegen</a> &nbsp;&nbsp;&nbsp;
+			 <a onclick="handleNewElection();"  >Neue Wahl anlegen</a> &nbsp;&nbsp;&nbsp;
 			 <a onclick="startVoting(true);"    >An Abstimmung teilnehmen</a> &nbsp;&nbsp;&nbsp; 
 			 <a onclick="startLoadingResult();" >Abstimmunsergebnis abrufen</a>
 		</div>
@@ -305,7 +372,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 			</script>
 			</div>
 		</div>
-		<div id="log" name ="log">
+		<div id="log">
 			<h1>Log:</h1>
 			<textarea id="logtextarea" name="log"></textarea>
 

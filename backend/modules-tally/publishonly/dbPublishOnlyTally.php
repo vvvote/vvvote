@@ -30,8 +30,8 @@ class DbPublishOnlyTelly extends DbBase {
 	function isFirstVote($electionId, $votingno) {
 		$where = array('electionId' => $electionId, 'votingno' => $votingno);
 		$got = $this->load($where, 'storedCorrectVotes', 'storedCorrectVotes');
-		if ($got == false) {return true;}
-		else               {return false;} 		
+		if ($got === false) {return true;}
+		else                {return false;} 		
 	}
 	
 	function getVotes($electionId) {

@@ -58,7 +58,7 @@ class DbBase {
 		return $this->connection->resetDb();
 	}
 
-	function save($cols, $tablename) {
+	function save(array $cols, $tablename) {
 		return $this->connection->save($cols, $tablename);
 	}
 	
