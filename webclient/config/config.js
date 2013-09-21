@@ -3,7 +3,9 @@
  * @returns {Array}
  */
 
-newElectionUrl = 'http://www.webhod.ra/vvvote2/backend/newelection.php'; // TODO mehrere? 
+newElectionUrl = new Array('http://www.webhod.ra/vvvote2/backend/newelection.php',
+		                   'http://www2.webhod.ra/vvvote2/backend/newelection.php'); 
+
 
 function getPermissionServerList() {
 	// load config

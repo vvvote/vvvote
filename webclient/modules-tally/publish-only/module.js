@@ -4,10 +4,11 @@
  * constructor and public-preveleged (can access private methods) methods which are instantiated each time
  * @param election Election
  */
-var PublishOnlyTelly = function (election, config, showResultElement) { // TODO store config also
+var PublishOnlyTelly = function (election, config, onGotVotesObj, onGotVotesMethod) { // TODO store config also
 	this.election = election;
 	this.config = config;
-	this.resultElement = showResultElement;
+	this.onGotVotesObj    = onGotVotesObj;
+	this.onGotVotesMethod = onGotVotesMethod;
 };
 
 /**
@@ -77,10 +78,10 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 		var data = parseServerAnswer(xml);
 		if (data.cmd != 'verifyCountVotes') {
 			throw new ErrorInServerAnswer(2003, 'Error: Expected >verifyCountVotes<', 'Got from server: ' + data.cmd);
-		} 
+		}
 		this.votes = data.data;
 		// process data
-		var me = this;
+		//   show a list of all votes
 		var htmlcode = '<div id="allvotes"><table>';
 		htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + 'Stimme'                  + '</th>'; 
 		htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</span></th></thead>';
@@ -97,32 +98,33 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 			votesOnly[i] = data.data[i].vote.vote;
 		}
 		htmlcode = htmlcode + '</tbody></table></div>';
+		
+		// show the frequencies
+		var freqs = getFrequencies(votesOnly);
+		freqs.sort(function(a, b) {return b.freq - a.freq;});
+		var numVotes = votesOnly.length;
+		var htmlcode2 = '<div id="freq"><table>';
+		htmlcode2 = htmlcode2 + '<thead>';
+		htmlcode2 = htmlcode2 + '<th class="optionHead"  >' + 'Option'         + '</th>'; 
+		htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Stimmen' + '</th>';
+		htmlcode2 = htmlcode2 + '</thead><tfoot>';
+		htmlcode2 = htmlcode2 + '<tr><td>Gesamt</td>';
+		htmlcode2 = htmlcode2 + '<td class="numVotes">' + numVotes+ '</td>';
+		htmlcode2 = htmlcode2 + '</tfoot><tbody>';
+		for (var i=0; i<freqs.length; i++) {
+			htmlcode2 = htmlcode2 + '<tr>';
+			htmlcode2 = htmlcode2 + '<td class="option"  >' + freqs[i].option + '</td>'; 
+			htmlcode2 = htmlcode2 + '<td class="numVotes">' + freqs[i].freq   + '</td>'; 
+			htmlcode2 = htmlcode2 + '</tr>';
+		}
+		htmlcode2 = htmlcode2 + '</tbody>';
+		htmlcode2 = htmlcode2 + '</table></div>';
+		var ret = htmlcode2 + '<br> <br>\n\n' + htmlcode;
+		this.onGotVotesMethod.call(this.onGotVotesObj, ret);
 	} catch (e) {
 		if (e instanceof MyException ) {e.alert();}
-		else {throw e;}
+		else {throw e;} // TODO show the error
 	}
-	
-	var freqs = getFrequencies(votesOnly);
-	freqs.sort(function(a, b) {return b.freq - a.freq;});
-	var numVotes = votesOnly.length;
-	var htmlcode2 = '<div id="freq"><table>';
-	htmlcode2 = htmlcode2 + '<thead>';
-	htmlcode2 = htmlcode2 + '<th class="optionHead"  >' + 'Option'         + '</th>'; 
-	htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Stimmen' + '</th>';
-	htmlcode2 = htmlcode2 + '</thead><tfoot>';
-	htmlcode2 = htmlcode2 + '<tr><td>Gesamt</td>';
-	htmlcode2 = htmlcode2 + '<td class="numVotes">' + numVotes+ '</td>';
-	htmlcode2 = htmlcode2 + '</tfoot><tbody>';
-	for (var i=0; i<freqs.length; i++) {
-		htmlcode2 = htmlcode2 + '<tr>';
-		htmlcode2 = htmlcode2 + '<td class="option"  >' + freqs[i].option + '</td>'; 
-		htmlcode2 = htmlcode2 + '<td class="numVotes">' + freqs[i].freq   + '</td>'; 
-		htmlcode2 = htmlcode2 + '</tr>';
-	}
-	htmlcode2 = htmlcode2 + '</tbody>';
-	htmlcode2 = htmlcode2 + '</table></div>';
-
-	this.resultElement.innerHTML = htmlcode2 + '<br> <br>\n\n' + htmlcode;
 };
 
 PublishOnlyTelly.prototype.handleUserClickVerifySig = function (no) {
