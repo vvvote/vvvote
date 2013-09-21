@@ -91,7 +91,7 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 			htmlcode = htmlcode + '<td> <span id="vote">' + data.data[i].vote.vote                  + '</span></td>'; 
 			htmlcode = htmlcode + '<td> <span id="votingno">' + data.data[i].permission.signed.votingno + '</span></td>'; 
 			// TODO substitude election for this.varname
-			htmlcode = htmlcode + '<td> <button onclick="telly.handleUserClickVerifySig(' + i +');" >Verify Signatures</button>' + '</td>'; 
+			htmlcode = htmlcode + '<td> <button onclick="page.tally.handleUserClickVerifySig(' + i +');" >Verify Signatures</button>' + '</td>'; 
 //			htmlcode = htmlcode + '<td>' + data.data[i].permission.signed.salt     + '</td>'; 
 			htmlcode = htmlcode + '</tr>';
 			// TODO add to votes only if sigOk

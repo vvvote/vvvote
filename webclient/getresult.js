@@ -6,6 +6,7 @@ function GetResultPage() {
 	this.mainContent = '<h2>Wahlunterlagen holen</h2>'+
 	                   '<p>Geben Sie den Link zu der Abstimmung ein, dessen Ergebnis Sie sehen wollen <br>' +
 	                   GetElectionConfig.getMainContent('page', 'page.gotElectionConfig');
+	this.tally = null;
 }
 
 GetResultPage.prototype = new Page();
@@ -20,12 +21,12 @@ GetResultPage.prototype.showResult = function() {
 	var me = this;
 	switch (this.config.telly) {
 	case 'publishOnly':
-		var tally = new PublishOnlyTelly(blinder, this.config, me, me.gotVotes);
+		this.tally = new PublishOnlyTelly(blinder, this.config, me, me.gotVotes);
 		break;
 	default: // TODO throw some error
 		break;
 	}
-	tally.handleUserClickGetAllVotes();
+	this.tally.handleUserClickGetAllVotes();
 
 };
 /*
