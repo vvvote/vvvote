@@ -19,6 +19,7 @@ class DbSharedPasswAuth extends DbBase {
 
 	function checkCredentials($electionId, $voterId, $secret) {
 		$secretFromDb = $this->load(array('electionId' => $electionId), 'sp_credentials', 'sp_credentials');
+		if (! (count($secret) === 1)) return false;
 		if ($secretFromDb[0] === $secret) {
 			return true;
 		}

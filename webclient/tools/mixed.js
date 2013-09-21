@@ -4,6 +4,7 @@
  * @returns {Array}
  */
 function getFrequencies(list) {
+	if (list.length < 1) {return list;}
 	list.sort();
 	var freqs = new Array();
 	var j = 0;
@@ -39,5 +40,7 @@ function parseServerAnswer(xml) {
 	} catch (e) {
 		// defined in exception.js
 		throw new ErrorInServerAnswer(2001, 'Error: could not JSON decode the server answer', 'Got from server: ' + xml.responseText);
+		// 		return Object({'action':'clientError', 'errorText': "could not JSON decode: (" + e + ") \n" + dataString});
+
 	}
 }

@@ -279,11 +279,7 @@ function makeVote(ballots, numRequiredSignatures, vote) {
 }
 
 function handleServerAnswer(election, dataString) {
-	try {
-	var data = JSON.parse(dataString);
-	} catch (e) {
-		return Object({'action':'clientError', 'errorText': "could not JSON decode: (" + e + ") \n" + dataString});
-	}
+	data = parseServerAnswer(dataString);
 	var ret;
 	switch (data.cmd) {
 	case 'unblindBallots':

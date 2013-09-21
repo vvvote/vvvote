@@ -8,13 +8,7 @@ function savePermission(ballot) {
 
 // TODO use handleXmlAnswer from tools/mixed 
 function XXhandleXmlAnswer(xml) {
-	if (xml.status != 200) {
-		alert('HTTP-Error received: ' + xml.status + "\n" + xml.responseText);
-		return;
-	}
-	var serverno = election.pServerSeq.slice(-1)[0];
-	document.permission.log.value = document.permission.log.value + '<-- empfangen von ' + (election.xthServer +1) + ' (' + election.pServerList[serverno].url + ') Server: ' + xml.responseText + "\r\n\r\n";
-	var result = handleServerAnswer(election, xml.responseText);
+	var result = handleServerAnswer(election, xml);
 	switchAction(result);
 	// TODO check maximal loops = numServers
 };
@@ -22,12 +16,14 @@ function XXhandleXmlAnswer(xml) {
 function switchAction(result) {
 	switch (result.action) {
 	case 'send':
-	  var xml2 = new XMLHttpRequest();
 	  serverno = election.pServerSeq.slice(-1)[0];
+	  var me = this;
+	  myXmlSend(election.pServerList[serverno].url, result.data, me, XXhandleXmlAnswer);
+/*	  var xml2 = new XMLHttpRequest();
 	  xml2.open('POST', election.pServerList[serverno].url, true);
 	  xml2.onload = function() { XXhandleXmlAnswer(xml2); }; // quasi resursiv
 	  document.permission.log.value = document.permission.log.value + '--> gesendet an ' + (election.xthServer +1) + ' (' + election.pServerList[serverno].url + ') Server: ' + result.data + "\r\n\r\n";
-	  xml2.send(result.data);
+	  xml2.send(result.data); */
 	  break;
 	case 'savePermission':
 		alert('fertig. Wahlzettel speichern! Wahlzettelinhalt: \n '+ result.data);
@@ -35,7 +31,7 @@ function switchAction(result) {
 		// saveAs(result.data, 'ballots.json');
 	    break;
 	case 'serverError':
-		alert('Server ' + (election.xthServer +1) + ' (' + election.pServerList[serverno].url + ') rejected the request \n Error number: '+ result.errorNo + "\n" + result.errorText);
+		alert('Server ' + (election.xthServer +1) + /*' (' + election.pServerList[serverno].url + */ ' rejected the request \n Error number: '+ result.errorNo + "\n" + result.errorText);
 		break;
 	case 'clientError':
 		alert('Client found error:\n '+ result.errorText);
@@ -57,9 +53,12 @@ function switchAction(result) {
 
 function onGetPermClick()  {
 		election = new Object();
-		election.voterId    = document.permission.voterId.value;
-		election.secret     = document.permission.secret.value;
-		election.electionId = document.permission.electionId.value;
+		var e = document.getElementById('voterId');
+		election.voterId    = e.value;
+		e = document.getElementById('secret');
+		election.secret     = e.value;
+		e = document.getElementById('electionId');
+		election.electionId = e.value;
 		election.numBallots = 5;
      	//  alert('voterID: '    + voterID +
 	    //        '\r\nelectionID: ' + electionID);
@@ -72,9 +71,11 @@ function onGetPermClick()  {
  	//	purl[0] = 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 	//	purl[1] = 'http://www2.webhod.ra/vvvote2/getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 		
-		var xml = new XMLHttpRequest();
-		//var serverno = getNextPermServer(election);
 		var url = election.pServerList[election.pServerSeq.slice(-1)[0]].url;
+		me = this;
+		myXmlSend(url, req, me, XXhandleXmlAnswer);
+/*	    var xml = new XMLHttpRequest();
+		//var serverno = getNextPermServer(election);
 		xml.open('POST', url, true);
 		xml.onload = function() { handleXmlAnswer(xml);};
 //		 xml.onreadystatechange = function() {
@@ -82,7 +83,7 @@ function onGetPermClick()  {
 //		   var serverResponse = JSON.parse(xml.responseText);
 //		 };
     	document.permission.log.value = document.permission.log.value + '\r\n\r\n --> gesendet an 1. Server (' + url + '): ' + req + "\r\n\r\n";  
-        xml.send(req);
+        xml.send(req); */
 		return false;
 }
 /**
@@ -131,9 +132,14 @@ BlindedVoterElection.getStep2HtmlDetails = function() {
  * provide HTML code to be presented in step 3 (voting)
  *  
  */
-BlindedVoterElection.getPermissionHtml = function(varname) {
+BlindedVoterElection.getPermissionHtml = function() {
 	return 'Bitte laden Sie die Datei, in der Ihr Wahlschein gespeichert ist:<br>'+
-	'<input type="file" id="loadfile" accept="text/plain" onchange="' + varname +'.loadPermFile(event);"/>';
+	'<input type="file" id="loadfile" accept="text/plain" onchange="BlindedVoterElection.onClickedLoadFile(event)"/>'; //+ varname +'.loadPermFile(event);"/>';
+};
+
+BlindedVoterElection.onClickedLoadFile = function(event) {
+	el = new BlindedVoterElection('', '', '');
+	el.loadPermFile(event);
 };
 
 /**
@@ -150,7 +156,7 @@ BlindedVoterElection.prototype.loadPermFile = function (evt) {
 };
 
 /**
- * called on: permission file is loaded
+ * called on: permission file is loaded into RAM
  * @param ev
  */
 BlindedVoterElection.prototype.permFileLoaded = function (ev) {
@@ -163,8 +169,11 @@ BlindedVoterElection.prototype.permFileLoaded = function (ev) {
 	// TODO check if all requiered fields are present
 	// TODO check signatures from permissionservers
 	// TODO check for date if voting already/still possible
+	this.config = {};
+	this.config.electionId = this.permission.transm.signed.electionId;
+	var me = this;
 	this.permissionOk = true;
-	this.callOnPermLoaded(this.permissionOk); // call back --> enables vote button
+	page.onPermLoaded(this.permissionOk, me); // call back --> enables vote button or loades ballot
 	};
 
 BlindedVoterElection.prototype.checkPerm = function() {

@@ -52,7 +52,7 @@ class Election {
 		// TODO check if correct number of ballots was sent
 		$inlist = $this->isInVoterList($voterID, $secret);
 		if (!$inlist) {
-			WrongRequestException::throwException(1, "Error: check of credentials failed", "isPermitted: Voter $voterID is not in the list of allowed voters.");
+			WrongRequestException::throwException(1, "Error: check of credentials failed", "isPermitted: Voter $voterID is not in the list of allowed voters or secret not accepted.");
 		}
 
 		if ($this->electionId != $electionID_) {

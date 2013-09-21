@@ -17,8 +17,8 @@ class DbElections extends DbBase {
 		$configstr = json_encode($config);
 		$hash = hash('sha256', $configstr);
 		$ok = $this->save(array('electionId' => $electionId, 
-				                 'config'     => $configstr, 
-				                 'hash'       => $hash), 
+				                'config'     => $configstr, 
+				                'hash'       => $hash), 
 				'elections');
 		return $hash;
 	}
@@ -28,6 +28,13 @@ class DbElections extends DbBase {
 		if (count($cfgs) < 1) return $cfgs; 
 		return $cfgs[0];
 	}
+	
+	function loadElectionConfigFromElectionId($electionId) {
+		$cfgs = $this->load(array('electionId' => $electionId), 'elections', 'config');
+		if (count($cfgs) < 1) return $cfgs;
+		return $cfgs[0];
+	}
+	
 }
 
 ?>

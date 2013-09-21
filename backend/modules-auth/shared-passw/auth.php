@@ -48,13 +48,6 @@ class SharedPasswAuth extends Auth {
 		return $this->db->newElection($electionId, $sharedSecret);
 	}
 	
-	/**
-	 * Return the html5 code to be integrated into the webpage
-	 * For the correct application use stylesheet use id="password" and id="username"
-	 */
-	function getAuthHtml() {
-
-	}
 	
 	/**
 	 * 
