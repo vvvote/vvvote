@@ -19,7 +19,7 @@ function GetElectionConfig(url, serverkeys, gotConfigObject, gotConfigMethod) {
 GetElectionConfig.prototype = {
 		reqestElectionConfig: function () {
 			var me = this;
-			myXmlSend(this.url, '', me, this.handleXmlAnswer);
+			myXmlSend(this.url + '&api', '', me, this.handleXmlAnswer);
 		},
 
 		handleXmlAnswer: function (xml) {
@@ -35,11 +35,14 @@ GetElectionConfig.prototype = {
  * @returns {String}
  */
 GetElectionConfig.getMainContent = function(gotConfigObject, gotConfigMethod) {
+	// TODO get url from link in browser
+	// var searchstr = location.search;
+	var url = 'http://www.webhod.ra/vvvote2/backend/getelectionconfig.php' + location.search; //'http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=34b71852f90d9c469530d27743da27c34b6795a30c7ef38cb016c613b134d76b';
 	var maincontent = 
 		'<div id="divElectionUrl">'+
 		'<form>'+
 		'Wahl-URL: '+
-		'<input style="width:60em" name="electionUrl" id="electionUrlId" type="text" value="http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=34b71852f90d9c469530d27743da27c34b6795a30c7ef38cb016c613b134d76b">'+
+		'<input style="width:60em" name="electionUrl" id="electionUrlId" type="text" value="' + url +'">'+
 		'<input type="button" name="getelectionconfig" value="Hole Wahlunterlagen"'+ 
 		   'onclick="'+
 		      'var a = document.getElementById(\'electionUrlId\');' + 
