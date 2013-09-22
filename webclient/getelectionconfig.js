@@ -34,20 +34,22 @@ GetElectionConfig.prototype = {
  * static methods
  * @returns {String}
  */
-GetElectionConfig.getMainContent = function(gotConfigObject, gotConfigMethod) {
+GetElectionConfig.getMainContent = function(buttontext, gotConfigObject, gotConfigMethod) {
 	// TODO get url from link in browser
-	// var searchstr = location.search;
-	var url = 'http://www.webhod.ra/vvvote2/backend/getelectionconfig.php' + location.search; //'http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=34b71852f90d9c469530d27743da27c34b6795a30c7ef38cb016c613b134d76b';
+	var  url = '';
+	if (location.search.length > 1) {
+		     url = 'http://www.webhod.ra/vvvote2/backend/getelectionconfig.php' + location.search; //'http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=34b71852f90d9c469530d27743da27c34b6795a30c7ef38cb016c613b134d76b';
+	} 
 	var maincontent = 
 		'<div id="divElectionUrl">'+
 		'<form>'+
-		'Wahl-URL: '+
+		'Wahl-Link: '+
 		'<input style="width:60em" name="electionUrl" id="electionUrlId" type="text" value="' + url +'">'+
-		'<input type="button" name="getelectionconfig" value="Hole Wahlunterlagen"'+ 
-		   'onclick="'+
-		      'var a = document.getElementById(\'electionUrlId\');' + 
-		      'new GetElectionConfig(a.value, null, ' + gotConfigObject + ', ' + gotConfigMethod + ');' +
-		      'return false;">'+
+		'<input type="button" name="getelectionconfig" value="' + buttontext + '"'+ 
+		'onclick="'+
+		'var a = document.getElementById(\'electionUrlId\');' + 
+		'new GetElectionConfig(a.value, null, ' + gotConfigObject + ', ' + gotConfigMethod + ');' +
+		'return false;">'+
 		'</form>'+
 		'</div>';
 	return maincontent;

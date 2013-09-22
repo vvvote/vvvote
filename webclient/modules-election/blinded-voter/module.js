@@ -26,7 +26,7 @@ function switchAction(result) {
 	  xml2.send(result.data); */
 	  break;
 	case 'savePermission':
-		alert('fertig. Wahlzettel speichern! Wahlzettelinhalt: \n '+ result.data);
+		alert('Speichern Sie den Wahlschein!\n Zum Abstimmen klicken Sie auf "An Abstimmung teilnehmen" und wählen Sie unter der Überschrift "Ich habe bereits einen Wahlschein" den gespeicherten Wahlschein aus.'); //+ Wahlzettelinhalt: \n result.data);
 		savePermission(result.data);
 		// saveAs(result.data, 'ballots.json');
 	    break;
@@ -115,7 +115,7 @@ BlindedVoterElection.getStep2Html = function() {
 };
 
 BlindedVoterElection.getStep2HtmlDetails = function() {
-	var ret = '<p><h2>Weitere technische Information</h2><br>' +
+	var ret = '<p><h2>Weitere technische Information</h2>' +
 	'Der Wahlzettel ist digital von mindestens 2 Servern unterschrieben. Diese Unterschrift führt dazu, dass der Wahlzettel bei der Stimmabgabe akzeptiert wird.<br> ' +
 	'Der Wahlzettel enthält eine eindeutige Wahlzettelnummer, die nur Ihr Computer kennt - sie wurde von Ihrem Computer erzeugt und verschlüsselt, bevor die Server den Wahlzettel unterschrieben haben, und danach auf Ihrem Computer entschlüsselt (Man spricht von &quot;Blinded Signature&quot;). Die Server kennen daher die Wahlzettelnummer nicht.<br> ' +
 	'Man kann sich das so vorstellen:<br>  ' +

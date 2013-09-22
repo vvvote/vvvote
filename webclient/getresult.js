@@ -3,9 +3,9 @@ function GetResultPage() {
 	this.steps = new Array();
 	this.steps[1] = 'Schritt 1: Abstimmungslink eingeben'; 
 	this.steps[2] = 'Schritt 2: Ergebnis anzeigen';
-	this.mainContent = '<h2>Wahlunterlagen holen</h2>'+
-	                   '<p>Geben Sie den Link zu der Abstimmung ein, dessen Ergebnis Sie sehen wollen <br>' +
-	                   GetElectionConfig.getMainContent('page', 'page.gotElectionConfig');
+	this.mainContent = '<p>Geben Sie den Link zu der Abstimmung ein, dessen Ergebnis Sie sehen wollen <br>' +
+	                   GetElectionConfig.getMainContent('Abstimmungsergebnis holen', 'page', 'page.gotElectionConfig');
+	this.title = 'Abstimmungsergebnis holen';
 	this.tally = null;
 }
 
