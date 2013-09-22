@@ -17,8 +17,12 @@ header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 if (isset($HTTP_RAW_POST_DATA)) {
 	// $hash =
 }
-if (isset($_GET) && isset($_GET['confighash'])) {
+if (isset($_GET) && isset($_GET['confighash']) ) {
 	$hash = $_GET['confighash'];
+	if (! isset($_GET['api'])) {
+		header('Location: ../webclient/index.html?confighash=' . $hash, true, 301);
+		die();
+	}
 }
 
 if (isset ($hash)) {
