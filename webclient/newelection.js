@@ -6,6 +6,7 @@ function NewElectionPage() {
 	this.steps[1] = 'Schritt 1: Abstimmungseinstellungen festlegen'; 
 	this.steps[2] = 'Schritt 2: Abstimmungslink speichern';
 	this.mainContent = newElectionHtml; // defined in index.html as heredoc replacement
+	this.title = 'Neue Abstimmung anlegen';
 	this.serverno = 0;
 }
 

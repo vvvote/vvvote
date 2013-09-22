@@ -1,12 +1,15 @@
 function Page() {
 	this.steps= new Array();
 	this.mainContent = '';
+	this.title = '';
 }
 
 Page.prototype.display = function() {
 	this.showSteps();
 	Page.loadMainContent(this.mainContent);
 	this.setStep(1);
+	var element = document.getElementById('pagetitle');
+	element.textContent = this.title;
 };
 
 // 	<li><span id="step1" class="curr">Schritt 1: Wahlunterlagen holen</span></li>

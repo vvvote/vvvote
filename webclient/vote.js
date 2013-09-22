@@ -4,14 +4,15 @@ function VotePage() {
 	this.steps[1] = 'Schritt 1: Wahlunterlagen holen'; 
 	this.steps[2] = 'Schritt 2: Autorisierung';
 	this.steps[3] = 'Schritt 3: Abstimmen';
-	this.mainContent = '<h2>Wahlunterlagen holen</h2>'+
+	this.mainContent = '<h3>Wahlunterlagen holen</h3>'+
 	'<p><ul><li>Ich habe noch keinen Wahlschein</li>' +
 	'<li>für die Wahl wird kein Wahlschein benötigt</li>' +
 	'<li>Ich weiß nicht, ob für die Wahl ein Wahlschein benötigt wird</li></ul>' +
-	GetElectionConfig.getMainContent('page', 'VotePage.gotElectionConfig') + '</p>' +
+	GetElectionConfig.getMainContent('Wahlunterlagen holen', 'page', 'VotePage.gotElectionConfig') + '</p>' +
 	'<p></p>&nbsp;<p></p>' +
-	'<h2>Ich habe bereits einen Wahlschein</h2><br>' + 
+	'<h3>Ich habe bereits einen Wahlschein</h3>' + 
 	BlindedVoterElection.getPermissionHtml('page.blinder');
+	this.title = 'An Abstimmung teilnehmen';
 	this.blinder = {};
 	this.tally = {};
 	this.displayPermFileHtmlOnPhase2 = false;
