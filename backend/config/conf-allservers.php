@@ -1,6 +1,7 @@
 <?php
 require_once 'Math/BigInteger.php';
-//$electionId = 'wahl1';
+
+$configUrlBase = 'http://www.webhod.ra/vvvote2/backend'; // without trailing slash
 
 // number of ballots the servers have to sign 0: first signing server, 1: second signing server...
 // last server always must be set to 1.
@@ -26,7 +27,6 @@ $pServerKeys = array(
 		1 => $pServerKey1
 );
 
-$configUrlBase = 'http://www.webhod.ra/vvvote2/backend'; // without trailing slash
 
 $base = 16;
 $numAllBallots = 5;
