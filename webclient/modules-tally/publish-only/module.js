@@ -63,13 +63,12 @@ PublishOnlyTelly.prototype.handleServerAnswerStoreVote = function (xml) {
 
 PublishOnlyTelly.prototype.handleUserClickGetAllVotes = function () {
 	var me = this; 
-	var url = 'http://www.webhod.ra/vvvote2/backend/tallyvote.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 	var data = {};
 	data.cmd = 'getAllVotes';
 	data.electionId = this.config.electionId;
 	var datastr = JSON.stringify(data);
 	// TODO add auth to data
-	myXmlSend(url, datastr, me, me.handleServerAnswerVerifyCountVotes);
+	myXmlSend(tallyUrl, datastr, me, me.handleServerAnswerVerifyCountVotes);
 };
 
 PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {

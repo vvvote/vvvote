@@ -127,7 +127,7 @@ VotePage.prototype.startPublishOnlyVote = function(config, needElection) {
 */
 
 VotePage.prototype.sendVote = function (event) {
-	alert('jetzt wird die Stimme gesendet');
+	// alert('jetzt wird die Stimme gesendet');
 	this.tally.sendVote();
 };
 

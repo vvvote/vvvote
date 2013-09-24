@@ -38,7 +38,7 @@ GetElectionConfig.getMainContent = function(buttontext, gotConfigObject, gotConf
 	// TODO get url from link in browser
 	var  url = '';
 	if (location.search.length > 1) {
-		     url = 'http://www.webhod.ra/vvvote2/backend/getelectionconfig.php' + location.search; //'http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=34b71852f90d9c469530d27743da27c34b6795a30c7ef38cb016c613b134d76b';
+		     url = electionConfigUrl + location.search; //'http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=34b71852f90d9c469530d27743da27c34b6795a30c7ef38cb016c613b134d76b';
 	} 
 	var maincontent = 
 		'<div id="divElectionUrl">'+
