@@ -34,8 +34,7 @@ PublishOnlyTelly.prototype.sendVote = function () {
 	
 	var transmstr = JSON.stringify(transm);
 	var me = this;
-	var url = 'http://www.webhod.ra/vvvote2/backend/tallyvote.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
-	myXmlSend(url, transmstr, me, me.handleServerAnswerStoreVote);
+	myXmlSend(tallyUrl, transmstr, me, me.handleServerAnswerStoreVote);
 };
 
 
