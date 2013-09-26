@@ -1,2 +1,41 @@
-öljknhö-jn
+Hier, wie angekündigt, ein Vorschlag, wie geheim gewählt werden kann (d.h. niemand nachvoolziehen kann, wer wie abgestimmt hat) und gleichzeitig sichergestellt ist, dass nur Wahlberechtigte abstimmen können und auch nur einmal.
+
+Die Lösung des Problems arbeitet mit blinden Signaturen.
+Die blinden Signaturen ermöglichen beispielsweise folgendes Vorgehen für
+eine geheime und nachvollziehbare Wahl:
+
+1. Wenn eine Wahlzettelnummer blind unterschrieben wird, so dass
+derjenige Server, der die Wahlberechtigung prüft, die Wahlzettelnummer
+nicht kennt. Das kann auch über mehrere Server geschehen, so dass man
+nicht 1 Server vertrauen muss. Man kann sich das so vorstellen: der
+Wähler schreibt eine lange selbst gewählte Nummer auf ein Blattpapier
+(Wahlzettelnummer) und legt dieses zusammen mit einem Kohleblatt in
+einen Umschlag, der verschlossen wird. Der Server prüft die
+Wahlberechtigung und unterschreibt außen auf dem Umschlag, wobei sich
+die Unterschrift durch das Kohlepapier auf das Blatt, auf dem die
+Wahlzettelnummer steht, durchdrückt. Der Server hat die Wahlzettelnummer
+also nicht gesehen.
+Es bietet sich an, das Verfahren so zu machen, dass man sich diese Wahlzettel vor Eröffnung der Wahlen erzeugen und blind unterschreiben lassen muss. Es können im Vorhinein Wahlzettel für mehrere Wahlen erzeugt werden.
+
+
+2. Die Unterschrift unter der Wahlzettelnummer kann hinterher von jedem
+geprüft werden.
+
+3. Nach Ende der Abstimmung werden die Wahlzettelnummern zusammen mit
+der abgegebenen Stimme veröffentlicht. (Im Vergleich: die ausgepackten
+Zettel, auf die sich die Unterschrift mittels Kohlepapier durchgedrückt
+hat und der Wähler danach seine Stimme drauf geschrieben hat werden
+veröffentlicht)
+
+Ergebnis:
+a) Jeder kann überprüfen, dass nur unterschriebene Wahlzettelnummern
+abgestimmt haben
+b) Jeder kann die Stimmen selbst nachzählen, weil sie veröffentlicht sind.
+c) Jeder kann bei seiner eigenen Stimme sehen, ob sie korrekt empfangen
+wurde, denn jeder kennt selbst seine eigene Wahlzettelnummer.
+
+Dies ist nur eine der Möglichkeiten, online Abstimmungen so
+durchzuführen, dass für niemanden außer dem Abstimmenden selbst
+nachvollziehbar ist, wer wie abgestimmt hat (geheime Wahl) und dennoch
+jeder das Wahlergebnis nachzählen kann (nachvollziehbar).
 
