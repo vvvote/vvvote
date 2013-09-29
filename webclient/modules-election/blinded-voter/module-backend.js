@@ -25,7 +25,11 @@ function addBallothash(ballot) {
 	var tmp = new Object();
 	tmp.electionId = ballot.electionId;
 	tmp.votingno   = ballot.votingno;
-	tmp.salt       = bigInt2str(ballot.salt, base);
+	if (typeof ballot.salt == "string") {
+		tmp.salt = ballot.salt;
+	} else {
+		tmp.salt       = bigInt2str(ballot.salt, 16);
+	}
 	var transm  = new Object();
 	transm.str  = JSON.stringify(tmp);
 	transm.hash = SHA256(transm.str); // returns an hex-encoded string

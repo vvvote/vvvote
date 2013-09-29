@@ -223,6 +223,13 @@ BlindedVoterElection.prototype.signVote = function (vote) {
 };
 
 
+BlindedVoterElection.getServerInfoByName = function (servername) {
+	var slist = getPermissionServerList();
+	for (var s=0; s<slist.length; s++) {
+		if (slist[s].name = servername) return slist[s]; 
+	}
+};
+
 BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 	var pubkeystr = vote.permission.signed.votingno;
 	var pubkey = str2key(pubkeystr);
@@ -234,11 +241,31 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 		// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
 		var sigOk = rsaVerifySig(voteitself, sig, pubkey);
 		if (sigOk) {
-			alert('Die Unterschrift is korrekt');
+			alert('Die Unterschrift unter der Stimme ist korrekt');
 		} else {
-			alert('Die Unterschrift ist nicht korrekt');
+			alert('Die Unterschrift unter der Stimme ist nicht korrekt');
 		}
 	} catch (e) {
 		alert("Fehler beim überprüfen der Signatur:\n" + e);
 	}
+
+	var transm = addBallothash(vote.permission.signed);
+	var sig, serverinfo, pubkey, sigOk;
+	for (var i=0; i <vote.permission.sigs.length; i++) {
+		try {
+			sig = vote.permission.sigs[i];
+			serverinfo = BlindedVoterElection.getServerInfoByName(sig.sigBy);
+			pubkey = serverinfo.key;
+			// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
+			sigOk = rsaVerifySig(transm.str, sig.sig, pubkey);
+			if (sigOk) {
+				alert('Die Unterschrift von Wahlberechtigungsserver ' + sig.sigBy + ' für den Abstimmungsschlüssel ist korrekt');
+			} else {
+				alert('Die Unterschrift von Wahlberechtigungsserver ' + sig.sigBy + ' für den Abstimmungsschlüssel ist nicht korrekt');
+			}
+		} catch (e) {
+			alert("Fehler beim überprüfen der Signatur:\n" + e);
+		}
+	}
+
 };
