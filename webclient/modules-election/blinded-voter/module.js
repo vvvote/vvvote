@@ -250,7 +250,11 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 	}
 
 	var transm = addBallothash(vote.permission.signed);
-	var sig, serverinfo, pubkey, sigOk;
+	var sig, serverinfo, pubkey, sigOk, slist;
+	slist = getPermissionServerList();
+	if (vote.permission.sigs.length != slist.length) {
+		alert("Die Anzahl der Unterschriften unter dem Wahlschein ist nicht korrekt. Erforderliche Anzahl: " + slist.length + ', Anzahl Unterschriften bei diesem Wahlschein: ' + vote.permission.sigs.length);
+	}
 	for (var i=0; i <vote.permission.sigs.length; i++) {
 		try {
 			sig = vote.permission.sigs[i];
@@ -259,7 +263,7 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 			// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
 			sigOk = rsaVerifySig(transm.str, sig.sig, pubkey);
 			if (sigOk) {
-				alert('Die Unterschrift von Wahlberechtigungsserver ' + sig.sigBy + ' für den Abstimmungsschlüssel ist korrekt');
+				alert('Die Unterschrift von Wahlberechtigungsserver' + sig.sigBy + ' für den Abstimmungsschlüssel ist korrekt');
 			} else {
 				alert('Die Unterschrift von Wahlberechtigungsserver ' + sig.sigBy + ' für den Abstimmungsschlüssel ist nicht korrekt');
 			}
