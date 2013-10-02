@@ -72,11 +72,15 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 
 <!-- the following "<script>" is used as heredoc replacement -->
 <script  id="newElectionHtml" type="mumpiz">
+	
+	Hier können Sie eine neue Abstimmung starten.     
+    Zum Anlegen einer neuen Abstimmung legen Sie den Namen der Abstimmung und das Abstimmungspasswort fest. Die W&auml;hler geben ihren Namen ein und k&ouml;nnen nur dann abstimmen, wenn sie das hier festgelegte Abstimmungspasswort kennen. Es kann also jeder abstimmen, der das Abstimmungspasswort kennt.
+	<br> 
 	<input type="text" id="electionId"> 
     	<label for="electionId">Name der Wahl</label> 
  	<br>
 	<input type="text" id="givenPassword">
-    	<label for="givenPassword">Wahlpasswort</label>
+    	<label for="givenPassword">Abstimmungspasswort</label>
 	<br>
 	<input type="button" onclick="page.handleNewElectionButton();" value="Neue Abstimmung anlegen">		
 
@@ -152,7 +156,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 		</div>
 
 		<div id="nav">
-			 <a onclick="page = newElectionPage; page.display(); // handleNewElection();"  >Neue Wahl anlegen</a> &nbsp;&nbsp;&nbsp;
+			 <a onclick="page = newElectionPage; page.display(); // handleNewElection();"  >Neue Abstimmung anlegen</a> &nbsp;&nbsp;&nbsp;
 			 <a onclick="page = votePage;        page.display(); // startVoting(true);"    >An Abstimmung teilnehmen</a> &nbsp;&nbsp;&nbsp; 
 			 <a onclick="page = getResultPage;   page.display(); // startLoadingResult();" >Abstimmunsergebnis abrufen</a>
 		</div>
