@@ -6,6 +6,16 @@
  * error no starts at 1100
  */
 
+/**
+ * return 404 if called directly
+ */
+if(count(get_included_files()) < 2) {
+	header('HTTP/1.0 404 Not Found');
+	echo "<h1>404 Not Found</h1>";
+	echo "The page that you have requested could not be found.";
+	exit;
+}
+
 require_once __DIR__ . '/../../crypt.php';
 require_once __DIR__ . '/../../exception.php';
 require_once __DIR__ . '/dbPublishOnlyTally.php';
@@ -131,7 +141,7 @@ class PublishOnlyTelly {
 		try {
 			$voterReq = json_decode($req, true); //, $options=JSON_BIGINT_AS_STRING); // decode $req
 			if ($voterReq == null) { // json could not be decoded
-				WrongRequestException::throwException(1100, 'Telly: Error while decoding JSON request', $req);
+				WrongRequestException::throwException(1100, 'Tally: Error while decoding JSON request', $req);
 			}
 			$result = array();
 			//	print "voterReq\n";
@@ -145,11 +155,11 @@ class PublishOnlyTelly {
 					$result = $this->getAllVotesEvent($voterReq);
 					break;
 				default:
-					WrongRequestException::throwException(1101, 'Error unknown telly command', $req);
+					WrongRequestException::throwException(1101, 'Error unknown tally command (accepting "storeVote" and "getAllVotes" only)', $req);
 					break;
 			}
 		} catch (WrongRequestException $e) {
-			$result = array('cmd' => 'error', 'errorTxt' => $e->errortxt, 'errorNo' => $e->errorno);
+			$result = $e->makeServerAnswer();
 		}
 		$ret = json_encode($result);
 		return $ret;

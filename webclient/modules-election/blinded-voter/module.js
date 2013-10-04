@@ -263,12 +263,12 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 			// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
 			sigOk = rsaVerifySig(transm.str, sig.sig, pubkey);
 			if (sigOk) {
-				alert('Die Unterschrift von Wahlberechtigungsserver' + sig.sigBy + ' für den Abstimmungsschlüssel ist korrekt');
+				alert('Die Unterschrift von Wahlberechtigungsserver >' + sig.sigBy + '< für den Abstimmungsschlüssel ist korrekt');
 			} else {
-				alert('Die Unterschrift von Wahlberechtigungsserver ' + sig.sigBy + ' für den Abstimmungsschlüssel ist nicht korrekt');
+				alert('Die Unterschrift von Wahlberechtigungsserver >' + sig.sigBy + '< für den Abstimmungsschlüssel ist nicht korrekt');
 			}
 		} catch (e) {
-			alert("Fehler beim überprüfen der Signatur:\n" + e);
+			alert("Fehler beim überprüfen der Signatur:\n" + e.toString());
 		}
 	}
 

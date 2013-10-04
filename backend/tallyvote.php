@@ -24,14 +24,14 @@ if (isset($HTTP_RAW_POST_DATA)) {
 	$reqdecoded = json_decode($HTTP_RAW_POST_DATA, true); // TODO error handling
 	switch ($reqdecoded['cmd']) {
 		case 'getAllVotes': $electionId = $reqdecoded['electionId']; break;
-		case 'storeVote':        $electionId = $reqdecoded['permission']['signed']['electionId']; break;
+		case 'storeVote':   $electionId = $reqdecoded['permission']['signed']['electionId']; break;
 		default: // TODO throw an error
 			break;
 	}
 	$elconfig = $dbElections->loadElectionConfigFromElectionId($electionId); // TODO error handling
 	
 	switch ($elconfig['auth']) {
-		case 'userPassw': $auth = new UserPasswAuth($dbInfos); break;
+		case 'userPassw':   $auth = new UserPasswAuth($dbInfos); break;
 		case 'sharedPassw': $auth = new SharedPasswAuth($dbInfos); break;
 		default: /* TODO return an error */ break;
 	}
