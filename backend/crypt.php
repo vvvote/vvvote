@@ -169,7 +169,7 @@ class Crypt {
 		if (! isset(   $ballot['sigs']) ) $ballot['sigs'] = array();
 		$newnum = count($ballot['sigs']);
 		$blindedHashBigInt = new Math_BigInteger($blindedHash, 16);
-		$ballot['sigs'][$newnum]['sig'] = $this->myPrivateKey['privRsa']->_rsasp1($blindedHashBigInt)->toHex();
+		$ballot['sigs'][$newnum]['sig']   = $this->myPrivateKey['privRsa']->_rsasp1($blindedHashBigInt)->toHex();
 		$ballot['sigs'][$newnum]['sigBy'] = $this->myPrivateKey['serverName'];
 
 		//ser Sig

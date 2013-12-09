@@ -35,7 +35,7 @@ if (isset($HTTP_RAW_POST_DATA)) {
 	try{
 		$dbElections = new DbElections($dbInfos);
 		$reqdecoded = json_decode($HTTP_RAW_POST_DATA, true); // TODO error handling
-		$elconfig = $dbElections->loadElectionConfigFromElectionId($reqdecoded['electionId']); // TODO error handling
+		$elconfig = $dbElections->loadElectionConfigFromElectionId($reqdecoded['electionId']); // TODO error handling, e.g. issset($reqdecoded['electionId'])...
 		if (count($elconfig) < 1) {
 			WrongRequestException::throwException(6000, 'Election ID not found', "ElectionId you sent: " . $reqdecoded['electionId']);
 		}

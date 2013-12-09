@@ -11,6 +11,8 @@ if(count(get_included_files()) < 2) {
 
 require_once 'rsaMyExts.php';
 
+$webclientUrlbase = '..'; // relativ to backend or absolute, no trailing slash
+
 $p         = new Math_BigInteger('10645752675217578369956837062782498220775273');
 $q         = new Math_BigInteger('287562030630461198841452085101513512781647409');
 $exppriv   = new Math_BigInteger('1210848652924603682067059225216507591721623093360649636835216974832908320027478419932929', 10);

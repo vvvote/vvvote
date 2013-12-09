@@ -133,7 +133,9 @@ class PublishOnlyTelly {
 			$this->sigsOk($vote);
 		}
 		*/
-		$ret = array ('data' => $allvotes, 'cmd' => 'verifyCountVotes');
+//		$blindedInfos = $this->election->getBlindedInfos(); // infos from blinding module 
+		$ret = array ('data' => array('allVotes' => $allvotes),  
+				      'cmd' => 'verifyCountVotes');
 		return $ret;
 	}
 	
