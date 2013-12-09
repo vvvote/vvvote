@@ -77,23 +77,24 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 		if (data.cmd != 'verifyCountVotes') {
 			throw new ErrorInServerAnswer(2003, 'Error: Expected >verifyCountVotes<', 'Got from server: ' + data.cmd);
 		}
-		this.votes = data.data;
+		this.votes = data.data.allVotes;
 		// process data
 		//   show a list of all votes
-		var htmlcode = '<div id="allvotes"><table>';
+		var htmlcode = '<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
+		htmlcode = htmlcode + '<div id="allvotes"><table>';
 		htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + 'Stimme'                  + '</th>'; 
 		htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</span></th></thead>';
 		htmlcode = htmlcode + '<tbody>';
-		for (var i=0; i<data.data.length; i++) {
+		for (var i=0; i<this.votes.length; i++) {
 			htmlcode = htmlcode + '<tr>';
-			htmlcode = htmlcode + '<td> <span id="vote">' + data.data[i].vote.vote                  + '</span></td>'; 
-			htmlcode = htmlcode + '<td> <span id="votingno">' + data.data[i].permission.signed.votingno + '</span></td>'; 
+			htmlcode = htmlcode + '<td> <span id="vote">' + this.votes[i].vote.vote                  + '</span></td>'; 
+			htmlcode = htmlcode + '<td> <span id="votingno">' + this.votes[i].permission.signed.votingno + '</span></td>'; 
 			// TODO substitude election for this.varname
-			htmlcode = htmlcode + '<td> <button onclick="page.tally.handleUserClickVerifySig(' + i +');" >Verify Signatures</button>' + '</td>'; 
-//			htmlcode = htmlcode + '<td>' + data.data[i].permission.signed.salt     + '</td>'; 
+			htmlcode = htmlcode + '<td> <button onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften prüfen!</button>' + '</td>'; 
+//			htmlcode = htmlcode + '<td>' + this.votes[i].permission.signed.salt     + '</td>'; 
 			htmlcode = htmlcode + '</tr>';
 			// TODO add to votes only if sigOk
-			votesOnly[i] = data.data[i].vote.vote;
+			votesOnly[i] = this.votes[i].vote.vote;
 		}
 		htmlcode = htmlcode + '</tbody></table></div>';
 		
@@ -127,4 +128,7 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 
 PublishOnlyTelly.prototype.handleUserClickVerifySig = function (no) {
 	this.election.verifyVoteSigs(this.votes[no]);
+};
+PublishOnlyTelly.prototype.handleUserClickGetPermissedBallots = function () {
+	this.election.getAllPermissedBallots();
 };

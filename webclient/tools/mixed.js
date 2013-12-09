@@ -20,10 +20,26 @@ function getFrequencies(list) {
 	return freqs;
 }
 
+/**
+ * returns the index in an array of objects which matches
+ * a given property of the object
+ * @param a: array to search in
+ * @param elementname: name of property to search
+ * @param element: element to search for
+ * @returns {Number}
+ */
+function ArrayIndexOf(a, elementname, element) {
+	if (!a || !a.length || a.length < 1) return -1;
+	for (var i = 0; i < a.length; i++) {
+		if (a[i][elementname] === element) return i;
+	}
+	return -1;
+}
+
 function myXmlSend(url, data, callbackObject, callbackFunction) {
 	  var xml2 = new XMLHttpRequest();
 	  xml2.open('POST', url, true);
-	  xml2.onload = function() { callbackFunction.call(callbackObject, xml2); }; 
+	  xml2.onload = function() { callbackFunction.call(callbackObject, xml2, url); }; 
 	  userlog("\n--> gesendet an Server " + (url) + ': ' + data + "\r\n\r\n");
 	  xml2.send(data);
 }

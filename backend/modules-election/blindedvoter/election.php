@@ -213,8 +213,13 @@ class Election {
 
 		$ret = array();
 		$ret['ballots'] = $signedBallots;
+		$tmp = array('voterId' => $voterReq['voterId'], 'signedBallots' => $signedBallots);
+		$this->db->saveSignedBallots($this->electionId, $voterReq['voterId'], $tmp);
 		if (count($ret['ballots'][0]['sigs']) >= $this->crypt->getNumServers() ) {
 			$ret['cmd'] = 'savePermission';
+			// TODO think about: save all signed ballots not only the ones where this server is the last signer?
+			// up to now it is only used for tally.js to show who requested a Wahlschein
+			// maybe it should be used to avoid multi-threading problems
 		} else {
 			$ret['cmd'] = 'reqSigsNextpServer';
 		}
@@ -320,7 +325,12 @@ class Election {
 		$str = $this->ballot2strForSig($vote['permission']['signed']);
 		return $this->crypt->verifySigs($str, $vote['permission']['sigs']);
 	}
-
+	
+	function getAllPermissedBallots() {
+		$signedBallots = $this->db->loadAllSignedBallots($this->electionId);  
+		return $signedBallots;
+	}
+	
 	function handlePermissionReq($req) {
 		try {
 			$voterReq = json_decode($req, true); //, $options=JSON_BIGINT_AS_STRING); // decode $req
@@ -337,11 +347,12 @@ class Election {
 				case 'pickBallots':
 					$result = $this->pickBallotsEvent($voterReq);
 					break;
-
 				case 'signBallots':
 					$result = $this->signBallotsEvent($voterReq);
 					break;
-
+				case 'getAllPermissedBallots':
+					$result = $this->getAllPermissedBallots($voterReq);
+					break;
 				default:
 					WrongRequestException::throwException(101, 'Error unknown command', $req);
 					break;

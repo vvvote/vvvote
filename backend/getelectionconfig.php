@@ -20,7 +20,7 @@ if (isset($HTTP_RAW_POST_DATA)) {
 if (isset($_GET) && isset($_GET['confighash']) ) {
 	$hash = $_GET['confighash'];
 	if (! isset($_GET['api'])) {
-		header('Location: ../webclient/index.html?confighash=' . $hash, true, 301);
+		header('Location: ' . $webclientUrlbase . '/index.html?confighash=' . $hash, true, 301);
 		die();
 	}
 }

@@ -231,6 +231,7 @@ BlindedVoterElection.getServerInfoByName = function (servername) {
 };
 
 BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
+	// TODO verify that there is no doubled voting no
 	var pubkeystr = vote.permission.signed.votingno;
 	var pubkey = str2key(pubkeystr);
 	// var rsa = new RSAKey();
@@ -241,9 +242,9 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 		// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
 		var sigOk = rsaVerifySig(voteitself, sig, pubkey);
 		if (sigOk) {
-			alert('Die Unterschrift unter der Stimme ist korrekt');
+			alert('Die Unterschrift unter der Stimme ist korrekt, d.h. die Stimme wurde nicht verändert.');
 		} else {
-			alert('Die Unterschrift unter der Stimme ist nicht korrekt');
+			alert('Die Unterschrift unter der Stimme ist nicht korrekt, d.h. die Stimme wurde verändert oder der Schlüssel passt nicht.');
 		}
 	} catch (e) {
 		alert("Fehler beim überprüfen der Signatur:\n" + e);
@@ -273,3 +274,58 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 	}
 
 };
+
+BlindedVoterElection.prototype.getAllPermissedBallots = function () {
+	var cmd = Object();
+	cmd.cmd = 'getAllPermissedBallots';
+	cmd.electionId = this.config.electionId;
+	var req = JSON.stringify(cmd);
+	this.allPermissions = new Array();
+	var pServerList = getPermissionServerList();
+	for (var i=0; i<pServerList.length; i++) {
+		var url = pServerList[i].url;
+		me = this;
+		myXmlSend(url, req, me, me.XhandleXmlAnswerGetAllPermissedBallots);
+	}
+};
+
+BlindedVoterElection.prototype.XhandleXmlAnswerGetAllPermissedBallots = function (xml, url) {
+	var answ = parseServerAnswer(xml); 
+	var pServerList = getPermissionServerList();
+
+	var i = ArrayIndexOf(pServerList, 'url', url);
+	var sname = pServerList[i].name; 
+	this.allPermissions = answ;
+
+	this.allPermissions; // .voterId .sigs[wievielter Unterzeichner][angabe von Servername]
+	var curr;
+	// find voterID, if not presend -> add
+	for (i=0; i<answ.length; i++) {
+		curr = answ[i]; // signedBallots[].sigs[].sigBy
+		var permission;
+		var v = ArrayIndexOf(this.allPermissions, 'voterId', curr['voterId']);
+		if (v < 1) {
+			permission = new Object();
+			permission.voderId = curr['voterId'];
+			permission.sigs = new Array();
+			this.allPermissions.push(permission);
+		} else {
+			permission = this.allPermissions[v];
+		}
+		permission.sigs[sname] = curr['sigsBy']; // this is an array containing the list of permission server names ind the sequence they signed the permission
+		// verify if all servers say the same sequence of sigs 
+		if (permission.sigs.length > 1) {
+			var c = permission.sigs[0]; // TODO find the server which provides the most sigs
+			for (var s in permission.sigs) {
+				for (var j=0; j<min(c.length, permission.sigs[s].length); j++) {
+					if (permission.sigs[s][0] != c[0]) {
+						alert('Bei Wähler >' + curr['voterId'] + '< gibt Server >' + s + '< eine anderen Reihenfolge der Unterschriften an als Server >' + x + '<.');}
+				}
+			}
+		}
+	}
+
+	return this.allPermissions;
+};
+
+

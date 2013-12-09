@@ -43,16 +43,18 @@ class DbBlindedVoter extends DbBase {
 	
 	function saveBlindedHashes($electionId, $voterId, $blindedHashesForJSON) {
 		return $this->saveElectionVoter($electionId, $voterId, 'blindedHashes', 'blindedHashes', $blindedHashesForJSON);
-		/*		$statemnt = $this->connection->prepare('INSERT INTO blindedHashes (electionId, voterId, jsonHash) VALUES (:electionId, :voterId, :jsonHash)');
-		 $statemnt->bindValue(':electionId', $electionId);
-		$statemnt->bindValue(':voterId'   , $voterId);
-		$statemnt->bindValue(':jsonHash'  , $jsonblindedHashes);
-		$statemnt->execute();
-		*/
 	}
 	
 	function loadBlindedHashes($electionId, $voterId) {
 		return $this->loadElectionVoter($electionId, $voterId, 'blindedHashes', 'blindedHashes');
+	}
+	
+	function saveSignedBallots($electionId, $voterId, $signedBallotsForJSON) {
+		return $this->saveElectionVoter($electionId, $voterId, 'signedBallots', 'signedBallots', $signedBallotsForJSON);
+	}
+	
+	function loadAllSignedBallots($electionId) {
+		return $this->load(array('electionID' => $electionId), 'signedBallots', 'signedBallots');
 	}
 	
 }
