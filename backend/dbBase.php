@@ -26,6 +26,7 @@ if(count(get_included_files()) < 2) {
 }
 
 require_once 'modules-db/dbMySql.php';
+require_once 'tools.php';
 
 /**
  * This class is made in order to make it easy to implement the usage of
@@ -69,13 +70,21 @@ class DbBase {
 	}
 
 	function save(array $cols, $tablename) {
-		return $this->connection->save($cols, $tablename);
+		foreach($cols as $colname => $colvalue) { // encode the json==true columns
+			$colnum = find_in_subarray($this->connection->evtables[$tablename], 'name', $colname);
+			if ($this->connection->evtables[$tablename][$colnum]['json']) {
+				$colsEnc[$colname] = json_encode($colvalue, true);
+			} else {
+				$colsEnc[$colname] = $colvalue;
+			}
+		}
+		return $this->connection->save($colsEnc, $tablename);
 	}
-	
+
 	function saveElectionVoter($electionId, $voterId, $tablename, $colname, $forjson) {
-		$saveStr = json_encode($forjson);
+		$saveStr = $forjson;
 		return $this->save(array('electionId' => $electionId, 'voterId' => $voterId, $colname => $saveStr), $tablename);
-	}	
+	}
 /**
  * 
  * @param unknown $where array colname == value all pairs are treated as AND conditions
@@ -83,9 +92,20 @@ class DbBase {
  * @param unknown $colname
  */
 	function load($where, $tablename, $colname) {
-		return $this->connection->load($where, $tablename, $colname);
+		$fromDB = $this->connection->load($where, $tablename, $colname);
+		$colnum = find_in_subarray($this->connection->evtables[$tablename], 'name', $colname);
+		if ($fromDB === false) return false;
+		$ret = array(); // this is necessary because sometimes $fromDB contains an empty array
+		foreach ($fromDB as $num => $gotrow) { // json decode if column is json
+			if ($this->connection->evtables[$tablename][$colnum]['json']) {
+				$ret[$num] = json_decode($gotrow[0], true);
+			} else {
+				$ret[$num] = $gotrow[0];
+			}
+		}
+		return $ret;
 	}
-	
+
 	function summarize($where, $groupby, $func, $funccol, $tablename, $colname) {
 		return $this->connection->summarize($where, $groupby, $func, $funccol, $tablename, $colname);
 	}

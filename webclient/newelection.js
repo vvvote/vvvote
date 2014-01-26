@@ -49,7 +49,7 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 			Page.loadMainContent(mc);
 			break;
 		case 'error':
-			alert('Server meldet Fehler: ' + data.errorno + "\n" + data.errortxt);
+			alert('Server meldet Fehler: ' + data.errorNo + "\n" + data.errorTxt);
 			break;
 		default:
 			break;

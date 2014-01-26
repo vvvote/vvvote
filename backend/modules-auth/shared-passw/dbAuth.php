@@ -22,8 +22,8 @@ class DbSharedPasswAuth extends DbBase {
 	function __construct($dbInfos) {
 		$dbtables =
 		array('sp_credentials' /* Table name */ => array(
-				array('name' => 'electionId'    , 'digits' => '100'), /* colunm definition */
-				array('name' => 'sp_credentials', 'digits' => '100')
+				array('name' => 'electionId'    , 'digits' => '100', 'json' => false), /* colunm definition */
+				array('name' => 'sp_credentials', 'digits' => '100', 'json' => false)
 		));
 		parent::__construct($dbInfos, $dbtables, true);
 	}

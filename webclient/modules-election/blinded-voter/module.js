@@ -31,7 +31,7 @@ function switchAction(result) {
 		// saveAs(result.data, 'ballots.json');
 	    break;
 	case 'serverError':
-		alert('Server ' + (election.xthServer +1) + /*' (' + election.pServerList[serverno].url + */ ' rejected the request \n Error number: '+ result.errorNo + "\n" + result.errorText);
+		alert('Server ' + (election.xthServer +1) + /*' (' + election.pServerList[serverno].url + */ ' rejected the request \n Error number: '+ result.errorNo + "\n" + result.errorTxt);
 		break;
 	case 'clientError':
 		alert('Client found error:\n '+ result.errorText);

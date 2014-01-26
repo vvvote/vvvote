@@ -86,7 +86,7 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 		htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</span></th></thead>';
 		htmlcode = htmlcode + '<tbody>';
 		for (var i=0; i<this.votes.length; i++) {
-			htmlcode = htmlcode + '<tr>';
+			htmlcode = htmlcode + '<tr>'; // TODO test if this.votes[i].vote.vote is set and is string same for this.votes[i].permission.signed.votingno and throw an error if not 
 			htmlcode = htmlcode + '<td> <span id="vote">' + this.votes[i].vote.vote                  + '</span></td>'; 
 			htmlcode = htmlcode + '<td> <span id="votingno">' + this.votes[i].permission.signed.votingno + '</span></td>'; 
 			// TODO substitude election for this.varname

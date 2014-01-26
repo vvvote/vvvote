@@ -18,10 +18,10 @@ class DbPublishOnlyTelly extends DbBase {
 	function __construct($dbInfos) {
 		$dbtables = 
 		array('storedCorrectVotes' /* Table name */ => array(
-				array('name' => 'electionID'        , 'digits' =>   '100'), /* colunm definition */
-				array('name' => 'votingno'          , 'digits' =>  '5000'),
-				array('name' => 'vote'              , 'digits' =>    '50'),
-				array('name' => 'storedCorrectVotes', 'digits' => '10000')
+				array('name' => 'electionID'        , 'digits' =>   '100', 'json' => false), /* colunm definition */
+				array('name' => 'votingno'          , 'digits' =>  '5000', 'json' => false),
+				array('name' => 'vote'              , 'digits' =>    '50', 'json' => false),
+				array('name' => 'storedCorrectVotes', 'digits' => '10000', 'json' => true)
 				)
 				);
 		parent::__construct($dbInfos, $dbtables, true);
@@ -32,7 +32,7 @@ class DbPublishOnlyTelly extends DbBase {
 								'electionId'         => $electionId, 
 								'votingno'           => $votingno,
 								'vote'               => $vote,
-								'storedCorrectVotes' => json_encode($voterReq),
+								'storedCorrectVotes' => $voterReq,
 								), 
 							'storedCorrectVotes');
 	}

@@ -18,9 +18,9 @@ class DbElections extends DbBase {
 	function __construct($dbInfos) {
 		$dbtables =
 		array('elections' /* Table name */ => array(
-				array('name' => 'electionId', 'digits' => '100'), /* colunm definition */
-				array('name' => 'config'    , 'digits' => '1000'),
-				array('name' => 'hash'      , 'digits' => '257')
+				array('name' => 'electionId', 'digits' => '100' , 'json' => false), /* colunm definition */
+				array('name' => 'config'    , 'digits' => '1000', 'json' => true),
+				array('name' => 'hash'      , 'digits' => '257' , 'json' => false)
 		));
 		parent::__construct($dbInfos, $dbtables, true);
 	}
@@ -29,7 +29,7 @@ class DbElections extends DbBase {
 		$configstr = json_encode($config);
 		$hash = hash('sha256', $configstr);
 		$ok = $this->save(array('electionId' => $electionId, 
-				                'config'     => $configstr, 
+				                'config'     => $config, // this column is marked as json=true so that it gets automatically json encoded and decoded 
 				                'hash'       => $hash), 
 				'elections');
 		return $hash;
