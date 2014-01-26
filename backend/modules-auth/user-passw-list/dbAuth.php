@@ -17,9 +17,9 @@ class DbAuth extends DbBase {
 	function __construct($dbInfos) {
 		$dbtables =
 		array('up_credentials' /* Table name */ => array(
-				array('name' => 'electionID'    , 'digits' => '100'), /* colunm definition */
-				array('name' => 'voterId'       , 'digits' => '100'),
-				array('name' => 'up_credentials', 'digits' => '100')
+				array('name' => 'electionID'    , 'digits' => '100', 'json' => false), /* colunm definition */
+				array('name' => 'voterId'       , 'digits' => '100', 'json' => false),
+				array('name' => 'up_credentials', 'digits' => '100', 'json' => false)
 		));
 		parent::__construct($dbInfos, $dbtables, true);
 	}

@@ -24,7 +24,7 @@ class WrongRequestException extends Exception {
 	}
 	
 	function makeServerAnswer() {
-		$ret = Array('cmd' => 'error', 'errorno' => $this->errorno, 'errortxt' => $this->errortxt);
+		$ret = Array('cmd' => 'error', 'errorNo' => $this->errorno, 'errorTxt' => $this->errortxt);
 		return $ret;
 	}
 	

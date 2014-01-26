@@ -302,9 +302,9 @@ function handleServerAnswer(election, dataString) {
 		return Object({'action':'savePermission', 'data': ballotFileContent});
 		break;
 	case 'error':
-		return Object({'action':'serverError', 'errorText': data.errorTxt, 'errorNo': data.errorNo});
+		return Object({'action':'serverError', 'errorTxt': data.errorTxt, 'errorNo': data.errorNo});
 	default:
-		return Object({'action':'clientError', 'errorText': "unknown server cmd: " + data.cmd});
+		return Object({'action':'clientError', 'errorTxt': "unknown server cmd: " + data.cmd});
 	break;
 	}
 	addCredentials(election, ret);

@@ -219,12 +219,12 @@ class DbMySql { // TODO dbBase
 		$status = $statmnt->execute();
 		$got = $statmnt->fetchAll();
 		if ($got === false) return false;
-		$ret = array();
-		foreach ($got as $num => $gotrow) {
-				$ret[$num] = json_decode($gotrow[0], true);
-				if ($ret[$num] == null) $ret[$num] = $gotrow[0]; // it's not JSON encoded
-		}
-		return $ret;
+		// $ret = array();
+		// foreach ($got as $num => $gotrow) {
+		//		$ret[$num] = json_decode($gotrow[0], true);
+		//		if ($ret[$num] == null) $ret[$num] = $gotrow[0]; // it's not JSON encoded
+		//}
+		return $got; // $ret;
 	}
 	
 	function summarize($where, $groupby, $func, $funccol, $tablename, $colname) {
