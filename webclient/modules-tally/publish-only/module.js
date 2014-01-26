@@ -19,7 +19,7 @@ PublishOnlyTelly.prototype.getMainContent = function() {
 //	ret = element.innerHTML
 	var ret = ''; // this.election.getPermissionHtml();
 	ret = ret + '\n<p>\n'; // TODO present options from config
-	ret = ret + 'Ihre Stimme: <input type="text" name="vote" id="vote" value="Alternative A">';
+	ret = ret + 'Ihre Stimme: <input type="text" name="vote" id="vote" value="">';
 	ret = ret + '\n</p>\n';
 	return ret;
 	
