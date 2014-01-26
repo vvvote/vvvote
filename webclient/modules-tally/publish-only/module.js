@@ -85,16 +85,21 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 		htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + 'Stimme'                  + '</th>'; 
 		htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</span></th></thead>';
 		htmlcode = htmlcode + '<tbody>';
+		var v;
+		var vno;
+		var disabled;
 		for (var i=0; i<this.votes.length; i++) {
-			htmlcode = htmlcode + '<tr>'; // TODO test if this.votes[i].vote.vote is set and is string same for this.votes[i].permission.signed.votingno and throw an error if not 
-			htmlcode = htmlcode + '<td> <span id="vote">' + this.votes[i].vote.vote                  + '</span></td>'; 
-			htmlcode = htmlcode + '<td> <span id="votingno">' + this.votes[i].permission.signed.votingno + '</span></td>'; 
+			htmlcode = htmlcode + '<tr>';
+			try {v   = this.votes[i].vote.vote;    disabled = '';} catch (e) {v   = 'Error'; disabled = 'disabled';}
+			try {vno = this.votes[i].permission.signed.votingno; } catch (e) {vno = 'Error'; disabled = 'disabled';}
+			htmlcode = htmlcode + '<td> <span id="vote">' + v + '</span></td>'; 
+			htmlcode = htmlcode + '<td> <span id="votingno">' + vno + '</span></td>'; 
 			// TODO substitude election for this.varname
-			htmlcode = htmlcode + '<td> <button onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften prüfen!</button>' + '</td>'; 
+			htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften prüfen!</button>' + '</td>'; 
 //			htmlcode = htmlcode + '<td>' + this.votes[i].permission.signed.salt     + '</td>'; 
 			htmlcode = htmlcode + '</tr>';
 			// TODO add to votes only if sigOk
-			votesOnly[i] = this.votes[i].vote.vote;
+			votesOnly[i] = v;
 		}
 		htmlcode = htmlcode + '</tbody></table></div>';
 		
@@ -122,6 +127,9 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 		this.onGotVotesMethod.call(this.onGotVotesObj, ret);
 	} catch (e) {
 		if (e instanceof MyException ) {e.alert();}
+		if (e instanceof TypeError   ) {
+			f = new ErrorInServerAnswer(2004, 'Error: unexpected var type', 'details: ' + e.toString());
+			f.alert();}
 		else {throw e;} // TODO show the error
 	}
 };
