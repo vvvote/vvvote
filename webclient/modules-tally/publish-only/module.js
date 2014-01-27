@@ -129,8 +129,11 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 		if (e instanceof MyException ) {e.alert();}
 		if (e instanceof TypeError   ) {
 			f = new ErrorInServerAnswer(2004, 'Error: unexpected var type', 'details: ' + e.toString());
-			f.alert();}
-		else {throw e;} // TODO show the error
+			f.alert();
+		} else {
+			f = new ErrorInServerAnswer(2005, 'Error: some else error', 'details: ' + e.toString());
+			f.alert();
+		} // TODO show the error
 	}
 };
 
