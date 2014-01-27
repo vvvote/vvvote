@@ -39,7 +39,8 @@ function ArrayIndexOf(a, elementname, element) {
 function myXmlSend(url, data, callbackObject, callbackFunction) {
 	  var xml2 = new XMLHttpRequest();
 	  xml2.open('POST', url, true);
-	  xml2.onload = function() { callbackFunction.call(callbackObject, xml2, url); }; 
+	  xml2.onload = function() { callbackFunction.call(callbackObject, xml2, url); };
+	  xml2.onerror = function() {alert("error");}
 	  userlog("\n--> gesendet an Server " + (url) + ': ' + data + "\r\n\r\n");
 	  xml2.send(data);
 }
