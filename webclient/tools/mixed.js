@@ -41,13 +41,21 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 	xml2.onload = function() { callbackFunction.call(callbackObject, xml2, url); };
 	xml2.onerror = function(e) {
 		alert("error: (" + xml2.status + ") "+ xml2.statusText + "e: " + e.target.status);
+		// this occures when
+		// * certificate of https is not valid
+		// * in chrome: protocol unknown
+		// * server not found (DNS error)
+		// unfortunately the status is in all cases 0
+		// so we open a new window (pop-up) to show the problem to the user
 		// + "\n" + 'click <a href="' + url +'" here</a>');};
+		
 		/*		  if (xml2.status == Components.results.NS_ERROR_UNKNOWN_HOST) {
 		   alert("DNS error: " +  this.channel.status);
 	  }
-		 */		  MeinFenster = window.open(url, "Diagnosis Window", "width=300,height=200,scrollbars=yes");
+		 */		  
+		var diagnosisWindow = window.open(url, "Diagnosis Window", "width=300,height=200,scrollbars=yes");
 		 try {
-			 MeinFenster.focus();
+			 diagnosisWindow.focus();
 		 } catch (e) {
 			 if (e instanceof TypeError) { // Pop-Up-Window blocked
 				 alert('Es ist ein Fehler beim Aufbau einer Verbindung aufgetreten. Um den genauen Fehler anzuzeigen, wurde versucht, die Verbindung in einem neuen Fenster zu öffnen. Bitte lassen Sie das Pop-up-Fenster zu.');

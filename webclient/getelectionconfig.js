@@ -8,18 +8,22 @@ function GetElectionConfig(url, serverkeys, gotConfigObject, gotConfigMethod) {
 	this.onGotConfigObject = gotConfigObject;
 	this.onGotConfigMethod = gotConfigMethod;
 //	var kw = new URI(null, null);
-	try {
-	var pos = url.indexOf('?');
-	if (pos > -1) {
-		q = url.substring(pos + 1) || null;
-	} else {
-		throw new UserInputError(1000, "The given election URL is not in the expected format (missing '?')", url);
-	}
-	
-	var query = URI.parseQuery(q); // tools/url/
-	if (!query || !query.confighash) return false; // TODO throw some error
-//	var sigsok = verifySigs(query); // TODO implement this
-	this.reqestElectionConfig();
+	try { // check the election-URL
+		if ( this.url.indexOf('http://') !== 0 && this.url.indexOf('https://' !== 0) ) {
+			throw new UserInputError(1000, "Bitte geben Sie einen gültigen Wahl-Link ein. Gültige Wahl-Links beginnen mit 'http://' oder 'https://'", url);
+		}
+		var pos = url.indexOf('?');
+		var q;
+		if (pos > -1) {
+			q = url.substring(pos + 1) || null;
+		} else {
+			throw new UserInputError(1000, "The given election URL is not in the expected format (missing '?')", url);
+		}
+
+		var query = URI.parseQuery(q); // tools/url/
+		if (!query || !query.confighash) throw new UserInputError(1000, "The given election URL is not in the expected format", url);
+//		var sigsok = verifySigs(query); // TODO implement this
+		this.reqestElectionConfig();
 	} catch (e) {
 		if (e instanceof MyException) { e.alert();}
 		else throw e;
@@ -30,6 +34,7 @@ GetElectionConfig.prototype = {
 		reqestElectionConfig: function () {
 			var me = this;
 			myXmlSend(this.url + '&api', '', me, this.handleXmlAnswer);
+
 		},
 
 		handleXmlAnswer: function (xml) {
