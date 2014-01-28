@@ -47,8 +47,9 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 
 function parseServerAnswer(xml) {
 	if (xml.status != 200) {
-		userlog("\n<--- empfangen:\n " + xml.status);
-		throw new ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: ' + xml.status);
+		userlog("\n<--- empfangen Fehler:\n " + xml.status + xml.statusText);
+		alert("ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (' " + xml.status + ') ' + xml.statusText);
+		throw new ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (' + xml.status + ') ' + xml.statusText);
 	}
 	try {
 		userlog("\n<--- empfangen:\n" + xml.responseText);
@@ -56,6 +57,7 @@ function parseServerAnswer(xml) {
 		return data;
 	} catch (e) {
 		// defined in exception.js
+		alert("ErrorInServerAnswer 2001, 'Error: could not JSON decode the server answer', 'Got from server: '" + xml.responseText);
 		throw new ErrorInServerAnswer(2001, 'Error: could not JSON decode the server answer', 'Got from server: ' + xml.responseText);
 		// 		return Object({'action':'clientError', 'errorText': "could not JSON decode: (" + e + ") \n" + dataString});
 

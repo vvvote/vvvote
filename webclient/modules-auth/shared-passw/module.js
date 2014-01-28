@@ -14,7 +14,7 @@ SharedPasswAuth.getMainContent = function(conf) {
 	'		  				     <input name="voterId" id="voterId" value=""> ' +
     '                       <br>' +
 	'						<label for="sharedPassw">Wahlpasswort</label> ' +
-	'						     <input name="sharedPassw" id="secret" value=""></td>' + 
+	'						     <input name="sharedPassw" id="secret" value="" type="password"></td>' + 
     '                       <br>' +
 	'						<label for="reqPermiss"></label> ' +
 	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
