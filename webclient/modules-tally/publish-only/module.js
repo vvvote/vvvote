@@ -85,8 +85,8 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 		htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + 'Stimme'                  + '</th>'; 
 		htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</span></th></thead>';
 		htmlcode = htmlcode + '<tbody>';
-		var v;
-		var vno;
+		var v;   // vote
+		var vno; // vote number
 		var disabled;
 		for (var i=0; i<this.votes.length; i++) {
 			htmlcode = htmlcode + '<tr>';
@@ -127,7 +127,7 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 		this.onGotVotesMethod.call(this.onGotVotesObj, ret);
 	} catch (e) {
 		if (e instanceof MyException ) {e.alert();}
-		if (e instanceof TypeError   ) {
+		else if (e instanceof TypeError   ) {
 			f = new ErrorInServerAnswer(2004, 'Error: unexpected var type', 'details: ' + e.toString());
 			f.alert();
 		} else {
