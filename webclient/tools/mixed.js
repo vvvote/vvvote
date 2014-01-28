@@ -37,20 +37,31 @@ function ArrayIndexOf(a, elementname, element) {
 }
 
 function myXmlSend(url, data, callbackObject, callbackFunction) {
-	  var xml2 = new XMLHttpRequest();
-	  xml2.open('POST', url, true);
-	  xml2.onload = function() { callbackFunction.call(callbackObject, xml2, url); };
-	  xml2.onerror = function(e) {
-		  alert("error: (" + xml2.status + ") "+ xml2.statusText + "e: " + e.target.status);
-		  // + "\n" + 'click <a href="' + url +'" here</a>');};
-		  if (this.channel && this.channel.status == Components.results.NS_ERROR_UNKNOWN_HOST) {
-			   alert("DNS error: " +  this.channel.status);
-		  }
-		  MeinFenster = window.open(url, "Zweitfenster", "width=300,height=200,scrollbars=yes");
-		  MeinFenster.focus();
-	  };
-	  userlog("\n--> gesendet an Server " + (url) + ': ' + data + "\r\n\r\n");
-	  xml2.send(data);
+	var xml2 = new XMLHttpRequest();
+	xml2.onload = function() { callbackFunction.call(callbackObject, xml2, url); };
+	xml2.onerror = function(e) {
+		alert("error: (" + xml2.status + ") "+ xml2.statusText + "e: " + e.target.status);
+		// + "\n" + 'click <a href="' + url +'" here</a>');};
+		/*		  if (xml2.status == Components.results.NS_ERROR_UNKNOWN_HOST) {
+		   alert("DNS error: " +  this.channel.status);
+	  }
+		 */		  MeinFenster = window.open(url, "Diagnosis Window", "width=300,height=200,scrollbars=yes");
+		 try {
+			 MeinFenster.focus();
+		 } catch (e) {
+			 if (e instanceof TypeError) { // Pop-Up-Window blocked
+				 alert('Es ist ein Fehler beim Aufbau einer Verbindung aufgetreten. Um den genauen Fehler anzuzeigen, wurde versucht, die Verbindung in einem neuen Fenster zu öffnen. Bitte lassen Sie das Pop-up-Fenster zu.');
+			 }
+		 }
+	};
+	try {
+		xml2.open('POST', url, true);
+		userlog("\n--> gesendet an Server " + (url) + ': ' + data + "\r\n\r\n");
+		xml2.send(data);
+	} catch (e) { // this is thrown from ff if xml2.open fails because of a non existent protocol (like http oder https)
+		// chrome calls xml2.onerror in this case
+		alert('Error trying to connect to ' + url + '\n' + e.toString());
+	}
 }
 
 function parseServerAnswer(xml) {

@@ -29,3 +29,7 @@ var ErrorInServerAnswer = function (errno, text, details) {
 ErrorInServerAnswer.prototype = new MyException(null, null, null);
 
 
+var UserInputError = function (errno, text, details) {
+	MyException.call(this, errno, text, details);
+};
+UserInputError.prototype = new MyException(null, null, null);
