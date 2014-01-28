@@ -40,14 +40,22 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 	  var xml2 = new XMLHttpRequest();
 	  xml2.open('POST', url, true);
 	  xml2.onload = function() { callbackFunction.call(callbackObject, xml2, url); };
-	  xml2.onerror = function(e) {alert("error: (" + xml2.status + ") "+ xml2.statusText + "e: " + e.target.status);};
+	  xml2.onerror = function(e) {
+		  alert("error: (" + xml2.status + ") "+ xml2.statusText + "e: " + e.target.status);
+		  // + "\n" + 'click <a href="' + url +'" here</a>');};
+		  if (this.channel && this.channel.status == Components.results.NS_ERROR_UNKNOWN_HOST) {
+			   alert("DNS error: " +  this.channel.status);
+		  }
+		  MeinFenster = window.open(url, "Zweitfenster", "width=300,height=200,scrollbars=yes");
+		  MeinFenster.focus();
+	  };
 	  userlog("\n--> gesendet an Server " + (url) + ': ' + data + "\r\n\r\n");
 	  xml2.send(data);
 }
 
 function parseServerAnswer(xml) {
 	if (xml.status != 200) {
-		userlog("\n<--- empfangen Fehler:\n " + xml.status + xml.statusText);
+		userlog("\n<--- empfangen Fehler " + xml.status + ": " + xml.statusText);
 		alert("ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (' " + xml.status + ') ' + xml.statusText);
 		throw new ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (' + xml.status + ') ' + xml.statusText);
 	}
@@ -57,7 +65,7 @@ function parseServerAnswer(xml) {
 		return data;
 	} catch (e) {
 		// defined in exception.js
-		alert("ErrorInServerAnswer 2001, 'Error: could not JSON decode the server answer', 'Got from server: '" + xml.responseText);
+//		alert("ErrorInServerAnswer 2001, 'Error: could not JSON decode the server answer', 'Got from server: '" + xml.responseText);
 		throw new ErrorInServerAnswer(2001, 'Error: could not JSON decode the server answer', 'Got from server: ' + xml.responseText);
 		// 		return Object({'action':'clientError', 'errorText': "could not JSON decode: (" + e + ") \n" + dataString});
 

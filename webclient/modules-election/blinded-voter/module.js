@@ -226,7 +226,7 @@ BlindedVoterElection.prototype.signVote = function (vote) {
 BlindedVoterElection.getServerInfoByName = function (servername) {
 	var slist = getPermissionServerList();
 	for (var s=0; s<slist.length; s++) {
-		if (slist[s].name = servername) return slist[s]; 
+		if (slist[s].name == servername) return slist[s]; 
 	}
 };
 

@@ -30,6 +30,7 @@ if (isset($HTTP_RAW_POST_DATA)) {
 	}
 	$elconfig = $dbElections->loadElectionConfigFromElectionId($electionId); // TODO error handling
 	
+	// TODO test if isset($elconfig['auth'])
 	switch ($elconfig['auth']) {
 		case 'userPassw':   $auth = new UserPasswAuth($dbInfos); break;
 		case 'sharedPassw': $auth = new SharedPasswAuth($dbInfos); break;
