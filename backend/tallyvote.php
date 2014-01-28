@@ -28,7 +28,7 @@ if (isset($HTTP_RAW_POST_DATA)) {
 		default: // TODO throw an error
 			break;
 	}
-	$elconfig = $dbElections->loadElectionConfigFromElectionId($electionId); // TODO error handling
+	$elconfig = $dbElections->loadElectionConfigFromElectionId($electionId); // TODO error handling if no election with $electionId is found: $elconfig is an array with length of 0
 	
 	// TODO test if isset($elconfig['auth'])
 	switch ($elconfig['auth']) {

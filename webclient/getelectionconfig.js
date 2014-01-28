@@ -1,19 +1,29 @@
+/*
+ * errorno start: 1000
+ */
+
 function GetElectionConfig(url, serverkeys, gotConfigObject, gotConfigMethod) {
 	this.url = url;
 	this.serverkey = serverkeys;
 	this.onGotConfigObject = gotConfigObject;
 	this.onGotConfigMethod = gotConfigMethod;
 //	var kw = new URI(null, null);
-
+	try {
 	var pos = url.indexOf('?');
 	if (pos > -1) {
 		q = url.substring(pos + 1) || null;
+	} else {
+		throw new UserInputError(1000, "The given election URL is not in the expected format (missing '?')", url);
 	}
+	
 	var query = URI.parseQuery(q); // tools/url/
 	if (!query || !query.confighash) return false; // TODO throw some error
 //	var sigsok = verifySigs(query); // TODO implement this
 	this.reqestElectionConfig();
-	
+	} catch (e) {
+		if (e instanceof MyException) { e.alert();}
+		else throw e;
+	}
 }
 
 GetElectionConfig.prototype = {
