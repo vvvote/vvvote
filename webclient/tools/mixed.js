@@ -84,14 +84,14 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 	try {
 		xml2.open('POST', myXmlSend.url, true);
 		xml2.send(myXmlSend.data);
-		userlog("\n--> gesendet an Server " + (this.url) + ': ' + this.data + "\r\n\r\n");
+		userlog("\n--> gesendet an Server " + myXmlSend.url + ': ' + myXmlSend.data + "\r\n\r\n");
 		var diagnosisIFrame = document.getElementById("diagnosisIFrame");
 		var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
 		diagnosisIFrame.style.display = "none";
 		diagnosisControlDiv.style.display = "none";
 		} catch (e) { // this is thrown from ff if xml2.open fails because of a non existent protocol (like http oder https)
 		// chrome calls xml2.onerror in this case
-		alert('Error trying to connect to ' + url + '\n' + e.toString());
+		alert('Error trying to connect to ' + myXmlSend.url + '\n' + e.toString());
 	}
 }
 
