@@ -30,7 +30,6 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 	
 	
 NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
-		// TODO sent newElection-request to other servers 
 		var data = parseServerAnswer(xml);
 		switch (data.cmd) {
 		case 'saveElectionUrl':
@@ -48,7 +47,7 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 			this.setStep(2);
 			Page.loadMainContent(mc);
 			break;
-		case 'error':
+		case 'error': // TODO in case the errors is reported not from the first server: handle it somehow: (remove election from all previous servers?)
 			alert('Server meldet Fehler: ' + data.errorNo + "\n" + data.errorTxt);
 			break;
 		default:

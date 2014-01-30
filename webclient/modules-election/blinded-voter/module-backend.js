@@ -119,7 +119,7 @@ function makePermissionReqs(election) {
  * @param req
  * @returns
  */
-function addCredentials(election, req) {
+function addCredentials(election, req) { // TODO use auth module
 	req['voterId']    = election.voterId;
 	req['secret']     = election.secret;
 	req['electionId'] = election.electionId;
