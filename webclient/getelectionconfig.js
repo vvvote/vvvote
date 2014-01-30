@@ -9,7 +9,7 @@ function GetElectionConfig(url, serverkeys, gotConfigObject, gotConfigMethod) {
 	this.onGotConfigMethod = gotConfigMethod;
 //	var kw = new URI(null, null);
 	try { // check the election-URL
-		if ( this.url.indexOf('http://') !== 0 && this.url.indexOf('https://' !== 0) ) {
+		if ( this.url.indexOf('http://') !== 0 && this.url.indexOf('https://') !== 0 ) {
 			throw new UserInputError(1000, "Bitte geben Sie einen gültigen Wahl-Link ein. Gültige Wahl-Links beginnen mit 'http://' oder 'https://'", url);
 		}
 		var pos = url.indexOf('?');
