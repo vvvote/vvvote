@@ -37,8 +37,14 @@ function ArrayIndexOf(a, elementname, element) {
 }
 
 function myXmlSend(url, data, callbackObject, callbackFunction) {
+	if (url != null) {
+	myXmlSend.url = url;
+	myXmlSend.data = data;
+	myXmlSend.callbackObject = callbackObject;
+	myXmlSend.callbackFunction = callbackFunction;
+	}
 	var xml2 = new XMLHttpRequest();
-	xml2.onload = function() { callbackFunction.call(callbackObject, xml2, url); };
+	xml2.onload = function() { myXmlSend.callbackFunction.call(myXmlSend.callbackObject, xml2, myXmlSend.url); };
 	xml2.onerror = function(e) {
 		alert("error: (" + xml2.status + ") "+ xml2.statusText + "e: " + e.target.status);
 		// this occures when
@@ -53,12 +59,17 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 		   alert("DNS error: " +  this.channel.status);
 	  }
 		 */		
-		var diagnosisIFrame = document.getElementById("diagnosisIFrame"); //src="' + url + '"
+		var diagnosisIFrame = document.getElementById("diagnosisIFrame");
 		//window.frames['diagnosisIFrame'].document.location.href = url;
-		diagnosisIFrame.srcdoc = '<a href="' + url + '" >Bitte klicken Sie hier, um genauere Informationen zu erhalten, warum die Verbinung zum Server gescheitert ist</a>';
+		diagnosisIFrame.srcdoc = '<a href="' + myXmlSend.url + '" >Bitte klicken Sie hier, um genauere Informationen zu erhalten, warum die Verbinung zum Server gescheitert ist</a>';
 		diagnosisIFrame.style.display = "";
+		var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
+		diagnosisControlDiv.innerHTML = '<button id="retry" name="retry" onclick="myXmlSend(null, null, null, null)">erneut versuchen</button>';
+
+//		diagnosisControlDiv.innerHTML = '<button id="retry" name="retry" onclick="myXmlSend(url, data, callbackObject, callbackFunction)">erneut versuchen</button>';
+		diagnosisControlDiv.style.display = "block";
 		//diagnosisIFrame.innerHtml = '<iframe  srcdoc="<h1>TITEL</h1>" width="100%" height="80%">Your Browser does not support IFrames</iframe>';
-		var diagnosisWindow = window.open(url, "Diagnosis Window", "width=600,height=600,scrollbars=yes");
+		var diagnosisWindow = window.open(myXmlSend.url, "Diagnosis Window", "width=600,height=600,scrollbars=yes");
 /*		diagnosisWindow.onLoad = function() { // funktioniert nicht, weil diagnosisWindow = null, wenn der Popup-blocker aktiv ist
 			alert("jetz hat's geklappt");
 		};
@@ -71,14 +82,20 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 		}
 	};
 	try {
-		xml2.open('POST', url, true);
-		userlog("\n--> gesendet an Server " + (url) + ': ' + data + "\r\n\r\n");
-		xml2.send(data);
-	} catch (e) { // this is thrown from ff if xml2.open fails because of a non existent protocol (like http oder https)
+		xml2.open('POST', myXmlSend.url, true);
+		xml2.send(myXmlSend.data);
+		userlog("\n--> gesendet an Server " + (this.url) + ': ' + this.data + "\r\n\r\n");
+		var diagnosisIFrame = document.getElementById("diagnosisIFrame");
+		var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
+		diagnosisIFrame.style.display = "none";
+		diagnosisControlDiv.style.display = "none";
+		} catch (e) { // this is thrown from ff if xml2.open fails because of a non existent protocol (like http oder https)
 		// chrome calls xml2.onerror in this case
 		alert('Error trying to connect to ' + url + '\n' + e.toString());
 	}
 }
+
+// myXmlSend.myRetry = function() {myXmlSend(url, data, callbackObject, callbackFunction);};
 
 function parseServerAnswer(xml) {
 	if (xml.status != 200) {
