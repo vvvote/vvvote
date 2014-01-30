@@ -55,7 +55,7 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 		 */		
 		var diagnosisIFrame = document.getElementById("diagnosisIFrame"); //src="' + url + '"
 		//window.frames['diagnosisIFrame'].document.location.href = url;
-		diagnosisIFrame.src = url;
+		diagnosisIFrame.srcdoc = '<a href="' + url + '" >Bitte klicken Sie hier, um genauere Informationen zu erhalten, warum die Verbinung zum Server gescheitert ist</a>';
 		diagnosisIFrame.style.display = "";
 		//diagnosisIFrame.innerHtml = '<iframe  srcdoc="<h1>TITEL</h1>" width="100%" height="80%">Your Browser does not support IFrames</iframe>';
 		var diagnosisWindow = window.open(url, "Diagnosis Window", "width=600,height=600,scrollbars=yes");
