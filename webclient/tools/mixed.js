@@ -36,17 +36,28 @@ function ArrayIndexOf(a, elementname, element) {
 	return -1;
 }
 
+/**
+ * 
+ * @param url if url is set to null the parameters from the last call we be used
+ * @param data
+ * @param callbackObject
+ * @param callbackFunction
+ * @returns
+ */
 function myXmlSend(url, data, callbackObject, callbackFunction) {
 	if (url != null) {
-	myXmlSend.url = url;
-	myXmlSend.data = data;
-	myXmlSend.callbackObject = callbackObject;
-	myXmlSend.callbackFunction = callbackFunction;
+		myXmlSend.url = url;
+		myXmlSend.data = data;
+		myXmlSend.callbackObject = callbackObject;
+		myXmlSend.callbackFunction = callbackFunction;
 	}
 	var xml2 = new XMLHttpRequest();
 	xml2.onload = function() { myXmlSend.callbackFunction.call(myXmlSend.callbackObject, xml2, myXmlSend.url); };
 	xml2.onerror = function(e) {
-		alert("error: (" + xml2.status + ") "+ xml2.statusText + "e: " + e.target.status);
+		var t;
+		if (e instanceof Event) t = e.target.statusText;
+		else                    t = e.toString;
+		alert("error: (" + xml2.status + ") "+ xml2.statusText + "e: " + t);
 		// this occures when
 		// * certificate of https is not valid
 		// * in chrome: protocol unknown
@@ -57,23 +68,28 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 
 		/*		  if (xml2.status == Components.results.NS_ERROR_UNKNOWN_HOST) {
 		   alert("DNS error: " +  this.channel.status);
-	  }
+	     }
 		 */		
 		var errorDiv = document.getElementById("errorDiv");
 		//window.frames['diagnosisIFrame'].document.location.href = url;
-		errorDiv.innerHTML = '<div id="error"><h1>Es gab einen Fehler bei einer Verbindung zu einem Server.</h1><p>Klicken Sie <a href="' + myXmlSend.url + '" target="_blank">auf diesen Link, um die Verbindung zum Server manuell zu testen.</a> Der Link wird in einem neuen Fenster geöffnet. Beheben Sie das Problem, schließen Sie das neue Fenster und klicken anschließend auf "Erneut versuchen"</p></div>';
-		errorDiv.innerHTML = errorDiv.innerHTML + '<button id="retry" name="retry" onclick="myXmlSend(null, null, null, null)">erneut versuchen</button>';
-		errorDiv.style.display = "";
+		var tmp   = '<div id="error"><h1>Es gab einen Fehler bei einer Verbindung zu einem Server.</h1>';
+		tmp = tmp + '<ul><li>Klicken Sie <a href="' + myXmlSend.url + '" target="_blank">auf diesen Link, um die Verbindung zum Server manuell zu testen.</a> Der Link wird in einem neuen Fenster geöffnet.</li> <li>Beheben Sie das Problem,</li> <li>schließen Sie das neue Fenster und </li><li>klicken anschließend auf <button id="retry" name="retry" onclick="myXmlSend(null, null, null, null)">erneut versuchen</button></li></ul></div>';
+		tmp = tmp + '';
+		errorDiv.innerHTML = tmp;
+		// alert(errorDiv.innerHTML);
+		errorDiv.style.display = ""; // this causes the div to be displayed (set to "none" to hide it)
+		// setTimeout(window.scrollTo(0, 0), 1000); //wait till rendering is done
+		window.scrollTo(0, 0);
 		// var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
 
 //		diagnosisControlDiv.innerHTML = '<button id="retry" name="retry" onclick="myXmlSend(url, data, callbackObject, callbackFunction)">erneut versuchen</button>';
 		// diagnosisControlDiv.style.display = "block";
 		//diagnosisIFrame.innerHtml = '<iframe  srcdoc="<h1>TITEL</h1>" width="100%" height="80%">Your Browser does not support IFrames</iframe>';
-/*		var diagnosisWindow = window.open(myXmlSend.url, "Diagnosis Window", "width=600,height=600,scrollbars=yes");
+		/*		var diagnosisWindow = window.open(myXmlSend.url, "Diagnosis Window", "width=600,height=600,scrollbars=yes");
 		diagnosisWindow.onLoad = function() { // funktioniert nicht, weil diagnosisWindow = null, wenn der Popup-blocker aktiv ist
 			alert("jetz hat's geklappt");
 		};
-	*/	/*try {
+		 */	/*try {
 			diagnosisWindow.focus();
 		} catch (e) {
 			if (e instanceof TypeError) { // Pop-Up-Window blocked
@@ -89,11 +105,14 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 		// var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
 		errorDiv.style.display = "none";
 		// diagnosisControlDiv.style.display = "none";
-		} catch (e) { // this is thrown from ff if xml2.open fails because of a non existent protocol (like http oder https)
+	} catch (e) { // this is thrown from ff if xml2.open fails because of a non existent protocol (like http oder https)
 		// chrome calls xml2.onerror in this case
-		alert('Error trying to connect to ' + myXmlSend.url + '\n' + e.toString());
+		// an old IE throws this for "permission dinied"
+		// alert('Error trying to connect to ' + myXmlSend.url + '\n' + e.toString());
+		xml2.onerror(e);
 	}
 }
+
 
 // myXmlSend.myRetry = function() {myXmlSend(url, data, callbackObject, callbackFunction);};
 
