@@ -59,36 +59,36 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 		   alert("DNS error: " +  this.channel.status);
 	  }
 		 */		
-		var diagnosisIFrame = document.getElementById("diagnosisIFrame");
+		var errorDiv = document.getElementById("errorDiv");
 		//window.frames['diagnosisIFrame'].document.location.href = url;
-		diagnosisIFrame.srcdoc = '<a href="' + myXmlSend.url + '" >Bitte klicken Sie hier, um genauere Informationen zu erhalten, warum die Verbinung zum Server gescheitert ist</a>';
-		diagnosisIFrame.style.display = "";
-		var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
-		diagnosisControlDiv.innerHTML = '<button id="retry" name="retry" onclick="myXmlSend(null, null, null, null)">erneut versuchen</button>';
+		errorDiv.innerHTML = '<div id="error"><h1>Es gab einen Fehler bei einer Verbindung zu einem Server.</h1><p>Klicken Sie <a href="' + myXmlSend.url + '" target="_blank">auf diesen Link, um die Verbindung zum Server manuell zu testen.</a> Der Link wird in einem neuen Fenster geöffnet. Beheben Sie das Problem, schließen Sie das neue Fenster und klicken anschließend auf "Erneut versuchen"</p></div>';
+		errorDiv.innerHTML = errorDiv.innerHTML + '<button id="retry" name="retry" onclick="myXmlSend(null, null, null, null)">erneut versuchen</button>';
+		errorDiv.style.display = "";
+		// var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
 
 //		diagnosisControlDiv.innerHTML = '<button id="retry" name="retry" onclick="myXmlSend(url, data, callbackObject, callbackFunction)">erneut versuchen</button>';
-		diagnosisControlDiv.style.display = "block";
+		// diagnosisControlDiv.style.display = "block";
 		//diagnosisIFrame.innerHtml = '<iframe  srcdoc="<h1>TITEL</h1>" width="100%" height="80%">Your Browser does not support IFrames</iframe>';
-		var diagnosisWindow = window.open(myXmlSend.url, "Diagnosis Window", "width=600,height=600,scrollbars=yes");
-/*		diagnosisWindow.onLoad = function() { // funktioniert nicht, weil diagnosisWindow = null, wenn der Popup-blocker aktiv ist
+/*		var diagnosisWindow = window.open(myXmlSend.url, "Diagnosis Window", "width=600,height=600,scrollbars=yes");
+		diagnosisWindow.onLoad = function() { // funktioniert nicht, weil diagnosisWindow = null, wenn der Popup-blocker aktiv ist
 			alert("jetz hat's geklappt");
 		};
-	*/	try {
+	*/	/*try {
 			diagnosisWindow.focus();
 		} catch (e) {
 			if (e instanceof TypeError) { // Pop-Up-Window blocked
 				alert('Es ist ein Fehler beim Aufbau einer Verbindung aufgetreten. Um den genauen Fehler anzuzeigen, wurde versucht, die Verbindung in einem neuen Fenster zu öffnen. Bitte lassen Sie das Pop-up-Fenster zu.');
 			}
-		}
+		} */
 	};
 	try {
 		xml2.open('POST', myXmlSend.url, true);
 		xml2.send(myXmlSend.data);
 		userlog("\n--> gesendet an Server " + myXmlSend.url + ': ' + myXmlSend.data + "\r\n\r\n");
-		var diagnosisIFrame = document.getElementById("diagnosisIFrame");
-		var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
-		diagnosisIFrame.style.display = "none";
-		diagnosisControlDiv.style.display = "none";
+		var errorDiv = document.getElementById("errorDiv");
+		// var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
+		errorDiv.style.display = "none";
+		// diagnosisControlDiv.style.display = "none";
 		} catch (e) { // this is thrown from ff if xml2.open fails because of a non existent protocol (like http oder https)
 		// chrome calls xml2.onerror in this case
 		alert('Error trying to connect to ' + myXmlSend.url + '\n' + e.toString());

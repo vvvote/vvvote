@@ -146,3 +146,11 @@ div#freq tfoot {
 div#allvotes{
 	
 }
+
+div#errorDiv{ /* div that is usually hidden, showing a connection problem and the retry button */
+}
+
+div#error{ /* div inside errorDiv containing the error massage and the guide what to do. It does not include the retry button */
+	background: red;
+}
+
