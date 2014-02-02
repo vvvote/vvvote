@@ -1,5 +1,7 @@
 <?php
 
+require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
+
 require_once __DIR__ . '/config/conf-allservers.php';
 require_once 'config/conf-thisserver.php';
 require_once 'exception.php';
@@ -13,6 +15,7 @@ header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 /**
  * error starts at 2100
  */
+
 
 if (isset($HTTP_RAW_POST_DATA)) {
 	$electionconfigStr = $HTTP_RAW_POST_DATA;
