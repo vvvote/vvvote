@@ -1,7 +1,11 @@
 
 function savePermission(ballot) {
-	var bb = new Blob([ballot]);
-	saveAs(bb, "signed_ballot.txt");
+	var bb = new Blob([ballot]); 
+	var p = JSON.parse(ballot); // ballot[0].transm contains the signed str which contains the electionId
+	var p2 = JSON.parse(p[0].transm.str);
+	var electionid = p2.electionId;
+	var electionid_clean = electionid.replace('/', '-').replace('\\','-');
+	saveAs(bb, "Wahlschein " + electionid_clean + '.vvvote');
 	// TODO check maximal loops = numServers
 }
 
@@ -106,10 +110,10 @@ var BlindedVoterElection = function (varname, onpermloaded, config) { // TODO sa
  *  
  */
 BlindedVoterElection.getStep2Html = function() {
-	var ret = 'Als Ergebnis dieses Schrittes erhalten Sie einen Wahlzettel, den Sie ' + 
+	var ret = 'Als Ergebnis dieses Schrittes erhalten Sie einen Wahlschein, den Sie ' + 
 	'speichern und zur Stimmabgabe später wieder laden müssen. ' +
-	'Der Stimmzettel berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
-	'weiter! Er ist anonym, d.h. es kann nicht festgestellt werden, wem er gehört.'; 
+	'Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
+	'weiter! Er ist anonym, d.h. es kann ohne Ihre Mithilfe nicht festgestellt werden, wem er gehört.'; 
 	return ret;
 		
 };
@@ -134,7 +138,7 @@ BlindedVoterElection.getStep2HtmlDetails = function() {
  */
 BlindedVoterElection.getPermissionHtml = function() {
 	return 'Bitte laden Sie die Datei, in der Ihr Wahlschein gespeichert ist:<br>'+
-	'<input type="file" id="loadfile" accept="text/plain" onchange="BlindedVoterElection.onClickedLoadFile(event)"/>'; //+ varname +'.loadPermFile(event);"/>';
+	'<input type="file" id="loadfile" accept=".vvvote" onchange="BlindedVoterElection.onClickedLoadFile(event)"/>'; //+ varname +'.loadPermFile(event);"/>';
 };
 
 BlindedVoterElection.onClickedLoadFile = function(event) {
