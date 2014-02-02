@@ -154,3 +154,8 @@ div#error{ /* div inside errorDiv containing the error massage and the guide wha
 	background: red;
 }
 
+input#electionUrl {
+	height: 2em;
+	width: 100%;
+}
+
