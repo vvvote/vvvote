@@ -18,7 +18,7 @@ SharedPasswAuth.getMainContent = function(conf) {
     '                       <br>' +
 	'						<label for="reqPermiss"></label> ' +
 	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
-	'							  value="Wahlzettel holen" onclick="onGetPermClick();">' +
+	'							  value="Wahlschein holen" onclick="onGetPermClick();">' +
     '                       <br>' +
     '</form>' +
     '</div>';
