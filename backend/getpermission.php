@@ -1,4 +1,7 @@
 <?php
+
+require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
+
 require_once 'exception.php';
 require_once 'Crypt/RSA.php';
 require_once 'modules-db/dbMySql.php'; 
@@ -28,6 +31,7 @@ header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 /**
  * error no start at 6000
  */
+
 if (isset($HTTP_RAW_POST_DATA)) {
 	// echo $HTTP_RAW_POST_DATA;
 	//$db = new DbMySql(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX, DB_TYP);

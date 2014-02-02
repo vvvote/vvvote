@@ -6,6 +6,8 @@
  * errorno starts at 4000
  */
 
+require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
+
 require_once 'config/conf-allservers.php';
 require_once 'config/conf-thisserver.php';
 require_once 'exception.php';
@@ -13,6 +15,13 @@ require_once 'dbelections.php';
 
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"); // this allows any cross-site scripting (needed for chrome)
+
+if (isset($_GET['connectioncheck'])) {
+	
+	print ('Verbindungstest erfolgreich. <ul><li>Schlie&szlig;en Sie jetzt dieses Fenster und </li><li>klicken Sie in dem urspr&uuml;nglichen Fenster innerhalb des roten Balkens auf den Knopf "erneut versuchen"</li><ul>');
+	exit(0);
+}
+
 
 if (isset($HTTP_RAW_POST_DATA)) {
 	// $hash =
