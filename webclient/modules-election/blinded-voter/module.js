@@ -4,8 +4,7 @@ function savePermission(ballot) {
 	var p = JSON.parse(ballot); // ballot[0].transm contains the signed str which contains the electionId
 	var p2 = JSON.parse(p[0].transm.str);
 	var electionid = p2.electionId;
-	var electionid_clean = electionid.replace('/', '-').replace('\\','-');
-	saveAs(bb, "Wahlschein " + electionid_clean + '.vvvote');
+	saveAs(bb, "Wahlschein " + clearForFilename(electionid) + '.vvvote');
 	// TODO check maximal loops = numServers
 }
 
