@@ -1,4 +1,14 @@
 /**
+ * replaces <> with - and :/\|?* with + because this are reserved characters on NTFS
+ * @param fn
+ * @returns
+ */
+function clearForFilename(fn) {
+	return fn.replace('<', '-').replace('>', '-').replace(':', '+').replace('/','+').replace('\\','+').replace('|', '+').replace('?', '+').replace('*','+');
+}
+
+
+/**
  * returns an array containing the counts of the same values in the given list
  * @param list array
  * @returns {Array}
