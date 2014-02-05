@@ -29,7 +29,7 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 
 	
 	
-NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
+	NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 		var data = parseServerAnswer(xml);
 		switch (data.cmd) {
 		case 'saveElectionUrl':
@@ -37,18 +37,19 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 				this.serverno++;
 				var me = this;
 				myXmlSend(newElectionUrl[this.serverno], JSON.stringify(this.config), me, me.handleNewElectionAnswer);
+			} else {
+				var a = getAuthModuleStatic(this.config);
+				var ahtml = a.getConfigObtainedHtml();
+				var mc = '<p>Speichern Sie den Link und geben Sie ihn an alle Wahlberechtigten weiter. ' +
+				ahtml +	
+				'</p>' +
+				'<p>Der Link zur Wahl ist: <input type="text" id="electionUrl" disabled="disabled" width="100%" value="' + data.configUrl + '"></p>';
+				// '<p>Der Link zur Wahl ist: ' + data.configUrl + '</p>';
+				this.setStep(2);
+				Page.loadMainContent(mc);
+				eleUrl = document.getElementById('electionUrl');
+				eleUrl.select();
 			}
-			var a = getAuthModuleStatic(this.config);
-			var ahtml = a.getConfigObtainedHtml();
-			var mc = '<p>Speichern Sie den Link und geben Sie ihn an alle Wahlberechtigten weiter. ' +
-			          ahtml +	
-			          '</p>' +
-			          '<p>Der Link zur Wahl ist: <input type="text" id="electionUrl" disabled="disabled" width="100%" value="' + data.configUrl + '"></p>';
-			          // '<p>Der Link zur Wahl ist: ' + data.configUrl + '</p>';
-			this.setStep(2);
-			Page.loadMainContent(mc);
-			eleUrl = document.getElementById('electionUrl');
-			eleUrl.select();
 			break;
 		case 'error': // TODO in case the errors is reported not from the first server: handle it somehow: (remove election from all previous servers?)
 			alert('Server meldet Fehler: ' + data.errorNo + "\n" + data.errorTxt);
