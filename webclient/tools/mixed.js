@@ -83,7 +83,10 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 		var errorDiv = document.getElementById("errorDiv");
 		//window.frames['diagnosisIFrame'].document.location.href = url;
 		var tmp   = '<div id="error"><h1>Es gab einen Fehler bei einer Verbindung zu einem Server.</h1>';
-		tmp = tmp + '<ul><li>Klicken Sie <a href="' + myXmlSend.url + '&connectioncheck' + '" target="_blank">auf diesen Link, um die Verbindung zum Server manuell zu testen.</a> Der Link wird in einem neuen Fenster geöffnet.</li> <li>Beheben Sie das Problem,</li> <li>schließen Sie das neue Fenster und </li><li>klicken anschließend auf <button id="retry" name="retry" onclick="myXmlSend(null, null, null, null)">erneut versuchen</button></li></ul></div>';
+		var testurl;
+		if (myXmlSend.url.indexOf('?') > 0) testurl = myXmlSend.url + '&connectioncheck';
+		else                                testurl = myXmlSend.url + '?connectioncheck';
+		tmp = tmp + '<ul><li>Klicken Sie <a href="' + testurl + '" target="_blank">auf diesen Link, um die Verbindung zum Server manuell zu testen.</a> Der Link wird in einem neuen Fenster geöffnet.</li> <li>Beheben Sie das Problem,</li> <li>schließen Sie das neue Fenster und </li><li>klicken anschließend auf <button id="retry" name="retry" onclick="myXmlSend(null, null, null, null)">erneut versuchen</button></li></ul></div>';
 		tmp = tmp + '';
 		errorDiv.innerHTML = tmp;
 		// alert(errorDiv.innerHTML);
