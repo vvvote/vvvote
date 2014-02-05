@@ -37,6 +37,18 @@ if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
 			'dbname'  => 'election_server1',
 			'prefix'  => 'el1_'
 	);
+	
+	// OAuth config
+	$oauthBEObayern = array(
+			'name'          => 'BEO Bayern',
+	        'client_id'     => 'vvvote',
+	        'client_secret' => 'your client secret',
+			'redirect_uri'  => 'http://url/of/this.php',
+			'authorization_endp'  => 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/',
+	        'token_endp'          => 'https://beoauth.piratenpartei-bayern.de/oauth2/token/',
+	  		'get_membership_endp' => 'https://beoauth.piratenpartei-bayern.de/api/self/membership/'
+	);
+	$oauthConfig = array($oauthBEObayern['name'] => $oauthBEObayern);
 }
 
 ?>
