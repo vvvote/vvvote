@@ -10,7 +10,7 @@ if(count(get_included_files()) < 2) {
 }
 
 
-require_once 'rsaMyExts.php';
+require_once __DIR__ . '/../rsaMyExts.php';
 
 if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
 	require_once 'conf-thisserver2.php';
@@ -40,7 +40,7 @@ if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
 	
 	// OAuth config
 	$oauthBEObayern = array(
-			'name'          => 'BEO Bayern',
+			'name'          => 'BEO Bayern', // Name of this OAuth service do not use special characters
 	        'client_id'     => 'vvvote',
 	        'client_secret' => 'your client secret',
 			'redirect_uri'  => $configUrlBase + '/modules-auth/oauth/callback.php',
