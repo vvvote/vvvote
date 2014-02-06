@@ -9,7 +9,7 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-require_once 'rsaMyExts.php';
+require_once __DIR__ . '/../rsaMyExts.php';
 
 $webclientUrlbase = '..'; // relativ to backend or absolute, no trailing slash
 
@@ -33,5 +33,17 @@ $dbInfos = array(
 		'dbname'  => 'election_server2',
 		'prefix'  => 'el2_'
 );
+
+// OAuth config
+$oauthBEObayern = array(
+		'name'          => 'BEO Bayern', // Name of this OAuth service do not use special characters
+		'client_id'     => 'vvvote2',
+		'client_secret' => 'your client secret',
+		'redirect_uri'  => $configUrlBase + '/modules-auth/oauth/callback.php',
+		'authorization_endp'  => 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/',
+		'token_endp'          => 'https://beoauth.piratenpartei-bayern.de/oauth2/token/',
+		'get_membership_endp' => 'https://beoauth.piratenpartei-bayern.de/api/self/membership/'
+);
+$oauthConfig = array($oauthBEObayern['name'] => $oauthBEObayern);
 
 ?>

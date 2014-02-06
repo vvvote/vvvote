@@ -96,14 +96,14 @@ if (!class_exists('Math_BigInteger')) {
 // call function_exists() a second time to stop the require_once from being called outside
 // of the auto loader
 if (!function_exists('crypt_random') && !class_exists('Crypt_Random') && !function_exists('crypt_random')) {
-    require_once('Crypt/Random.php');
+    require_once(__DIR__ . '/Random.php');
 }
 
 /**
  * Include Crypt_Hash
  */
 if (!class_exists('Crypt_Hash')) {
-    require_once('Crypt/Hash.php');
+    require_once(__DIR__ . '/Hash.php');
 }
 
 /**#@+

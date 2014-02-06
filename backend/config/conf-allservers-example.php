@@ -10,7 +10,7 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-require_once 'Math/BigInteger.php';
+require_once __DIR__ . '/../Math/BigInteger.php';
 
 $configUrlBase = 'http://www.webhod.ra/vvvote2/backend'; // without trailing slash
 
