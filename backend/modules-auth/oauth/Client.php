@@ -249,9 +249,18 @@ class Client
      * @param string $token Set the access token
      * @return void
      */
-    public function setAccessToken($token)
+    public function setAccessToken($tokeninfos)
     {
-        $this->access_token = $token;
+        $this->access_token = $tokeninfos['access_token'];
+        switch (strtolower($tokeninfos['token_type'])) {
+        	case 'bearer':
+        		$this->access_token_type = self::ACCESS_TOKEN_BEARER;
+        		break;
+        	case 'mac':
+        		$this->access_token_type = self::ACCESS_TOKEN_MAC;
+        	default:
+        		throw new Exception('programmer did not know the auth type: ' . $tokeninfos['token_type'], Exception::INVALID_CLIENT_AUTHENTICATION_TYPE); 
+        }
     }
 
     /**
@@ -456,7 +465,6 @@ class Client
         if (!empty($this->curl_options)) {
             curl_setopt_array($ch, $this->curl_options);
         }
-        print_r($curl_options);
         $result = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
