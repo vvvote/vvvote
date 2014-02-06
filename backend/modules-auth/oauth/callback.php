@@ -1,5 +1,6 @@
 <?php
 
+use OAuth2\Client;
 require_once '../../config/conf-allservers.php';
 require_once '../../config/conf-thisserver.php';
 require_once '../../exception.php';
@@ -37,14 +38,21 @@ else
 	$response = $client->getAccessToken($curConfig['token_endp'], 'authorization_code', $params);
 	print "<br><br>\nresponse: ";
 	print_r($response);
-	parse_str($response['result'], $info);
+//	parse_str($response['result'], $info);
+	$tokeninfos = $response['result'];
 	print "<br><br>\info: ";
-	print_r($info);
-	$client->setAccessToken($info['access_token']);
-	$response = $client->fetch($curConfig['get_membership_endp']);
-	print "<br><br>\nresponse 2: ";
+	print_r($tokeninfos);
+	$client->setAccessToken($tokeninfos);
 	
-	print_r($response);
+	$membership = $client->fetch($curConfig['get_membership_endp'], Array(), Client::HTTP_METHOD_POST);
+	print "<br><br>\nresponse 2: ";
+	print_r($membership);
+	
+	
+	$userprofile = $client->fetch('https://beoauth.piratenpartei-bayern.de/api/self/profile/', $params, Client::HTTP_METHOD_POST);
+	print "<br><br>\nresponse 3: ";
+	print_r($userprofile);
+	
 	// var_dump($response, $response['result']);
 }
 
