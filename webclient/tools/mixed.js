@@ -64,10 +64,10 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 	var xml2 = new XMLHttpRequest();
 	xml2.onload = function() { myXmlSend.callbackFunction.call(myXmlSend.callbackObject, xml2, myXmlSend.url); };
 	xml2.onerror = function(e) {
-		var t;
-		if (e instanceof Event) t = e.target.statusText;
-		else                    t = e.toString;
-		alert("error: (" + xml2.status + ") "+ xml2.statusText + "e: " + t);
+		// var t;
+		// if (e instanceof Event) t = e.target.statusText;
+		// else                    t = e.toString;
+		// alert("error: (" + xml2.status + ") "+ xml2.statusText + "e: " + t);
 		// this occures when
 		// * certificate of https is not valid
 		// * in chrome: protocol unknown
