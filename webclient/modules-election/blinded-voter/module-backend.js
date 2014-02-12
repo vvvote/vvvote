@@ -31,7 +31,7 @@ function addBallothash(ballot) {
 		tmp.salt       = bigInt2str(ballot.salt, 16);
 	}
 	var transm  = new Object();
-	transm.str  = JSON.stringify(tmp);
+	transm.str  = unicodeToBlackslashU(JSON.stringify(tmp)); // this is necessary because php json_encode uses u\XXXX Notation
 	transm.hash = SHA256(transm.str); // returns an hex-encoded string
 	return transm;
 }
