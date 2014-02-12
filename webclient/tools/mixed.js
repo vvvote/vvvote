@@ -147,3 +147,37 @@ function parseServerAnswer(xml) {
 
 	}
 }
+
+/**
+ * 
+ * Working with up to 53 bits (more is not saved in a number [mantisse of a double])
+ * @param num number to be converted to hex string
+ * @param digits number of digits of the resulting hex string (padded this zeros)
+ * @returns
+ */
+function int2hex(num, digits) {
+	h = Number(num).toString(16);
+	ret = ("000000000000000" + h).substr(-digits);
+	return ret;
+}
+
+/**
+ * @param str
+ * @returns {String} a string where all not asci characters are encoded to \uXXXX resp. \UXXXXXXXX
+ */
+function unicodeToBlackslashU(str) {
+	var ret = '';
+	for (var i = 0; i < str.length; ++i) {
+		var unicode = str.charCodeAt(i);
+		if (unicode < 128) {
+			ret = ret + str.charAt(i);
+		} else {
+			if (unicode < 65536) {
+				ret = ret + '\\u' + int2hex(unicode, 4);
+			} else {
+				ret = ret + '\\U' + int2hex(utf16_code, 4);
+			}
+		}
+	}
+	return ret;
+}

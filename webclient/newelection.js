@@ -17,13 +17,15 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 		var ret = {};
 		var element = document.getElementById('electionId');
 		ret.electionId = element.value;
-		ret.authModule = 'sharedPassw'; // TODO move somethin to auth module
+		
+		ret.authModule = 'sharedPassw'; // TODO move something to auth module
 		ret.authData = {};
 		var element = document.getElementById('givenPassword');
 		ret.authData.sharedPassw = element.value;
 		this.config = ret;
 		var data = JSON.stringify(ret);
 		var me = this;
+		this.serverno = 0;
 		myXmlSend(newElectionUrl[0], data, me, me.handleNewElectionAnswer);
 	};
 
