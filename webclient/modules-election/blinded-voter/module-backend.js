@@ -31,7 +31,7 @@ function addBallothash(ballot) {
 		tmp.salt       = bigInt2str(ballot.salt, 16);
 	}
 	var transm  = new Object();
-	transm.str  = unicodeToBlackslashU(JSON.stringify(tmp)); // this is necessary because php json_encode uses u\XXXX Notation
+	transm.str  = unicodeToBlackslashU(JSON.stringify(tmp)); // unicodeToBlackslashU is necessary because php json_encode uses u\XXXX-notation instead of the direct unicode values. Without this hash verification will fail on server side if umlauts are in the electionId
 	transm.hash = SHA256(transm.str); // returns an hex-encoded string
 	return transm;
 }

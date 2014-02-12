@@ -17,7 +17,6 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 		var ret = {};
 		var element = document.getElementById('electionId');
 		ret.electionId = element.value;
-		
 		ret.authModule = 'sharedPassw'; // TODO move something to auth module
 		ret.authData = {};
 		var element = document.getElementById('givenPassword');
