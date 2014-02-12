@@ -175,7 +175,7 @@ function unicodeToBlackslashU(str) {
 			if (unicode < 65536) {
 				ret = ret + '\\u' + int2hex(unicode, 4);
 			} else {
-				ret = ret + '\\U' + int2hex(utf16_code, 4);
+				ret = ret + '\\U' + int2hex(unicode, 8);
 			}
 		}
 	}
