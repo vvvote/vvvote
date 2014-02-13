@@ -1,10 +1,18 @@
-var Oauth = function() {
+var OAuth2 = function() {
 
 
 };
 
-Oauth.getMainContent = function(conf) {
-	var oauthAutorize = 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/?scope=member&redirect_uri=https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php&response_type=code&client_id=vvvote';
+OAuth2.getMainContent = function(conf) {
+	oauth2name = 'BEOBayern';
+	var code = bigInt2str(randBigInt(200,0), 62);
+//	var oauthRedirectUri = 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php';
+	var oauthRedirectUri = 'http%3A//www.webhod.ra/backend/modules-auth/oauth/callback.php';
+	var oauthClientId = 'vvvote';
+	var oauthAutorize = 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/?scope=member+profile' +
+		'&state=' + oauth2name + '.' + code + 
+		'&redirect_uri=' + oauthRedirectUri + '&response_type=code' +
+		'&client_id=' + oauthClientId;
 	var mc = '<div id="auth">' +
 	'<form onsubmit="return false;">' +
 	'                       <br>' +
@@ -14,8 +22,8 @@ Oauth.getMainContent = function(conf) {
 	'						<label for="voterId">&Uuml;ber BEO Bayern einloggen</label> ' +
 	'		  				     <a href="' + oauthAutorize + '" target="_blank" '+
     '                       <br>' +
-	'						<label for="sharedPassw">Wahlpasswort</label> ' +
-	'						     <input name="sharedPassw" id="secret" value="" type="password"></td>' + 
+	'						<label for="voterId">Username bei BEO</label> ' +
+	'						     <input name="voterId" id="voterId" value="" type="text"></td>' + 
     '                       <br>' +
 	'						<label for="reqPermiss"></label> ' +
 	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
@@ -26,7 +34,28 @@ Oauth.getMainContent = function(conf) {
 	return mc;
 }; 
 
-Oauth.getConfigObtainedHtml = function () {
-	var ret = 'Teilen Sie den Wahlberechtigten außerdem das Wahlpasswort mit.';
+OAuth2.getConfigObtainedHtml = function () {
+	var ret = ''; // shared password: Teilen Sie den Wahlberechtigten außerdem das Wahlpasswort mit.
+	return ret;
+};
+
+OAuth2.getNewElectionHtml = function () {
+	var ret = 
+		'Für den Basisentscheid Online (BEO) wird für jeden Abstimmungstermin eine Liste der Stimmberechtigten angelegt. Geben Sie hier die ID dieser Liste ein.<br>' +
+		'<input name="listId" id="listId" value="" type="text">' +
+		'<label for="listId">ID der Liste, die die Abstimmungsberechtigten enth&auml;lt</label> ';
+	return ret;
+};
+
+/**
+ * this function must return an Array/Object with .authModule, containing the AuthModuleId
+ * and .authData containing an Array/Object with all auth data needed for this module
+ */
+OAuth2.getNewElectionData = function () {
+	var ret = {};
+	ret.authModule = 'oAuth2'; 
+	ret.authData = {};
+	var element = document.getElementById('listId');
+	ret.authData.listId = element.value;
 	return ret;
 };

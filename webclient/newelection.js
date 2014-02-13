@@ -8,19 +8,28 @@ function NewElectionPage() {
 	this.mainContent = newElectionHtml; // defined in index.html as heredoc replacement
 	this.title = 'Neue Abstimmung anlegen';
 	this.serverno = 0;
+	this.authModule = Object();
 }
 
 NewElectionPage.prototype = new Page();
 
+NewElectionPage.prototype.setAuthMethod = function(method) {
+	switch(method) {
+	case 'sharedPassw':		this.authModule = SharedPasswAuth; 	break;
+	case 'userPasswList':	this.authModule = UserPasswList;   	break;
+	case 'BEOBayern':		this.authModule = OAuth2;       	break;
+	default:		alert('Programmfehler 8769867'); 			break;
+	}
+	var html = this.authModule.getNewElectionHtml();
+	var el = document.getElementById('authInputs');
+	el.innerHTML = html;
+};
+
 
 NewElectionPage.prototype.handleNewElectionButton = function () {
-		var ret = {};
+		var ret = this.authModule.getNewElectionData();
 		var element = document.getElementById('electionId');
 		ret.electionId = element.value;
-		ret.authModule = 'sharedPassw'; // TODO move something to auth module
-		ret.authData = {};
-		var element = document.getElementById('givenPassword');
-		ret.authData.sharedPassw = element.value;
 		this.config = ret;
 		var data = JSON.stringify(ret);
 		var me = this;

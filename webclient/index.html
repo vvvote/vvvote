@@ -74,13 +74,26 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 <script  id="newElectionHtml" type="mumpiz">
 	
 	Hier können Sie eine neue Abstimmung starten.     
-    Zum Anlegen einer neuen Abstimmung legen Sie den Namen der Abstimmung und das Abstimmungspasswort fest. Die W&auml;hler geben ihren Namen ein und k&ouml;nnen nur dann abstimmen, wenn sie das hier festgelegte Abstimmungspasswort kennen. Es kann also jeder abstimmen, der das Abstimmungspasswort kennt.
-	<br> 
+    Zum Anlegen einer neuen Abstimmung legen Sie den Namen der Abstimmung und die Authorisierungsmethode fest. 
+	<br><br>
 	<input type="text" id="electionId"> 
-    	<label for="electionId">Name der Wahl</label> 
+    	<label for="electionId">Name der Abstimmung</label> 
  	<br>
-	<input type="text" id="givenPassword">
-    	<label for="givenPassword">Abstimmungspasswort</label>
+	<fieldset onload="page.setAuthMethod('sharedPassw');">
+		<legend>Autorisierungsmethode</legend>
+		<input type="radio" onclick="page.setAuthMethod('sharedPassw');"   name="authMethod" id="sharedPassw">
+			<label for="sharedPassw">Abstimmungspasswort</label>
+
+ <!---   	<input type="radio" onclick="page.setAuthMethod('userPasswList');" name="authMethod" id="userPasswList">
+			<label for="userPasswList">Liste Benuzername und Passwort hochladen</label></input>
+--->
+    	<input type="radio" onclick="page.setAuthMethod('BEOBayern');"     name="authMethod" id="BEOBayern">
+			<label for="BEOBayern">Basisentscheid Bayern Testserver</label></input>
+    </fieldset>
+	<br>
+	<div id="authInputs">
+	<!--- in this div the different inputs needed for the different auth methods are displayed --->
+	</div>
 	<br>
 	<input type="button" onclick="page.handleNewElectionButton();" value="Neue Abstimmung anlegen">		
 
@@ -88,6 +101,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 
 <script src="modules-auth/user-passw-list/module.js"></script>
 <script src="modules-auth/shared-passw/module.js"></script>
+<script src="modules-auth/oauth2/module.js"></script>
 <script src="tools/BigInt.js"></script>
 <script src="tools/rsa.js"></script>
 <script src="tools/sha256.js"></script>

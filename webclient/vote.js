@@ -64,6 +64,11 @@ VotePage.prototype.startStep2 = function (config) {
 		mc = mc + SharedPasswAuth.getMainContent(config);
 		this.tally = new SharedPasswAuth();
 		break;
+	case 'oAuth2':
+		mc = mc + Oauthth2.getMainContent(config);
+		this.tally = new OAuth2();
+		break;
+		
 	default:
 		alert('The election requieres authorisation module >' + config.auth + "< which is not supported by this client.\nUse a compatible client.");
 	}
