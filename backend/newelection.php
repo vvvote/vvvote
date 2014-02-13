@@ -49,7 +49,8 @@ if (isset ($electionconfigStr)) {
 				$newconfig['auth'] = 'userPasswList';
 				break;
 			default:
-				break; // TODO return some error
+				WrongRequestException::throwException(2110, 'Authorisation module not supported by this server', "you requested: " . $electionconfig['authModule']);
+				break; 
 		}
 		// TODO election
 		$newconfig['blinding'] = 'blindedVoter';
