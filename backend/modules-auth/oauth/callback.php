@@ -27,21 +27,22 @@ else
 {
 	$oauthdata = explode('.', $_GET['state'], 2); // TODO test if set -> error handling
 	if (count($oauthdata) < 2) {
-	} // TODO error handling
-	print "<br>$oauthdata";
-	print_r($oauthdata);
+		// TODO error handling
+	} 
+//	print "<br>$oauthdata";
+//	print_r($oauthdata);
 	$curConfig = $oauthConfig[$oauthdata[0]];
-	print "<br><br>\ncurConfig: ";
-	print_r($curConfig);
+//	print "<br><br>\ncurConfig: ";
+//	print_r($curConfig);
 	// TODO write $oauthdata[0] and $oauthdata[1] into a database
 	$client = new OAuth2\Client($curConfig['client_id'], $curConfig['client_secret']);
 	$params = array('code' => $_GET['code'], 'redirect_uri' => $curConfig['redirect_uri']);
 	$response = $client->getAccessToken($curConfig['token_endp'], 'authorization_code', $params);
-	print "<br><br>\nresponse: ";
-	print_r($response);
+//	print "<br><br>\nresponse: ";
+//	print_r($response);
 	//	parse_str($response['result'], $info);
 	$tokeninfos = $response['result'];
-	print "<br><br>\info: ";
+//	print "<br><br>\info: ";
 	print_r($tokeninfos);
 	$client->setAccessToken($tokeninfos);
 
@@ -58,6 +59,10 @@ else
 	print "<br><br>\may vote: ";
 	print_r($mayvote);
 	
+	print "<h1>Ergebnisse</h1>";
+	print "<br>BEO-Username: " . $userprofile['result']['username'];
+	print "<br>BEO-Anzeigename: " . $userprofile['result']['public_id'];
+	print ('<br>Mitglied der Piratenpartei: ' . $membership['result']['type'] . ', überprüft: ' . $membership['result']['verified']);
 	// var_dump($response, $response['result']);
 }
 

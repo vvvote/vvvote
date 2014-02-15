@@ -7,7 +7,7 @@ OAuth2.getMainContent = function(conf) {
 	oauth2name = 'BEOBayern';
 	var code = bigInt2str(randBigInt(200,0), 62);
 //	var oauthRedirectUri = 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php';
-	var oauthRedirectUri = 'http%3A//www.webhod.ra/backend/modules-auth/oauth/callback.php';
+	var oauthRedirectUri = 'http%3A//www.webhod.ra/vvvote2/backend/modules-auth/oauth/callback.php';
 	var oauthClientId = 'vvvote';
 	var oauthAutorize = 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/?scope=member+profile' +
 		'&state=' + oauth2name + '.' + code + 
@@ -17,10 +17,10 @@ OAuth2.getMainContent = function(conf) {
 	'<form onsubmit="return false;">' +
 	'                       <br>' +
 	'						<label for="electionId">Name der Abstimmung:</label> ' +
-    '                            <input disabled="disabled" name="electionId" id="electionId" value="' + conf.electionId + '">' +
+    '                            <input readonly="readonly" name="electionId" id="electionId" value="' + conf.electionId + '">' +
     '                       <br>' +
-	'						<label for="voterId">&Uuml;ber BEO Bayern einloggen</label> ' +
-	'		  				     <a href="' + oauthAutorize + '" target="_blank" '+
+	'						<label for="login">Einloggen</label> ' +
+	'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber BEO Bayern einloggen</a>'+
     '                       <br>' +
 	'						<label for="voterId">Username bei BEO</label> ' +
 	'						     <input name="voterId" id="voterId" value="" type="text"></td>' + 
@@ -41,7 +41,7 @@ OAuth2.getConfigObtainedHtml = function () {
 
 OAuth2.getNewElectionHtml = function () {
 	var ret = 
-		'Für den Basisentscheid Online (BEO) wird für jeden Abstimmungstermin eine Liste der Stimmberechtigten angelegt. Geben Sie hier die ID dieser Liste ein.<br>' +
+		'Für den Basisentscheid Online (BEO) wird für jeden Abstimmungstermin auf dem BEO-Server eine Liste der Stimmberechtigten angelegt. Geben Sie hier die ID dieser Liste ein.<br>' +
 		'<input name="listId" id="listId" value="" type="text">' +
 		'<label for="listId">ID der Liste, die die Abstimmungsberechtigten enth&auml;lt</label> ';
 	return ret;

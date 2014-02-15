@@ -7,6 +7,7 @@ require_once 'config/conf-thisserver.php';
 require_once 'exception.php';
 require_once 'modules-auth/shared-passw/auth.php';
 require_once 'modules-auth/user-passw-list/auth.php';
+require_once 'modules-auth/oauth/auth.php';
 require_once 'dbelections.php';
 
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
@@ -39,19 +40,23 @@ if (isset ($electionconfigStr)) {
 		$newconfig['electionId'] = $electionId;
 		switch ($electionconfig['authModule']) {
 			case 'sharedPassw':
-				$sp = new SharedPasswAuth($dbInfos);
-				$sp->handleNewElectionReq($electionId, $electionconfig['authData']);
+				$authm = new SharedPasswAuth($dbInfos);
 				$newconfig['auth'] = 'sharedPassw';
 				break;
 			case 'userPasswList':
-				$sp = new UserPasswAuth($dbInfos);
-				$sp->handleNewElectionReq($electionId, $electionconfig['authData']);
+				$authm = new UserPasswAuth($dbInfos);
 				$newconfig['auth'] = 'userPasswList';
+				break;
+			case 'oAuth2':
+				$authm = new OAuth2($dbInfos);
+				$newconfig['auth'] = 'oAuth2';
 				break;
 			default:
 				WrongRequestException::throwException(2110, 'Authorisation module not supported by this server', "you requested: " . $electionconfig['authModule']);
 				break; 
 		}
+		$authm->handleNewElectionReq($electionId, $electionconfig['authData']);
+
 		// TODO election
 		$newconfig['blinding'] = 'blindedVoter';
 		
