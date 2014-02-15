@@ -53,7 +53,7 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 				var mc = '<p>Speichern Sie den Link und geben Sie ihn an alle Wahlberechtigten weiter. ' +
 				ahtml +	
 				'</p>' +
-				'<p>Der Link zur Wahl ist: <input type="text" id="electionUrl" disabled="disabled" width="100%" value="' + data.configUrl + '"></p>';
+				'<p>Der Link zur Wahl ist: <input type="text" id="electionUrl" readonly="readonly" width="100%" value="' + data.configUrl + '"></p>';
 				// '<p>Der Link zur Wahl ist: ' + data.configUrl + '</p>';
 				this.setStep(2);
 				Page.loadMainContent(mc);

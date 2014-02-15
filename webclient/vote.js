@@ -65,7 +65,7 @@ VotePage.prototype.startStep2 = function (config) {
 		this.tally = new SharedPasswAuth();
 		break;
 	case 'oAuth2':
-		mc = mc + Oauthth2.getMainContent(config);
+		mc = mc + OAuth2.getMainContent(config);
 		this.tally = new OAuth2();
 		break;
 		

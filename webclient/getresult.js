@@ -62,6 +62,7 @@ function getAuthModuleStatic(config) {
 	switch (config.authModule) {
 	case 'userPassw':    a = UserPasswList;   break;
 	case 'sharedPassw':  a = SharedPasswAuth; break;
+	case 'oAuth2':       a = OAuth2;          break;
 	default:
 		alert('The election requieres authorisation module >' + config.auth + "< which is not supported by this client.\nUse a compatible client.");
 	}
