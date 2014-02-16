@@ -45,7 +45,7 @@ if (isset ($hash)) {
 	 		'auth'       => 'userPassw',
 	 		'blinding'   => 'blindedVoter',
 	 		'ballot'     => array('opt1' => 'Europäische Zentralbank soll künftig direkt Kredit an Staaten geben', 'opt2' => 'Europäische Zentralbank soll weiterhin keine Kredite an Staaten geben dürfen'),
-	 		'telly'      => 'publishOnly'
+	 		'tally'      => 'publishOnly'
 	 );
 	*/
 	// TODO sign the config

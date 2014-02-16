@@ -12,16 +12,8 @@ function GetElectionConfig(url, serverkeys, gotConfigObject, gotConfigMethod) {
 		if ( this.url.indexOf('http://') !== 0 && this.url.indexOf('https://') !== 0 ) {
 			throw new UserInputError(1000, "Bitte geben Sie einen gültigen Wahl-Link ein. Gültige Wahl-Links beginnen mit 'http://' oder 'https://'", url);
 		}
-		var pos = url.indexOf('?');
-		var q;
-		if (pos > -1) {
-			q = url.substring(pos + 1) || null;
-		} else {
-			throw new UserInputError(1000, "The given election URL is not in the expected format (missing '?')", url);
-		}
-
-		var query = URI.parseQuery(q); // tools/url/
-		if (!query || !query.confighash) throw new UserInputError(1000, "The given election URL is not in the expected format", url);
+		var query = URI.parseURL(url); // tools/url/
+		if (!query || !query.confighash) throw new UserInputError(1000, "The given election URL is not in the expected format (missing ? or confighash=)", url);
 //		var sigsok = verifySigs(query); // TODO implement this
 		this.reqestElectionConfig();
 	} catch (e) {
@@ -29,6 +21,8 @@ function GetElectionConfig(url, serverkeys, gotConfigObject, gotConfigMethod) {
 		else throw e;
 	}
 }
+
+
 
 GetElectionConfig.prototype = {
 		reqestElectionConfig: function () {
@@ -38,10 +32,18 @@ GetElectionConfig.prototype = {
 		},
 
 		handleXmlAnswer: function (xml) {
-			var config = parseServerAnswer(xml);
-			// TODO verify the hash
-			// TODO verify config sigs
-			this.onGotConfigMethod.call(this.onGotConfigObject, config);
+			try {
+				var config = parseServerAnswer(xml);
+				var query = URI.parseURL(this.url); // tools/url/
+				if (!query || !query.confighash) throw new UserInputError(1000, "The given election URL is not in the expected format (missing confighash=)", this.url);
+				// TODO verify the hash, implement the following function
+				if ( !(GetElectionConfig.generateConfigHash(config) === query.confighash)) throw new ErrorInServerAnswer(1080, "The election config obtained from the server does not match the checksum. The server is trying to cheat you. Aborted.", this.url); 
+				// TODO verify config sigs
+				this.onGotConfigMethod.call(this.onGotConfigObject, config);
+			} catch (e) {
+				if (e instanceof MyException) { e.alert();}
+				else throw e;
+			}
 		}
 };
 
@@ -59,7 +61,7 @@ GetElectionConfig.getMainContent = function(buttontext, gotConfigObject, gotConf
 		'<div id="divElectionUrl">'+
 		'<form>'+
 		'Wahl-Link: '+
-		'<input style="width:60em" name="electionUrl" id="electionUrlId" type="text" value="' + url +'">'+
+		'<input style="width:100%" name="electionUrl" id="electionUrlId" autocomplete="off" type="text" value="' + url +'">'+
 		'<input type="button" name="getelectionconfig" value="' + buttontext + '"'+ 
 		'onclick="'+
 		'var a = document.getElementById(\'electionUrlId\');' + 
@@ -70,5 +72,11 @@ GetElectionConfig.getMainContent = function(buttontext, gotConfigObject, gotConf
 	return maincontent;
 };
 
-
+GetElectionConfig.generateConfigHash = function (config) {
+	var configOnly = JSON.parse(JSON.stringify(config)); 	// make a copy of the original config object 
+	delete configOnly.cmd; // remove the cmd from the config
+	var configstr = unicodeToBlackslashU(JSON.stringify(configOnly));
+	var hash = SHA256(configstr);
+    return hash; 
+};
 

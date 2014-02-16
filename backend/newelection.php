@@ -60,7 +60,7 @@ if (isset ($electionconfigStr)) {
 		// TODO election
 		$newconfig['blinding'] = 'blindedVoter';
 		
-		// TODO telly
+		// TODO tally
 		$newconfig['telly'] = 'publishOnly';
 				
 		$db = new DbElections($dbInfos);

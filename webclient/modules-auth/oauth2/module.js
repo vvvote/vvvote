@@ -9,8 +9,9 @@ OAuth2.getMainContent = function(conf) {
 //	var oauthRedirectUri = 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php';
 	var oauthRedirectUri = 'http%3A//www.webhod.ra/vvvote2/backend/modules-auth/oauth/callback.php';
 	var oauthClientId = 'vvvote';
+	var elIdEscaped = encodeURIComponent(conf['electionId'].replace(/\./g, '..'));
 	var oauthAutorize = 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/?scope=member+profile' +
-		'&state=' + oauth2name + '.' + code + 
+		'&state=' + oauth2name + '.' + elIdEscaped + '.'+ code + 
 		'&redirect_uri=' + oauthRedirectUri + '&response_type=code' +
 		'&client_id=' + oauthClientId;
 	var mc = '<div id="auth">' +

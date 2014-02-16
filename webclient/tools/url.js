@@ -11,6 +11,21 @@ URI.decodeQuery = function(string) {
 	return decodeURIComponent((string + "").replace(/\+/g, '%20'));
 };
 
+/**
+ * this function added by pfefffer
+ */
+URI.parseURL = function(url) {
+	var pos = url.indexOf('?');
+	var q;
+	if (pos > -1) {
+		q = url.substring(pos + 1) || null;
+	} else {
+		return {};
+	}
+	var query = URI.parseQuery(q); // tools/url/
+	return query;
+};
+
 URI.parseQuery = function(string) {
 	if (!string) {
 		return {};
