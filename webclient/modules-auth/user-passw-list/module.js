@@ -10,7 +10,7 @@ UserPasswList.getMainContent = function() {
 	return mainContentUserPassw;
 }; 
 
-UserPasswList.getNewElectionHtml = function () {
+UserPasswList.getNewElectionHtml = function (serverId) {
 	var ret = 
 		'Die W&auml;hler m&uuml;ssen sich mit Benutzername und Passwort anmelden. Laden Sie ein .csv-Datei hoch mit den Benutzernamen und den Passwörtern aller Stimmberechtigten <br>' +
 		'<input type="file" id="userlist">' + 

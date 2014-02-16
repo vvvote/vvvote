@@ -71,7 +71,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 
 
 <!-- the following "<script>" is used as heredoc replacement -->
-<script  id="newElectionHtml" type="mumpiz">
+<script  id="newElectionHtmlPre" type="mumpiz">
 	
 	Hier können Sie eine neue Abstimmung starten.     
     Zum Anlegen einer neuen Abstimmung legen Sie den Namen der Abstimmung und die Authorisierungsmethode fest. 
@@ -81,14 +81,16 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
  	<br>
 	<fieldset onload="page.setAuthMethod('sharedPassw');">
 		<legend>Autorisierungsmethode</legend>
-		<input type="radio" onclick="page.setAuthMethod('sharedPassw');"   name="authMethod" id="sharedPassw">
+		<input type="radio" onclick="page.setAuthMethod('sharedPassw', null);"   name="authMethod" id="sharedPassw">
 			<label for="sharedPassw">Abstimmungspasswort</label>
 
- <!---   	<input type="radio" onclick="page.setAuthMethod('userPasswList');" name="authMethod" id="userPasswList">
+ <!---   	<input type="radio" onclick="page.setAuthMethod('userPasswList', null);" name="authMethod" id="userPasswList">
 			<label for="userPasswList">Liste Benuzername und Passwort hochladen</label></input>
 --->
-    	<input type="radio" onclick="page.setAuthMethod('BEOBayern');"     name="authMethod" id="BEOBayern">
-			<label for="BEOBayern">Basisentscheid Bayern Testserver</label></input>
+</script>
+
+<!-- the following "<script>" is used as heredoc replacement -->
+<script  id="newElectionHtmlPost" type="mumpiz">
     </fieldset>
 	<br>
 	<div id="authInputs">
@@ -96,7 +98,6 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 	</div>
 	<br>
 	<input type="button" onclick="page.handleNewElectionButton();" value="Neue Abstimmung anlegen">		
-
 </script>
 
 <script src="modules-auth/user-passw-list/module.js"></script>
@@ -138,8 +139,10 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 	// var maincontent = '<object type="text/html" width="800" height="700" data="modules-auth/user-passw-list/module.html"></object>'; 
 	// var maincontent = '<object type="text/html" width="800" height="700" data="getelectionconfig.html"></object>';
 	
-	var element = document.getElementById('newElectionHtml'); // heredoc replacement
-	newElectionHtml = element.innerHTML;
+	var element = document.getElementById('newElectionHtmlPre'); // heredoc replacement
+	newElectionHtmlPre = element.innerHTML;
+	var element = document.getElementById('newElectionHtmlPost'); // heredoc replacement
+	newElectionHtmlPost = element.innerHTML;
 
 	
 	function userlog(log) {

@@ -25,18 +25,19 @@ if (!isset($_GET['code']))
 }
 else
 {
-	$oauthdata = explode('.', $_GET['state'], 2); // TODO test if set -> error handling
-	if (count($oauthdata) < 3) {
+	$state = explode('.', $_GET['state']); // TODO test if set -> error handling
+	if (count($state) < 3) {
 		// TODO error handling
 	}
 	//	print "<br>$oauthdata";
 	//	print_r($oauthdata);
-	$curConfig = $oauthConfig[$oauthdata[0]];
+	$curOAuth2Config = $oauthConfig[$state[0]];
+	/*
 	// unescpe '..' to '.'
 	$i = 1; $next = true;
-	while ($next && $i < count($oauthdata)) {
-		$electionId = $oauthConfig[$oauthdata[$i]];
-		if (strlen($oauthdata[$i]) == 0) {
+	while ($next && $i < count($state)) {
+		$electionId = $oauthConfig[$state[$i]];
+		if (strlen($state[$i]) == 0) {
 			$electionId = $electionId . '.';
 			$next = true;
 		} else {
@@ -44,13 +45,16 @@ else
 		}
 		$i++;
 	}
-	$tmpsecret = $oauthdata[$i];
+	*/
+	
+	$electionhash = $state[1];
+	$tmpsecret = $state[2];
 	//	print "<br><br>\ncurConfig: ";
 	//	print_r($curConfig);
 	// TODO write $oauthdata[0] and $oauthdata[1] into a database
-	$client = new OAuth2\Client($curConfig['client_id'], $curConfig['client_secret']);
-	$params = array('code' => $_GET['code'], 'redirect_uri' => $curConfig['redirect_uri']);
-	$response = $client->getAccessToken($curConfig['token_endp'], 'authorization_code', $params);
+	$client = new OAuth2\Client($curOAuth2Config['client_id'], $curOAuth2Config['client_secret']);
+	$params = array('code' => $_GET['code'], 'redirect_uri' => $curOAuth2Config['redirect_uri']);
+	$response = $client->getAccessToken($curOAuth2Config['token_endp'], 'authorization_code', $params);
 	//	print "<br><br>\nresponse: ";
 	//	print_r($response);
 	//	parse_str($response['result'], $info);
@@ -59,7 +63,7 @@ else
 	print_r($tokeninfos);
 	$client->setAccessToken($tokeninfos);
 
-	$membership = $client->fetch($curConfig['get_membership_endp'], Array(), Client::HTTP_METHOD_POST);
+	$membership = $client->fetch($curOAuth2Config['get_membership_endp'], Array(), Client::HTTP_METHOD_POST);
 	print "<br><br>\nresponse 2: ";
 	print_r($membership);
 
@@ -68,7 +72,7 @@ else
 	print "<br><br>\nresponse 3: ";
 	print_r($userprofile);
 
-	$mayvote = $client->fetch($curConfig['may_vote_endp'] . 'd94b915b-db13-4264-890c-0780692e4998' .'/', Array(), Client::HTTP_METHOD_POST);
+	$mayvote = $client->fetch($curOAuth2Config['may_vote_endp'] . 'd94b915b-db13-4264-890c-0780692e4998' .'/', Array(), Client::HTTP_METHOD_POST);
 	print "<br><br>\may vote: ";
 	print_r($mayvote);
 	$now = new DateTime(null, null);
@@ -76,8 +80,8 @@ else
 	print '<br>auid: ' . $membership['result']['auid'];
 	print '<br>Access Token: ' . print_r($tokeninfos, true);
 	print "<br>BEO-Username: " . $userprofile['result']['username'];
+	print '<br>Election config hash: ' . $electionhash;
 	print '<br>temp secret: ' . $tmpsecret;
-	print '<br>Election Id: ' . $electionId;
 	print "<br>BEO-Anzeigename: " . $userprofile['result']['public_id'];
 	print ('<br>Mitglied der Piratenpartei: ' . $membership['result']['type'] . ', überprüft: ' . $membership['result']['verified']);
 	print "<br>jetzt: " . $now->format(DateTime::ATOM);

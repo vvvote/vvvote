@@ -11,6 +11,27 @@ newElectionUrl    = new Array(server1url +'newelection.php',
 electionConfigUrl = server1url + 'getelectionconfig.php';
 tallyUrl          = server1url + 'tallyvote.php'; //?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 
+// OAuth 2.0 configuration
+
+oAuth2ConfigBEOBayern = {
+		serverId: 'BEOBayern', // This is used in the backend to identify the oauth server
+		serverDesc: 'Basisentscheid Online der Piraten (Bayrischer Testserver)',
+		authorizeUri: 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/?', // must end with ?
+		scope: 'member+profile',
+		redirectUri: {
+			0: 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php',
+			1: 'https://84.246.124.167/backend/modules-auth/oauth/callback.php'
+		}, 
+		clientId: {
+			0: 'vvvote',
+			1: 'vvvote2'
+		}
+};
+
+oAuth2Config = {
+		'BEOBayern': oAuth2ConfigBEOBayern
+		};
+
 
 function getPermissionServerList() {
 	// load config
