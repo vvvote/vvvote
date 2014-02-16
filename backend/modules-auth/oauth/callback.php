@@ -75,7 +75,7 @@ else
 	$mayvote = $client->fetch($curOAuth2Config['may_vote_endp'] . 'd94b915b-db13-4264-890c-0780692e4998' .'/', Array(), Client::HTTP_METHOD_POST);
 	print "<br><br>\may vote: ";
 	print_r($mayvote);
-	$now = new DateTime(null, null);
+	$now =  new DateTime('now');
 	print "<h1>Ergebnisse</h1>";
 	print '<br>auid: ' . $membership['result']['auid'];
 	print '<br>Access Token: ' . print_r($tokeninfos, true);
