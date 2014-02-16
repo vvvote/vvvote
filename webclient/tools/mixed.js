@@ -4,7 +4,7 @@
  * @returns
  */
 function clearForFilename(fn) {
-	return fn.replace('<', '-').replace('>', '-').replace(':', '+').replace('/','+').replace('\\','+').replace('|', '+').replace('?', '+').replace('*','+');
+	return fn.replace(/</g, '-').replace(/>/g, '-').replace(/:/g, '+').replace(/\//g,'+').replace(/\\/g,'+').replace(/|/g, '+').replace(/\?/g, '+').replace(/\*/g,'+');
 }
 
 
