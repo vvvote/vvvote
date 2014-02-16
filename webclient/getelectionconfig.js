@@ -34,9 +34,9 @@ GetElectionConfig.prototype = {
 		handleXmlAnswer: function (xml) {
 			try {
 				var config = parseServerAnswer(xml);
-				var query = URI.parseURL(this.url); // tools/url/
+				// verify if the deliverd config matches the requested hash
+				var query = URI.parseURL(this.url); 
 				if (!query || !query.confighash) throw new UserInputError(1000, "The given election URL is not in the expected format (missing confighash=)", this.url);
-				// TODO verify the hash, implement the following function
 				if ( !(GetElectionConfig.generateConfigHash(config) === query.confighash)) throw new ErrorInServerAnswer(1080, "The election config obtained from the server does not match the checksum. The server is trying to cheat you. Aborted.", this.url); 
 				// TODO verify config sigs
 				this.onGotConfigMethod.call(this.onGotConfigObject, config);
@@ -52,7 +52,6 @@ GetElectionConfig.prototype = {
  * @returns {String}
  */
 GetElectionConfig.getMainContent = function(buttontext, gotConfigObject, gotConfigMethod) {
-	// TODO get url from link in browser
 	var  url = '';
 	if (location.search.length > 1) {
 		     url = electionConfigUrl + location.search; //'http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=34b71852f90d9c469530d27743da27c34b6795a30c7ef38cb016c613b134d76b';
