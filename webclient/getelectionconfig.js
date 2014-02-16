@@ -74,6 +74,7 @@ GetElectionConfig.getMainContent = function(buttontext, gotConfigObject, gotConf
 GetElectionConfig.generateConfigHash = function (config) {
 	var configOnly = JSON.parse(JSON.stringify(config)); 	// make a copy of the original config object 
 	delete configOnly.cmd; // remove the cmd from the config
+	delete configOnly.phase; // remoce the phase info from the config
 	var configstr = unicodeToBlackslashU(JSON.stringify(configOnly));
 	var hash = SHA256(configstr);
     return hash; 

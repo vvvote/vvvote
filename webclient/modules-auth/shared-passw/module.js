@@ -48,7 +48,7 @@ SharedPasswAuth.getNewElectionHtml = function () {
  * this function must return an Array/Object with .authModule, containing the AuthModuleId
  * and .authData containing an Array/Object with all auth data needed for this module
  */
-SharedPasswAuth.getNewElectionData = function () {
+SharedPasswAuth.getNewElectionData = function (serverId) {
 	var ret = {};
 	ret.authModule = 'sharedPassw'; 
 	ret.authData = {};

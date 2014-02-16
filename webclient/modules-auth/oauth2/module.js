@@ -4,16 +4,19 @@ var OAuth2 = function() {
 };
 
 OAuth2.getMainContent = function(conf) {
-	oauth2name = 'BEOBayern';
-	var code = bigInt2str(randBigInt(200,0), 62);
-	var oauthRedirectUri = 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php';
+	serverId = 'BEOBayern';
+	
+	var random = bigInt2str(randBigInt(200,0), 62);
+//	var oauthRedirectUri = 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php';
 //	var oauthRedirectUri = 'http%3A//www.webhod.ra/vvvote2/backend/modules-auth/oauth/callback.php';
-	var oauthClientId = 'vvvote';
-	var elIdEscaped = encodeURIComponent(conf['electionId'].replace(/\./g, '..'));
-	var oauthAutorize = 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/?scope=member+profile' +
-		'&state=' + oauth2name + '.' + elIdEscaped + '.'+ code + 
-		'&redirect_uri=' + oauthRedirectUri + '&response_type=code' +
-		'&client_id=' + oauthClientId;
+//	var oauthClientId = 'vvvote';
+	var elelctionConfigHash = GetElectionConfig.generateConfigHash(conf);
+	var oauthAutorize = oAuth2Config[serverId].authorizeUri + 
+		'scope=' + oAuth2Config[serverId].scope +
+		'&state=' + oAuth2Config[serverId].serverId + '.' + elelctionConfigHash + '.'+ random + 
+		'&redirect_uri=' + oAuth2Config[serverId].redirectUri[0] + 
+		'&response_type=code' +
+		'&client_id=' + oAuth2Config[serverId].clientId[0];
 	var mc = '<div id="auth">' +
 	'<form onsubmit="return false;">' +
 	'                       <br>' +
@@ -40,7 +43,8 @@ OAuth2.getConfigObtainedHtml = function () {
 	return ret;
 };
 
-OAuth2.getNewElectionHtml = function () {
+OAuth2.getNewElectionHtml = function (serverId) {
+	// TODO put this in config 
 	var ret = 
 		'Für den Basisentscheid Online (BEO) wird für jeden Abstimmungstermin auf dem BEO-Server eine Liste der Stimmberechtigten angelegt. Geben Sie hier die ID dieser Liste ein.<br>' +
 		'<input name="listId" id="listId" value="" type="text">' +
@@ -49,7 +53,7 @@ OAuth2.getNewElectionHtml = function () {
 };
 
 /**
- * this function must return an Array/Object with .authModule, containing the AuthModuleId
+ * this function must returns an Array/Object with .authModule, containing the AuthModuleId
  * and .authData containing an Array/Object with all auth data needed for this module
  */
 OAuth2.getNewElectionData = function () {

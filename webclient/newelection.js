@@ -5,7 +5,13 @@ function NewElectionPage() {
 	Page.call(this);
 	this.steps[1] = 'Schritt 1: Abstimmungseinstellungen festlegen'; 
 	this.steps[2] = 'Schritt 2: Abstimmungslink speichern';
-	this.mainContent = newElectionHtml; // defined in index.html as heredoc replacement
+	OauthHtml = '';
+	for ( var curroauthconfig in oAuth2Config) {
+		OauthHtml  = '<input type="radio" onclick="page.setAuthMethod(\'OAuth2\',\'' + oAuth2Config[curroauthconfig].serverId + '\');"     name="authMethod" id="' + oAuth2Config[curroauthconfig].serverId + '">';
+		OauthHtml += '<label for="' + oAuth2Config[curroauthconfig].serverId +'">' + oAuth2Config[curroauthconfig].serverDesc + '</label></input>';
+		
+	}
+	this.mainContent = newElectionHtmlPre + OauthHtml + newElectionHtmlPost; // newElectionHtmlPre and newElectionHtmlPost defined in index.html as heredoc replacement
 	this.title = 'Neue Abstimmung anlegen';
 	this.serverno = 0;
 	this.authModule = Object();
@@ -13,14 +19,14 @@ function NewElectionPage() {
 
 NewElectionPage.prototype = new Page();
 
-NewElectionPage.prototype.setAuthMethod = function(method) {
+NewElectionPage.prototype.setAuthMethod = function(method, authServerId) {
 	switch(method) {
 	case 'sharedPassw':		this.authModule = SharedPasswAuth; 	break;
 	case 'userPasswList':	this.authModule = UserPasswList;   	break;
-	case 'BEOBayern':		this.authModule = OAuth2;       	break;
-	default:		alert('Programmfehler 8769867'); 			break;
+	case 'OAuth2':		    this.authModule = OAuth2;       	break;
+	default:		alert('Program error 8769867'); 			break;
 	}
-	var html = this.authModule.getNewElectionHtml();
+	var html = this.authModule.getNewElectionHtml(authServerId);
 	var el = document.getElementById('authInputs');
 	el.innerHTML = html;
 };
