@@ -22,18 +22,20 @@ class DbOAuth extends DbBase {
 	function __construct($dbInfos) {
 		$dbtables =
 		array('oa_elections' /* Table name */ => array(
-				array('name' => 'electionId'    , 'digits' => '100', 'json' => false), /* colunm definition */
-				array('name' => 'listId'        , 'digits' => '100', 'json' => false)
+				array('name' => 'electionId'        , 'digits' => '100', 'json' => false), /* colunm definition */
+				array('name' => 'electionConfigHash', 'digits' => '100', 'json' => false), /* colunm definition */
+				array('name' => 'listId'            , 'digits' => '100', 'json' => false)
 				),
 			  'oa_voters' /* table name */ => array(
-				array('name' => 'oAuth2ServerId' , 'digits' => '100', 'json' => false), /* colunm definition */
-				array('name' => 'electionId'     , 'digits' => '100', 'json' => false), /* colunm definition */
+				array('name' => 'serverId' , 'digits' => '100', 'json' => false), /* colunm definition: Id of the OAuth 2.0 server */
+				array('name' => 'configHash'     , 'digits' => '100', 'json' => false), /* colunm definition */
+				array('name' => 'transactionId'  , 'digits' => '100', 'json' => false), /* colunm definition */
 			  	array('name' => 'username'       , 'digits' => '100', 'json' => false), /* colunm definition */
-				array('name' => 'statecode'      , 'digits' => '100', 'json' => false), /* colunm definition */
-				array('name' => 'public_id'      , 'digits' => '100', 'json' => false), /* colunm definition */
-			  	array('name' => 'auuid'          , 'digits' => '100', 'json' => false), /* colunm definition */
-			  	array('name' => 'authCode'       , 'digits' => '100', 'json' => false)
-				)
+				//array('name' => 'public_id'      , 'digits' => '100', 'json' => false), /* colunm definition */
+			  	array('name' => 'auid'           , 'digits' => '100', 'json' => false), /* colunm definition */
+			  	array('name' => 'authInfos'      , 'digits' => '100', 'json' => true),
+			  	array('name' => 'startTime'      , 'digits' => '100', 'json' => true)
+			  )
 		);
 		parent::__construct($dbInfos, $dbtables, true);
 	}
@@ -47,19 +49,44 @@ class DbOAuth extends DbBase {
 		return false;
 	}
 	
-	function newElection($electionId, $listId) {
+	function newElection($electionId, $configHash, $listId) {
 		$exists = $this->load(array('electionId' => $electionId), 'oa_elections', 'listId');
 		if (isset($exists[0])) { 
 			WrongRequestException::throwException(3000, 'election ID already used', $electionId);
 		}
-		$saved = $this->save(array('electionId' => $electionId, 'listId' => $listId), 'oa_elections');
+		$saved = $this->save(array('electionId' => $electionId, 'electionConfigHash' => $configHash, 'listId' => $listId), 'oa_elections');
 		if (! $saved) {
 			WrongRequestException::throwException(3001, 'internal server error; election not saved', $electionId);
 		}
 		return $saved;
 	}
 	
-
+	function getListIdByElectionConfigHash($electionConfigHash) {
+		return $this->load(array('ElectionConfigHash' => $electionConfigHash), 'oa_elections', 'listId');
+	}
+	
+	function saveAuthData($configHash, $ServerId, $transactionId, $username, $authInfos, $now) {
+		$saved = $this->save(array(
+				'serverId' => $ServerId,
+				'configHash' => $configHash,
+				'transactionId' => $transactionId,
+				'username' => $username,
+				'authInfos' => $authInfos,
+				'startTime' => $now
+		), 'oa_voters');
+		if (! $saved) {
+			WrongRequestException::throwException(3010, 'internal server error; auth infos not saved', 'config hash: ' . $electionId . ', username: ' . $username);
+		}
+		return $saved;
+	}
+	
+	function loadAuthData($configHash, $serverId, $transactionId) {
+		$this->load(array(
+				'serverId' => $ServerId,
+				'configHash' => $configHash,
+				'transactionId' => $transactionId
+		), 'oa_voters', $colname);
+	}
 
 }
 

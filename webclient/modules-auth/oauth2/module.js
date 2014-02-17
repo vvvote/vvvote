@@ -1,33 +1,50 @@
 var OAuth2 = function() {
 
-
 };
+
+OAuth2.prototype.getCredentials = function (config, clientId) {
+	var configHash = GetElectionConfig.generateConfigHash(config);
+	var el = document.getElementById('username');
+	var username = el.value;
+	var credentials = {
+			secret: SHA256(configHash  + clientId + username + OAuth2.random[clientId]),
+			identifier: random[clientId]
+	};
+	return credentials;
+};
+
+/**
+ * the random for access
+ */
+OAuth2.random = [];
 
 OAuth2.getMainContent = function(conf) {
 	serverId = 'BEOBayern';
 	
-	var random = bigInt2str(randBigInt(200,0), 62);
-//	var oauthRedirectUri = 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php';
-//	var oauthRedirectUri = 'http%3A//www.webhod.ra/vvvote2/backend/modules-auth/oauth/callback.php';
-//	var oauthClientId = 'vvvote';
 	var elelctionConfigHash = GetElectionConfig.generateConfigHash(conf);
-	var oauthAutorize = oAuth2Config[serverId].authorizeUri + 
-		'scope=' + oAuth2Config[serverId].scope +
-		'&state=' + oAuth2Config[serverId].serverId + '.' + elelctionConfigHash + '.'+ random + 
-		'&redirect_uri=' + oAuth2Config[serverId].redirectUri[0] + 
-		'&response_type=code' +
-		'&client_id=' + oAuth2Config[serverId].clientId[0];
 	var mc = '<div id="auth">' +
 	'<form onsubmit="return false;">' +
 	'                       <br>' +
 	'						<label for="electionId">Name der Abstimmung:</label> ' +
     '                            <input readonly="readonly" name="electionId" id="electionId" value="' + conf.electionId + '">' +
-    '                       <br>' +
-	'						<label for="login">Einloggen</label> ' +
-	'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber BEO Bayern einloggen</a>'+
-    '                       <br>' +
+    '                       <br>';
+	
+	for ( var clientno in oAuth2Config[serverId].clientId) {
+		OAuth2.random[clientno] = bigInt2str(randBigInt(200,0), 62);
+		var oauthAutorize = oAuth2Config[serverId].authorizeUri + 
+		'scope=' + oAuth2Config[serverId].scope +
+		'&state=' + oAuth2Config[serverId].serverId + '.' + elelctionConfigHash + '.'+ OAuth2.random[clientno]+ 
+		'&redirect_uri=' + oAuth2Config[serverId].redirectUri[clientno] + 
+		'&response_type=code' +
+		'&client_id=' + oAuth2Config[serverId].clientId[clientno];
+		mc = mc + 
+		'						<label for="login">Einloggen f&uuml;r Abstimmserver ' + clientno +'</label> ' +
+		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
+	}
+	
+	mc = mc +
 	'						<label for="voterId">Username bei BEO</label> ' +
-	'						     <input name="voterId" id="voterId" value="" type="text"></td>' + 
+	'						     <input name="username" id="username" value="" type="text"></td>' + 
     '                       <br>' +
 	'						<label for="reqPermiss"></label> ' +
 	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
