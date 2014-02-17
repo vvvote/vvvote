@@ -89,18 +89,27 @@ class DbBase {
  * 
  * @param unknown $where array colname == value all pairs are treated as AND conditions
  * @param unknown $tablename
- * @param unknown $colname
+ * @param unknown $colnames String for only one column oder array of strings
+ * @return array[] of all data rows matching where if colnames is a string, array[][$colnames] if $colnames is an array
  */
-	function load($where, $tablename, $colname) {
-		$fromDB = $this->connection->load($where, $tablename, $colname);
-		$colnum = find_in_subarray($this->connection->evtables[$tablename], 'name', $colname);
-		if ($fromDB === false) return false;
-		$ret = array(); // this is necessary because sometimes $fromDB contains an empty array
-		foreach ($fromDB as $num => $gotrow) { // json decode if column is json
-			if ($this->connection->evtables[$tablename][$colnum]['json']) {
-				$ret[$num] = json_decode($gotrow[0], true);
-			} else {
-				$ret[$num] = $gotrow[0];
+	function load($where, $tablename, $colnames) {
+		if (is_array($colnames))  $colarray   = $colnames;
+		else                     $colarray[0] = $colnames; 
+		$colnames_ = implode(' ', $colarray);
+
+		$fromDB = $this->connection->load($where, $tablename, $colnames_);
+		foreach ($colarray as $answColNum => $cname) {
+			$colnum = find_in_subarray($this->connection->evtables[$tablename], 'name', $cname);
+			if ($fromDB === false) return false;
+			$ret = array(); // this is necessary because sometimes $fromDB contains an empty array
+			foreach ($fromDB as $rownum => $gotrow) { // json decode if column is json
+				if ($this->connection->evtables[$tablename][$colnum]['json']) {
+					$value = json_decode($gotrow[$answColNum], true);
+				} else {
+					$value = $gotrow[$answColNum];
+				}
+				if (is_array($colnames)) $ret[$rownum][$cname] = $value;
+				else                     $ret[$rownum]         = $value;
 			}
 		}
 		return $ret;

@@ -14,7 +14,7 @@ if (isset($_GET['connectioncheck'])) {
     print ('    <li>klicken Sie in dem urspr&uuml;nglichen Fenster innerhalb des roten Balkens auf den Knopf &quot;erneut versuchen&quot;</li></ul>');
     print ('<button onClick="window.close();">Fenster schlie&szlig;en</button>');
 	print ('</body>');
-	exit(0);
+	die();
 }
 
 ?>

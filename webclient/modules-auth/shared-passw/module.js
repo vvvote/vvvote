@@ -8,7 +8,7 @@ SharedPasswAuth.getMainContent = function(conf) {
 	'<form onsubmit="return false;">' +
 	'                       <br>' +
 	'						<label for="electionId">Name der Abstimmung:</label> ' +
-    '                            <input disabled="disabled" name="electionId" id="electionId" value="' + conf.electionId + '">' +
+    '                            <input readonly="readonly" name="electionId" id="electionId" value="' + conf.electionId + '">' +
     '                       <br>' +
 	'						<label for="voterId">Ihr Name:</label> ' +
 	'		  				     <input name="voterId" id="voterId" value=""> ' +

@@ -76,6 +76,15 @@ else
 	print "<br><br>\may vote: ";
 	print_r($mayvote);
 	$now =  new DateTime('now');
+	
+	print ("<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"ISO-8859-1\">");
+	print ('<title>VVVote: Login erfolgreich</title>');
+	print ('</head><body>');
+	print ('<big><u>Login für Abstimmungsserver 1 erfolgreich.</u></big>');
+	print ('<ul><li>Schlie&szlig;en Sie jetzt dieses Fenster und </li>');
+	print ('    <li>klicken Sie in dem urspr&uuml;nglichen Fenster auf den Knopf zum Login für Abstimmungsserver 2</li></ul>');
+	print ('<button onClick="window.close();">Fenster schlie&szlig;en</button>');
+	
 	print "<h1>Ergebnisse</h1>";
 	print '<br>auid: ' . $membership['result']['auid'];
 	print '<br>Access Token: ' . print_r($tokeninfos, true);
@@ -85,6 +94,7 @@ else
 	print "<br>BEO-Anzeigename: " . $userprofile['result']['public_id'];
 	print ('<br>Mitglied der Piratenpartei: ' . $membership['result']['type'] . ', überprüft: ' . $membership['result']['verified']);
 	print "<br>jetzt: " . $now->format(DateTime::ATOM);
+	print ('</body>');
 	// var_dump($response, $response['result']);
 }
 

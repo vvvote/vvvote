@@ -41,7 +41,14 @@ class OAuth2 extends Auth {
 	/**
 	 * check the credentials sent from the voter
 	 */
-	function checkCredentials($voterreq) {
+	function checkCredentials($credentials) {
+		// load auid, username, public_id auth-infos, already_used by electionId, tmp-secret
+		// hash(electionId + username + tmpsecret)
+		// check if this hash matches the tmp-secret-hash
+		// load list-id by election
+		// ask oAuth-server if auid is in the list
+		// mark tmp-secret as used, so that it is not accepted again?
+		// return auid and public_id if everthing is ok.
 		return $this->db->checkCredentials($voterreq['electionId'], $voterreq['voterId'], $voterreq['secret']);
 	}
 
