@@ -25,7 +25,7 @@ require_once 'exception.php';
 class OAuth2 extends Auth {
 	function __construct($dbInfo) {
 		parent::__construct();
-		$this->db = new DbOAuth($dbInfo);
+		$this->db = new DbOAuth2($dbInfo);
 	}
 
 
@@ -42,7 +42,11 @@ class OAuth2 extends Auth {
 	 * check the credentials sent from the voter
 	 * @param array $credentials: ['secret'] ['identifier'] 
 	 */
-	function checkCredentials($credentials) {
+	function checkCredentials($electionId, $credentials) {
+		$electionsDB = new DbElections($dbInfos);
+		$elConfig = $electionsDB->loadElectionConfigFromElectionId($electionId);
+		$configHash = $electionsDB->generateConfigHash($elconfig);
+		$authinfos = $this->db->loadAuthData($configHash, $serverId, $credentials['identifier']);
 		// load auid, username, public_id auth-infos, already_used by electionId, tmp-secret
 		// hash(electionId + username + tmpsecret)
 		// check if this hash matches the tmp-secret-hash
