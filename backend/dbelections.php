@@ -25,9 +25,19 @@ class DbElections extends DbBase {
 		parent::__construct($dbInfos, $dbtables, true);
 	}
 	
-	function saveElectionConfig($electionId, $config) {
+	function configHashToElectionId($configHash) {
+		$config = $this->loadElectionConfigFromHash($configHash);
+		return $this->generateConfigHash($config);
+	}
+	
+	function generateConfigHash($config) {
 		$configstr = json_encode($config);
 		$hash = hash('sha256', $configstr);
+		return $hash;
+	}
+	
+	function saveElectionConfig($electionId, $config) {
+		$hash = $this->generateConfigHash($config);
 		$ok = $this->save(array('electionId' => $electionId, 
 				                'config'     => $config, // this column is marked as json=true so that it gets automatically json encoded and decoded 
 				                'hash'       => $hash), 

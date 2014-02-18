@@ -23,7 +23,6 @@ class DbOAuth extends DbBase {
 		$dbtables =
 		array('oa_elections' /* Table name */ => array(
 				array('name' => 'electionId'        , 'digits' => '100', 'json' => false), /* colunm definition */
-				array('name' => 'electionConfigHash', 'digits' => '100', 'json' => false), /* colunm definition */
 				array('name' => 'listId'            , 'digits' => '100', 'json' => false)
 				),
 			  'oa_voters' /* table name */ => array(
@@ -50,12 +49,12 @@ class DbOAuth extends DbBase {
 		return false;
 	}
 	
-	function newElection($electionId, $configHash, $listId) {
+	function newElection($electionId, $listId) {
 		$exists = $this->load(array('electionId' => $electionId), 'oa_elections', 'listId');
 		if (isset($exists[0])) { 
 			WrongRequestException::throwException(3000, 'election ID already used', $electionId);
 		}
-		$saved = $this->save(array('electionId' => $electionId, 'electionConfigHash' => $configHash, 'listId' => $listId), 'oa_elections');
+		$saved = $this->save(array('electionId' => $electionId, 'listId' => $listId), 'oa_elections');
 		if (! $saved) {
 			WrongRequestException::throwException(3001, 'internal server error; election not saved', $electionId);
 		}
