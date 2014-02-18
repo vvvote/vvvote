@@ -34,7 +34,8 @@ class DbOAuth extends DbBase {
 				//array('name' => 'public_id'      , 'digits' => '100', 'json' => false), /* colunm definition */
 			  	array('name' => 'auid'           , 'digits' => '100', 'json' => false), /* colunm definition */
 			  	array('name' => 'authInfos'      , 'digits' => '100', 'json' => true),
-			  	array('name' => 'startTime'      , 'digits' => '100', 'json' => true)
+			  	array('name' => 'startTime'      , 'digits' => '100', 'json' => false),
+			  	array('name' => 'firstUse'       , 'digits' => '1'  , 'json' => false)
 			  )
 		);
 		parent::__construct($dbInfos, $dbtables, true);
@@ -72,7 +73,8 @@ class DbOAuth extends DbBase {
 				'transactionId' => $transactionId,
 				'username' => $username,
 				'authInfos' => $authInfos,
-				'startTime' => $now
+				'startTime' => $now,
+				'firstUse' => 1
 		), 'oa_voters');
 		if (! $saved) {
 			WrongRequestException::throwException(3010, 'internal server error; auth infos not saved', 'config hash: ' . $electionId . ', username: ' . $username);
@@ -81,11 +83,13 @@ class DbOAuth extends DbBase {
 	}
 	
 	function loadAuthData($configHash, $serverId, $transactionId) {
-		$this->load(array(
+		$fromDB = $this->load(array(
 				'serverId' => $ServerId,
 				'configHash' => $configHash,
 				'transactionId' => $transactionId
-		), 'oa_voters', $colname);
+		), 'oa_voters', array('username', 'authInfos', 'startTime', 'firstUse'));
+		// TODO set firstUse auf 0 for false
+		return $fromDB;
 	}
 
 }
