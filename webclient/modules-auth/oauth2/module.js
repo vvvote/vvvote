@@ -14,7 +14,7 @@ OAuth2.prototype.getCredentials = function (config, clientId) {
 };
 
 /**
- * the random for access
+ * the randoms for transaction token - generated when step 2 page is loaded
  */
 OAuth2.random = [];
 
@@ -77,6 +77,7 @@ OAuth2.getNewElectionData = function () {
 	var ret = {};
 	ret.authModule = 'oAuth2'; 
 	ret.authData = {};
+	ret.authData.serverId = oAuth2Config['BEOBayern'].serverId; // TODO read this from selected OAuthServer-config which was selected in the web formular 
 	var element = document.getElementById('listId');
 	ret.authData.listId = element.value;
 	return ret;

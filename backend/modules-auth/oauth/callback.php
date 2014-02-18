@@ -15,14 +15,13 @@ require 'client.php';
 require 'GrantType/IGrantType.php';
 require 'GrantType/AuthorizationCode.php';
 
-// TODO remove this and put it in the conf-this-server
-$oauthConfig['is_in_voter_list_endp'] = 'https://beoauth.piratenpartei-bayern.de/api/self/listmember/';
-
 // $client = new OAuth2\Client(CLIENT_ID, CLIENT_SECRET);
 if (!isset($_GET['code']))
 {
-	$auth_url = $client->getAuthenticationUrl(AUTHORIZATION_ENDPOINT, REDIRECT_URI);
-	header('Location: ' . $auth_url);
+	// TODO error handling, e.g. scope not permitted
+	//$auth_url = $client->getAuthenticationUrl(AUTHORIZATION_ENDPOINT, REDIRECT_URI);
+	//header('Location: ' . $auth_url);
+	print_r($_GET);
 	die('Redirect');
 }
 else
@@ -56,11 +55,11 @@ else
 	$username = $fetcher->fetchUsername();
 	print '<br>username from fetch: ' . $fetcher->fetchUsername();
 	print '<br>auid from fetch: ' . $fetcher->fetchAuid();
-	print '<br>isInVoterlist from fetch: ' . $fetcher->isInVoterList('d94b915b-db13-4264-890c-0780692e4998');
+	print '<br>isInVoterlist from fetch: ' . ($fetcher->isInVoterList('d94b915b-db13-4264-890c-0780692e4998') ? 'true' : 'false');
 	
-	$oAuthDb = new DbOAuth2($dbInfos);
+/*	$oAuthDb = new DbOAuth2($dbInfos);
 	$oAuthDb->saveAuthData($electionhash, $ServerId, $tmpsecret, $username, $tokeninfos, $now);
-	
+	*/
 	
 	$membership = $client->fetch($curOAuth2Config['get_membership_endp'], Array(), Client::HTTP_METHOD_POST);
 	print "<br><br>\nresponse 2: ";
@@ -109,9 +108,10 @@ class FetchFromOAuth2Server {
 	function __construct($serverId, $authInfos) {
 		//$this->serverId = $serverId;
 		//$this->authInfos = $authInfos;
+		global $oauthConfig;
 		$this->curOAuth2Config =  $oauthConfig[$serverId];
 		$this->client = new OAuth2\Client($this->curOAuth2Config['client_id'], $this->curOAuth2Config['client_secret']);
-		$client->setAccessToken($authInfos);
+		$this->client->setAccessToken($authInfos);
 		// $this->params = array('redirect_uri' => $curOAuth2Config['redirect_uri']); // $params = array('code' => $_GET['code'], 'redirect_uri' => $curOAuth2Config['redirect_uri']);
 	}
 
@@ -126,8 +126,8 @@ class FetchFromOAuth2Server {
 	}
 
 	function isInVoterList($listId) {
-		$inVoterlist = $this->fetch($this->$curOAuth2Config['is_in_voter_list_endp'] . $listId .'/');
-		$inVoterlistBoolean = ($inVoterlist['result']['list'] === $listId && $inVoterlist['result'] == 1);
+		$inVoterlist = $this->fetch($this->curOAuth2Config['is_in_voter_list_endp'] . $listId .'/');
+		$inVoterlistBoolean = ($inVoterlist['result']['list'] === $listId && $inVoterlist['result']['listmember']);
 		return $inVoterlistBoolean;
 	}
 
