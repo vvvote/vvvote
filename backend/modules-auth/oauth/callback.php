@@ -28,32 +28,18 @@ if (!isset($_GET['code']))
 else
 {
 	$state = explode('.', $_GET['state']); // TODO test if set -> error handling
-	if (count($state) < 3) {
+	if (count($state) != 3) {
 		// TODO error handling
 	}
 	//	print "<br>$oauthdata";
 	//	print_r($oauthdata);
-	$curOAuth2Config = $oauthConfig[$state[0]];
-	/*
-	 // unescpe '..' to '.'
-	$i = 1; $next = true;
-	while ($next && $i < count($state)) {
-	$electionId = $oauthConfig[$state[$i]];
-	if (strlen($state[$i]) == 0) {
-	$electionId = $electionId . '.';
-	$next = true;
-	} else {
-	$next = false;
-	}
-	$i++;
-	}
-	*/
-
+	$serverId     = $state[0];
 	$electionhash = $state[1];
-	$tmpsecret = $state[2];
+	$tmpsecret    = $state[2];
+	$curOAuth2Config = $oauthConfig[$serverId];
+	
 	//	print "<br><br>\ncurConfig: ";
 	//	print_r($curConfig);
-	// TODO write $oauthdata[0] and $oauthdata[1] into a database
 	$client = new OAuth2\Client($curOAuth2Config['client_id'], $curOAuth2Config['client_secret']);
 	$params = array('code' => $_GET['code'], 'redirect_uri' => $curOAuth2Config['redirect_uri']);
 	$response = $client->getAccessToken($curOAuth2Config['token_endp'], 'authorization_code', $params);
@@ -64,11 +50,17 @@ else
 	//	print "<br><br>\info: ";
 	print_r($tokeninfos);
 	$client->setAccessToken($tokeninfos);
+	$now =  new DateTime('now');
 	
 	$fetcher = new FetchFromOAuth2Server($state[0], $tokeninfos);
+	$username = $fetcher->fetchUsername();
 	print '<br>username from fetch: ' . $fetcher->fetchUsername();
 	print '<br>auid from fetch: ' . $fetcher->fetchAuid();
 	print '<br>isInVoterlist from fetch: ' . $fetcher->isInVoterList('d94b915b-db13-4264-890c-0780692e4998');
+	
+	$oAuthDb = new DbOAuth2($dbInfos);
+	$oAuthDb->saveAuthData($electionhash, $ServerId, $tmpsecret, $username, $tokeninfos, $now);
+	
 	
 	$membership = $client->fetch($curOAuth2Config['get_membership_endp'], Array(), Client::HTTP_METHOD_POST);
 	print "<br><br>\nresponse 2: ";
@@ -83,7 +75,6 @@ else
 	print "<br><br>\may vote: ";
 	print_r($mayvote);
 	$mayvoteBoolean = ($mayvote['result']['list'] === $listId && $mayvote['result'] == 1);
-	$now =  new DateTime('now');
 
 
 	print ("<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"ISO-8859-1\">");
@@ -171,5 +162,23 @@ die();
 }
 }
 */
+
+/*
+ // unescpe '..' to '.'
+$i = 1; $next = true;
+while ($next && $i < count($state)) {
+$electionId = $oauthConfig[$state[$i]];
+if (strlen($state[$i]) == 0) {
+$electionId = $electionId . '.';
+$next = true;
+} else {
+$next = false;
+}
+$i++;
+}
+*/
+
+
+
 
 ?>

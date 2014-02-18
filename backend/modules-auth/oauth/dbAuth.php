@@ -17,7 +17,7 @@ require_once 'dbBase.php';
  * @author r
  *
  */
-class DbOAuth extends DbBase {
+class DbOAuth2 extends DbBase {
 
 	function __construct($dbInfos) {
 		$dbtables =
