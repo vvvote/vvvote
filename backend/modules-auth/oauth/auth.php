@@ -43,18 +43,32 @@ class OAuth2 extends Auth {
 	 * @param array $credentials: ['secret'] ['identifier'] 
 	 */
 	function checkCredentials($electionId, $credentials) {
+		// load necessary data
 		$electionsDB = new DbElections($dbInfos);
 		$elConfig = $electionsDB->loadElectionConfigFromElectionId($electionId);
 		$configHash = $electionsDB->generateConfigHash($elconfig);
-		$authinfos = $this->db->loadAuthData($configHash, $serverId, $credentials['identifier']);
+		$Ids = $this->db->getListIdandServerIdByElectionId($electionId); // $Ids['serverId'] und $Ids['listId']
+		
+		// verify transaction credentials
+		$webclientAuthFromDb = $this->db->loadAuthData($configHash, $credentials['identifier']);
+		$secretFromDb = hash('sha256', $configHash . $oauthConfig[$Ids['serverId']] . $webclientAuthFromDb['username'] . $credentials['identifier']);
+		if ($secretFromDb !== $credentials['secret'] ) return false;
+		
+		// check if in list of allowed voters
+		$authInfos = $this->db->loadAuthData($configHash, $Ids['serverId'], $credentials['identifier']);
+		$oAuthConnection = new FetchFromOAuth2Server($Ids['serverId'], $authInfos);
+		$isInVoterList = $oAuthConnection->isInVoterList($Ids['listId']);
+		if (!$isInVoterList) return false;
+
+		// voter is in voter list --> fetch identity information
 		// load auid, username, public_id auth-infos, already_used by electionId, tmp-secret
-		// hash(electionId + username + tmpsecret)
-		// check if this hash matches the tmp-secret-hash
-		// load list-id by election
-		// ask oAuth-server if auid is in the list
-		// mark tmp-secret as used, so that it is not accepted again?
+		$displayname = $oAuthConnection->fetchAuid();
 		// return auid and public_id if everthing is ok.
-		return $this->db->checkCredentials($voterreq['electionId'], $voterreq['voterId'], $voterreq['secret']);
+		return $isInVoterList;
+	}
+	
+	function getVoterId() {
+		
 	}
 
 	/**
@@ -72,8 +86,8 @@ class OAuth2 extends Auth {
 	 * @param unknown $listId Id of the list of allowed voters. This Id must 
 	 * match the Id of the list of allowed voters of the oauth (BEO) server
 	 */
-	function newElection($electionId, $listId) {
-		return $this->db->newElection($electionId, $listId);
+	function newElection($electionId, $listId, $serverId) {
+		return $this->db->newElection($electionId, $listId, $serverId);
 	}
 	
 	
@@ -86,12 +100,12 @@ class OAuth2 extends Auth {
 		if (isset($electionId) && isset($req['listId']) &&
 				gettype($electionId) == 'string' && gettype($req['listId']) == 'string') 
 		{
-			return $this->newElection($electionId, $req['listId']);
+			return $this->newElection($electionId, $req['listId'], $req['serverId']);
 		} else {
 			WrongRequestException::throwException(2700, 'ElectionId or list Id not set or of wrong type', "request received: \n" . print_r($req, true));
 		}
 	}
-	
+	/*
 	function isInVoterList($oAuthConnection) {
 		$db = new DbElections($dbInfos);
 		$electionId = $db->configHashToElectionId($configHash);
@@ -99,6 +113,6 @@ class OAuth2 extends Auth {
 		$isInVoterList = $oAuthConnection->isInVoterList($listId);
 		return $isInVoterList;
 	}
-
+*/
 }
 ?>
