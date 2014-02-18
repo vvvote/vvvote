@@ -137,7 +137,7 @@ class FetchFromOAuth2Server {
 	function isInVoterList($listId) {
 		$inVoterlist = $this->fetch($this->$curOAuth2Config['is_in_voter_list_endp'] . $listId .'/');
 		$inVoterlistBoolean = ($inVoterlist['result']['list'] === $listId && $inVoterlist['result'] == 1);
-		return $$inVoterlistBoolean;
+		return $inVoterlistBoolean;
 	}
 
 

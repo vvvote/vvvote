@@ -40,6 +40,7 @@ class OAuth2 extends Auth {
 
 	/**
 	 * check the credentials sent from the voter
+	 * @param array $credentials: ['secret'] ['identifier'] 
 	 */
 	function checkCredentials($credentials) {
 		// load auid, username, public_id auth-infos, already_used by electionId, tmp-secret
@@ -85,6 +86,14 @@ class OAuth2 extends Auth {
 		} else {
 			WrongRequestException::throwException(2700, 'ElectionId or list Id not set or of wrong type', "request received: \n" . print_r($req, true));
 		}
+	}
+	
+	function isInVoterList($oAuthConnection) {
+		$db = new DbElections($dbInfos);
+		$electionId = $db->configHashToElectionId($configHash);
+		$listId = $this->db->getListIdByElectionId($electionId);
+		$isInVoterList = $oAuthConnection->isInVoterList($listId);
+		return $isInVoterList;
 	}
 
 }
