@@ -46,6 +46,7 @@ if (isset($HTTP_RAW_POST_DATA)) {
 		switch ($elconfig['auth']) {
 			case 'userPassw': $auth = new UserPasswAuth($dbInfos); break;
 			case 'sharedPassw': $auth = new SharedPasswAuth($dbInfos); break;
+			case 'oAuth2': $auth = new OAuth2($dbInfo); break;
 			default: /* TODO return an error */ break;
 		}
 		$el = new Election($elconfig['electionId'],

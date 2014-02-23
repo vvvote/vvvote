@@ -25,7 +25,21 @@
  * @author      Anis Berejeb <anis.berejeb@gmail.com>
  * @version     1.2-dev
  */
-namespace OAuth2;
+
+
+namespace nsOAuth2;
+
+/**
+ * return 404 if called directly
+ * added by Pfefffer
+ */
+if(count(get_included_files()) < 2) {
+	header('HTTP/1.0 404 Not Found');
+	echo "<h1>404 Not Found</h1>";
+	echo "The page that you have requested could not be found.";
+	exit;
+}
+
 
 class Client
 {
@@ -208,7 +222,7 @@ class Client
      * @param array  $parameters        Array sent to the server (depend on which grant type you're using)
      * @return array Array of parameters required by the grant_type (CF SPEC)
      */
-    public function getAccessToken($token_endpoint, $grant_type, array $parameters)
+    public function getAccessToken($token_endpoint, $grant_type, array $parameters) 
     {
         if (!$grant_type) {
             throw new InvalidArgumentException('The grant_type is mandatory.', InvalidArgumentException::INVALID_GRANT_TYPE);
@@ -218,7 +232,7 @@ class Client
         if (!class_exists($grantTypeClass)) {
             throw new InvalidArgumentException('Unknown grant type \'' . $grant_type . '\'', InvalidArgumentException::INVALID_GRANT_TYPE);
         }
-        $grantTypeObject = new $grantTypeClass();
+        $grantTypeObject = new $grantTypeClass(); // TODO (pfefffer) I am not sure if it is a good idea to directly use the content of a string variable as class caller. It's a potential security risk
         $grantTypeObject->validateParameters($parameters);
         if (!defined($grantTypeClass . '::GRANT_TYPE')) {
             throw new Exception('Unknown constant GRANT_TYPE for class ' . $grantTypeClassName, Exception::GRANT_TYPE_ERROR);

@@ -23,6 +23,7 @@ class DbOAuth2 extends DbBase {
 		$dbtables =
 		array('oa_elections' /* Table name */ => array(
 				array('name' => 'electionId'        , 'digits' => '100', 'json' => false), /* colunm definition */
+				array('name' => 'serverId'          , 'digits' => '100', 'json' => false),
 				array('name' => 'listId'            , 'digits' => '100', 'json' => false)
 		),
 			  'oa_voters' /* table name */ => array(

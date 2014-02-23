@@ -1,9 +1,10 @@
 <?php
 
-use OAuth2\Client;
+use nsOAuth2\Client;
 require_once '../../config/conf-allservers.php';
 require_once '../../config/conf-thisserver.php';
 require_once '../../exception.php';
+require_once 'fetchfromoauthserver.php';
 
 // config
 // $acc_url = 'https://beoauth.piratenpartei-bayern.de/oauth2/token/'; // URL for fetching the access token
@@ -11,9 +12,9 @@ require_once '../../exception.php';
 // append to this URL: //?scope=member&state=BEO+Bayern.12345&redirect_uri=https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php&response_type=code&client_id=vvvote';
 
 
-require 'client.php';
-require 'GrantType/IGrantType.php';
-require 'GrantType/AuthorizationCode.php';
+require_once 'client.php';
+require_once 'GrantType/IGrantType.php';
+require_once 'GrantType/AuthorizationCode.php';
 
 // $client = new OAuth2\Client(CLIENT_ID, CLIENT_SECRET);
 if (!isset($_GET['code']))
@@ -39,7 +40,7 @@ else
 	
 	//	print "<br><br>\ncurConfig: ";
 	//	print_r($curConfig);
-	$client = new OAuth2\Client($curOAuth2Config['client_id'], $curOAuth2Config['client_secret']);
+	$client = new nsOAuth2\Client($curOAuth2Config['client_id'], $curOAuth2Config['client_secret']);
 	$params = array('code' => $_GET['code'], 'redirect_uri' => $curOAuth2Config['redirect_uri']);
 	$response = $client->getAccessToken($curOAuth2Config['token_endp'], 'authorization_code', $params);
 	//	print "<br><br>\nresponse: ";
@@ -103,39 +104,6 @@ else
 	// var_dump($response, $response['result']);
 }
 
-class FetchFromOAuth2Server {
-
-	function __construct($serverId, $authInfos) {
-		//$this->serverId = $serverId;
-		//$this->authInfos = $authInfos;
-		global $oauthConfig;
-		$this->curOAuth2Config =  $oauthConfig[$serverId];
-		$this->client = new OAuth2\Client($this->curOAuth2Config['client_id'], $this->curOAuth2Config['client_secret']);
-		$this->client->setAccessToken($authInfos);
-		// $this->params = array('redirect_uri' => $curOAuth2Config['redirect_uri']); // $params = array('code' => $_GET['code'], 'redirect_uri' => $curOAuth2Config['redirect_uri']);
-	}
-
-	function fetchUsername() {
-		$userprofile = $this->fetch($this->curOAuth2Config['get_profile_endp']);
-		return $userprofile['result']['username'];
-	}
-
-	function fetchAuid() {
-		$membership = $this->fetch($this->curOAuth2Config['get_membership_endp']);
-		return $membership['result']['auid'];
-	}
-
-	function isInVoterList($listId) {
-		$inVoterlist = $this->fetch($this->curOAuth2Config['is_in_voter_list_endp'] . $listId .'/');
-		$inVoterlistBoolean = ($inVoterlist['result']['list'] === $listId && $inVoterlist['result']['listmember']);
-		return $inVoterlistBoolean;
-	}
-
-
-	function fetch($endpoint) {
-		return $this->client->fetch($endpoint, Array(), Client::HTTP_METHOD_POST);
-	}
-}
 
 
 /*
