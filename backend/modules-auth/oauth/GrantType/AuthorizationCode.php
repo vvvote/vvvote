@@ -1,7 +1,7 @@
 <?php
-namespace OAuth2\GrantType;
+namespace nsOAuth2\GrantType;
 
-use OAuth2\InvalidArgumentException;
+use nsOAuth2\InvalidArgumentException;
 
 /**
  * Authorization code  Grant Type Validator

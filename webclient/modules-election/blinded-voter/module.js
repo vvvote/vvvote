@@ -5,6 +5,8 @@ function savePermission(ballot) {
 	var p2 = JSON.parse(p[0].transm.str);
 	var electionid = p2.electionId;
 	saveAs(bb, "Wahlschein " + clearForFilename(electionid) + '.vvvote');
+	var el = document.getElementById('maincontent');
+	el.setText('jjjjjjjjjjjjjjjjjjjjj');
 	// TODO check maximal loops = numServers
 }
 

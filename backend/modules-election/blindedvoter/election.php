@@ -100,6 +100,7 @@ class Election {
 
 	function pickBallotsEvent($voterReq) {
 		$permitted = $this->isPermitted($voterReq['voterId'], $voterReq['secret'], $voterReq['electionId'], 1); // @TODO substitude ThreadId for 1
+		$voterId = $this->auth->getVoterId($voterReq['credentials'], $this->electionId);
 		// TODO check if this is the first req for picking ballots
 		$numPick = $this->numVerifyBallots[$voterReq['xthServer']]; // TODO think about: trust the xthServer from voterReq? - better check the number of already obained sigs?
 		$numBallots = count($voterReq['ballots']); // TODO take from config?

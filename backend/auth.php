@@ -36,6 +36,19 @@ class Auth {
 	}
 	
 	/**
+	 * In OAuth 2.0 / BEO the voterId is not read from vvvote client but
+	 * from OAuth-Server. Shared Password and Username/Password will just
+	 * return the transmitted voterId
+	 * @param unknown $credentials
+	 * @param unknown $electionId
+	 * @return voterId
+	 */
+	function getVoterId($credentials, $electionId){
+		return $credentials['voterId'];
+	}
+	
+	
+	/**
 	 * Import the list of voters and associated credentials into the database
 	 */
 	function importCredentials($voterlist) {

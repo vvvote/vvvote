@@ -118,7 +118,7 @@ class PublishOnlyTelly {
 		} catch (Exception $e) {
 			WrongRequestException::throwException(1104, 'Signature verification failed.', "details: " . $e->__toString() ); ;
 		}
-		// TODO sign the vote
+		// TODO sign the vote and send it back
 		return array('cmd' => 'saveYourCountedVote'); // TODO sent the signed vote back
 	}
 

@@ -1,5 +1,5 @@
 <?php
-namespace OAuth2\GrantType;
+namespace nsOAuth2\GrantType;
 /**
  * Specific GrantType Interface
  */

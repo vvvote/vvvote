@@ -10,9 +10,10 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
+require_once 'exception.php';
 require_once 'dbAuth.php';
 require_once 'auth.php';
-require_once 'exception.php';
+require_once 'fetchfromoauthserver.php';
 
 /**
  * Provides an interface to oauth
@@ -42,10 +43,10 @@ class OAuth2 extends Auth {
 	 * check the credentials sent from the voter
 	 * @param array $credentials: ['secret'] ['identifier'] 
 	 */
-	function checkCredentials($electionId, $credentials) {
+	function checkCredentials($credentials) {
 		// load necessary data
 		$electionsDB = new DbElections($dbInfos);
-		$elConfig = $electionsDB->loadElectionConfigFromElectionId($electionId);
+		$elConfig = $electionsDB->loadElectionConfigFromElectionId($credentials['electionId']);
 		$configHash = $electionsDB->generateConfigHash($elconfig);
 		$Ids = $this->db->getListIdandServerIdByElectionId($electionId); // $Ids['serverId'] und $Ids['listId']
 		
