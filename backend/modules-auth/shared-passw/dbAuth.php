@@ -30,7 +30,7 @@ class DbSharedPasswAuth extends DbBase {
 
 	function checkCredentials($electionId, $voterId, $secret) {
 		$secretFromDb = $this->load(array('electionId' => $electionId), 'sp_credentials', 'sp_credentials');
-		if (! (count($secret) === 1)) return false;
+		if (! (count($secretFromDb) === 1)) return false;
 		if ($secretFromDb[0] === $secret) {
 			return true;
 		}
@@ -44,7 +44,7 @@ class DbSharedPasswAuth extends DbBase {
 		}
 		$saved = $this->save(array('electionId' => $electionId, 'sp_credentials' => $secret), 'sp_credentials');
 		if (! $saved) {
-			WrongRequestException::throwException(3001, 'internal server error; election not saved', $electionId);
+			InternalServerError::throwException(3001, 'internal server error; election not saved', $electionId);
 		}
 		return $saved;
 	}

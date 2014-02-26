@@ -95,13 +95,13 @@ class DbBase {
 	function load($where, $tablename, $colnames) {
 		if (is_array($colnames))  $colarray   = $colnames;
 		else                     $colarray[0] = $colnames; 
-		$colnames_ = implode(' ', $colarray);
+		$colnames_ = implode(', ', $colarray);
 
 		$fromDB = $this->connection->load($where, $tablename, $colnames_);
+		$ret = array(); // this is necessary because sometimes $fromDB contains an empty array
 		foreach ($colarray as $answColNum => $cname) {
 			$colnum = find_in_subarray($this->connection->evtables[$tablename], 'name', $cname);
 			if ($fromDB === false) return false;
-			$ret = array(); // this is necessary because sometimes $fromDB contains an empty array
 			foreach ($fromDB as $rownum => $gotrow) { // json decode if column is json
 				if ($this->connection->evtables[$tablename][$colnum]['json']) {
 					$value = json_decode($gotrow[$answColNum], true);

@@ -9,6 +9,7 @@ require_once 'dbelections.php';
 require_once 'modules-election/blindedvoter/election.php';
 require_once 'modules-auth/user-passw-list/auth.php';
 require_once 'modules-auth/shared-passw/auth.php';
+require_once 'modules-auth/oauth/auth.php';
 
 require_once 'config/conf-allservers.php';
 require_once 'config/conf-thisserver.php';
@@ -46,7 +47,7 @@ if (isset($HTTP_RAW_POST_DATA)) {
 		switch ($elconfig['auth']) {
 			case 'userPassw': $auth = new UserPasswAuth($dbInfos); break;
 			case 'sharedPassw': $auth = new SharedPasswAuth($dbInfos); break;
-			case 'oAuth2': $auth = new OAuth2($dbInfo); break;
+			case 'oAuth2': $auth = new OAuth2($dbInfos); break;
 			default: /* TODO return an error */ break;
 		}
 		$el = new Election($elconfig['electionId'],
@@ -60,7 +61,7 @@ if (isset($HTTP_RAW_POST_DATA)) {
 				$auth);
 		$result = $el->handlePermissionReq($HTTP_RAW_POST_DATA);
 		// print "\r\n";
-	} catch (WrongRequestException $e) {
+	} catch (ElectionServerException $e) {
 		$result = json_encode($e->makeServerAnswer());
 	} // TODO catch all exceptions
 	print "$result";

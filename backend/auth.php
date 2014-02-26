@@ -31,12 +31,12 @@ class Auth {
 	/**
 	 * check the credentials sent from the voter
 	 */
-	function checkCredentials($credentials) {
+	function checkCredentials($credentials, $electionId) {
 		
 	}
 	
 	/**
-	 * In OAuth 2.0 / BEO the voterId is not read from vvvote client but
+	 * In OAuth 2 / BEO the voterId is not read from vvvote client but
 	 * from OAuth-Server. Shared Password and Username/Password will just
 	 * return the transmitted voterId
 	 * @param unknown $credentials

@@ -131,7 +131,7 @@ function RsablindingFactorsGen(bits, n){
         if (!equalsInt(mod(n, r), 1)) break;
       }
 
-	factors.blind   = str2bigInt('27', 10); // @TODO put r here back after debugging finished
+	factors.blind   = r; // str2bigInt('27', 10); // @TODO put r here back after debugging finished
 	factors.unblind = inverseMod(factors.blind, n);
 	return factors; 
 }

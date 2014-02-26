@@ -87,8 +87,8 @@ function makeBallots(election, forServer) {
 function makePermissionReqs(election) {
 	// voterId, secret, electionId, numBallots, serverList
 	//global base;
-	if ('xthServer' in election) { election.xthServer++;   }
-	else                         { election.xthServer = 0; }
+//	if ('xthServer' in election) { election.xthServer++;   }
+//	else                         { election.xthServer = 0; }
 	var forServer = getNextPermServer(election); 
 	var ballots   = makeBallots(election, forServer); 
 	var req = new Object();
@@ -119,15 +119,18 @@ function makePermissionReqs(election) {
  * @param req
  * @returns
  */
-function addCredentials(election, req) { // TODO use auth module
-	req['voterId']    = election.voterId;
-	req['secret']     = election.secret;
+function addCredentials(election, req) { 
+	req['credentials'] = election.credentials[election.pServerSeq[election.xthServer]];
+	//req['voterId']    = election.voterId;
+	//req['secret']     = election.secret;
 	req['electionId'] = election.electionId;
 	return req;
 }
 
 function reqSigsNextpServerEvent(election, data) {
-	verifySaveElectionPermiss(election, data); // TODO issue an error if verifaction failed
+	var sigsOk = verifySaveElectionPermiss(election, data);
+	if (!sigsOk) throw new ErrorInServerAnswer(9238983, 'Verification of server signature failed. Aborted.', '');
+	election.xthServer++;
 	return makePermissionReqs(election);
 }
 
@@ -154,7 +157,7 @@ function savePermissionEvent(election, data) {
 }
 
 function unblindBallotsEvent(election, requestedBallots) {
-	var ret = disclose(election, requestedBallots.picked, election.ballots, election.pServerSeq[election.pServerSeq.length - 1]);
+	var ret = disclose(election, requestedBallots.picked, election.ballots, election.pServerSeq[election.xthServer]);
 	ret.cmd = 'signBallots';
 	return ret;
 }
@@ -193,6 +196,7 @@ function disclose(election, requestedBallots, ballots, forServer) {
 
 function getNextPermServer(election) {
 	// var serverSeq, pServerList;
+/*
 	if (!election.pServerSeq) {election.pServerSeq = new Array();}
 	for (var i=0; i<election.pServerList.length; i++) { 
 		nextServer = Math.round((Math.random()*(election.pServerList.length - 1))); // find the next random server number
@@ -206,6 +210,8 @@ function getNextPermServer(election) {
 	}
 	election.pServerSeq.push(nextServer);
     return nextServer;
+*/
+	return election.pServerSeq[election.xthServer];
 }
 
 function makeUnblindedreqestedBallots(reqestedBallots, allBallots){
@@ -217,7 +223,7 @@ function makeUnblindedreqestedBallots(reqestedBallots, allBallots){
 }
 
 function verifySaveElectionPermiss(election, answ) {
-	var prevServer = election.pServerSeq[election.pServerSeq.length-1];
+	var prevServer = election.pServerSeq[election.xthServer];
 	var serverKey  = election.pServerList[prevServer].key;
 	// TODO check if we got the sig from the server we sent the request to (check sigs server name)
 	// TODO check if the server did sign what I sent to him (e.g. votingno returned is not changed)
@@ -283,7 +289,8 @@ function makeVote(ballots, numRequiredSignatures, vote) {
 }
 
 function handleServerAnswer(election, dataString) {
-	data = parseServerAnswer(dataString);
+	try {
+		data = parseServerAnswer(dataString);
 	var ret;
 	switch (data.cmd) {
 	case 'unblindBallots':
@@ -302,13 +309,20 @@ function handleServerAnswer(election, dataString) {
 		return Object({'action':'savePermission', 'data': ballotFileContent});
 		break;
 	case 'error':
-		return Object({'action':'serverError', 'errorTxt': data.errorTxt, 'errorNo': data.errorNo});
+		return Object({'action':'serverError', 'errorText': data.errorTxt, 'errorNo': data.errorNo});
 	default:
-		return Object({'action':'clientError', 'errorTxt': "unknown server cmd: " + data.cmd});
+		return Object({'action':'clientError', 'errorText': "unknown server cmd: " + data.cmd});
 	break;
 	}
 	addCredentials(election, ret);
 	send = JSON.stringify(ret);
 	return Object({'action':'send', 'data':send});
+	} catch (e) {
+		if (e instanceof ErrorInServerAnswer)	{
+			var m = e.getMessage();
+			return Object({'action':'clientError', 'errorText': m});
+		}
+		else                            		return Object({'action':'clientError', 'errorText': "could not decode server answer (JSON decode error): " + dataString});
+	}
 }
 

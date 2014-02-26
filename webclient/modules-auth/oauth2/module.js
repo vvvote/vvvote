@@ -1,14 +1,18 @@
-var OAuth2 = function() {
-
+var OAuth2 = function(authConfig) {
+	this.serverId = authConfig.serverId;
 };
 
-OAuth2.prototype.getCredentials = function (config, clientId) {
+OAuth2.prototype.getCredentials = function (config, permissionServerId) {
 	var configHash = GetElectionConfig.generateConfigHash(config);
 	var el = document.getElementById('username');
 	var username = el.value;
+	el = document.getElementById('displayname');
+	var displayname = el.value;
+	var clientId = ClientConfig.oAuth2Config[config.authConfig.serverId].clientId[permissionServerId];
 	var credentials = {
 			secret: SHA256(configHash  + clientId + username + OAuth2.random[clientId]),
-			identifier: random[clientId]
+			identifier: OAuth2.random[clientId],
+			displayname: displayname
 	};
 	return credentials;
 };
@@ -19,39 +23,32 @@ OAuth2.prototype.getCredentials = function (config, clientId) {
 OAuth2.random = [];
 
 OAuth2.getMainContent = function(conf) {
-	serverId = 'BEOBayern';
+	var serverId = conf.authConfig.serverId;
 	
 	var elelctionConfigHash = GetElectionConfig.generateConfigHash(conf);
-	var mc = '<div id="auth">' +
-	'<form onsubmit="return false;">' +
-	'                       <br>' +
-	'						<label for="electionId">Name der Abstimmung:</label> ' +
-    '                            <input readonly="readonly" name="electionId" id="electionId" value="' + conf.electionId + '">' +
-    '                       <br>';
+	var mc = '';
 	
-	for ( var clientno in oAuth2Config[serverId].clientId) {
-		OAuth2.random[clientno] = bigInt2str(randBigInt(200,0), 62);
-		var oauthAutorize = oAuth2Config[serverId].authorizeUri + 
-		'scope=' + oAuth2Config[serverId].scope +
-		'&state=' + oAuth2Config[serverId].serverId + '.' + elelctionConfigHash + '.'+ OAuth2.random[clientno]+ 
-		'&redirect_uri=' + oAuth2Config[serverId].redirectUri[clientno] + 
+	for ( var permissionServerId in ClientConfig.oAuth2Config[serverId].clientId) {
+		var clientId = ClientConfig.oAuth2Config[conf.authConfig.serverId].clientId[permissionServerId];
+		OAuth2.random[clientId] = bigInt2str(randBigInt(200,0), 62);
+		var oauthAutorize = ClientConfig.oAuth2Config[serverId].authorizeUri + 
+		'scope=' + ClientConfig.oAuth2Config[serverId].scope +
+		'&state=' + ClientConfig.oAuth2Config[serverId].serverId + '.' + elelctionConfigHash + '.'+ OAuth2.random[clientId]+ 
+		'&redirect_uri=' + ClientConfig.oAuth2Config[serverId].redirectUri[permissionServerId] + 
 		'&response_type=code' +
-		'&client_id=' + oAuth2Config[serverId].clientId[clientno];
+		'&client_id=' + clientId;
 		mc = mc + 
-		'						<label for="login">Einloggen f&uuml;r Abstimmserver ' + clientno +'</label> ' +
-		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
+		'						<label for="login">Einloggen f&uuml;r Abstimmserver ' + permissionServerId +'</label> ' +
+		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
 	}
 	
 	mc = mc +
-	'						<label for="voterId">Username bei BEO</label> ' +
+	'						<label for="username">Username bei BEO</label> ' +
 	'						     <input name="username" id="username" value="" type="text"></td>' + 
     '                       <br>' +
-	'						<label for="reqPermiss"></label> ' +
-	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
-	'							  value="Wahlschein holen" onclick="onGetPermClick();">' +
-    '                       <br>' +
-    '</form>' +
-    '</div>';
+	'						<label for="displayname">Mich &ouml;ffentlich anzeigen als</label> ' +
+	'						     <input name="displayname" id="displayname" value="" type="text"></td>' + 
+    '                       <br>';
 	return mc;
 }; 
 
@@ -77,7 +74,7 @@ OAuth2.getNewElectionData = function () {
 	var ret = {};
 	ret.authModule = 'oAuth2'; 
 	ret.authData = {};
-	ret.authData.serverId = oAuth2Config['BEOBayern'].serverId; // TODO read this from selected OAuthServer-config which was selected in the web formular 
+	ret.authData.serverId = ClientConfig.oAuth2Config['BEOBayern'].serverId; // TODO read this from selected OAuthServer-config which was selected in the web formular 
 	var element = document.getElementById('listId');
 	ret.authData.listId = element.value;
 	return ret;

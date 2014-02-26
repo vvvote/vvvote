@@ -55,7 +55,7 @@ if (isset ($electionconfigStr)) {
 				WrongRequestException::throwException(2110, 'Authorisation module not supported by this server', "you requested: " . $electionconfig['authModule']);
 				break; 
 		}
-		$authm->handleNewElectionReq($electionId, $electionconfig['authData']);
+		$newconfig['authConfig'] = $authm->handleNewElectionReq($electionId, $electionconfig['authData']);
 
 		// TODO election
 		$newconfig['blinding'] = 'blindedVoter';
@@ -71,7 +71,7 @@ if (isset ($electionconfigStr)) {
 		$result['cmd'] = 'saveElectionUrl';
 		$result['configUrl'] = $configurl;
 		// TODO sign the answer
-	} catch (WrongRequestException $e) {
+	} catch (ElectionServerException $e) {
 		$result = $e->makeServerAnswer();
 	}
 	

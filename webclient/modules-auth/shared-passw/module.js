@@ -3,25 +3,23 @@ var SharedPasswAuth = function() {
 
 };
 
+SharedPasswAuth.prototype.getCredentials = function (config, clientId) {
+	var credentials = {};
+	var e = document.getElementById('voterId');
+	credentials.voterId    = e.value;
+	e = document.getElementById('secret');
+	credentials.secret     = e.value;
+	return credentials;
+};
+
 SharedPasswAuth.getMainContent = function(conf) {
-	var mc = '<div id="auth">' +
-	'<form onsubmit="return false;">' +
-	'                       <br>' +
-	'						<label for="electionId">Name der Abstimmung:</label> ' +
-    '                            <input readonly="readonly" name="electionId" id="electionId" value="' + conf.electionId + '">' +
-    '                       <br>' +
+	var mc =
 	'						<label for="voterId">Ihr Name:</label> ' +
 	'		  				     <input name="voterId" id="voterId" value=""> ' +
     '                       <br>' +
 	'						<label for="sharedPassw">Wahlpasswort</label> ' +
 	'						     <input name="sharedPassw" id="secret" value="" type="password"></td>' + 
-    '                       <br>' +
-	'						<label for="reqPermiss"></label> ' +
-	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
-	'							  value="Wahlschein holen" onclick="onGetPermClick();">' +
-    '                       <br>' +
-    '</form>' +
-    '</div>';
+    '                       <br>';
 	return mc;
 }; 
 

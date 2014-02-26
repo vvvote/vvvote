@@ -10,8 +10,7 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-
-class WrongRequestException extends Exception {
+class ElectionServerException extends Exception {
 	var $errorno;
 	var $errortxt;
 	function __construct($errorno_, $errortxt_) {
@@ -39,5 +38,12 @@ class WrongRequestException extends Exception {
 	}
 }
 
+class WrongRequestException extends ElectionServerException {
+
+}
+
+class InternalServerError extends ElectionServerException {
+
+}
 
 ?>
