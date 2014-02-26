@@ -132,7 +132,7 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 function parseServerAnswer(xml) {
 	if (xml.status != 200) {
 		userlog("\n<--- empfangen Fehler " + xml.status + ": " + xml.statusText);
-		alert("ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (' " + xml.status + ') ' + xml.statusText);
+		alert("ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (" + xml.status + ") " + xml.statusText);
 		throw new ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (' + xml.status + ') ' + xml.statusText);
 	}
 	try {
@@ -181,3 +181,22 @@ function unicodeToBlackslashU(str) {
 	}
 	return ret;
 }
+
+/**
+ * Randomize array element order in-place.
+ * Using Fisher-Yates shuffle algorithm.
+ * taken from http://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+ * 
+ */
+function shuffleArray(arrayOrig) {
+	array = arrayOrig.slice(0);
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+}
+
+

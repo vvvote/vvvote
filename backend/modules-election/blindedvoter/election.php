@@ -46,32 +46,33 @@ class Election {
 	}
 
 
-	function isInVoterList($voterId, $secret) { // TODO think about how voterId and secret should be used with other auth moduls
-		return $this->auth->checkCredentials(array('electionId' => $this->electionId, 'voterId' => $voterId, 'secret' => $secret));
+	function isInVoterList($credentials, $electionId) { 
+		return $this->auth->checkCredentials($credentials, $electionId);
 	}
 
-	function isFirstVote($voterID, $electionID, $threadId) {
-		//read transaktionlist
+	function isFirstVote($credentials, $electionID, $threadId) {
+		//read transactionlist
 		//
 		return true;
 	}
 
-	function isPermitted($voterID, $secret, $electionID_, $threadId) {
+	function isPermitted($credentials, $electionID_, $threadId) {
 		// TODO save req in log-database and check if first req
 		// TODO check if correct number of ballots was sent
-		$inlist = $this->isInVoterList($voterID, $secret);
+		$inlist = $this->isInVoterList($credentials, $electionID_);
 		if (!$inlist) {
-			WrongRequestException::throwException(1, "Error: check of credentials failed", "isPermitted: Voter $voterID is not in the list of allowed voters or secret not accepted.");
+			WrongRequestException::throwException(1, "Error: check of credentials failed", 'isPermitted: credentials ' . print_r($credentials, true) .' is not in the list of allowed voters or secret not accepted.');
 		}
 
 		if ($this->electionId != $electionID_) {
-			WrongRequestException::throwException(2, 'Error: wrong electionID', "isPermitted: No voting permission is given for election $electionID_, only $this->electionId is accepted");
+			WrongRequestException::throwException(2, 'Error: wrong election id', "isPermitted: No voting permission is given for election $electionID_, only $this->electionId is accepted");
 		}
-
-		$firstVote = $this->isFirstVote($voterID, $electionID_, $threadId);
+/* at the moment, this is tested later
+		$firstVote = $this->isFirstVote($credentials, $electionID_, $threadId);
 		if (!$firstVote) {
 			WrongRequestException::throwException(3, "Error: This voter is already a voting permission given for the election $this->electionId If you lost your permission use the recover button.", "isPermitted: $voterReq[voterId] already got a voting permission from this server.");
 		}
+*/
 		return true;
 	}
 	/**
@@ -99,7 +100,7 @@ class Election {
 	}
 
 	function pickBallotsEvent($voterReq) {
-		$permitted = $this->isPermitted($voterReq['voterId'], $voterReq['secret'], $voterReq['electionId'], 1); // @TODO substitude ThreadId for 1
+		$permitted = $this->isPermitted($voterReq['credentials'], $this->electionId, 1); // $voterReq['voterId'], $voterReq['secret'], $voterReq['electionId'], 1); // @TODO substitude ThreadId for 1
 		$voterId = $this->auth->getVoterId($voterReq['credentials'], $this->electionId);
 		// TODO check if this is the first req for picking ballots
 		$numPick = $this->numVerifyBallots[$voterReq['xthServer']]; // TODO think about: trust the xthServer from voterReq? - better check the number of already obained sigs?
@@ -111,7 +112,7 @@ class Election {
 		// save requested Ballots(voterId, electionId);
 		$toSave = array('requestedBallots' => $requestBallots['picked'],
 				        'blindedHashes'    => $voterReq['ballots']);
-		$this->db->saveBlindedHashes($this->electionId, $voterReq['voterId'], $toSave);
+		$this->db->saveBlindedHashes($this->electionId, $voterId, $toSave);
 		return $requestBallots;
 	}
 	/**
@@ -193,7 +194,8 @@ class Election {
 	function signBallotsEvent($voterReq) {
 		// TODO: check credentials
 		// load the blinded Hashes from cmd 'pickBallots'
-		$blindedHashesFromDB = $this->db->loadBlindedHashes($this->electionId, $voterReq['voterId']);
+		$voterId = $this->auth->getVoterId($voterReq['credentials'], $voterReq['electionId']);
+		$blindedHashesFromDB = $this->db->loadBlindedHashes($this->electionId, $voterId);
 		if (count($blindedHashesFromDB) > 1) {
 			WrongRequestException::throwException(301, 'Error: more than one request for ballots sent', "All requested ballots: " . print_r($blindedHashesFromDB, true));
 		}
@@ -214,8 +216,8 @@ class Election {
 
 		$ret = array();
 		$ret['ballots'] = $signedBallots;
-		$tmp = array('voterId' => $voterReq['voterId'], 'signedBallots' => $signedBallots);
-		$this->db->saveSignedBallots($this->electionId, $voterReq['voterId'], $tmp);
+		$tmp = array('voterId' => $voterId, 'signedBallots' => $signedBallots);
+		$this->db->saveSignedBallots($this->electionId, $voterId, $tmp);
 		if (count($ret['ballots'][0]['sigs']) >= $this->crypt->getNumServers() ) {
 			$ret['cmd'] = 'savePermission';
 			// TODO think about: save all signed ballots not only the ones where this server is the last signer?
@@ -277,18 +279,19 @@ class Election {
 			$blindedHashFromDatabase    = $blindedHashesFromDB['blindedHashes'][$voterReq['ballots'][$i]['ballotno']]['blindedHash'];
 			$unblindf                   = $voterReq["ballots"][$i]['unblindf'];
 			$hashOk = $this->crypt->verifyBlindedHash($str, $unblindf, $blindedHashFromDatabase);
-			if (!$hashOk) {
+  			if (! ($hashOk === true)) {
 				WrongRequestException::throwException(212, "Error: hash wrong", "hash from signature: " . $verifyHash->toHex() . "calculated hash: $hashByMe");
 			}
 			// verify sigs from previous servers .ballots.sigs: .sig(encryptet previous sig or hash if first sig) .sigBy (name of the signing server in order to identify the correct public key)
+			$sigsOk = false;
 			if (isset($voterReq["ballots"][$i]['sigs'])) {
-				$this->crypt->verifySigs($str, $voterReq["ballots"][$i]['sigs']);
-			}
-			$tmpret[$i] = $hashOk;
+				$sigsOk = $this->crypt->verifySigs($str, $voterReq["ballots"][$i]['sigs']);
+			} else { $sigsOk = true; } // no sigs there
+			$tmpret[$i] = ($hashOk === true) && ($sigsOk === true);
 			if ($i == 0) {
-				$ret = $hashOk;
+				$ret = ($tmpret[$i] === true);
 			}
-			else         { $ret = $ret && $hashOk;
+			else         { $ret = ($ret === true) && ($tmpret[$i] === true);
 			}
 
 			// TODO verify if votingId is unique
@@ -358,7 +361,7 @@ class Election {
 					WrongRequestException::throwException(101, 'Error unknown command', $req);
 					break;
 			}
-		} catch (WrongRequestException $e) {
+		} catch (ElectionServerException $e) {
 			$result = array('cmd' => 'error', 'errorTxt' => $e->errortxt, 'errorNo' => $e->errorno);
 		}
 		$ret = json_encode($result);

@@ -34,7 +34,7 @@ PublishOnlyTelly.prototype.sendVote = function () {
 	
 	var transmstr = JSON.stringify(transm);
 	var me = this;
-	myXmlSend(tallyUrl, transmstr, me, me.handleServerAnswerStoreVote);
+	myXmlSend(ClientConfig.tallyUrl, transmstr, me, me.handleServerAnswerStoreVote);
 };
 
 
@@ -67,7 +67,7 @@ PublishOnlyTelly.prototype.handleUserClickGetAllVotes = function () {
 	data.electionId = this.config.electionId;
 	var datastr = JSON.stringify(data);
 	// TODO add auth to data
-	myXmlSend(tallyUrl, datastr, me, me.handleServerAnswerVerifyCountVotes);
+	myXmlSend(ClientConfig.tallyUrl, datastr, me, me.handleServerAnswerVerifyCountVotes);
 };
 
 PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {

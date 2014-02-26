@@ -8,13 +8,15 @@ function VotePage() {
 	'<p><ul><li>Ich habe noch keinen Wahlschein</li>' +
 	'<li>für die Wahl wird kein Wahlschein benötigt</li>' +
 	'<li>Ich weiß nicht, ob für die Wahl ein Wahlschein benötigt wird</li></ul>' +
-	GetElectionConfig.getMainContent('Wahlunterlagen holen', 'page', 'VotePage.gotElectionConfig') + '</p>' +
+	GetElectionConfig.getMainContent('Wahlunterlagen holen', 'page', 'VotePage.prototype.gotElectionConfig') + '</p>' + 
 	'<p></p>&nbsp;<p></p>' +
 	'<h3>Ich habe bereits einen Wahlschein</h3>' + 
 	BlindedVoterElection.getPermissionHtml('page.blinder');
 	this.title = 'An Abstimmung teilnehmen';
+	this.config = {};
 	this.blinder = {};
 	this.tally = {};
+	this.authModule = {};
 	this.displayPermFileHtmlOnPhase2 = false;
 	VotePage.obj = this; // set a reference to this instance so that it can be called from static methods
 }
@@ -30,11 +32,12 @@ function startVoting(load) {
  */
 
 
-VotePage.gotElectionConfig = function (config) { 
+VotePage.prototype.gotElectionConfig = function (config) { 
+	this.config = config; 
 	config.phase = 'generatePermissions'; // TODO take phase from config
 	switch (config.phase) {
 	case 'generatePermissions':
-		this.startStep2(config, true);
+		this.startStep2(config);
 		break;
 	case 'voting':
 		this.startStep3(config, true);		
@@ -54,27 +57,49 @@ VotePage.prototype.startStep2 = function (config) {
 		alert('The election requieres election module >' + config.blinding + "< which is not supported by this client.\nUse a compatible client.");
 	break;			
 	}
+	
+	mc = mc + '<div id="auth">' +
+	'<form onsubmit="return false;">' +
+	'                       <br>' +
+	'						<label for="electionId">Name der Abstimmung:</label> ' +
+    '                            <input readonly="readonly" name="electionId" id="electionId" value="' + config.electionId + '">' + // TODO use element.settext for election (instead of escaping electionId) 
+    '                       <br>';
+
 
 	switch (config.auth) {
 	case 'userPassw':
 		mc = mc + UserPasswList.getMainContent(config);
-		this.tally = new UserPasswList();
+		this.authModule = new UserPasswList();
 		break;
 	case 'sharedPassw':
 		mc = mc + SharedPasswAuth.getMainContent(config);
-		this.tally = new SharedPasswAuth();
+		this.authModule = new SharedPasswAuth();
 		break;
 	case 'oAuth2':
 		mc = mc + OAuth2.getMainContent(config);
-		this.tally = new OAuth2();
+		this.authModule = new OAuth2(config.authConfig);
 		break;
 		
 	default:
 		alert('The election requieres authorisation module >' + config.auth + "< which is not supported by this client.\nUse a compatible client.");
 	}
+	mc = mc + // TODO take this or some part of it from election module
+	'						<label for="reqPermiss"></label> ' +
+	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
+	'							  value="Wahlschein holen" onclick="page.onGetPermClick();">' +
+    '                       <br>' +
+    '</form>' +
+    '</div>';
+
 	Page.loadMainContent(mc + mclast);
 	this.setStep(2);
 };
+
+VotePage.prototype.onGetPermClick = function () { 
+	this.blinder.onGetPermClick(this.authModule);
+};
+
+
 
 /*
 function permissionLoaded(ok){

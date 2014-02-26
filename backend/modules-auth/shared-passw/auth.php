@@ -42,8 +42,8 @@ class SharedPasswAuth extends Auth {
 	/**
 	 * check the credentials sent from the voter
 	 */
-	function checkCredentials($voterreq) {
-		return $this->db->checkCredentials($voterreq['electionId'], $voterreq['voterId'], $voterreq['secret']);
+	function checkCredentials($credentials, $electionId) {
+		return $this->db->checkCredentials($electionId, $credentials['voterId'], $credentials['secret']);
 	}
 
 	/**
@@ -69,7 +69,9 @@ class SharedPasswAuth extends Auth {
 		if (isset($electionId) && isset($req['sharedPassw']) &&
 				gettype($electionId) == 'string' && gettype($req['sharedPassw']) == 'string') 
 		{
-			return $this->newElection($electionId, $req['sharedPassw']);
+			$ok = $this->newElection($electionId, $req['sharedPassw']);
+			if (! $ok) InternalServerError::throwException(2710, 'Internal server error: error saving election auth information', "request received: \n" . print_r($req, true));
+			return Array();
 		} else {
 			WrongRequestException::throwException(2000, 'ElectionId or shared password not set or of wrong type', "request received: \n" . print_r($req, true));
 		}

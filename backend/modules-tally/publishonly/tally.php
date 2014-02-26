@@ -160,7 +160,7 @@ class PublishOnlyTelly {
 					WrongRequestException::throwException(1101, 'Error unknown tally command (accepting "storeVote" and "getAllVotes" only)', $req);
 					break;
 			}
-		} catch (WrongRequestException $e) {
+		} catch (ElectionServerException $e) {
 			$result = $e->makeServerAnswer();
 		}
 		$ret = json_encode($result);

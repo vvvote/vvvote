@@ -32,8 +32,8 @@ class UserPasswAuth extends Auth {
 	/**
 	 * check the credentials sent from the voter
 	 */
-	function checkCredentials($voterreq) {
-		return $this->db->checkCredentials($voterreq['electionId'], $voterreq['voterId'], $voterreq['secret']);
+	function checkCredentials($credentials, $electionId) {
+		return $this->db->checkCredentials($electionId, $credentials['voterId'], $credentials['secret']);
 	}
 	
 	/**

@@ -65,7 +65,7 @@ if (isset($HTTP_RAW_POST_DATA)) {
 		$tally = new PublishOnlyTelly($dbInfos, new Crypt($pServerKeys, $serverkey), $el); // TODO use a different private key for tallying server
 		$result = $tally->handleTallyReq($HTTP_RAW_POST_DATA);
 		// print "\r\n";
-	} catch (WrongRequestException $e) {
+	} catch (ElectionServerException $e) {
 		$result = json_encode($e->makeServerAnswer());
 	}
 	print "$result";

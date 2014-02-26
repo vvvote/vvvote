@@ -6,10 +6,9 @@ function NewElectionPage() {
 	this.steps[1] = 'Schritt 1: Abstimmungseinstellungen festlegen'; 
 	this.steps[2] = 'Schritt 2: Abstimmungslink speichern';
 	OauthHtml = '';
-	for ( var curroauthconfig in oAuth2Config) {
-		OauthHtml  = '<input type="radio" onclick="page.setAuthMethod(\'OAuth2\',\'' + oAuth2Config[curroauthconfig].serverId + '\');"     name="authMethod" id="' + oAuth2Config[curroauthconfig].serverId + '">';
-		OauthHtml += '<label for="' + oAuth2Config[curroauthconfig].serverId +'">' + oAuth2Config[curroauthconfig].serverDesc + '</label></input>';
-		
+	for ( var curroauthconfig in ClientConfig.oAuth2Config) {
+		OauthHtml  = '<input type="radio" onclick="page.setAuthMethod(\'OAuth2\',\'' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '\');"     name="authMethod" id="' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '">';
+		OauthHtml += '<label for="' + ClientConfig.oAuth2Config[curroauthconfig].serverId +'">' + ClientConfig.oAuth2Config[curroauthconfig].serverDesc + '</label></input>';
 	}
 	this.mainContent = newElectionHtmlPre + OauthHtml + newElectionHtmlPost; // newElectionHtmlPre and newElectionHtmlPost defined in index.html as heredoc replacement
 	this.title = 'Neue Abstimmung anlegen';
@@ -40,37 +39,42 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 		var data = JSON.stringify(ret);
 		var me = this;
 		this.serverno = 0;
-		myXmlSend(newElectionUrl[0], data, me, me.handleNewElectionAnswer);
+		myXmlSend(ClientConfig.newElectionUrl[0], data, me, me.handleNewElectionAnswer);
 	};
 
 	
 	
 	NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
-		var data = parseServerAnswer(xml);
-		switch (data.cmd) {
-		case 'saveElectionUrl':
-			if (this.serverno < newElectionUrl.length -1) {
-				this.serverno++;
-				var me = this;
-				myXmlSend(newElectionUrl[this.serverno], JSON.stringify(this.config), me, me.handleNewElectionAnswer);
-			} else {
-				var a = getAuthModuleStatic(this.config);
-				var ahtml = a.getConfigObtainedHtml();
-				var mc = '<p>Speichern Sie den Link und geben Sie ihn an alle Wahlberechtigten weiter. ' +
-				ahtml +	
-				'</p>' +
-				'<p>Der Link zur Wahl ist: <input type="text" id="electionUrl" readonly="readonly" width="100%" value="' + data.configUrl + '"></p>';
-				// '<p>Der Link zur Wahl ist: ' + data.configUrl + '</p>';
-				this.setStep(2);
-				Page.loadMainContent(mc);
-				eleUrl = document.getElementById('electionUrl');
-				eleUrl.select();
+		try {
+			var data = parseServerAnswer(xml);
+			switch (data.cmd) {
+			case 'saveElectionUrl':
+				if (this.serverno < ClientConfig.newElectionUrl.length -1) {
+					this.serverno++;
+					var me = this;
+					myXmlSend(ClientConfig.newElectionUrl[this.serverno], JSON.stringify(this.config), me, me.handleNewElectionAnswer);
+				} else {
+					var a = getAuthModuleStatic(this.config);
+					var ahtml = a.getConfigObtainedHtml();
+					var mc = '<p>Speichern Sie den Link und geben Sie ihn an alle Wahlberechtigten weiter. ' +
+					ahtml +	
+					'</p>' +
+					'<p>Der Link zur Wahl ist: <input type="text" id="electionUrl" readonly="readonly" width="100%" value="' + data.configUrl + '"></p>';
+					// '<p>Der Link zur Wahl ist: ' + data.configUrl + '</p>';
+					this.setStep(2);
+					Page.loadMainContent(mc);
+					eleUrl = document.getElementById('electionUrl');
+					eleUrl.select();
+				}
+				break;
+			case 'error': // TODO in case the errors is reported not from the first server: handle it somehow: (remove election from all previous servers?)
+				alert('Server meldet Fehler: ' + data.errorNo + "\n" + data.errorTxt);
+				break;
+			default:
+				break;
 			}
-			break;
-		case 'error': // TODO in case the errors is reported not from the first server: handle it somehow: (remove election from all previous servers?)
-			alert('Server meldet Fehler: ' + data.errorNo + "\n" + data.errorTxt);
-			break;
-		default:
-			break;
+		}catch (e) {
+			alert('Answer from Server does not match the expected format (JSON decode error)');
 		}
+
 	};

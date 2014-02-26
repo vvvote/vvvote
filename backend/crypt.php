@@ -82,7 +82,7 @@ class Crypt {
 		if ($hashBI->equals($verify)) {
 			return true;
 		}
-		WrongRequestException::throwException(1001, "Error: signature verifcation failed", "verifySig: Server $servername, given hash: $hash, calculated hash: " . $verify->toHex());
+		WrongRequestException::throwException(1001, "Error: signature verifcation failed", "verifySig: given hash: $hash, calculated hash: " . $verify->toHex());
 	}
 
 	
@@ -102,9 +102,14 @@ class Crypt {
 	
 	function verifySigs($text, array $arrayOfSigs) {
 		$ok = array();
+		$differentSigsBy = Array();
 		foreach ($arrayOfSigs as $num => $sig) {
 			$ok[$num] = $this->verifySigText($text, $sig['sig'], $sig['sigBy']); // throws an exception if not ok
-			if (! $ok) { return false; }
+			if (! $ok[$num]) { return false; }
+			if (in_array($sig['sigBy'], $differentSigsBy)) {return false;} // do not allow the sig from one server twice in the list of sigs / count sigs from the same server only once 
+			array_push($differentSigsBy, $sig['sigBy']); 
+			if ($num == 0) 	$oksum = $ok[$num];
+			else 			$oksum = $oksum & $ok[$num]; 
 			// if ($num == 0) {
 			//	$prevsig = $hashByMe;
 			// }
@@ -112,7 +117,8 @@ class Crypt {
 			// if (!$result['sigok']) { $e = 'Signature of previous server in serSig is wrong.'; return $e;}
 			// $prevsig = $result['prevsig']; // TODO serSig
 		}
-		return $ok === array_pad(array(), count($arrayOfSigs), true);
+		if (count($differentSigsBy) != count($arrayOfSigs) ) return false;
+		else return $oksum;
 	}
 	
 	// TODO move this to a more reasonable place - election?

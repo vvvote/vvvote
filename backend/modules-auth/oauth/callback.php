@@ -1,8 +1,8 @@
 <?php
 
-use nsOAuth2\Client;
 require_once '../../config/conf-allservers.php';
 require_once '../../config/conf-thisserver.php';
+
 require_once '../../exception.php';
 require_once 'fetchfromoauthserver.php';
 
@@ -15,6 +15,10 @@ require_once 'fetchfromoauthserver.php';
 require_once 'client.php';
 require_once 'GrantType/IGrantType.php';
 require_once 'GrantType/AuthorizationCode.php';
+
+require_once 'dbAuth.php';
+
+use nsOAuth2\Client;
 
 // $client = new OAuth2\Client(CLIENT_ID, CLIENT_SECRET);
 if (!isset($_GET['code']))
@@ -54,13 +58,18 @@ else
 	
 	$fetcher = new FetchFromOAuth2Server($state[0], $tokeninfos);
 	$username = $fetcher->fetchUsername();
-	print '<br>username from fetch: ' . $fetcher->fetchUsername();
-	print '<br>auid from fetch: ' . $fetcher->fetchAuid();
-	print '<br>isInVoterlist from fetch: ' . ($fetcher->isInVoterList('d94b915b-db13-4264-890c-0780692e4998') ? 'true' : 'false');
+	$auid = $fetcher->fetchAuid();
+	print '<br>Folgende Daten wurden auf diesem Abstimmserver gespeichert:';
+	print '<br>Username beim BEO-Server: ' . $username;
+	print '<br>Eindeutige Benutzerkennung f&uuml;r diesen Abstimmserver: ' . $auid;
+	print '<br>Geheime Zugangsdaten, die es dem Server ermöglichen, Ihre Wahlberechtigung beim BEO-Server abzufragen.';
+	print '<br>Ihre Wahlberechtigung wurde noch nicht gepr&uuml;ft. Sie wird erst gepr&uumlft, wenn Sie im ursp&uuml;nglichen Fenster auf &quot;Wahlschein holen&quot; klicken.';
+	//print '<br>isInVoterlist from fetch: ' . ($fetcher->isInVoterList('d94b915b-db13-4264-890c-0780692e4998') ? 'true' : 'false');
 	
-/*	$oAuthDb = new DbOAuth2($dbInfos);
-	$oAuthDb->saveAuthData($electionhash, $ServerId, $tmpsecret, $username, $tokeninfos, $now);
-	*/
+	global $dbInfos;
+	$oAuthDb = new DbOAuth2($dbInfos);
+	$oAuthDb->saveAuthData($electionhash, $serverId, $tmpsecret, $auid, $username, $tokeninfos, $now->format(DateTime::ATOM));
+	
 	
 	$membership = $client->fetch($curOAuth2Config['get_membership_endp'], Array(), Client::HTTP_METHOD_POST);
 	print "<br><br>\nresponse 2: ";
@@ -90,7 +99,11 @@ else
 			'auid'      => $membership['result']['auid'],
 			'mayvote'   => $mayvoteBoolean
 	);
-
+	
+	
+//	$db = new DbOAuth2($dbInfos);
+//	$db->saveAuthData($electionhash, $serverId, $tmpsecret, $username, $authInfos, $now);
+	
 	print "<h1>Ergebnisse</h1>";
 	print '<br>auid: ' . $membership['result']['auid'];
 	print '<br>Access Token: ' . print_r($tokeninfos, true);

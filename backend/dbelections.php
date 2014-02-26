@@ -30,6 +30,12 @@ class DbElections extends DbBase {
 		return $this->generateConfigHash($config);
 	}
 	
+	function electionIdToConfigHash($electionId) {
+	$elConfig = $this->loadElectionConfigFromElectionId($electionId);
+	$configHash = $this->generateConfigHash($elConfig);
+	return $configHash;
+}
+	
 	function generateConfigHash($config) {
 		$configstr = json_encode($config);
 		$hash = hash('sha256', $configstr);

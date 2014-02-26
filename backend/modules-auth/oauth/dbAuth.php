@@ -10,7 +10,7 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-require_once 'dbBase.php';
+require_once __DIR__ . '/../../dbBase.php';
 
 /**
  * errorno starts at 3000
@@ -33,7 +33,7 @@ class DbOAuth2 extends DbBase {
 			  	array('name' => 'username'       , 'digits' => '100', 'json' => false), /* colunm definition */
 				//array('name' => 'public_id'      , 'digits' => '100', 'json' => false), /* colunm definition */
 			  	array('name' => 'auid'           , 'digits' => '100', 'json' => false), /* colunm definition */
-			  	array('name' => 'authInfos'      , 'digits' => '100', 'json' => true),
+			  	array('name' => 'authInfos'      , 'digits' => '1000','json' => true),
 			  	array('name' => 'startTime'      , 'digits' => '100', 'json' => false),
 			  	array('name' => 'firstUse'       , 'digits' => '1'  , 'json' => false)
 			  )
@@ -41,15 +41,6 @@ class DbOAuth2 extends DbBase {
 		parent::__construct($dbInfos, $dbtables, true);
 	}
 
-	function checkCredentials($electionId, $voterId, $secret) {
-		$secretFromDb = $this->load(array('electionId' => $electionId), 'sp_credentials', 'sp_credentials');
-		if (! (count($secret) === 1)) return false;
-		if ($secretFromDb[0] === $secret) {
-			return true;
-		}
-		return false;
-	}
-	
 	function newElection($electionId, $listId, $serverId) {
 		$exists = $this->load(array('electionId' => $electionId), 'oa_elections', 'listId');
 		if (isset($exists[0])) { 
@@ -57,7 +48,7 @@ class DbOAuth2 extends DbBase {
 		}
 		$saved = $this->save(array('electionId' => $electionId, 'listId' => $listId, 'serverId' => $serverId), 'oa_elections');
 		if (! $saved) {
-			WrongRequestException::throwException(3001, 'internal server error; election not saved', $electionId);
+			InternalServerError::throwException(3001, 'internal server error; election not saved', $electionId);
 		}
 		return $saved;
 	}
@@ -67,23 +58,27 @@ class DbOAuth2 extends DbBase {
 	}
 
 	function getListIdandServerIdByElectionId($electionId) {
-		return $this->load(array('electionId' => $electionId), 'oa_elections', 
+		$rettmp = $this->load(array('electionId' => $electionId), 'oa_elections', 
 				array('listId', 'serverId'));
+		if (count($rettmp) < 1) InternalServerError::throwException(3000, 'election id not found', "election >$electionId< not found in table oa_elections");
+		if (count($rettmp) > 1) InternalServerError::throwException(3010, 'more than 1 election id found', "several >$electionId< found in table oa_elections");
+		return $rettmp[0];
 	}
 	
 	
-	function saveAuthData($configHash, $ServerId, $transactionId, $username, $authInfos, $now) {
+	function saveAuthData($configHash, $ServerId, $transactionId, $auid, $username, $authInfos, $now) {
 		$saved = $this->save(array(
 				'serverId'      => $ServerId,
 				'configHash'    => $configHash,
 				'transactionId' => $transactionId,
+				'auid'			=> $auid,
 				'username'      => $username,
 				'authInfos'     => $authInfos,
 				'startTime'     => $now,
 				'firstUse'      => '1'
 		), 'oa_voters');
-		if (! $saved) {
-			WrongRequestException::throwException(3010, 'internal server error; auth infos not saved', 'config hash: ' . $electionId . ', username: ' . $username);
+		if (! $saved) { 
+			InternalServerError::throwException(3010, 'internal server error; auth infos not saved', 'config hash: ' . $electionId . ', username: ' . $username);
 		}
 		return $saved;
 	}
@@ -91,10 +86,11 @@ class DbOAuth2 extends DbBase {
 	function loadAuthData($configHash, $transactionId) {
 		$fromDB = $this->load(array(
 				'configHash'    => $configHash,
-				'transactionId' => $transactionId
-		), 'oa_voters', array('username', 'authInfos', 'startTime', 'firstUse'));
+				'transactionId' => $transactionId // TODO firstUse => false
+		), 'oa_voters', array('auid', 'username', 'authInfos', 'startTime', 'firstUse'));
 		// TODO set firstUse auf 0 for false
-		return $fromDB;
+		if ($fromDB === false || count($fromDB) < 1) return Array();
+		return $fromDB[count($fromDB)-1]; // TODO sort by startTime
 	}
 
 }

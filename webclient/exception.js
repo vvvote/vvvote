@@ -18,8 +18,13 @@ var MyException = function (errno, text, details) {
 };
 MyException.prototype = new Error();
 
+MyException.prototype.getMessage = function() {
+	var m = this.text + "\n" + 'Error number: ' + this.errNo + "\n" + this.details; 
+	return m;
+};
+
 MyException.prototype.alert = function() {
-	alert(this.text + "\n" + 'Error number: ' + this.errNo + "\n" + this.details);
+	alert(this.getMessage);
 };
 
 

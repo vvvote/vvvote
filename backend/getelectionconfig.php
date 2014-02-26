@@ -36,7 +36,7 @@ if (isset ($hash)) {
 			$result = WrongRequestException::throwException(4000, 'Election not found', $hash);
 		}
 		$result['cmd'] = 'loadElectionConfig';
-	} catch (WrongRequestException $e) {
+	} catch (ElectionServerException $e) {
 		$result = $e->makeServerAnswer();
 	}
 	/*
