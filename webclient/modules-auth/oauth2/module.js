@@ -41,8 +41,8 @@ OAuth2.getMainContent = function(conf) {
 		'&client_id=' + clientId;
 		mc = mc + 
 		'						<label for="login">Für ' + permissionServerId +'</label> ' +
-		'		  				     <a id="login" href="javascript:window.open(\'' + oauthAutorize + '\', \'_blank\');">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
-//		'		  				     <a id="login" href="javascript:window.open("' + oauthAutorize + '",  target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
+		'		  				     <a id="login" href="javascript:window.open(\'' + oauthAutorize.replace('%', '\%') + '\', \'_blank\');">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
+//		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
 	}
 	
 	mc = mc +
