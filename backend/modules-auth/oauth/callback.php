@@ -70,7 +70,8 @@ else
 		if (isset($userProfile['public_id'])) $public_id = $userProfile['public_id'];
 		else $public_id = '';
 
-		print "<br><h1>Hallo " . $public_id . ',</h1>';
+		if ($public_id == '') 	print "<br><h1>Hallo,</h1>";
+		else 					print '<br><h1>Hallo ' . $public_id . ',</h1>';
 		print '<br>Ihr Login war erfolgreich und der Abstimmserver ist nun berechtigt, ';
 		print 'Ihre Wahlberechtigung abzufragen.';
 		print '<br>Ihre Wahlberechtigung wurde noch nicht gepr&uuml;ft. Sie wird erst gepr&uumlft, wenn Sie im ursp&uuml;nglichen Fenster auf &quot;Wahlschein holen&quot; klicken.';
