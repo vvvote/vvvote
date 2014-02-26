@@ -26,7 +26,9 @@ OAuth2.getMainContent = function(conf) {
 	var serverId = conf.authConfig.serverId;
 	
 	var elelctionConfigHash = GetElectionConfig.generateConfigHash(conf);
-	var mc = '';
+	var mc = 
+	'						<label for="loginOAuth2">Einloggen</label> ' +
+	'		  				     <a id="loginOAuth2" href="' + ClientConfig.oAuth2Config[serverId].loginUri + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
 	
 	for ( var permissionServerId in ClientConfig.oAuth2Config[serverId].clientId) {
 		var clientId = ClientConfig.oAuth2Config[conf.authConfig.serverId].clientId[permissionServerId];
@@ -38,8 +40,9 @@ OAuth2.getMainContent = function(conf) {
 		'&response_type=code' +
 		'&client_id=' + clientId;
 		mc = mc + 
-		'						<label for="login">Einloggen f&uuml;r Abstimmserver ' + permissionServerId +'</label> ' +
-		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
+		'						<label for="login">Für ' + permissionServerId +'</label> ' +
+		'		  				     <a id="login" href="javascript:window.open(\'' + oauthAutorize + '\', \'_blank\');">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
+//		'		  				     <a id="login" href="javascript:window.open("' + oauthAutorize + '",  target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
 	}
 	
 	mc = mc +
