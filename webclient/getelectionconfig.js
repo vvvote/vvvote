@@ -34,6 +34,7 @@ GetElectionConfig.prototype = {
 		handleXmlAnswer: function (xml) {
 			try {
 				var config = parseServerAnswer(xml);
+				if (config.cmd = 'error') throw new ServerReturnedAnError(1010, 'Error from server: ' + config.errorNo + ': ' + config.errorTxt, '');
 				// verify if the deliverd config matches the requested hash
 				var query = URI.parseURL(this.url); 
 				if (!query || !query.confighash) throw new UserInputError(1000, "The given election URL is not in the expected format (missing confighash=)", this.url);

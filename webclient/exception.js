@@ -24,10 +24,12 @@ MyException.prototype.getMessage = function() {
 };
 
 MyException.prototype.alert = function() {
-	alert(this.getMessage);
+	alert(this.getMessage());
 };
 
-
+/**
+ * the answer from the server is not correct
+ */
 var ErrorInServerAnswer = function (errno, text, details) {
 	MyException.call(this, errno, text, details);
 };
@@ -38,3 +40,8 @@ var UserInputError = function (errno, text, details) {
 	MyException.call(this, errno, text, details);
 };
 UserInputError.prototype = new MyException(null, null, null);
+
+var ServerReturnedAnError = function (errno, text, details) {
+	MyException.call(this, errno, text, details);
+};
+ServerReturnedAnError.prototype = new MyException(null, null, null);
