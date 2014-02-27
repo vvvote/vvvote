@@ -39,7 +39,7 @@ else
 	if (count($state) != 3) {
 		print '<title>VVVote: Error</title>';
 		print '</head><body>';
-		print '<h1>Keine Autorisierungsdaten &uuml;bermittelt. Login fehlgeschlagen.</h1>';
+		print '<h1>Daten zur Zuodnung der Anfrage fehlen.</h1>';
 		print '</body>';
 		die('Redirect');
 	} else {
@@ -62,7 +62,7 @@ else
 		//	print "<br><br>\nresponse: ";
 		//	print_r($response);
 		//	parse_str($response['result'], $info);
-//		if (isset($response['error'])) {
+		if (isset($response['error'])) {
 			// TODO better error message
 			print_r($response);
 			print '<h1>Autorisierung dieser Anwendung fehlgeschlagen.</h1>';
@@ -74,7 +74,7 @@ else
 			print '<br>params:' . print_r($params, true);
 			print '</body>';
 			die('error');
-//		}
+		}
 		print_r($response);
 		$tokeninfos = $response['result'];
 		//	print "<br><br>\info: ";
