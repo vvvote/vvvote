@@ -116,6 +116,15 @@ function permissionLoaded(ok){
 	}
 }*/
 
+VotePage.prototype.onPermGenerated = function() {
+	this.setStep(3);
+	var mc = this.blinder.getPermGeneratedHtml();
+	Page.loadMainContent(mc);
+	
+};
+
+
+
 VotePage.prototype.onPermLoaded = function(permok, blindingobj) {
 	this.blinder = blindingobj;
 	if (permok) {
