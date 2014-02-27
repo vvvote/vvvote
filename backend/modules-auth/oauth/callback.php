@@ -75,7 +75,7 @@ else
 			print '</body>';
 			die('error');
 		}
-		print_r($response);
+		// print_r($response);
 		$tokeninfos = $response['result'];
 		//	print "<br><br>\info: ";
 		// print_r($tokeninfos);
