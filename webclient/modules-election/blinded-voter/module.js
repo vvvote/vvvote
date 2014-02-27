@@ -33,7 +33,7 @@ function switchAction(result) {
 	case 'savePermission':
 		alert('Speichern Sie den Wahlschein!\n Zum Abstimmen klicken Sie auf "An Abstimmung teilnehmen" und wählen Sie unter der Überschrift "Ich habe bereits einen Wahlschein" den gespeicherten Wahlschein aus.'); //+ Wahlzettelinhalt: \n result.data);
 		savePermission(result.data);
-		
+		page.onPermGenerated();
 		// saveAs(result.data, 'ballots.json');
 	    break;
 	case 'serverError':
@@ -154,6 +154,17 @@ BlindedVoterElection.getStep2HtmlDetails = function() {
 BlindedVoterElection.getPermissionHtml = function() {
 	return 'Bitte laden Sie die Datei, in der Ihr Wahlschein gespeichert ist:<br>'+
 	'<input type="file" id="loadfile" accept=".vvvote" onchange="BlindedVoterElection.onClickedLoadFile(event)"/>'; //+ varname +'.loadPermFile(event);"/>';
+};
+
+/**
+ * provide HTML code to be presented after successful voting permission generated
+ */
+BlindedVoterElection.prototype.getPermGeneratedHtml = function() {
+	return '<h2>Wahlschein erfolgreich erstellt. </h2>' +
+	'<p>Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
+	'weiter! Er ist anonym, d.h. es kann ohne Ihre Mithilfe nicht festgestellt werden, wem er gehört.</p>' +
+	'<p>Zum Abstimmen klicken Sie oben auf &quot;An Abstimmung teilnehmen&quot; und ' +
+	'anschlie&szlig;end laden Sie unter der &Uuml;berschrift &quot;Ich habe bereits einen Wahlschein&quot; den soeben gespeicherten Wahlschein.</p>';
 };
 
 BlindedVoterElection.onClickedLoadFile = function(event) {
