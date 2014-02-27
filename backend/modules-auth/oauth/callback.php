@@ -62,11 +62,20 @@ else
 		//	print "<br><br>\nresponse: ";
 		//	print_r($response);
 		//	parse_str($response['result'], $info);
-		if (isset($response['error'])) {
+//		if (isset($response['error'])) {
 			// TODO better error message
 			print_r($response);
+			print '<h1>Autorisierung dieser Anwendung fehlgeschlagen.</h1>';
+			print '<br>client_id:' . 	$curOAuth2Config['client_id'];
+			print '<br>client_secret:' .$curOAuth2Config['client_secret'];
+			print '<br>code:' . 		$_GET['code'];
+			print '<br>redirect_uri:' . $curOAuth2Config['redirect_uri'];
+			print '<br>token_endp:' . 	$curOAuth2Config['token_endp'];
+			print '<br>params:' . print_r($params, true);
+			print '</body>';
 			die('error');
-		}
+//		}
+		print_r($response);
 		$tokeninfos = $response['result'];
 		//	print "<br><br>\info: ";
 		// print_r($tokeninfos);
