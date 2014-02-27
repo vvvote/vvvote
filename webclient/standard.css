@@ -89,10 +89,10 @@ div#nav a:hover {
 
 /*** Log ***/
 div#log {
-	padding: 1em;
+	
 }
 div#log h1 {
-	font-size: 0.8em;
+	font-size: 1em;
 }
 div#log textarea {
   width: 70em;
@@ -101,7 +101,7 @@ div#log textarea {
 
 /*** technical infos ***/
 div#techinfosswitch {
-	
+	padding:1em;
 }
 
 div#techinfos {
