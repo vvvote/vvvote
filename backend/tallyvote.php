@@ -13,7 +13,7 @@ require_once __DIR__ . '/modules-election/blindedvoter/election.php'; // TODO us
 require_once __DIR__ . '/modules-tally/publishonly/tally.php';
 require_once 'modules-auth/user-passw-list/auth.php';
 require_once 'modules-auth/shared-passw/auth.php';
-
+require_once 'modules-auth/oauth/auth.php';
 
 
 require_once 'config/conf-allservers.php';
@@ -48,7 +48,8 @@ if (isset($HTTP_RAW_POST_DATA)) {
 		switch ($elconfig['auth']) {
 			case 'userPassw':   $auth = new UserPasswAuth($dbInfos); break;
 			case 'sharedPassw': $auth = new SharedPasswAuth($dbInfos); break;
-			default: WrongRequestException::throwException(1230, 'Only auth modules >userPassw< and >sharedPassw< are accepted', $elconfig['auth']);
+			case 'oAuth2': 		$auth = new OAuth2($dbInfos); break;
+			default: WrongRequestException::throwException(1230, 'Only auth modules >userPassw<, >sharedPassw< and >oAuth2< are accepted', $elconfig['auth']);
 				break;
 		}
 
