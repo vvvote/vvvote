@@ -20,23 +20,28 @@ require_once 'dbAuth.php';
 
 use nsOAuth2\Client;
 
-// $client = new OAuth2\Client(CLIENT_ID, CLIENT_SECRET);
+
+print "<!DOCTYPE html>\n<html>\n";
+print "<head>\n<meta charset=\"ISO-8859-1\">";
+
 if (!isset($_GET['code']))
 {
-	// TODO error handling, e.g. scope not permitted
-	//$auth_url = $client->getAuthenticationUrl(AUTHORIZATION_ENDPOINT, REDIRECT_URI);
-	//header('Location: ' . $auth_url);
-	print_r($_GET);
+	// TODO better error handling / better text
+	print '<title>VVVote: Error</title>';
+	print '</head><body>';
+	print '<h1>Keine Autorisierungsdaten &uuml;bermittelt. Login fehlgeschlagen.</h1>';
+	print '</body>';
 	die('Redirect');
 }
 else
 {
-	print "<!DOCTYPE html>\n<html>\n";
-	print "<head>\n<meta charset=\"ISO-8859-1\">";
-
 	$state = explode('.', $_GET['state']); // TODO test if set -> error handling
 	if (count($state) != 3) {
-		// TODO error handling
+		print '<title>VVVote: Error</title>';
+		print '</head><body>';
+		print '<h1>Keine Autorisierungsdaten &uuml;bermittelt. Login fehlgeschlagen.</h1>';
+		print '</body>';
+		die('Redirect');
 	} else {
 		//	print "<br>$oauthdata";
 		//	print_r($oauthdata);
@@ -57,6 +62,11 @@ else
 		//	print "<br><br>\nresponse: ";
 		//	print_r($response);
 		//	parse_str($response['result'], $info);
+		if (isset($response['error'])) {
+			// TODO better error message
+			print_r($response);
+			die('error');
+		}
 		$tokeninfos = $response['result'];
 		//	print "<br><br>\info: ";
 		// print_r($tokeninfos);
