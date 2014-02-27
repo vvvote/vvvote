@@ -46,11 +46,11 @@ VotePage.prototype.gotElectionConfig = function (config) {
 
 VotePage.prototype.startStep2 = function (config) {
 	var mc = '';
-	var mclast = '';
+	var techinfo = '';
 	switch (config.blinding) {
 	case 'blindedVoter':
 		mc = mc + BlindedVoterElection.getStep2Html();
-		mclast =  BlindedVoterElection.getStep2HtmlDetails();
+		techinfo =  BlindedVoterElection.getStep2HtmlDetails();
 		this.blinder = new BlindedVoterElection('page.election', VotePage.onPermLoaded, config);
 		break;
 	default:
@@ -61,8 +61,11 @@ VotePage.prototype.startStep2 = function (config) {
 	mc = mc + '<div id="auth">' +
 	'<form onsubmit="return false;">' +
 	'                       <br>' +
-	'						<label for="electionId">Name der Abstimmung:</label> ' +
-    '                            <input readonly="readonly" name="electionId" id="electionId" value="' + config.electionId + '">' + // TODO use element.settext for election (instead of escaping electionId) 
+	'						<h3><label for="electionId">Name der Abstimmung:</label> ' +
+	'                            <span id="electionId">' + config.electionId + '</span></h3>'+		
+//	'						<label for="electionId">Name der Abstimmung:</label> ' +
+//  '                            <input readonly="readonly" name="electionId" id="electionId" value="' + config.electionId + '">' + // TODO use element.settext for election (instead of escaping electionId) 
+    '                            <input type="hidden" readonly="readonly" name="electionId" id="electionId" value="' + config.electionId + '">' + // TODO use element.settext for election (instead of escaping electionId) 
     '                       <br>';
 
 
@@ -91,8 +94,9 @@ VotePage.prototype.startStep2 = function (config) {
     '</form>' +
     '</div>';
 
-	Page.loadMainContent(mc + mclast);
-	this.setStep(2);
+	this.setStep(2); // setStep deletes additional tech infos
+	Page.loadMainContent(mc);
+	Page.setAddiTechInfos(techinfo);
 };
 
 VotePage.prototype.onGetPermClick = function () { 

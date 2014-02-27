@@ -40,6 +40,7 @@ if (isset($HTTP_RAW_POST_DATA)) {
 	try{
 		$dbElections = new DbElections($dbInfos);
 		$reqdecoded = json_decode($HTTP_RAW_POST_DATA, true); // TODO error handling
+		if (! isset($reqdecoded['electionId'])) WrongRequestException::throwException(6010, 'Election id missing in client request', $HTTP_RAW_POST_DATA);
 		$elconfig = $dbElections->loadElectionConfigFromElectionId($reqdecoded['electionId']); // TODO error handling, e.g. issset($reqdecoded['electionId'])...
 		if (count($elconfig) < 1) {
 			WrongRequestException::throwException(6000, 'Election ID not found', "ElectionId you sent: " . $reqdecoded['electionId']);

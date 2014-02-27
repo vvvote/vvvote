@@ -19,6 +19,23 @@
 <script src="tools/mixed.js"></script>
 <script src="tools/url.js"></script>
 <script src="getelectionconfig.js"></script>
+
+
+<script>
+/**
+ * shows/hides the additional technical info div
+ */
+		function onToggleTechInfosSwitch() {
+			var el=document.getElementById('techinfocheckbox');
+			var el2=document.getElementById('techinfos');
+			if (el.checked) {
+				el2.style.display='';
+			} else {
+				el2.style.display='none';
+			}
+		}
+</script>
+
 <!-- the following "<script>" is used as heredoc replacement -->
 <script  id="authUserPasswHtml" type="mumpiz">
 <div id="auth">
@@ -165,7 +182,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 
 </head>
 
-<body onload="page.display(); //startVoting(true); //test();">
+<body onload="page.display(); onToggleTechInfosSwitch(); //startVoting(true); //test();">
 	<div id="errorDiv" style="display:none"></div>
 	<!--  <div id="diagnosisControlDiv" style="display:none"></div>   -->
 	<div id="all">
@@ -201,10 +218,16 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 			</script>
 			</div>
 		</div>
+		<div id="techinfosswitch">
+		<input type="checkbox" name="techinfocheckbox" id="techinfocheckbox" value="techinfocheckbox" onclick="onToggleTechInfosSwitch();">
+		<label for="techinfocheckbox">Technische Informationen/Erkl&auml;rungen anzeigen</label></div>
+		<div id="techinfos" style="display:none;">
+		<div id="additiontechinfos"></div>
 		<div id="log">
 			<h1>Log:</h1>
 			<textarea id="logtextarea" name="log"></textarea>
 
+		</div>
 		</div>
 	</div>
 </body>

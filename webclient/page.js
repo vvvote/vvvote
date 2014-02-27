@@ -22,6 +22,11 @@ Page.prototype.showSteps = function() {
 	element.innerHTML = html;
 };
 
+
+/**
+ * setStep removes additional tech infos
+ * @param step
+ */
 Page.prototype.setStep = function(step) {
 		var element;
 		for (var i=1; i<this.steps.length; i++) {
@@ -31,9 +36,15 @@ Page.prototype.setStep = function(step) {
 		}
 		element = document.getElementById('steptitle');
 		element.textContent = this.steps[step];
+		Page.setAddiTechInfos('');
 };
 
 Page.loadMainContent = function (content) {
 	var element = document.getElementById("loadedmaincontent");
+	element.innerHTML = content; 
+};
+
+Page.setAddiTechInfos = function (content) {
+	var element = document.getElementById("additiontechinfos");
 	element.innerHTML = content; 
 };

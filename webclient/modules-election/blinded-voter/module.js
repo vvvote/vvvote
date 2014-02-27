@@ -74,8 +74,8 @@ var BlindedVoterElection = function (varname, onpermloaded, config) { // TODO sa
 
 BlindedVoterElection.prototype.onGetPermClick = function(authmodule)  {
 	election = new Object(); // TODO make this a local variable, therefor make module-backend object-oriented
-	var e = document.getElementById('electionId');
-	election.electionId = e.value;
+	var e = this.config['electionId']; // document.getElementById('electionId');
+	election.electionId = e; //e.value;
 	election.numBallots = 5; // TODO move this to config
 	election.pServerList = ClientConfig.serverList;
 	election.pServerSeq = [];

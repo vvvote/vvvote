@@ -26,9 +26,20 @@ OAuth2.getMainContent = function(conf) {
 	var serverId = conf.authConfig.serverId;
 	
 	var elelctionConfigHash = GetElectionConfig.generateConfigHash(conf);
+	var step = 1;
 	var mc = 
-	'						<label for="loginOAuth2">Einloggen</label> ' +
-	'		  				     <a id="loginOAuth2" href="' + ClientConfig.oAuth2Config[serverId].loginUri + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
+	'						<label for="loginOauth2Txt"><span class="substeps">Schritt ' + step +':</span> Einloggen</label> ' +
+	'<span id="loginOauth2Txt">Sie m&uuml;ssen sich beim Basisentscheid-Server einloggen und angemeldet bleiben. </span>' +
+	'						<label for="loginOAuth2"><span class="substeps"> </label> ' +
+	'		  				     <a id="loginOAuth2" href="' + ClientConfig.oAuth2Config[serverId].loginUri + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>' +
+	'						<label for="loginOauth2Txt2"> </label> ' +
+	'<span id="loginOauth2Txt2">Wichtig: Erst einloggen, danach folgende Schritte ausf&uuml;hren.'+
+//	'<span id="loginOauth2Txt2">Erst nachdem Sie sich erfolgreich eingeloggt haben, fahren Sie mit den folgenden Schritten fort.</span><br>' + // klicken Sie auf die folgenden ' + Object.keys(ClientConfig.oAuth2Config[serverId].clientId).length + ' Links.'
+
+	// ' Durch den Klick auf die Links wird den Abstimmungsserver erlaubt beim Basisentscheid-Server ' +
+	// 'Ihre Wahlberechtigung abzurufen.' +
+	'<br><br>';
+	step++;
 	
 	for ( var permissionServerId in ClientConfig.oAuth2Config[serverId].clientId) {
 		var clientId = ClientConfig.oAuth2Config[conf.authConfig.serverId].clientId[permissionServerId];
@@ -40,18 +51,19 @@ OAuth2.getMainContent = function(conf) {
 		'&response_type=code' +
 		'&client_id=' + clientId;
 		mc = mc + 
-		'						<label for="login">Für ' + permissionServerId +'</label> ' +
+		'						<label for="login'+step+'"><span class="substeps">Schritt ' + step +':</span> Für ' + permissionServerId +': </label> ' +
 	//	'		  				     <a id="login" href="javascript:window.open(\'' + oauthAutorize + '\', \'_blank\');">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
-		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
+		'		  				     <a id="login'+step+'" href="' + oauthAutorize + '" target="_blank">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
 //		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
+		step++;
 	}
 	
 	mc = mc +
-	'						<label for="username">Username bei BEO</label> ' +
+	'						<label for="username"><span class="substeps">Schritt ' + step +':</span> Username beim Basisentscheid-Server</label> ' +
 	'						     <input name="username" id="username" value="" type="text"></td>' + 
     '                       <br>' +
-	'						<label for="displayname">Mich &ouml;ffentlich anzeigen als</label> ' +
-	'						     <input name="displayname" id="displayname" value="" type="text"></td>' + 
+	'						<label for="displayname" style="display:none">Mich &ouml;ffentlich anzeigen als</label> ' +
+	'						     <input name="displayname" id="displayname" value="" type="hidden"></td>' + 
     '                       <br>';
 	return mc;
 }; 
