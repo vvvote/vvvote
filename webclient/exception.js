@@ -30,18 +30,22 @@ MyException.prototype.alert = function() {
 /**
  * the answer from the server is not correct
  */
-var ErrorInServerAnswer = function (errno, text, details) {
-	MyException.call(this, errno, text, details);
+var ErrorInServerAnswer = function (clientErrno, serverErrorNo, text, details) {
+	MyException.call(this, clientErrno, text, details);
 };
-ErrorInServerAnswer.prototype = new MyException(null, null, null);
-
+ErrorInServerAnswer.prototype = new MyException(null, null, null, null);
 
 var UserInputError = function (errno, text, details) {
 	MyException.call(this, errno, text, details);
 };
 UserInputError.prototype = new MyException(null, null, null);
 
-var ServerReturnedAnError = function (errno, text, details) {
-	MyException.call(this, errno, text, details);
+var ServerReturnedAnError = function (errno, serverErrorNo, text, details) {
+	MyException.call(this, errno, serverErrorNo, text, details);
+	this.serverErrorNo = serverErrorNo;
 };
 ServerReturnedAnError.prototype = new MyException(null, null, null);
+
+ServerReturnedAnError.prototype.getMessage = function() {
+	return translateServerError(this.serverErrorNo, MyException.prototype.getMessage.call(this));
+};
