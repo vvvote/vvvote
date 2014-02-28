@@ -22,23 +22,52 @@ OAuth2.prototype.getCredentials = function (config, permissionServerId) {
  */
 OAuth2.random = [];
 
+
+function setSubStep(ss) {
+	var numSteps = 4;
+	for (var i=1; i<=numSteps; i++) 
+	{    
+		var el = document.getElementById("substep"+i);    
+		if (ss == i) el.style.display="";    
+		else        el.style.display="none";  
+	}
+	if (ss == numSteps) {
+		el = document.getElementById("substepL");
+		el.style.display="";    
+
+	}
+}
+
+
 OAuth2.getMainContent = function(conf) {
 	var serverId = conf.authConfig.serverId;
 	
 	var elelctionConfigHash = GetElectionConfig.generateConfigHash(conf);
 	var step = 1;
 	var mc = 
-	'						<label for="loginOauth2Txt"><span class="substeps">Schritt ' + step +':</span> Einloggen</label> ' +
-	'<span id="loginOauth2Txt">Sie m&uuml;ssen sich beim Basisentscheid-Server einloggen und angemeldet bleiben. </span>' +
-	'						<label for="loginOAuth2"><span class="substeps"> </label> ' +
-	'		  				     <a id="loginOAuth2" href="' + ClientConfig.oAuth2Config[serverId].loginUri + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>' +
-	'						<label for="loginOauth2Txt2"> </label> ' +
-	'<span id="loginOauth2Txt2">Wichtig: Erst einloggen, danach folgende Schritte ausf&uuml;hren.'+
+		'<script type="text/javascript">'+
+		'function setSubStep(ss) {' +
+		'  for (var i=1; i<=3; i++) {' +
+		'    var el = document.getElementById("substep"+i);' +
+		'    if (ss == i) el.style.display="";' +
+		'    else         el.style.display="none";' +
+		'  }' +
+		'}' +
+		'</script>' +
+		'<div id="substep1">	<label for="loginOauth2Txt"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Einloggen</label> ' +
+		'<span id="loginOauth2Txt">Sie m&uuml;ssen sich beim Basisentscheid-Server einloggen und angemeldet bleiben. </span>' +
+		'						<label for="loginOAuth2"><span class="substeps"> </label> ' +
+		'		  				     <a id="loginOAuth2" href="' + ClientConfig.oAuth2Config[serverId].loginUri + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>' +
+		'<br>' +
+		'						<label for="loginOauth2Txt2"> </label> ' +
+		'<span id="loginOauth2Txt2"><button onclick="setSubStep(2);">Ich habe mich erfolreich angemeldet</button></span>'+
+		'</div>'+
+//	'<span id="loginOauth2Txt2">Wichtig: Erst einloggen, danach folgende Schritte ausf&uuml;hren.'+
 //	'<span id="loginOauth2Txt2">Erst nachdem Sie sich erfolgreich eingeloggt haben, fahren Sie mit den folgenden Schritten fort.</span><br>' + // klicken Sie auf die folgenden ' + Object.keys(ClientConfig.oAuth2Config[serverId].clientId).length + ' Links.'
 
 	// ' Durch den Klick auf die Links wird den Abstimmungsserver erlaubt beim Basisentscheid-Server ' +
 	// 'Ihre Wahlberechtigung abzurufen.' +
-	'<br><br>';
+		'<br>';
 	step++;
 	
 	for ( var permissionServerId in ClientConfig.oAuth2Config[serverId].clientId) {
@@ -51,20 +80,27 @@ OAuth2.getMainContent = function(conf) {
 		'&response_type=code' +
 		'&client_id=' + clientId;
 		mc = mc + 
-		'						<label for="login'+step+'"><span class="substeps">Schritt ' + step +':</span> Für ' + permissionServerId +': </label> ' +
+		'<div id="substep' + step +'" style="display:none;">' +
+		'						<label for="login'+step+'"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Für ' + permissionServerId +': </label> ' +
 	//	'		  				     <a id="login" href="javascript:window.open(\'' + oauthAutorize + '\', \'_blank\');">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
-		'		  				     <a id="login'+step+'" href="' + oauthAutorize + '" target="_blank">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
+		'		  				     <a id="login'+step+'" href="' + oauthAutorize + '" target="_blank">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>'+
 //		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
+		'						<label for="loginOauth2Txt2s'+step+'"> </label> ' +
+		'<span id="loginOauth2Txt2s'+step+'"><button onclick="setSubStep(' +(step+1) +')">Zugriff erfolgreich erlaubt</button></span>'+
+		'<br>' +
+		'</div>';
 		step++;
 	}
 	
 	mc = mc +
-	'						<label for="username"><span class="substeps">Schritt ' + step +':</span> Username beim Basisentscheid-Server</label> ' +
+	'<div id="substep' + step +'" style="display:none;">' +
+	'						<label for="username"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Username beim Basisentscheid-Server</label> ' +
 	'						     <input name="username" id="username" value="" type="text"></td>' + 
     '                       <br>' +
 	'						<label for="displayname" style="display:none">Mich &ouml;ffentlich anzeigen als</label> ' +
 	'						     <input name="displayname" id="displayname" value="" type="hidden"></td>' + 
-    '                       <br>';
+    '                       <br>'+
+	'</div>';
 	return mc;
 }; 
 

@@ -77,7 +77,7 @@ class OAuth2 extends Auth {
 	function getVoterId($credentials, $electionId) {
 		$configHash = $this->electionsDB->electionIdToConfigHash($electionId);
 		$authData = $this->db->loadAuthData($configHash, $credentials['identifier']);
-		if (count($authData) == 0 || $authData === false) WrongRequestException::throwException(12000, 'Voter not found. Please login in.', print_r($voterReq['credentials'], true) .  print_r($voterReq['electionId'], true));
+		if (count($authData) == 0 || $authData === false) WrongRequestException::throwException(12000, 'Voter not found. Please login in into OAuth2 server and allow access to this server.', print_r($voterReq['credentials'], true) .  print_r($voterReq['electionId'], true));
 		return $authData['auid'];
 	}
 
