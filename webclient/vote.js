@@ -87,10 +87,12 @@ VotePage.prototype.startStep2 = function (config) {
 		alert('The election requieres authorisation module >' + config.auth + "< which is not supported by this client.\nUse a compatible client.");
 	}
 	mc = mc + // TODO take this or some part of it from election module
+	'<div id="substepL" style="display:none;">' +
 	'						<label for="reqPermiss"></label> ' +
 	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
-	'							  value="Wahlschein holen" onclick="page.onGetPermClick();">' +
+	'							  value="Wahlschein erzeugen" onclick="page.onGetPermClick();">' +
     '                       <br>' +
+    '</div>' +
     '</form>' +
     '</div>';
 

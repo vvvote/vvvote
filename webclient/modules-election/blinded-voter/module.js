@@ -37,7 +37,12 @@ function switchAction(result) {
 		// saveAs(result.data, 'ballots.json');
 	    break;
 	case 'serverError':
-		alert('Server ' + (election.xthServer +1) + /*' (' + election.pServerList[serverno].url + */ ' rejected the request \n Error number: '+ result.errorNo + "\n" + result.errorText);
+		var servername = 'Server ' + (election.xthServer +1);
+		if (result.errorNo in listOfServerErrors.de) {
+			alert(servername + ' meldet: ' + listOfServerErrors.de[result.errorNo]);
+		} else { 
+			alert(servername + /*' (' + election.pServerList[serverno].url + */ ' rejected the request \n Error number: '+ result.errorNo + "\n" + result.errorText);
+		}
 		break;
 	case 'clientError':
 		alert('Client found error:\n '+ result.errorText);

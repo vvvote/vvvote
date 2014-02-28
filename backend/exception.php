@@ -31,8 +31,10 @@ class ElectionServerException extends Exception {
 	static function throwException($errorno, $errortxt, $data) {
 		global $debug;
 		if ($debug) {
-			$errortxt = $errortxt . "\n" . $data . "\n";
+			$errortxt = $errortxt . "\n" . $data;
 			// debug_print_backtrace();
+		} else {
+			$errortxt = $errortxt;
 		}
 		throw new WrongRequestException($errorno, $errortxt);
 	}
