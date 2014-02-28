@@ -1,4 +1,12 @@
 
+function translateServerError(errorNo, errorTxt) {
+	if (errorNo in listOfServerErrors.de) {
+		return listOfServerErrors.de[errorNo];
+	} else {
+		return errorTxt;
+	}
+}
+
 listOfServerErrors = {
 		"de": {
 			"1": "Sie sind nicht in der Liste der Stimmberechtigten oder die Zugangsdaten sind falsch.",
