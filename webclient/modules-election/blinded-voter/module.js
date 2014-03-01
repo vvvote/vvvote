@@ -21,31 +21,40 @@ function XXhandleXmlAnswer(xml) {
 function switchAction(result) {
 	switch (result.action) {
 	case 'send':
-	  serverno = election.pServerSeq[election.xthServer];
-	  var me = this;
-	  myXmlSend(election.pServerList[serverno].url, result.data, me, XXhandleXmlAnswer);
-/*	  var xml2 = new XMLHttpRequest();
+		serverno = election.pServerSeq[election.xthServer];
+		var me = this;
+		myXmlSend(election.pServerList[serverno].url, result.data, me, XXhandleXmlAnswer);
+		/*	  var xml2 = new XMLHttpRequest();
 	  xml2.open('POST', election.pServerList[serverno].url, true);
 	  xml2.onload = function() { XXhandleXmlAnswer(xml2); }; // quasi resursiv
 	  document.permission.log.value = document.permission.log.value + '--> gesendet an ' + (election.xthServer +1) + ' (' + election.pServerList[serverno].url + ') Server: ' + result.data + "\r\n\r\n";
 	  xml2.send(result.data); */
-	  break;
+		break;
 	case 'savePermission':
+		delete(election.restart);
 		alert('Speichern Sie den Wahlschein!\n Zum Abstimmen klicken Sie auf "An Abstimmung teilnehmen" und w‰hlen Sie unter der ‹berschrift "Ich habe bereits einen Wahlschein" den gespeicherten Wahlschein aus.'); //+ Wahlzettelinhalt: \n result.data);
 		savePermission(result.data);
 		page.onPermGenerated();
 		// saveAs(result.data, 'ballots.json');
-	    break;
+		break;
 	case 'serverError':
 		var servername = election.pServerList[election.pServerSeq[election.xthServer]].name;
 		var errortext = translateServerError(result.errorNo, result.errorText);
-		alert(servername + /*' (' + election.pServerList[serverno].url + */ ' hat Ihre Anliegen zur¸ckgewiesen (Fehlernr. '+ result.errorNo + "):\n" + errortext);
+		alert(servername + ' hat Ihr Anliegen zur¸ckgewiesen (Fehlernr. '+ result.errorNo + "):\n" + errortext);
+		switch (result.errorNo) {
+		case 1: /* authorization failed */
+			page.onAuthFailed(election.xthServer);
+			break;
+		default:
+		break;
+		}
+
 		break;
 	case 'clientError':
 		alert('Client found error:\n '+ result.errorText);
-	    break;
-	// telly
-/*	case 'sendVote':
+		break;
+		// telly
+		/*	case 'sendVote':
 		  var xml2 = new XMLHttpRequest();
 		  // serverno = election.pServerSeq.slice(-1)[0]; // TODO use different config for telly servers
 		  xml2.open('POST', 'http://www.webhod.ra/vvvote2/backend/tallyvote.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813', true);
@@ -74,18 +83,20 @@ var BlindedVoterElection = function (varname, onpermloaded, config) { // TODO sa
  * public members
  */
 
-BlindedVoterElection.prototype.onGetPermClick = function(authmodule)  {
-	election = new Object(); // TODO make this a local variable, therefor make module-backend object-oriented
-	var e = this.config['electionId']; // document.getElementById('electionId');
-	election.electionId = e; //e.value;
-	election.numBallots = 5; // TODO move this to config
-	election.pServerList = ClientConfig.serverList;
-	election.pServerSeq = [];
-	for (var i=election.pServerList.length -1; i >= 0; i--) {
-		election.pServerSeq[i] = i; 
+BlindedVoterElection.prototype.onGetPermClick = function(authmodule, retry)  {
+	if (!retry) {
+		election = new Object(); // TODO make this a local variable, therefor make module-backend object-oriented
+		var e = this.config['electionId']; // document.getElementById('electionId');
+		election.electionId = e; //e.value;
+		election.numBallots = 5; // TODO move this to config
+		election.pServerList = ClientConfig.serverList;
+		election.pServerSeq = [];
+		for (var i=election.pServerList.length -1; i >= 0; i--) {
+			election.pServerSeq[i] = i; 
+		}
+		// TODO let it shuffle again: election.pServerSeq = shuffleArray(election.pServerSeq);
+		election.xthServer = 0;
 	}
-	election.pServerSeq = shuffleArray(election.pServerSeq);
-	election.xthServer = 0;
 	election.credentials = [];
 	for ( var i = 0; i < election.pServerList.length; i++) {
 		election.credentials[i] = authmodule.getCredentials(this.config, election.pServerList[i].name); 
@@ -97,7 +108,9 @@ BlindedVoterElection.prototype.onGetPermClick = function(authmodule)  {
 	//  alert('voterID: '    + voterID +
 	//        '\r\nelectionID: ' + electionID);
 
-	req = makeFirstPermissionReqs(election);
+	var req;
+	if (retry) req = makePermissionReqsResume(election);
+	else       req = makeFirstPermissionReqs (election);
 	// save req as local file in order to have a backup in case something goes wrong
 
 	//	purl = new Array();
@@ -132,7 +145,7 @@ BlindedVoterElection.getStep2Html = function() {
 	'Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
 	'weiter! Er ist anonym, d.h. es kann ohne Ihre Mithilfe nicht festgestellt werden, wem er gehˆrt.'; 
 	return ret;
-		
+
 };
 
 BlindedVoterElection.getStep2HtmlDetails = function() {
@@ -144,7 +157,7 @@ BlindedVoterElection.getStep2HtmlDetails = function() {
 	'Der Server unterschreibt auﬂen auf dem Umschlag (wenn Sie wahlberechtigt sind), so dass sich die Unterschrift durch das Kohlepapier auf Ihren Wahlschein ¸bertr‰gt. Ohne den Umschlag geˆffnet zu haben (was der Server nicht kann, weil er den daf¸r notwendigen Schl¸ssel nicht kennt), schickt er den Brief an Ihren Computer zur¸ck. ' +
 	'Ihr Computer ˆffnet den Umschlag (d.h. entschl¸sselt die Wahlscheinnummer) und h‰lt einen vom Server unterschriebenen Wahlschein in der Hand, deren Nummer der Server nicht kennt.   ' +
 	'</p>';
- 	return ret;
+	return ret;
 };
 
 
@@ -179,12 +192,12 @@ BlindedVoterElection.onClickedLoadFile = function(event) {
  * @param evt
  */
 BlindedVoterElection.prototype.loadPermFile = function (evt) {
-    var files = evt.target.files; // FileList object
-    files[0];
-    var filereader = new FileReader();
-    var me = this;
-    filereader.onload = function(event) {me.permFileLoaded(event);};
-    filereader.readAsText(files[0]);
+	var files = evt.target.files; // FileList object
+	files[0];
+	var filereader = new FileReader();
+	var me = this;
+	filereader.onload = function(event) {me.permFileLoaded(event);};
+	filereader.readAsText(files[0]);
 };
 
 /**
@@ -206,7 +219,7 @@ BlindedVoterElection.prototype.permFileLoaded = function (ev) {
 	var me = this;
 	this.permissionOk = true;
 	page.onPermLoaded(this.permissionOk, me); // call back --> enables vote button or loades ballot
-	};
+};
 
 BlindedVoterElection.prototype.checkPerm = function() {
 	if (!this.permissionOk) return false;
@@ -226,10 +239,10 @@ BlindedVoterElection.prototype.signVote = function (vote) {
 	var privatekey = arrayStr2key(privatekeyarray);
 	var sigBI = RsaEncDec(hashBi, privatekey);
 	var sig = bigInt2str(sigBI, 16);
-	
+
 	// var publickey = str2key(this.permission.transm.signed.votingno);
-/*	scheiﬂ library ist fehlerhaft: Die PSS-Signatur ist nur manchmal korrekt.
- * var rsa = new RSAKey();
+	/*	scheiﬂ library ist fehlerhaft: Die PSS-Signatur ist nur manchmal korrekt.
+	 * var rsa = new RSAKey();
 	var coeffs = getHelpingNumbers(str2bigInt(privatekey.p, 16), str2bigInt(privatekey.q, 16), str2bigInt(privatekey.exp, 16), str2bigInt(privatekey.n, 16));
 	rsa.setPrivateEx(privatekey.n, 
 			bigInt2str(publickey.exp, 16), 
@@ -243,8 +256,8 @@ BlindedVoterElection.prototype.signVote = function (vote) {
 	Test:
 	var verified = rsa.verifyPSS(votestr, sig, 'sha256', 0);
 	if (verified) alert('unterschrift korrekt');
-	*/
-	
+	 */
+
 	signedvote = {};
 	signedvote.vote = votestr;
 	signedvote.sig  = sig;

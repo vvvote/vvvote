@@ -1,0 +1,34 @@
+@CHARSET "ISO-8859-1";
+
+.substep-progress {
+	list-style: upper-latin;
+	border: 2px solid darkblue;
+	padding: 1em;
+}
+
+.substep-progress li {
+	text-align: center;
+	position: relative;
+	border: 5px solid white;
+	border-radius: 1em;
+	width: 1.2em;
+	display: inline;
+}
+
+.substep-progress .step-name {
+	display: table-cell;
+	text-align: center;
+	width: 13em;
+}
+
+.substep-progress .active-step {
+	background-color: orange;
+}
+
+.substep-progress .done-step {
+	background-color: yellowgreen;
+}
+
+.substep-progress .todo-step {
+	background-color: lightgrey;
+}
