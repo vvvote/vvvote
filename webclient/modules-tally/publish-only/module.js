@@ -46,7 +46,7 @@ PublishOnlyTelly.prototype.handleServerAnswerStoreVote = function (xml) {
 			alert('Stimme wurde vom Server akzeptiert!');
 			break;
 		case 'error':
-			alert('Der Server hat die  Stimme nicht akzeptiert.\ Er meldet:\n' + data.errorNo + ': ' + data.errorTxt);
+			alert('Der Server hat die Stimme nicht akzeptiert.\ Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
 			break;
 		default:
 			throw new ErrorInServerAnswer(2002, 'Error: Expected >saveYourCountedVote<', 'Got from server: ' + data.cmd);
