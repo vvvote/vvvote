@@ -13,15 +13,27 @@ function VotePage() {
 	'<h3>Ich habe bereits einen Wahlschein</h3>' + 
 	BlindedVoterElection.getPermissionHtml('page.blinder');
 	this.title = 'An Abstimmung teilnehmen';
+	this.reset();
+	VotePage.obj = this; // set a reference to this instance so that it can be called from static methods
+}
+
+
+VotePage.prototype = new Page();
+
+VotePage.prototype.reset = function() {
 	this.config = {};
 	this.blinder = {};
 	this.tally = {};
 	this.authModule = {};
 	this.displayPermFileHtmlOnPhase2 = false;
-	VotePage.obj = this; // set a reference to this instance so that it can be called from static methods
-}
+	this.authFailed = false;
+};
 
-VotePage.prototype = new Page();
+VotePage.prototype.display = function() {
+	this.reset();
+	Page.prototype.display.call(this);
+};
+
 
 /*
 function startVoting(load) {
@@ -102,9 +114,13 @@ VotePage.prototype.startStep2 = function (config) {
 };
 
 VotePage.prototype.onGetPermClick = function () { 
-	this.blinder.onGetPermClick(this.authModule);
+	this.blinder.onGetPermClick(this.authModule, this.authFailed);
 };
 
+VotePage.prototype.onAuthFailed = function(xthserver) {
+	this.authFailed = true;
+	this.authModule.onAuthFailed(xthserver);
+};
 
 
 /*

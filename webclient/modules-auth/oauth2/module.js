@@ -25,19 +25,26 @@ OAuth2.random = [];
 
 function setSubStep(ss) {
 	var numSteps = 4;
-	for (var i=1; i<=numSteps; i++) 
-	{    
-		var el = document.getElementById("substep"+i);    
-		if (ss == i) el.style.display="";    
-		else        el.style.display="none";  
+	for (var i=1; i<=numSteps; i++) { 
+		var el  = document.getElementById("substep"+i);
+		var el2 = document.getElementById("ss"+i);
+		if (ss == i) {
+			el.style.display="";
+			el2.className ='active-step';
+		}
+		else {        
+			el.style.display="none";
+		}
+		if (i < ss) el2.className ='done-step';
+		if (i > ss) el2.className ='todo-step';
 	}
-	if (ss == numSteps) {
-		el = document.getElementById("substepL");
+	el = document.getElementById("substepL");
+	if (ss == numSteps) { // show "generate voting permission"-button on last step
 		el.style.display="";    
-
+	} else {
+		el.style.display="none";    
 	}
 }
-
 
 OAuth2.getMainContent = function(conf) {
 	var serverId = conf.authConfig.serverId;
@@ -45,15 +52,21 @@ OAuth2.getMainContent = function(conf) {
 	var elelctionConfigHash = GetElectionConfig.generateConfigHash(conf);
 	var step = 1;
 	var mc = 
-		'<script type="text/javascript">'+
-		'function setSubStep(ss) {' +
-		'  for (var i=1; i<=3; i++) {' +
-		'    var el = document.getElementById("substep"+i);' +
-		'    if (ss == i) el.style.display="";' +
-		'    else         el.style.display="none";' +
-		'  }' +
-		'}' +
-		'</script>' +
+		'<ol class="substep-progress">' +
+		'<li class="active-step" id="ss1">' +
+        '	<span class="step-name">Einloggen</span>' +
+        '</li>' +
+        '<li class="todo-step"   id="ss2">' +
+        '	<span class="step-name">Server 1 Zugriff erlauben</span>'+
+        '</li>'+
+        '<li class="todo-step"   id="ss3">'+
+        '<span class="step-name">Server 2 Zugriff erlauben</span>'+
+        '</li>'+
+        '<li class="todo-step"   id="ss4">'+
+        '	<span class="step-name">Wahlschein erstellen</span>'+
+        '</li>'+
+        '</ol>'+
+        '<br><br>' +
 		'<div id="substep1">	<label for="loginOauth2Txt"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Einloggen</label> ' +
 		'<span id="loginOauth2Txt">Sie m&uuml;ssen sich beim Basisentscheid-Server einloggen und angemeldet bleiben. </span>' +
 		'						<label for="loginOAuth2"><span class="substeps"> </label> ' +
@@ -130,4 +143,14 @@ OAuth2.getNewElectionData = function () {
 	var element = document.getElementById('listId');
 	ret.authData.listId = element.value;
 	return ret;
+};
+
+OAuth2.prototype.onAuthFailed = function(xthserver){
+	var ss = 1; 
+	if (xthserver > 0) {
+		// pa = Math.min(xthserver, election.pServerSeq[xthserver]); // in case "Server 2"-auth was failing first, take the user to "server 1", because this one was not tried.
+		var pa = xthserver;
+		ss = pa + 2;
+	}
+	setSubStep(ss);
 };

@@ -83,14 +83,7 @@ function makeBallots(election, forServer) {
 	return ballots;
 }
 
-
-function makePermissionReqs(election) {
-	// voterId, secret, electionId, numBallots, serverList
-	//global base;
-//	if ('xthServer' in election) { election.xthServer++;   }
-//	else                         { election.xthServer = 0; }
-	var forServer = getNextPermServer(election); 
-	var ballots   = makeBallots(election, forServer); 
+function makePermissionReqsFromBallots(election, ballots) {
 	var req = new Object();
 	req.cmd = 'pickBallots';
 	req.ballots = new Array();
@@ -110,6 +103,17 @@ function makePermissionReqs(election) {
 	}
 	req.xthServer = election.xthServer;
 	return req;
+}
+
+
+function makePermissionReqs(election) {
+	// voterId, secret, electionId, numBallots, serverList
+	//global base;
+//	if ('xthServer' in election) { election.xthServer++;   }
+//	else                         { election.xthServer = 0; }
+	var forServer = getNextPermServer(election); 
+	var ballots   = makeBallots(election, forServer);
+	return makePermissionReqsFromBallots(election, ballots);
 }
 
 
@@ -136,6 +140,12 @@ function reqSigsNextpServerEvent(election, data) {
 
 function makeFirstPermissionReqs(election) {
 	var ret = makePermissionReqs(election);
+	addCredentials(election, ret);
+	return JSON.stringify(ret);
+}
+
+function makePermissionReqsResume(election) {
+	var ret = makePermissionReqsFromBallots(election, election.ballots);
 	addCredentials(election, ret);
 	return JSON.stringify(ret);
 }
