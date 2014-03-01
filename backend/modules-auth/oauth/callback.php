@@ -91,15 +91,17 @@ else
 
 		if ($public_id == '') 	print "<br><h1>Hallo,</h1>";
 		else 					print '<br><h1>Hallo ' . $public_id . ',</h1>';
-		print '<br>Ihr Login war erfolgreich und der Abstimmserver ist nun berechtigt, ';
-		print 'Ihre Wahlberechtigung abzufragen.';
-		print '<br>Ihre Wahlberechtigung wurde noch nicht gepr&uuml;ft. Sie wird erst gepr&uumlft, wenn Sie im ursp&uuml;nglichen Fenster auf &quot;Wahlschein holen&quot; klicken.';
-		print '<ul><li>Schlie&szlig;en Sie jetzt dieses Fenster</li>';
-		print '    <li>Anschlie&szlig;end:</li>';
-		print '<ul><li>Wenn Sie noch nicht erfolgreich f&uuml;r den anderen Abstimmserver eingeloggt haben, klicken Sie in dem urspr&uuml;nglichen Fenster auf den Link zum Login f&uuml;r den anderen Abstimmungsserver</li>';
-		print '<li>Wenn Sie sich bereits f&uuml;r beide Abstimmserver eingeloggt haben, klicken Sie in dem urspr&uuml;nglichen Fenster auf den Knopf &quot;Wahlschein holen&quot;.</li></ul></ul>';
+		print '<br><ul><li>Ihr Login war erfolgreich und der Abstimmserver ist nun berechtigt, ';
+		print 'Ihre Wahlberechtigung abzufragen.</li>';
+		print '<li>Ihre Wahlberechtigung wurde noch nicht gepr&uuml;ft. Sie wird erst gepr&uumlft, wenn Sie im ursp&uuml;nglichen Fenster auf &quot;Wahlschein holen&quot; klicken.</li>';
+		print '<li>Schlie&szlig;en Sie jetzt dieses Fenster</li></ul>';
 		print '<br><button onClick="window.close();">Fenster schlie&szlig;en</button>';
-
+		print '<br><br><br>';
+		// print '<ul><li>Schlie&szlig;en Sie jetzt dieses Fenster</li>';
+		// print '    <li>Anschlie&szlig;end:</li>';
+		// print '<ul><li>Wenn Sie noch nicht erfolgreich f&uuml;r den anderen Abstimmserver eingeloggt haben, klicken Sie in dem urspr&uuml;nglichen Fenster auf den Link zum Login f&uuml;r den anderen Abstimmungsserver</li>';
+		// print '<li>Wenn Sie sich bereits f&uuml;r beide Abstimmserver eingeloggt haben, klicken Sie in dem urspr&uuml;nglichen Fenster auf den Knopf &quot;Wahlschein holen&quot;.</li></ul></ul>';
+		
 
 		//print '<br>isInVoterlist from fetch: ' . ($fetcher->isInVoterList('d94b915b-db13-4264-890c-0780692e4998') ? 'true' : 'false');
 
