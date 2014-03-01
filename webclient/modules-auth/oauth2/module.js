@@ -46,6 +46,11 @@ function setSubStep(ss) {
 	}
 }
 
+OAuth2.showDoneButton = function(id) {
+	var el = document.getElementById(id);
+	el.style.display = '';
+};
+
 OAuth2.getMainContent = function(conf) {
 	var serverId = conf.authConfig.serverId;
 	
@@ -70,10 +75,10 @@ OAuth2.getMainContent = function(conf) {
 		'<div id="substep1">	<label for="loginOauth2Txt"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Einloggen</label> ' +
 		'<span id="loginOauth2Txt">Sie m&uuml;ssen sich beim Basisentscheid-Server einloggen und angemeldet bleiben. </span>' +
 		'						<label for="loginOAuth2"><span class="substeps"> </label> ' +
-		'		  				     <a id="loginOAuth2" href="' + ClientConfig.oAuth2Config[serverId].loginUri + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>' +
+		'		  				     <a id="loginOAuth2" href="' + ClientConfig.oAuth2Config[serverId].loginUri + '" target="_blank" onclick="OAuth2.showDoneButton(\'loginOauth2Txt2\');">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>' +
 		'<br>' +
 		'						<label for="loginOauth2Txt2"> </label> ' +
-		'<span id="loginOauth2Txt2"><button onclick="setSubStep(2);">Ich habe mich erfolreich angemeldet</button></span>'+
+		'<span id="loginOauth2Txt2" style="display:none;"><button onclick="setSubStep(2);">Ich habe mich erfolreich angemeldet</button></span>'+
 		'</div>'+
 //	'<span id="loginOauth2Txt2">Wichtig: Erst einloggen, danach folgende Schritte ausf&uuml;hren.'+
 //	'<span id="loginOauth2Txt2">Erst nachdem Sie sich erfolgreich eingeloggt haben, fahren Sie mit den folgenden Schritten fort.</span><br>' + // klicken Sie auf die folgenden ' + Object.keys(ClientConfig.oAuth2Config[serverId].clientId).length + ' Links.'
@@ -96,10 +101,10 @@ OAuth2.getMainContent = function(conf) {
 		'<div id="substep' + step +'" style="display:none;">' +
 		'						<label for="login'+step+'"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Für ' + permissionServerId +': </label> ' +
 	//	'		  				     <a id="login" href="javascript:window.open(\'' + oauthAutorize + '\', \'_blank\');">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
-		'		  				     <a id="login'+step+'" href="' + oauthAutorize + '" target="_blank">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>'+
+		'		  				     <a id="login'+step+'" href="' + oauthAutorize + '" target="_blank" onclick="OAuth2.showDoneButton(\'loginOauth2Txt2s'+step+'\');">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>'+
 //		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
 		'						<label for="loginOauth2Txt2s'+step+'"> </label> ' +
-		'<span id="loginOauth2Txt2s'+step+'"><button onclick="setSubStep(' +(step+1) +')">Zugriff erfolgreich erlaubt</button></span>'+
+		'<span id="loginOauth2Txt2s'+step+'" style="display:none;"><button onclick="setSubStep(' +(step+1) +')">Zugriff erfolgreich erlaubt</button></span>'+
 		'<br>' +
 		'</div>';
 		step++;
