@@ -9,16 +9,15 @@
 .substep-progress li {
 	text-align: center;
 	position: relative;
-	border: 5px solid white;
-	border-radius: 1em;
-	width: 1.2em;
-	display: inline;
+	border: 0px solid white;
+	border-radius: 0.5em;
+	display: inline-block;
 }
 
 .substep-progress .step-name {
 	display: table-cell;
 	text-align: center;
-	width: 13em;
+	width: 13.8em;
 }
 
 .substep-progress .active-step {

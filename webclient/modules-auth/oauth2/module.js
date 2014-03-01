@@ -54,16 +54,16 @@ OAuth2.getMainContent = function(conf) {
 	var mc = 
 		'<ol class="substep-progress">' +
 		'<li class="active-step" id="ss1">' +
-        '	<span class="step-name">Einloggen</span>' +
+        '	<span class="step-name"><span class="substeps">A:</span> Einloggen</span>' +
         '</li>' +
         '<li class="todo-step"   id="ss2">' +
-        '	<span class="step-name">Server 1 Zugriff erlauben</span>'+
+        '	<span class="step-name"><span class="substeps">B:</span> Server 1 Zugriff erlauben</span>'+
         '</li>'+
         '<li class="todo-step"   id="ss3">'+
-        '<span class="step-name">Server 2 Zugriff erlauben</span>'+
+        '<span class="step-name"><span class="substeps">C:</span> Server 2 Zugriff erlauben</span>'+
         '</li>'+
         '<li class="todo-step"   id="ss4">'+
-        '	<span class="step-name">Wahlschein erstellen</span>'+
+        '	<span class="step-name"><span class="substeps">D:</span> Wahlschein erstellen</span>'+
         '</li>'+
         '</ol>'+
         '<br><br>' +
