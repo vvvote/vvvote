@@ -22,26 +22,77 @@ use nsOAuth2\Client;
 
 
 print "<!DOCTYPE html>\n<html>\n";
-print "<head>\n<meta charset=\"ISO-8859-1\">";
+print "<head>\n<meta charset=\"ISO-8859-1\">\n";
+if (strpos($webclientUrlbase, "http") === 0) $pathwebclient = $webclientUrlbase ; // absolute path given
+else                                         $pathwebclient = '../../' . $webclientUrlbase;
+print "<style type=\"text/css\">\n";
+print '@import url("' . $pathwebclient . '/standard.css' .'");\n';
+print "</style>";
+print '
+<script>
+/**
+ * shows/hides the additional technical info div
+ */
+		function onToggleTechInfosSwitch() {
+			var el=document.getElementById("techinfocheckbox");
+			var el2=document.getElementById("techinfos");
+			if (el.checked) {
+				el2.style.display="";
+			} else {
+				el2.style.display="none";
+			}
+		}
+</script>
+		';
 
-if (!isset($_GET['code']))
-{
-	// TODO better error handling / better text
-	print '<title>VVVote: Error</title>';
+function printTitle($headertitle, $h1) {
+	global $pathwebclient;
+	print "<title>$headertitle</title>";
 	print '</head><body>';
-	print '<h1>Keine Autorisierungsdaten &uuml;bermittelt. Login fehlgeschlagen.</h1>';
-	print '</body>';
-	die('Redirect');
+	echo '
+		<div id="all">
+			<div id="ci">
+				<img id="logoimg" alt="Logo" src="' . $pathwebclient . '/logo125x149.svg" align="left">
+				<h1>VVVote</h1>
+				Online Wahl: Anonyme und nachvollziehbare Abstimmungen
+			</div>
+		<div id="maincontent">
+		';
+	print '<h1 id="pagetitle">' . $h1 . '</h1>';
 }
-else
-{
-	$state = explode('.', $_GET['state']); // TODO test if set -> error handling
+
+function printTechInfos($techinfos) {
+	echo '
+				<br><button onClick="window.close();">Fenster schlie&szlig;en</button>
+			</div>
+			<div id="techinfosswitch">
+				<input type="checkbox" name="techinfocheckbox" id="techinfocheckbox" value="techinfocheckbox" onclick="onToggleTechInfosSwitch();">
+				<label for="techinfocheckbox">Technische Informationen/Erkl&auml;rungen anzeigen</label>
+			</div>
+			<div id="techinfos" style="display:none;">'
+				. $techinfos . '
+			</div>
+		</body>';
+}
+
+
+
+if (!isset($_GET['code'])) {
+	// TODO better error handling / better text
+	printTitle('VVVote: Error', 'Keine Autorisierungsdaten &uuml;bermittelt. Login fehlgeschlagen.');
+	printTechInfos('URL-request-parameter >code< not set');
+	die();
+} else {
+	if (!isset($_GET['state'])) {
+		printTitle('VVVote: Error', 'Daten zur Zuordnung der Anfrage fehlen.');
+		printTechInfos('URL-request-parameter >state< ist nor set.');
+		die();
+	}
+	$state = explode('.', $_GET['state']);
 	if (count($state) != 3) {
-		print '<title>VVVote: Error</title>';
-		print '</head><body>';
-		print '<h1>Daten zur Zuodnung der Anfrage fehlen.</h1>';
-		print '</body>';
-		die('Redirect');
+		printTitle('VVVote: Error', 'Daten zur Zuordnung der Anfrage fehlen.');
+		printTechInfos('URL-request-parameter >state< does not contain two dots: >' . $_GET['state']);
+		die();
 	} else {
 		//	print "<br>$oauthdata";
 		//	print_r($oauthdata);
@@ -62,18 +113,25 @@ else
 		//	print "<br><br>\nresponse: ";
 		//	print_r($response);
 		//	parse_str($response['result'], $info);
-		if (isset($response['error'])) {
+		if (isset($response['error']) || $response['code'] != '200') {
 			// TODO better error message
-			print_r($response);
-			print '<h1>Autorisierung dieser Anwendung fehlgeschlagen.</h1>';
-			print '<br>client_id:' . 	$curOAuth2Config['client_id'];
-			print '<br>client_secret:' .$curOAuth2Config['client_secret'];
-			print '<br>code:' . 		$_GET['code'];
-			print '<br>redirect_uri:' . $curOAuth2Config['redirect_uri'];
-			print '<br>token_endp:' . 	$curOAuth2Config['token_endp'];
-			print '<br>params:' . print_r($params, true);
-			print '</body>';
-			die('error');
+			printTitle('VVVote: Login fehlgeschlagen', 'Autorisierung dieser Anwendung fehlgeschlagen.');
+			print 'M&ouml;gliche Ursachen:<br>';
+			print '<ul>
+						<li>Wenn die Autorisierung urspr&uuml;nglich geklappt hatte und Sie bei dieser Seite lediglich auf &quot;Neu Laden&quot; gedr&uuml;ckt haben, dann gilt vermutlich die alte Autorisierung weiterhin. Schlie&szlig;en Sie einfach dieses Fenster.</li>
+						<li>Anonsten schlie&szlig;en Sie dieses Fenster und loggen sich erneut beim Basisentscheid-Server ein.</li>
+					</ul>';
+			
+			$techinfos = 
+			'<br>client_id: >' . 	$curOAuth2Config['client_id'] . '<' .
+			'<br>client_secret: >' .$curOAuth2Config['client_secret'] . '<' . 
+			'<br>code: >' . 		$_GET['code'] . '<' .
+			'<br>redirect_uri: >' . $curOAuth2Config['redirect_uri'] . '<' .
+			'<br>token_endp: >' . 	$curOAuth2Config['token_endp'] . '<' .
+			'<br>params: >' . print_r($params, true) . '<' .
+			'<br>response: >' . print_r($response, true) . '<';
+			printTechInfos($techinfos);		
+			die();
 		}
 		// print_r($response);
 		$tokeninfos = $response['result'];
@@ -86,34 +144,42 @@ else
 		$auid        = $fetcher->fetchAuid();
 		$userProfile = $fetcher->fetchUserProilfe();
 		$username  = $userProfile['username'];
+		
+		global $dbInfos;
+		$oAuthDb = new DbOAuth2($dbInfos);
+		$oAuthDb->saveAuthData($electionhash, $serverId, $tmpsecret, $auid, $username, $tokeninfos, $now->format(DateTime::ATOM));
+		
 		if (isset($userProfile['public_id'])) $public_id = $userProfile['public_id'];
-		else $public_id = '';
-
-		if ($public_id == '') 	print "<br><h1>Hallo,</h1>";
-		else 					print '<br><h1>Hallo ' . $public_id . ',</h1>';
-		print '<br><ul><li>Ihr Login war erfolgreich und der Abstimmserver ist nun berechtigt, ';
-		print 'Ihre Wahlberechtigung abzufragen.</li>';
-		print '<li>Ihre Wahlberechtigung wurde noch nicht gepr&uuml;ft. Sie wird erst gepr&uumlft, wenn Sie im ursp&uuml;nglichen Fenster auf &quot;Wahlschein holen&quot; klicken.</li>';
-		print '<li>Schlie&szlig;en Sie jetzt dieses Fenster</li></ul>';
-		print '<br><button onClick="window.close();">Fenster schlie&szlig;en</button>';
-		print '<br><br><br>';
+		else                                  $public_id = '';
+		if ($public_id == '') 	$h1 = 'Hallo,';
+		else 					$h1 = 'Hallo ' . $public_id .',';
+		printTitle('VVVote: Login erfolgreich', $h1);
+		
+		print 	'<br> '.
+				'<ul>' .
+				'	<li>Ihr Login war erfolgreich und der Abstimmserver &gt;' . $serverkey['serverName'] . '&lt; ist nun berechtigt, ' .
+						'Ihre Wahlberechtigung abzufragen.</li>' .
+				'	<li>Ihre Wahlberechtigung wurde noch nicht gepr&uuml;ft. Sie wird erst gepr&uumlft, wenn Sie im ursp&uuml;nglichen Fenster auf &quot;Wahlschein erzeugen&quot; klicken.</li>' .
+				'	<li>Schlie&szlig;en Sie jetzt dieses Fenster</li>' .
+				'</ul>';
+								
 		// print '<ul><li>Schlie&szlig;en Sie jetzt dieses Fenster</li>';
 		// print '    <li>Anschlie&szlig;end:</li>';
 		// print '<ul><li>Wenn Sie noch nicht erfolgreich f&uuml;r den anderen Abstimmserver eingeloggt haben, klicken Sie in dem urspr&uuml;nglichen Fenster auf den Link zum Login f&uuml;r den anderen Abstimmungsserver</li>';
 		// print '<li>Wenn Sie sich bereits f&uuml;r beide Abstimmserver eingeloggt haben, klicken Sie in dem urspr&uuml;nglichen Fenster auf den Knopf &quot;Wahlschein holen&quot;.</li></ul></ul>';
-		
+
 
 		//print '<br>isInVoterlist from fetch: ' . ($fetcher->isInVoterList('d94b915b-db13-4264-890c-0780692e4998') ? 'true' : 'false');
 
-		global $dbInfos;
-		$oAuthDb = new DbOAuth2($dbInfos);
-		$oAuthDb->saveAuthData($electionhash, $serverId, $tmpsecret, $auid, $username, $tokeninfos, $now->format(DateTime::ATOM));
-		print '<br><h2>Informationen zum Datenschutz</h2>';
-		print '<br>Folgende pers&ouml;nliche Daten wurden auf diesem Abstimmserver gespeichert:';
-		print '<br>Ihr Username beim BEO-Server';
-		print '<br>Eine Ziffernfolge, die Sie eindeutig identifiziert: ' . $auid;
-		print '<br>Geheime Zugangsdaten, die es dem Server erm&ouml;glichen, Ihre Wahlberechtigung beim BEO-Server abzufragen.';
-		print '</body>';
+		$techinfos = 
+			'<br><h2>Informationen zum Datenschutz</h2>' .
+			'<br>Folgende pers&ouml;nliche Daten wurden auf diesem Abstimmserver gespeichert:' .
+			'<ul>' .
+				'<li>Ihr Username beim Basisentscheid-Server</li>' .
+				'<li>Eine Ziffernfolge, die Sie eindeutig identifiziert: ' . $auid . '</li>' .
+				'<li>Geheime Zugangsdaten, die es dem Server erm&ouml;glichen, Ihre Wahlberechtigung beim Basisentscheid-Server abzufragen.</li>' .
+			'</ul>';
+		printTechInfos($techinfos);
 		/*
 		 $membership = $client->fetch($curOAuth2Config['get_membership_endp'], Array(), Client::HTTP_METHOD_POST);
 		print "<br><br>\nresponse 2: ";
