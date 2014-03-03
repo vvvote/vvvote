@@ -20,6 +20,14 @@
 	width: 13.8em;
 }
 
+.substep-progress .step-name:after {
+	content: " \2192";
+}
+
+.substep-progress li:last-of-type .step-name:after {
+	content: "";
+}
+
 .substep-progress .active-step {
 	background-color: orange;
 }
