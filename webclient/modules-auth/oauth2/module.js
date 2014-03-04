@@ -109,7 +109,7 @@ OAuth2.getMainContent = function(conf) {
 		'		  				     <a id="login'+step+'" href="' + oauthAutorize + '" target="_blank" onclick="OAuth2.showDoneButton(\'loginOauth2Txt2s'+step+'\');">' + slist[permServerNr].desc + ' autorisieren</a><br>'+
 //		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
 		'						<label for="loginOauth2Txt2s'+step+'"> </label> ' +
-		'<span id="loginOauth2Txt2s'+step+'" style="display:none"><button onclick="setSubStep(' +(step+1) +')">Zugriff erfolgreich erlaubt</button></span>'+
+		'<span id="loginOauth2Txt2s'+step+'" style="display:none"><button onclick="setSubStep(' +(step+1) +')">Autorisierung war erfolgreich</button></span>'+
 		'<br>' +
 		'</div>';
 		step++;

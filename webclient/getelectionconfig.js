@@ -61,15 +61,15 @@ GetElectionConfig.getMainContent = function(buttontext, gotConfigObject, gotConf
 	} 
 	var maincontent = 
 		'<div id="divElectionUrl">'+
-		'<form>'+
-		'Wahl-Link: '+
-		'<input style="width:100%" name="electionUrl" id="electionUrlId" autocomplete="off" type="text" value="' + url +'">'+
-		'<input type="button" name="getelectionconfig" value="' + buttontext + '"'+ 
-		'onclick="'+
-		'var a = document.getElementById(\'electionUrlId\');' + 
-		'new GetElectionConfig(a.value, null, ' + gotConfigObject + ', ' + gotConfigMethod + ');' +
-		'return false;">'+
-		'</form>'+
+		'	<form id="formGetelectionConfig">'+
+		'		Wahl-Link: '+
+		'			<input style="width:100%" name="electionUrl" id="electionUrlId" autocomplete="off" type="text" value="' + url +'">'+
+		'		<input type="button" name="getelectionconfig" id="buttonElectionUrlId" value="' + buttontext + '"'+ 
+		'			onclick="'+
+		'				var a = document.getElementById(\'electionUrlId\');' + 
+		'				new GetElectionConfig(a.value, null, ' + gotConfigObject + ', ' + gotConfigMethod + ');' +
+		'				return false;">'+
+		'	</form>'+
 		'</div>';
 	return maincontent;
 };
@@ -81,5 +81,10 @@ GetElectionConfig.generateConfigHash = function (config) {
 	var configstr = unicodeToBlackslashU(JSON.stringify(configOnly));
 	var hash = SHA256(configstr);
     return hash; 
+};
+
+GetElectionConfig.submitForm = function() {
+	var el = document.getElementById('buttonElectionUrlId');
+	el.click();
 };
 
