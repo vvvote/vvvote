@@ -63,7 +63,7 @@ function printTitle($headertitle, $h1) {
 
 function printTechInfos($techinfos) {
 	echo '
-				<br><button onClick="window.close();">Fenster schlie&szlig;en</button>
+				<br><button onClick="window.close();">Fenster schlie&szlig;en und zur&uuml;ck zum Hauptfenster</button>
 			</div>
 			<div id="techinfosswitch">
 				<input type="checkbox" name="techinfocheckbox" id="techinfocheckbox" value="techinfocheckbox" onclick="onToggleTechInfosSwitch();">
@@ -149,19 +149,14 @@ if (!isset($_GET['code'])) {
 		$oAuthDb = new DbOAuth2($dbInfos);
 		$oAuthDb->saveAuthData($electionhash, $serverId, $tmpsecret, $auid, $username, $tokeninfos, $now->format(DateTime::ATOM));
 		
-		if (isset($userProfile['public_id'])) $public_id = $userProfile['public_id'];
+/*		if (isset($userProfile['public_id'])) $public_id = $userProfile['public_id'];
 		else                                  $public_id = '';
 		if ($public_id == '') 	$h1 = 'Hallo,';
 		else 					$h1 = 'Hallo ' . $public_id .',';
+		*/
+		$h1 = 'Autorisierung erfolgreich';
 		printTitle('VVVote: Login erfolgreich', $h1);
 		
-		print 	'<br> '.
-				'<ul>' .
-				'	<li>Ihr Login war erfolgreich und der Abstimmserver &gt;' . $serverkey['serverName'] . '&lt; ist nun berechtigt, ' .
-						'Ihre Wahlberechtigung abzufragen.</li>' .
-				'	<li>Ihre Wahlberechtigung wurde noch nicht gepr&uuml;ft. Sie wird erst gepr&uumlft, wenn Sie im ursp&uuml;nglichen Fenster auf &quot;Wahlschein erzeugen&quot; klicken.</li>' .
-				'	<li>Schlie&szlig;en Sie jetzt dieses Fenster</li>' .
-				'</ul>';
 								
 		// print '<ul><li>Schlie&szlig;en Sie jetzt dieses Fenster</li>';
 		// print '    <li>Anschlie&szlig;end:</li>';
@@ -171,14 +166,21 @@ if (!isset($_GET['code'])) {
 
 		//print '<br>isInVoterlist from fetch: ' . ($fetcher->isInVoterList('d94b915b-db13-4264-890c-0780692e4998') ? 'true' : 'false');
 
-		$techinfos = 
+		$techinfos =
+				'<h2>Technische Informationen</h2>' . 
+					'<br> '.
+					'<ul>' .
+					'	<li>Ihr Login war erfolgreich und der Abstimmserver &gt;' . $serverkey['serverName'] . '&lt; ist nun berechtigt, ' .
+							'Ihre Wahlberechtigung abzufragen.</li>' .
+					'	<li>Ihre Wahlberechtigung wurde noch nicht gepr&uuml;ft. Sie wird erst gepr&uumlft, wenn Sie im ursp&uuml;nglichen Fenster auf &quot;Wahlschein erzeugen&quot; klicken.</li>' .
+					'</ul>' .
 			'<br><h2>Informationen zum Datenschutz</h2>' .
-			'<br>Folgende pers&ouml;nliche Daten wurden auf diesem Abstimmserver gespeichert:' .
-			'<ul>' .
-				'<li>Ihr Username beim Basisentscheid-Server</li>' .
-				'<li>Eine Ziffernfolge, die Sie eindeutig identifiziert: ' . $auid . '</li>' .
-				'<li>Geheime Zugangsdaten, die es dem Server erm&ouml;glichen, Ihre Wahlberechtigung beim Basisentscheid-Server abzufragen.</li>' .
-			'</ul>';
+				'<br>Folgende pers&ouml;nliche Daten wurden auf diesem Abstimmserver gespeichert:' .
+				'<ul>' .
+					'<li>Ihr Username beim Basisentscheid-Server</li>' .
+					'<li>Eine Ziffernfolge, die Sie eindeutig identifiziert: ' . $auid . '</li>' .
+					'<li>Geheime Zugangsdaten, die es dem Server erm&ouml;glichen, Ihre Wahlberechtigung beim Basisentscheid-Server abzufragen.</li>' .
+				'</ul>';
 		printTechInfos($techinfos);
 		/*
 		 $membership = $client->fetch($curOAuth2Config['get_membership_endp'], Array(), Client::HTTP_METHOD_POST);
