@@ -1,6 +1,5 @@
 var SharedPasswAuth = function() {
-
-
+	this.hasSubSteps = false;
 };
 
 SharedPasswAuth.prototype.getCredentials = function (config, clientId) {
