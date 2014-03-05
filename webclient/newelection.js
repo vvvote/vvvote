@@ -10,7 +10,9 @@ function NewElectionPage() {
 		OauthHtml  = '<input type="radio" onclick="page.setAuthMethod(\'OAuth2\',\'' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '\');"     name="authMethod" id="' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '">';
 		OauthHtml += '<label for="' + ClientConfig.oAuth2Config[curroauthconfig].serverId +'">' + ClientConfig.oAuth2Config[curroauthconfig].serverDesc + '</label></input>';
 	}
-	this.mainContent = newElectionHtmlPre + OauthHtml + newElectionHtmlPost; // newElectionHtmlPre and newElectionHtmlPost defined in index.html as heredoc replacement
+	var testHtmlml = 
+		'<br><br><button onclick="ConfigurableTally.test();">Teste Tally Config</button>';
+	this.mainContent = newElectionHtmlPre + OauthHtml + newElectionHtmlPost + testHtmlml; // newElectionHtmlPre and newElectionHtmlPost defined in index.html as heredoc replacement
 	this.title = 'Neue Abstimmung anlegen';
 	this.serverno = 0;
 	this.authModule = Object();
