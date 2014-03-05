@@ -1,5 +1,6 @@
 var OAuth2 = function(authConfig) {
 	this.serverId = authConfig.serverId;
+	this.hasSubSteps = true;
 };
 
 OAuth2.prototype.getCredentials = function (config, permissionServerId) {

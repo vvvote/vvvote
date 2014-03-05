@@ -98,8 +98,10 @@ VotePage.prototype.startStep2 = function (config) {
 	default:
 		alert('The election requieres authorisation module >' + config.auth + "< which is not supported by this client.\nUse a compatible client.");
 	}
+	var showGenerateButton = '""';
+	if (this.authModule.hasSubSteps) showGenerateButton = '"display:none;"';
 	mc = mc + // TODO take this or some part of it from election module
-	'<div id="substepL" style="display:none;">' +
+	'<div id="substepL" style=' +showGenerateButton + '>' +
 	'						<label for="reqPermiss"></label> ' +
 	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
 	'							  value="Wahlschein erzeugen" onclick="page.onGetPermClick();">' +
