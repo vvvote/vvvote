@@ -6,6 +6,7 @@ function ConfigurableTally(election, config, onGotVotesObj, onGotVotesMethod) {
 ConfigurableTally.prototype = new PublishOnlyTelly();
 
 ConfigurableTally.getMainContent = function(tallyconfig) {
+	ConfigurableTally.tallyConfig = tallyconfig;
 	var mc =
 		'<p id="ballotName">' + tallyconfig.ballotName + '</p>';
 
@@ -14,7 +15,7 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 		mc = mc + '<p class="voteQuestion" id="voteQuestion'+tallyconfig.questions[qNo].questionID+'">' + tallyconfig.questions[qNo].questionWording + '</p>';
 		switch (tallyconfig.questions[qNo].voteSystem.type) {
 		case 'score':
-			if (tallyconfig.questions[qNo].voteSystem['single-step'] === true) 
+			//if (tallyconfig.questions[qNo].voteSystem['single-step'] === true) 
 			for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
 				var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
 				mc = mc + '<p class="votingOption">' +
@@ -42,6 +43,22 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 				}
 			}
 			break;
+		case 'rank':
+			mc = mc + '<table class="ranking">';
+			mc = mc + '	<thead>';
+			mc = mc + '		<th>Rang</th>';
+			mc = mc + '		<th>Option</th>';
+			mc = mc + '		<th>Verschieben</th>';
+			mc = mc + '</thead>';
+			ConfigurableTally.questions = new Array();
+			var rankingTmp = [];
+			for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
+				rankingTmp[optionNo] = optionNo;
+			}
+			ConfigurableTally.questions[qNo] = {"ranking": rankingTmp};
+			mc = mc + '<tbody id="rankingTable' + qNo +'">' + ConfigurableTally.getRankingTableHtml(qNo) +'</tbody>';
+			mc = mc + '</table>';
+			break;
 		default: 
 			alert('Client unterstützt das Abstimmsystem >' + tallyconfig.voteSystem.type + '< nicht');
 		}
@@ -49,11 +66,10 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 			mc = mc + '<button id="buttonPrevQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo-1)+')">Vorhergehende Frage</button>';
 		}
 		if (qNo == tallyconfig.questions.length-1)
-				mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.submitVote()">Abstimmen!</button>';
+			mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.submitVote()">Abstimmen!</button>';
 		else 	mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo+1)+')">N&auml;chste Frage</button>';
 		mc = mc + '</div>';
 	}
-	ConfigurableTally.tallyConfig = tallyconfig;
 	return mc;
 };
 
@@ -64,6 +80,55 @@ ConfigurableTally.showQuestion = function(showqNo) {
 		if (qNo == showqNo)	el.style.display = '';
 		else       			el.style.display = 'none';
 	}
+};
+
+ConfigurableTally.getRankingTableHtml = function(qNo) {
+	var mc ='';
+	for (var optionNo=0; optionNo<ConfigurableTally.tallyConfig.questions[qNo].options.length; optionNo++) {
+//		var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
+		var ranking = ConfigurableTally.questions[qNo].ranking;
+		mc = mc + '<div class="votingOption">'; 
+		mc = mc + '<tr>';
+		mc = mc + '	<td>' + (optionNo+1) + '</td>';
+		mc = mc + '	<td>'+ ConfigurableTally.tallyConfig.questions[qNo].options[ranking[optionNo]].optionText + '</td>';
+		mc = mc + '	<td>';
+		if (optionNo > 0)                        		mc = mc + '		<span onclick="ConfigurableTally.moveUp  (' + qNo +', ' + (optionNo) + ');" class="move">&uarr;&nbsp;</span>';
+		else 											mc = mc + '&nbsp;&nbsp;';
+		if (optionNo < ConfigurableTally.tallyConfig.questions[qNo].options.length - 1) 	mc = mc + '		<span onclick="ConfigurableTally.moveDown(' + qNo +', ' + (optionNo) + ');" class="move">&darr;&nbsp;</span>';
+		mc = mc + '</td>';
+		mc = mc + '</tr>';
+	}
+	return mc;
+};
+
+ConfigurableTally.moveUp = function(qNo, optionIndex) {
+	if (optionIndex > 0)
+		ConfigurableTally.moveFromTo(qNo, optionIndex, optionIndex - 1);
+};
+
+ConfigurableTally.moveDown = function(qNo, optionIndex) {
+	if (optionIndex < ConfigurableTally.tallyConfig.questions[qNo].options.length)  
+		ConfigurableTally.moveFromTo(qNo, optionIndex, optionIndex + 1);
+};
+
+ConfigurableTally.moveFromTo = function(qNo, from, to) {
+	if (from == to) return;
+	if (from < to) {
+		var beforeFrom = ConfigurableTally.questions[qNo].ranking.slice(0, from);
+		var afterFrom = ConfigurableTally.questions[qNo].ranking.slice(from + 1, to +1);
+		var FromElement = ConfigurableTally.questions[qNo].ranking[from];
+		var afterTo = ConfigurableTally.questions[qNo].ranking.slice(to + 1);
+		ConfigurableTally.questions[qNo].ranking = beforeFrom.concat(afterFrom, FromElement, afterTo);
+	} else {
+		var beforeTo = ConfigurableTally.questions[qNo].ranking.slice(0, to);
+		var afterTo= ConfigurableTally.questions[qNo].ranking.slice(to, from);
+		var moveElement = ConfigurableTally.questions[qNo].ranking[from];
+		var afterFrom = ConfigurableTally.questions[qNo].ranking.slice(from + 1);
+		ConfigurableTally.questions[qNo].ranking = beforeTo.concat(moveElement, afterTo, afterFrom);
+	}
+	var el = document.getElementById('rankingTable' +qNo);
+	var tablehtml = ConfigurableTally.getRankingTableHtml(qNo);
+	el.innerHTML = tablehtml;
 };
 
 ConfigurableTally.test = function() {
@@ -92,7 +157,7 @@ ConfigurableTally.test = function() {
 					 },
 					 "options":
 						 [
-						  { "optionID": 1, "optionText": "Ja, linksherum" },
+						  { "optionID": 1, "optionText": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
 						  { "optionID": 2, "optionText": "Ja, rechtsherum" },
 						  { "optionID": 3, "optionText": "Nein. Ab durch die Mitte!" },
 						  { "optionID": 4, "optionText": "Jein. Wir drehen durch." }
@@ -108,7 +173,7 @@ ConfigurableTally.test = function() {
 					 "questionWording":"Bringen uns Schuldzuweisungen irgendwas?",
 					 "voteSystem":
 					 {
-						 "type": "score",
+						 "type": "rank",
 						 "max-score": 1,
 						 "abstention": false,
 						 "single-step": true
