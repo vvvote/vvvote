@@ -43,6 +43,7 @@ PublishOnlyTelly.prototype.handleServerAnswerStoreVote = function (xml) {
 		var data = parseServerAnswer(xml);
 		switch (data.cmd) {
 		case 'saveYourCountedVote':
+			Page.loadMainContent('Vielen Dank f&uuml;r Ihre Stimme!');
 			alert('Stimme wurde vom Server akzeptiert!');
 			break;
 		case 'error':
@@ -70,6 +71,11 @@ PublishOnlyTelly.prototype.handleUserClickGetAllVotes = function () {
 	myXmlSend(ClientConfig.tallyUrl, datastr, me, me.handleServerAnswerVerifyCountVotes);
 };
 
+PublishOnlyTelly.prototype.findMyVote = function() {
+	
+	var myVoteIndex = ArrayIndexOf(this.votes, 'permission.signed.votingno', myvotingno);
+};
+
 PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 	var votesOnly = new Array();
 	try {
@@ -81,6 +87,7 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 		// process data
 		//   show a list of all votes
 		var htmlcode = '<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
+		htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">Finde meine Stimme</button>';
 		htmlcode = htmlcode + '<div id="allvotes"><table>';
 		htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + 'Stimme'                  + '</th>'; 
 		htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</span></th></thead>';
