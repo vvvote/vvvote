@@ -66,9 +66,9 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 			mc = mc + '<button id="buttonPrevQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo-1)+')">Vorhergehende Frage</button>';
 		}
 		if (qNo == tallyconfig.questions.length-1)
-			mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.submitVote()">Abstimmen!</button>';
+				mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.submitVote()">Abstimmen!</button>';
 		else 	mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo+1)+')">N&auml;chste Frage</button>';
-		mc = mc + '</div>';
+		mc = mc + '</div>'; // end div question
 	}
 	return mc;
 };
@@ -87,16 +87,17 @@ ConfigurableTally.getRankingTableHtml = function(qNo) {
 	for (var optionNo=0; optionNo<ConfigurableTally.tallyConfig.questions[qNo].options.length; optionNo++) {
 //		var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
 		var ranking = ConfigurableTally.questions[qNo].ranking;
-		mc = mc + '<div class="votingOption">'; 
-		mc = mc + '<tr>';
-		mc = mc + '	<td>' + (optionNo+1) + '</td>';
-		mc = mc + '	<td>'+ ConfigurableTally.tallyConfig.questions[qNo].options[ranking[optionNo]].optionText + '</td>';
-		mc = mc + '	<td>';
-		if (optionNo > 0)                        		mc = mc + '		<span onclick="ConfigurableTally.moveUp  (' + qNo +', ' + (optionNo) + ');" class="move">&uarr;&nbsp;</span>';
-		else 											mc = mc + '&nbsp;&nbsp;';
-		if (optionNo < ConfigurableTally.tallyConfig.questions[qNo].options.length - 1) 	mc = mc + '		<span onclick="ConfigurableTally.moveDown(' + qNo +', ' + (optionNo) + ');" class="move">&darr;&nbsp;</span>';
-		mc = mc + '</td>';
-		mc = mc + '</tr>';
+		mc = mc + '	<tr class="votingOption">';
+		mc = mc + '		<td class="rankNo">' + (optionNo+1) + '</td>';
+		mc = mc + '		<td id="optionQ'+qNo+'O'+optionNo+'" class="votingOptionText" draggable="true" ondrop="ConfigurableTally.drop(event, '+qNo+', '+optionNo+');" ondragover="ConfigurableTally.dragOver(event, '+qNo+', '+optionNo+');" ondragstart="ConfigurableTally.dragStart(event, '+qNo+', '+optionNo+');">'+ ConfigurableTally.tallyConfig.questions[qNo].options[ranking[optionNo]].optionText + '</td>';
+		mc = mc + '		<td class="moveRank">';
+		if (optionNo > 0)                        		mc = mc + '<a href="javascript:ConfigurableTally.moveUp  (' + qNo +', ' + (optionNo) + ');" >&nbsp;&uarr;&nbsp;</a>';
+		else 											mc = mc + '&nbsp;&nbsp;&nbsp;';
+		mc = mc + ' ';
+		if (optionNo < ConfigurableTally.tallyConfig.questions[qNo].options.length - 1) 	mc = mc + '		<a href="javascript:ConfigurableTally.moveDown(' + qNo +', ' + (optionNo) + ');" >&nbsp;&darr;&nbsp;</a>';
+		else 																				mc = mc + '&nbsp;&nbsp;&nbsp;'; 
+		mc = mc + '		</td>';
+		mc = mc + '	</tr>';
 	}
 	return mc;
 };
@@ -130,6 +131,35 @@ ConfigurableTally.moveFromTo = function(qNo, from, to) {
 	var tablehtml = ConfigurableTally.getRankingTableHtml(qNo);
 	el.innerHTML = tablehtml;
 };
+
+
+ConfigurableTally.dragOver = function (ev, qNo, optNo) {
+	ev.preventDefault();
+	// ConfigurableTally.drop(ev, qNo, optNo);
+};
+
+ConfigurableTally.dragStart = function (ev, qNo, optNo) {
+	ev.dataTransfer.effectAllowed = 'move';
+	// ev.dataTransfer.setData("Text", ev.target.id);
+	var transobj = {"qNo": qNo, "optNo": optNo};
+	var transstr = JSON.stringify(transobj);
+	ev.dataTransfer.setData("Text", transstr);
+	ConfigurableTally.transObj = transobj;
+	// ev.dataTransfer.setData("optNo", optNo.toString());
+};
+
+ConfigurableTally.drop = function (ev, qNo, optNo) {
+	ev.preventDefault();
+	// var data=ev.dataTransfer.getData("Text");
+	// ev.target.appendChild(document.getElementById(data));
+//	var transobj = JSON.parse(ev.dataTransfer.getData('Text')); 
+	var transobj = ConfigurableTally.transObj;
+	var fromQNo = transobj.qNo;
+	var fromOptNo = transobj.optNo;
+	if (qNo != fromQNo) return;
+	ConfigurableTally.moveFromTo(qNo, fromOptNo, optNo);
+};
+
 
 ConfigurableTally.test = function() {
 	var tallyConfig = 
