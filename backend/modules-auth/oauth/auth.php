@@ -56,7 +56,7 @@ class OAuth2 extends Auth {
 		$Ids = $this->db->getListIdandServerIdByElectionId($electionId); // $Ids['serverId'] und $Ids['listId']
 		
 		// verify transaction credentials
-		$webclientAuthFromDb = $this->db->loadAuthData($configHash, $credentials['identifier']); // TODO error handling $webclientAuthFromDb empty
+		$webclientAuthFromDb = $this->db->loadAuthData($configHash, $credentials['identifier']); // TODO error handling $webclientAuthFromDb empty // TODO error handling if not set (or not string) 
 		if (! isset($webclientAuthFromDb['username'])) return false; // did not log in in OAuth2 / BEO server 
 		$secretFromDb = hash('sha256', $configHash . $oauthConfig[$Ids['serverId']]['client_id'] . $webclientAuthFromDb['username'] . $credentials['identifier']);
 		if ($secretFromDb !== $credentials['secret'] ) return false;

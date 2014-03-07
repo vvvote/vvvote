@@ -133,7 +133,7 @@ function addCredentials(election, req) {
 
 function reqSigsNextpServerEvent(election, data) {
 	var sigsOk = verifySaveElectionPermiss(election, data);
-	if (!sigsOk) throw new ErrorInServerAnswer(9238983, 'Verification of server signature failed. Aborted.', '');
+	if (!sigsOk) throw new ErrorInServerAnswer(9238983, 0, 'Verification of server signature failed. Aborted.', '');
 	election.xthServer++;
 	return makePermissionReqs(election);
 }
@@ -151,7 +151,9 @@ function makePermissionReqsResume(election) {
 }
 
 function savePermissionEvent(election, data) {
-	verifySaveElectionPermiss(election, data); // TODO return an error if verification failed
+	var sigsOk = verifySaveElectionPermiss(election, data);
+	if (!sigsOk) throw new ErrorInServerAnswer(9238983, 0, 'Verification of server signature failed. Aborted.', '');
+
 	ret = new Array();
 	for (var i=0; i<election.ballots.length; i++) {
 		if ('sigs' in election.ballots[i].transm) {
@@ -235,12 +237,12 @@ function makeUnblindedreqestedBallots(reqestedBallots, allBallots){
 function verifySaveElectionPermiss(election, answ) {
 	var prevServer = election.pServerSeq[election.xthServer];
 	var serverKey  = election.pServerList[prevServer].key;
-	// TODO check if we got the sig from the server we sent the request to (check sigs server name)
 	// TODO check if the server did sign what I sent to him (e.g. votingno returned is not changed)
 	// answ: array of signed: .num .blindSignatur .serverId
 	// var answ     = JSON.parse(serverAnsw); // decode answer
 	var sigsOk = false;
 	for (var i=0; i<answ.ballots.length; i++) {
+		if (election.pServerList[prevServer].name !== answ.ballots[i].sigs.slice(-1)[0].sigBy) return false; // sig is not from the server we sent the data to in order to let the server sign
 		// TODO think about: this only checks the newest sigs
 		var blindedSig = str2bigInt(answ.ballots[i].sigs.slice(-1)[0].sig, base);
 		var signatur = rsaUnblind(blindedSig, election.ballots[answ.ballots[i].ballotno].blindingf[prevServer], serverKey);  // unblind

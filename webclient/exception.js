@@ -30,7 +30,7 @@ MyException.prototype.alert = function() {
 /**
  * the answer from the server is not correct
  */
-var ErrorInServerAnswer = function (clientErrno, serverErrorNo, text, details) {
+var ErrorInServerAnswer = function (clientErrno, text, details) {
 	MyException.call(this, clientErrno, text, details);
 };
 ErrorInServerAnswer.prototype = new MyException(null, null, null, null);
