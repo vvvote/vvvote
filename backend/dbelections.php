@@ -31,11 +31,11 @@ class DbElections extends DbBase {
 	}
 	
 	function electionIdToConfigHash($electionId) {
-	$elConfig = $this->loadElectionConfigFromElectionId($electionId);
-	$configHash = $this->generateConfigHash($elConfig);
-	return $configHash;
-}
-	
+		$elConfig = $this->loadElectionConfigFromElectionId($electionId);
+		$configHash = $this->generateConfigHash($elConfig);
+		return $configHash;
+	}
+
 	function generateConfigHash($config) {
 		$configstr = json_encode($config);
 		$hash = hash('sha256', $configstr);

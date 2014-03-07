@@ -70,7 +70,8 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 				}
 				break;
 			case 'error': // TODO in case the errors is reported not from the first server: handle it somehow: (remove election from all previous servers?)
-				alert('Server meldet Fehler: ' + data.errorNo + "\n" + data.errorTxt);
+				var msg = translateServerError(data.errorNo, data.errorTxt);
+				alert("Server meldet Fehler: \n" + msg);
 				break;
 			default:
 				break;

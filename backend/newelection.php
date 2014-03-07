@@ -36,6 +36,11 @@ if (isset ($electionconfigStr)) {
 		else {
 			WrongRequestException::throwException(2100, 'Missing election Id or authorisation module name or it is not a string or auth data ist missing', "complete request received:\n" . $electionconfigStr);
 		}
+		
+		$db = new DbElections($dbInfos);
+		$alreadyGiven = $db->loadElectionConfigFromElectionId($electionId);
+		if (count($alreadyGiven) > 0) WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
+		
 		// auth
 		$newconfig['electionId'] = $electionId;
 		switch ($electionconfig['authModule']) {
@@ -63,7 +68,6 @@ if (isset ($electionconfigStr)) {
 		// TODO tally
 		$newconfig['telly'] = 'publishOnly';
 				
-		$db = new DbElections($dbInfos);
 		$hash = $db->saveElectionConfig($electionId, $newconfig);
 		//e.g. http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=
 		$configurl = "${configUrlBase}/getelectionconfig.php?confighash=${hash}";

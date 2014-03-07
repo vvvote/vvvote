@@ -13,6 +13,7 @@ listOfServerErrors = {
 			"2": "Manipulationsversuch: Ihr Computer &uuml;bermittelt einen falschen Namen der Abstimmung.",
 			"301": "Der Server hat Ihnen bereits einen Wahlschein für diese Abstimmung bestätigt. Für jeden Stimmberechtigten wird maximal ein Wahlschein bestätigt (d.h. vom Server digital unterschrieben).",
 			"1102": "Bei dieser Abstimmung haben Sie bereits abgestimmt.",
+			"2120": "Der Name der Abstimmung ist bereits vergeben.",
 			"4000": "Die Abstimmung existiert nicht auf diesem Server. Vermutlich ist der Wahl-Link falsch. Korrigieren Sie den Wahl-Link und versuchen es erneut.", // confighash nicht gefunden
 			"6000": "Eine Abstimmung mit dem &uuml;bermittelten Namen existiert nicht auf diesem Server. Rufen Sie den Wahl-Link direkt auf.", // electionId nicht gefunden
 			"12000":"Sie haben diesem Server keine Erlaubnis erteilt, Ihre Stimmberechtigung beim Basisentscheid-Server zu pr&uuml;fen. Erlauben Sie den Zugriff auf den Basisentscheid-Server und versuchen Sie es erneut."
