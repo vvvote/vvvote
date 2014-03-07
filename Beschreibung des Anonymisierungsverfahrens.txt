@@ -1,5 +1,3 @@
-Test
-
 Ein Vorschlag, wie anonym gew�hlt werden kann (d.h. niemand nachvollziehen kann, wer wie abgestimmt hat) und gleichzeitig sichergestellt ist, dass nur Wahlberechtigte abstimmen k�nnen und auch nur einmal.
 
 Die L�sung des Problems arbeitet mit blinden Signaturen.
