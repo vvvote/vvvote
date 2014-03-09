@@ -217,7 +217,7 @@ ConfigurableTally.test = function() {
 						  ],
 						  "references":
 							  [                
-							   { "referenceName":"piff paff puff kappotschieﬂen", "referenceAddress":"https://twitter.com/czossi/status/436217916803911680/photo/1" },
+							   { "referenceName":"piff paff puff kappotschieﬂen", "referenceAddress":"https://twitter.com/czossi/status/436217916803911680/photo/1" }
 							   ]
 				 }
 				 ],
