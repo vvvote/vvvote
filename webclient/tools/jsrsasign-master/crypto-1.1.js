@@ -60,7 +60,7 @@ KJUR.crypto.Util = new function() {
 	'sha512':    "3051300d060960864801650304020305000440",
 	'md2':       "3020300c06082a864886f70d020205000410",
 	'md5':       "3020300c06082a864886f70d020505000410",
-	'ripemd160': "3021300906052b2403020105000414",
+	'ripemd160': "3021300906052b2403020105000414"
 
     };
 
@@ -88,7 +88,7 @@ KJUR.crypto.Util = new function() {
 	'SHA256withECDSA':	'cryptojs/jsrsa',
 	'SHA384withECDSA':	'cryptojs/jsrsa',
 	'SHA512withECDSA':	'cryptojs/jsrsa',
-	'RIPEMD160withECDSA':	'cryptojs/jsrsa',
+	'RIPEMD160withECDSA':	'cryptojs/jsrsa'
     };
 
     /**
