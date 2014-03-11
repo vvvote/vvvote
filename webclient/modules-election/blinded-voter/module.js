@@ -193,7 +193,7 @@ BlindedVoterElection.onClickedLoadFile = function(event) {
  */
 BlindedVoterElection.prototype.loadPermFile = function (evt) {
 	var files = evt.target.files; // FileList object
-	files[0];
+	// files[0];
 	var filereader = new FileReader();
 	var me = this;
 	filereader.onload = function(event) {me.permFileLoaded(event);};

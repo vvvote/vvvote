@@ -15,33 +15,60 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 		mc = mc + '<p class="voteQuestion" id="voteQuestion'+tallyconfig.questions[qNo].questionID+'">' + tallyconfig.questions[qNo].questionWording + '</p>';
 		switch (tallyconfig.questions[qNo].voteSystem.type) {
 		case 'score':
-			//if (tallyconfig.questions[qNo].voteSystem['single-step'] === true) 
-			for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
-				var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
-				mc = mc + '<p class="votingOption">' +
-				'<fieldset>' +
-				'<legend>' + tallyconfig.questions[qNo].options[optionNo].optionText + '</legend>'+
-				'<input type="radio" name="option'+optionID+'" id="option'+optionID+'Y" value="Y">' +
-				'                                      <label for="option'+optionID+'Y">Ja</label>' +
-				'<input type="radio" name="option'+optionID+'" id="option'+optionID+'N" value="N">' +
-				' <label                                      for="option'+optionID+'N">Nein</label>' +
-				'<input type="radio" name="option'+optionID+'" id="option'+optionID+'E" value="E" checked="checked">' +
-				' <label                                      for="option'+optionID+'E">Enthaltung</label>';
-				if (tallyconfig.questions[qNo].voteSystem.abstention) {
-					mc = mc + '<input type="radio" name="option'+optionID+'" id="option'+optionID+'A" value="A" checked="checked">' +
-					' <label                                                for="option'+optionID+'A">keine Teilnahme</label>';
+			mc = mc +'<div id="FirstStepQ'+qNo+'">';
+			//if (tallyconfig.questions[qNo].voteSystem['single-step'] === true)
+			if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('yesNo' >= 0)) {
+				for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
+					var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
+					mc = mc + '<p class="votingOption">' +
+					'<fieldset>' +
+					'<legend>' + tallyconfig.questions[qNo].options[optionNo].optionText + '</legend>'+
+					'<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'Y" value="Y">' +
+					'                                      <label for="optionQ'+qNo+'O'+optionID+'Y">Ja</label>' +
+					'<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'N" value="N">' +
+					' <label                                      for="optionQ'+qNo+'O'+optionID+'N">Nein</label>' +
+					'<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'E" value="E" checked="checked">' +
+					' <label                                      for="optionQ'+qNo+'O'+optionID+'E">Enthaltung</label>';
+					if (tallyconfig.questions[qNo].voteSystem.abstention) {
+						mc = mc + '<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'A" value="A" checked="checked">' +
+						' <label                                                for="optionQ'+qNo+'O'+optionID+'A">keine Teilnahme</label>';
+					}
+					mc = mc + '</fieldset>' + '</p>';
 				}
-				mc = mc + '</fieldset>' + '</p>';
 			}
-			if (!tallyconfig.questions[qNo].voteSystem['single-step'] === true) {
-				mc = mc + '<button id="button2ndStepQ"'+tallyconfig.questions[qNo].questionID+'">Weiter</button>';
-				for (var optionNo=0; optionNo<tallyconfig.options.length; optionNo++) {
-					var optionID = tallyconfig.options[optionNo].optionID;
+			if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('yesNo') >= 0 && tallyconfig.questions[qNo].voteSystem.steps.indexOf('score') >= 0) {
+				mc = mc + '<button id="button2ndStepQ"'+tallyconfig.questions[qNo].questionID+'" onclick="ConfigurableTally.buttonStep('+qNo+', true);" >Weiter</button>';
+			}
+			mc = mc + '</div>';
+			if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('score') >= 0) {
+				mc = mc +'<div id="SecondStepQ'+qNo+'" style="display:none">';
+				mc = mc + '<table class="ranking">';
+				mc = mc + '<thead>';
+				mc = mc + '<tr><th scope="col" rowspan="2">Option</th>';
+				mc = mc + '<th scope="col" rowspan="2">enthalten</th>';
+				mc = mc + '<th scope="col" colspan="3">bewerten </th></tr>';
+				mc = mc + '<tr><th scope="col" style="text-align:left;">sehr schlecht</th><th style="text-align:center;">mittel</th><th style="text-align:right;">sehr gut</th></tr>';
+				mc = mc + '</thead><tbody>';
+				for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
+					var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
+					var min = tallyconfig.questions[qNo].voteSystem['min-score'];
+					var max = tallyconfig.questions[qNo].voteSystem['max-score'];
 					mc = mc +
-					'<input type="text" name="optionScore'+option+'" id="option'+optionID+'Y" value="Y">' +
-					' <label for="optionScore'+optionID+'">' + tallyconfig.options[optionNo].optionText + '</label>';
+					'<tr>' +
+					'	<td scope="row"><label for="optionRQ'+qNo+'O'+optionNo+'">' + tallyconfig.questions[qNo].options[optionNo].optionText + '</label></td>' +
+					'	<td style="text-align:center;"><input type="checkbox" name="optionScore'+optionNo+'" id="optionRAQ'+qNo+'O'+optionNo+'" checked="checked" onclick="ConfigurableTally.onScoreAbstentionClick('+qNo+', '+optionNo+');"></td>' +
+//					' <label for="optionRAQ'+qNo+'O'+optionNo+'">Enthaltung</label>&emsp;'+
+					'	<td colspan="3" style="text-align:center;"><input style="width:100%;" type="range" name="optionScore'+optionNo+'" id="optionRQ'+qNo+'O'+optionNo+'" value="0" min="'+min+'" max="'+max+'" disabled="disabled"></td>' +
+					'</tr>';
 				}
+				mc = mc + '</tbody></table>';
+				if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('yesNo') >= 0) {
+					mc = mc + '<button id="button1stStepQ"'+tallyconfig.questions[qNo].questionID+'" onclick="ConfigurableTally.buttonStep('+qNo+', false);">Zur&uuml;ck</button>';
+				}
+				mc = mc + '</div>';
+
 			}
+
 			break;
 		case 'rank':
 			mc = mc + '<table class="ranking">';
@@ -66,8 +93,8 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 			mc = mc + '<button id="buttonPrevQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo-1)+')">Vorhergehende Frage</button>';
 		}
 		if (qNo == tallyconfig.questions.length-1)
-				mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.submitVote()">Abstimmen!</button>';
-		else 	mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo+1)+')">N&auml;chste Frage</button>';
+			mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.submitVote()">Abstimmen!</button>';
+		else 	mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo+1)+');">N&auml;chste Frage</button>';
 		mc = mc + '</div>'; // end div question
 	}
 	return mc;
@@ -161,6 +188,21 @@ ConfigurableTally.drop = function (ev, qNo, optNo) {
 };
 
 
+ConfigurableTally.onScoreAbstentionClick = function(qNo, optionNo) {
+	var checkbox = document.getElementById('optionRAQ'+qNo+'O'+optionNo);
+	var range = document.getElementById('optionRQ'+qNo+'O'+optionNo);
+	if (checkbox.checked) 	range.disabled = true;
+	else 					range.disabled = false;
+};
+
+ConfigurableTally.buttonStep = function(qNo, forward) {
+	var firstStep = document.getElementById('FirstStepQ'+qNo);
+	var secondStep = document.getElementById('SecondStepQ'+qNo);
+	if (forward)  	{ firstStep.style.display = 'none'; 	secondStep.style.display = ''; 		}
+	else 			{ firstStep.style.display = ''; 		secondStep.style.display = 'none'; 	}
+};
+
+
 ConfigurableTally.test = function() {
 	var tallyConfig = 
 	{
@@ -181,9 +223,10 @@ ConfigurableTally.test = function() {
 					 "voteSystem":
 					 {
 						 "type": "score",
-						 "max-score": 1,
+						 "min-score": -3,
+						 "max-score": 3,
 						 "abstention": true,
-						 "single-step": true
+						 "steps": "yesNo score"
 					 },
 					 "options":
 						 [
@@ -200,13 +243,37 @@ ConfigurableTally.test = function() {
 				 },
 				 {
 					 "questionID":2,
+					 "questionWording":"Drehen wir uns im Kreis?",
+					 "voteSystem":
+					 {
+						 "type": "score",
+						 "max-score": 3,
+						 "min-score": -3,
+						 "abstention": true,
+						 "steps": "yesNo"
+					 },
+					 "options":
+						 [
+						  { "optionID": 1, "optionText": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
+						  { "optionID": 2, "optionText": "Ja, rechtsherum" },
+						  { "optionID": 3, "optionText": "Nein. Ab durch die Mitte!" },
+						  { "optionID": 4, "optionText": "Jein. Wir drehen durch." }
+						  ],
+						  "references":
+							  [
+							   { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
+							   { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
+							   ]
+				 },
+				 {
+					 "questionID":3,
 					 "questionWording":"Bringen uns Schuldzuweisungen irgendwas?",
 					 "voteSystem":
 					 {
 						 "type": "rank",
 						 "max-score": 1,
 						 "abstention": false,
-						 "single-step": true
+						 "steps": ""
 					 },
 					 "options":
 						 [
