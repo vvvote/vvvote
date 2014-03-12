@@ -42,12 +42,12 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 			mc = mc + '</div>';
 			if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('score') >= 0) {
 				mc = mc +'<div id="SecondStepQ'+qNo+'" style="display:none">';
-				mc = mc + '<table class="ranking">';
+				mc = mc + '<table class="voteOptions">';
 				mc = mc + '<thead>';
 				mc = mc + '<tr><th scope="col" rowspan="2">Option</th>';
 				mc = mc + '<th scope="col" rowspan="2">enthalten</th>';
 				mc = mc + '<th scope="col" colspan="3">bewerten </th></tr>';
-				mc = mc + '<tr><th scope="col" style="text-align:left;">sehr schlecht</th><th style="text-align:center;">mittel</th><th style="text-align:right;">sehr gut</th></tr>';
+				mc = mc + '<tr><th style="text-align:left;">sehr schlecht</th><th style="text-align:center;">mittel</th><th style="text-align:right;">sehr gut</th></tr>';
 				mc = mc + '</thead><tbody>';
 				for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
 					var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
@@ -58,7 +58,7 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 					'	<td scope="row"><label for="optionRQ'+qNo+'O'+optionNo+'">' + tallyconfig.questions[qNo].options[optionNo].optionText + '</label></td>' +
 					'	<td style="text-align:center;"><input type="checkbox" name="optionScore'+optionNo+'" id="optionRAQ'+qNo+'O'+optionNo+'" checked="checked" onclick="ConfigurableTally.onScoreAbstentionClick('+qNo+', '+optionNo+');"></td>' +
 //					' <label for="optionRAQ'+qNo+'O'+optionNo+'">Enthaltung</label>&emsp;'+
-					'	<td colspan="3" style="text-align:center;"><input style="width:100%;" type="range" name="optionScore'+optionNo+'" id="optionRQ'+qNo+'O'+optionNo+'" value="0" min="'+min+'" max="'+max+'" disabled="disabled"></td>' +
+					'	<td colspan="3" style="text-align:center;"><input style="width:100%;" type="range" name="optionScore'+optionNo+'" id="optionRQ'+qNo+'O'+optionNo+'" value="0" min="'+min+'" max="'+max+'" class="likeDisabled" onmousedown="ConfigurableTally.onScoreRangeClick('+qNo+', '+optionNo+');"></td>' +
 					'</tr>';
 				}
 				mc = mc + '</tbody></table>';
@@ -71,7 +71,7 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 
 			break;
 		case 'rank':
-			mc = mc + '<table class="ranking">';
+			mc = mc + '<table class="voteOptions">';
 			mc = mc + '	<thead>';
 			mc = mc + '		<th>Rang</th>';
 			mc = mc + '		<th>Option</th>';
@@ -191,9 +191,16 @@ ConfigurableTally.drop = function (ev, qNo, optNo) {
 ConfigurableTally.onScoreAbstentionClick = function(qNo, optionNo) {
 	var checkbox = document.getElementById('optionRAQ'+qNo+'O'+optionNo);
 	var range = document.getElementById('optionRQ'+qNo+'O'+optionNo);
-	if (checkbox.checked) 	range.disabled = true;
-	else 					range.disabled = false;
+	if (checkbox.checked) 	range.className = 'likeDisabled';
+	else 					range.className = '';
 };
+
+ConfigurableTally.onScoreRangeClick = function(qNo, optionNo) {
+	var checkbox = document.getElementById('optionRAQ'+qNo+'O'+optionNo);
+	checkbox.checked = false;
+	ConfigurableTally.onScoreAbstentionClick(qNo, optionNo); 
+};
+
 
 ConfigurableTally.buttonStep = function(qNo, forward) {
 	var firstStep = document.getElementById('FirstStepQ'+qNo);
