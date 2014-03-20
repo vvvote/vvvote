@@ -163,8 +163,7 @@ class PublishOnlyTelly {
 		} catch (ElectionServerException $e) {
 			$result = $e->makeServerAnswer();
 		}
-		$ret = json_encode($result);
-		return $ret;
+		return $result;
 	
 	}
 	

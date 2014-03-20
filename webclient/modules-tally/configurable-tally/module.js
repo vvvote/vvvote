@@ -24,14 +24,14 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 					'<fieldset>' +
 					'<legend>' + tallyconfig.questions[qNo].options[optionNo].optionText + '</legend>'+
 					'<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'Y" value="Y">' +
-					'                                      <label for="optionQ'+qNo+'O'+optionID+'Y">Ja</label>' +
+					'                                      <label          for="optionQ'+qNo+'O'+optionID+'Y">Ja</label>' +
 					'<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'N" value="N">' +
-					' <label                                      for="optionQ'+qNo+'O'+optionID+'N">Nein</label>' +
-					'<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'E" value="E" checked="checked">' +
-					' <label                                      for="optionQ'+qNo+'O'+optionID+'E">Enthaltung</label>';
+					' <label                                               for="optionQ'+qNo+'O'+optionID+'N">Nein</label>';
+					// '<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'E" value="E" checked="checked">';
+					// ' <label                                                             for="optionQ'+qNo+'O'+optionID+'A">Enthaltung</label>';
 					if (tallyconfig.questions[qNo].voteSystem.abstention) {
 						mc = mc + '<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'A" value="A" checked="checked">' +
-						' <label                                                for="optionQ'+qNo+'O'+optionID+'A">keine Teilnahme</label>';
+						' <label                                                for="optionQ'+qNo+'O'+optionID+'A">Einhaltung</label>';
 					}
 					mc = mc + '</fieldset>' + '</p>';
 				}
@@ -66,7 +66,6 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 					mc = mc + '<button id="button1stStepQ"'+tallyconfig.questions[qNo].questionID+'" onclick="ConfigurableTally.buttonStep('+qNo+', false);">Zur&uuml;ck</button>';
 				}
 				mc = mc + '</div>';
-
 			}
 
 			break;
@@ -207,6 +206,10 @@ ConfigurableTally.buttonStep = function(qNo, forward) {
 	var secondStep = document.getElementById('SecondStepQ'+qNo);
 	if (forward)  	{ firstStep.style.display = 'none'; 	secondStep.style.display = ''; 		}
 	else 			{ firstStep.style.display = ''; 		secondStep.style.display = 'none'; 	}
+};
+
+ConfigurableTally.getInputs = function() {
+	
 };
 
 

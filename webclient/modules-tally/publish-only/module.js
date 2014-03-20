@@ -34,7 +34,7 @@ PublishOnlyTelly.prototype.sendVote = function () {
 	
 	var transmstr = JSON.stringify(transm);
 	var me = this;
-	myXmlSend(ClientConfig.tallyUrl, transmstr, me, me.handleServerAnswerStoreVote);
+	myXmlSend(ClientConfig.tallyUrl, transmstr, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
 };
 
 

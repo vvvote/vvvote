@@ -67,9 +67,9 @@ if (isset($HTTP_RAW_POST_DATA)) {
 		$result = $tally->handleTallyReq($HTTP_RAW_POST_DATA);
 		// print "\r\n";
 	} catch (ElectionServerException $e) {
-		$result = json_encode($e->makeServerAnswer());
+		$result = $e->makeServerAnswer();
 	}
-	print "$result";
+	print "----vvvote----\n" . json_encode($result) . "\n----vvvote----\n";
 }
 
 ?>
