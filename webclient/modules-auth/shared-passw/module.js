@@ -29,7 +29,7 @@ SharedPasswAuth.getConfigObtainedHtml = function () {
 };
 
 /**
- * This static function has to retunt HTML code containing the fields needed for creating
+ * This static function has to return HTML code containing the fields needed for creating
  * a new election
  * @returns {String}
  */

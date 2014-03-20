@@ -21,6 +21,10 @@ div#ci {
 	padding: 0.4em;
 }
 
+div#logoimg {
+	float: left;
+}
+
 div#ci h1 {
 	font-size: 24px;
 	color: #0B0B61;
@@ -28,13 +32,12 @@ div#ci h1 {
 
 /*** curr **/
 span.curr {
-  font-weight: bold;
+	font-weight: bold;
 }
 
 span.substeps {
-  font-weight: bold;
+	font-weight: bold;
 }
-
 
 /*** Content ***/
 div#maincontent {
@@ -46,11 +49,10 @@ div#maincontent h1 {
 }
 
 div#auth label {
-	display: inline-block; 
+	display: inline-block;
 	width: 320px;;
 	line-height: 1.5em;
 }
-
 
 /*** Steps ****/
 div#steps {
@@ -65,7 +67,6 @@ div#steps h1 {
 	font-size: 1.2em;
 	color: orange;
 }
-
 
 /*** Navigation bar ***/
 div#nav {
@@ -91,17 +92,19 @@ div#nav a:hover {
 div#log {
 	
 }
+
 div#log h1 {
 	font-size: 1em;
 }
+
 div#log textarea {
-  width: 70em;
-  height: 20em;	
+	width: 70em;
+	height: 20em;
 }
 
 /*** technical infos ***/
 div#techinfosswitch {
-	padding:1em;
+	padding: 1em;
 }
 
 div#techinfos {
@@ -110,7 +113,7 @@ div#techinfos {
 
 /*** tally result **/
 div#freq {
-/**	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	/**	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
 	font-size: 12px; */
 	background: #fff;
 	margin: 45px;
@@ -119,8 +122,7 @@ div#freq {
 	text-align: left;
 }
 
-div#freq th
-{
+div#freq th {
 	font-size: 14px;
 	font-weight: normal;
 	color: #039;
@@ -129,26 +131,22 @@ div#freq th
 	text-align: center;
 }
 
-.optionHead
-{
+.optionHead {
 	width: 25em;
 }
 
-.numVotes
-{
+.numVotes {
 	width: 10em;
 	text-align: center;
 }
 
-
-div#freq td
-{
+div#freq td {
 	border-bottom: 1px solid #ccc;
 	color: #669;
 	padding: 6px 8px;
 }
-div#freq tbody tr:hover td
-{
+
+div#freq tbody tr:hover td {
 	color: #339;
 	background: #eff2ff;
 }
@@ -157,15 +155,17 @@ div#freq tfoot {
 	font-style: italic;
 }
 
-
-div#allvotes{
+div#allvotes {
 	
 }
 
-div#errorDiv{ /* div that is usually hidden, showing a connection problem and the retry button */
+div#errorDiv {
+	/* div that is usually hidden, showing a connection problem and the retry button */
+	
 }
 
-div#error{ /* div inside errorDiv containing the error massage and the guide what to do. It does not include the retry button */
+div#error {
+	/* div inside errorDiv containing the error massage and the guide what to do. It does not include the retry button */
 	background: red;
 }
 
@@ -175,10 +175,7 @@ input#electionUrl {
 }
 
 /*** Ranking Table ***/
-
-
-.voteOptions th
-{
+.voteOptions th {
 	/* font-size: 14px; */
 	/* font-weight: normal; */
 	color: #039;
@@ -188,18 +185,30 @@ input#electionUrl {
 }
 
 .voteOptions tbody {
-	padding: 12px;	
+	padding: 12px;
 }
 
-input[type="range"].likeDisabled {
+/* this causes IE to make everything grey but is needed for chrome */
+input[type="range"].likeDisabled
+	/* not working: and (-webkit-min-device-pixel-ratio:0) */ {
 	background-color: lightGrey !important;
 }
+
 input[type="range"].likeDisabled::-moz-range-track {
 	background-color: lightGrey !important;
 }
 
+input[type="range"].likeDisabled::-ms-fill-upper {
+	background-color: lightGrey !important;
+}
 
-.voteOptions  input[type="range"] {
+input[type="range"].likeDisabled::-ms-fill-lower {
+	background-color: lightGrey !important;
+}
+
+/* this causes IE to make everything grey but is needed for chrome */
+.voteOptions  input[type="range"]
+	/* not working: and (-webkit-min-device-pixel-ratio:0) */ {
 	border-radius: 5px;
 	box-shadow: inset 0px 3px 5px #333;
 	background-color: blue;
@@ -208,22 +217,35 @@ input[type="range"].likeDisabled::-moz-range-track {
 }
 
 .voteOptions input[type='range']::-moz-range-track {
+	border-radius: 5px;
+	box-shadow: inset 0 3px 5px #333;
+	background-color: blue;
+	height: 8px;
+}
+
+input[type="range"]::-ms-fill-upper {
+	background-color: blue;
+}
+
+input[type="range"]::-ms-fill-lower {
+	background-color: blue;
+}
+
+/*
+.voteOptions input[type='range']::-ms-track {
 	 border-radius: 5px;
 	 box-shadow: inset 0 3px 5px #333;
 	 background-color: blue;
 	 height: 8px;
 }
-
-
-
-
+*/
 .votingOptionText:hover {
 	outline: 2px solid #6678b1;
 	cursor: move;
 }
 
 .votingOptionText {
-		width: 80%;
+	width: 80%;
 }
 
 .rankNo {
@@ -231,8 +253,8 @@ input[type="range"].likeDisabled::-moz-range-track {
 }
 
 .votingOptionText {
-		width: 80%;
-		padding: 10px;
+	width: 80%;
+	padding: 10px;
 }
 
 .moveRank {
@@ -244,5 +266,3 @@ input[type="range"].likeDisabled::-moz-range-track {
 	text-decoration: none;
 	background-color: yellow;
 }
-
-	

@@ -46,20 +46,26 @@ function ArrayIndexOf(a, elementname, element) {
 	return -1;
 }
 
+function sendThroughProxy() {
+	
+}
+
 /**
  * 
  * @param url if url is set to null the parameters from the last call we be used
  * @param data
  * @param callbackObject
  * @param callbackFunction
+ * @param proxy
  * @returns
  */
-function myXmlSend(url, data, callbackObject, callbackFunction) {
-	if (url != null) {
+function myXmlSend(url, data, callbackObject, callbackFunction, proxy) {
+	if (url != null) { // if url == null: an error occoured and retry was pressed
 		myXmlSend.url = url;
 		myXmlSend.data = data;
 		myXmlSend.callbackObject = callbackObject;
 		myXmlSend.callbackFunction = callbackFunction;
+		myXmlSend.proxy = proxy;
 	}
 	var xml2 = new XMLHttpRequest();
 	xml2.onload = function() { myXmlSend.callbackFunction.call(myXmlSend.callbackObject, xml2, myXmlSend.url); };
@@ -111,9 +117,19 @@ function myXmlSend(url, data, callbackObject, callbackFunction) {
 		} */
 	};
 	try {
+		if (proxy && proxy.length > 0) {
+			var urlparts = URI.getParts(url);
+			myXmlSend.url = proxy + url; // urlparts.pathname + urlparts.search +urlparts.hash;
+		}
+
 		xml2.open('POST', myXmlSend.url, true);
+		if (proxy && proxy.length > 0) {
+			var urlparts = URI.getParts(url);
+			var realhost = urlparts.host;
+			xml2.setRequestHeader('Host', realhost);
+		}
 		xml2.send(myXmlSend.data);
-		userlog("\n--> gesendet an Server " + myXmlSend.url + ': ' + myXmlSend.data + "\r\n\r\n");
+		userlog("\r\n\r\n--> gesendet an Server " + myXmlSend.url + ': ' + myXmlSend.data + "\r\n\r\n");
 		var errorDiv = document.getElementById("errorDiv");
 		// var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
 		errorDiv.style.display = "none";
@@ -137,7 +153,11 @@ function parseServerAnswer(xml) {
 	}
 	try {
 		userlog("\n<--- empfangen:\n" + xml.responseText);
-		var data = JSON.parse(xml.responseText);
+		var regex = /----vvvote----\n(.*)\n----vvvote----\n/g;
+		var tmp = regex.exec(xml.responseText);
+		if (tmp != null && 1 in  tmp)	tmp = tmp[1]; // found ----vvvote---- marker
+		else 							tmp = xml.responseText; // use complete response if no marker found
+		var data = JSON.parse(tmp);
 		return data;
 	} catch (e) {
 		// defined in exception.js

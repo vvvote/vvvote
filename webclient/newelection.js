@@ -12,11 +12,13 @@ function NewElectionPage() {
 	}
 	var testHtmlml = 
 		'<br><br><button onclick="ConfigurableTally.test();">Teste Tally Config</button>';
-	this.mainContent = newElectionHtmlPre + OauthHtml + newElectionHtmlPost + testHtmlml; // newElectionHtmlPre and newElectionHtmlPost defined in index.html as heredoc replacement
+	var test2Htmlml = 
+		'<a href="https://addons.mozilla.org/firefox/downloads/latest/325576/addon-325576-latest.xpi?src=search" data-hash="sha256:96e26869e85c9fb40202078eae55218b477957ced6cfb997b07523ec2a99ffb6">Zu FireFox hinzuf&uuml;gen</a>';
+	this.mainContent = newElectionHtmlPre + OauthHtml + newElectionHtmlPost + testHtmlml; // test2Htmlml; // newElectionHtmlPre and newElectionHtmlPost defined in index.html as heredoc replacement
 	this.title = 'Neue Abstimmung anlegen';
 	this.serverno = 0;
 	this.authModule = Object();
-}
+};
 
 NewElectionPage.prototype = new Page();
 
@@ -34,50 +36,52 @@ NewElectionPage.prototype.setAuthMethod = function(method, authServerId) {
 
 
 NewElectionPage.prototype.handleNewElectionButton = function () {
-		var ret = this.authModule.getNewElectionData();
-		var element = document.getElementById('electionId');
-		ret.electionId = element.value;
-		this.config = ret;
-		var data = JSON.stringify(ret);
-		var me = this;
-		this.serverno = 0;
-		myXmlSend(ClientConfig.newElectionUrl[0], data, me, me.handleNewElectionAnswer);
-	};
+	var ret = this.authModule.getNewElectionData();
+	var element = document.getElementById('electionId');
+	ret.electionId = element.value;
+	this.config = ret;
+	var data = JSON.stringify(ret);
+	var me = this;
+	this.serverno = 0;
+//	myXmlSend(ClientConfig.newElectionUrl[0], data, me, me.handleNewElectionAnswer, 'http://94.228.205.41:8080/');
+	myXmlSend(ClientConfig.newElectionUrl[0], data, me, me.handleNewElectionAnswer);
+//	myXmlSend(ClientConfig.newElectionUrl[0], data, me, me.handleNewElectionAnswer);
+};
 
-	
-	
-	NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
-		try {
-			var data = parseServerAnswer(xml);
-			switch (data.cmd) {
-			case 'saveElectionUrl':
-				if (this.serverno < ClientConfig.newElectionUrl.length -1) {
-					this.serverno++;
-					var me = this;
-					myXmlSend(ClientConfig.newElectionUrl[this.serverno], JSON.stringify(this.config), me, me.handleNewElectionAnswer);
-				} else {
-					var a = getAuthModuleStatic(this.config);
-					var ahtml = a.getConfigObtainedHtml();
-					var mc = '<p>Speichern Sie den Link und geben Sie ihn an alle Wahlberechtigten weiter. ' +
-					ahtml +	
-					'</p>' +
-					'<p>Der Link zur Wahl ist: <input type="text" id="electionUrl" readonly="readonly" width="100%" value="' + data.configUrl + '"></p>';
-					// '<p>Der Link zur Wahl ist: ' + data.configUrl + '</p>';
-					this.setStep(2);
-					Page.loadMainContent(mc);
-					eleUrl = document.getElementById('electionUrl');
-					eleUrl.select();
-				}
-				break;
-			case 'error': // TODO in case the errors is reported not from the first server: handle it somehow: (remove election from all previous servers?)
-				var msg = translateServerError(data.errorNo, data.errorTxt);
-				alert("Server meldet Fehler: \n" + msg);
-				break;
-			default:
-				break;
+
+
+NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
+	try {
+		var data = parseServerAnswer(xml);
+		switch (data.cmd) {
+		case 'saveElectionUrl':
+			if (this.serverno < ClientConfig.newElectionUrl.length -1) {
+				this.serverno++;
+				var me = this;
+				myXmlSend(ClientConfig.newElectionUrl[this.serverno], JSON.stringify(this.config), me, me.handleNewElectionAnswer);
+			} else {
+				var a = getAuthModuleStatic(this.config);
+				var ahtml = a.getConfigObtainedHtml();
+				var mc = '<p>Speichern Sie den Link und geben Sie ihn an alle Wahlberechtigten weiter. ' +
+				ahtml +	
+				'</p>' +
+				'<p>Der Link zur Wahl ist: <input type="text" id="electionUrl" readonly="readonly" width="100%" value="' + data.configUrl + '"></p>';
+				// '<p>Der Link zur Wahl ist: ' + data.configUrl + '</p>';
+				this.setStep(2);
+				Page.loadMainContent(mc);
+				eleUrl = document.getElementById('electionUrl');
+				eleUrl.select();
 			}
-		}catch (e) {
-			alert('Answer from Server does not match the expected format (JSON decode error)');
+			break;
+		case 'error': // TODO in case the errors is reported not from the first server: handle it somehow: (remove election from all previous servers?)
+			var msg = translateServerError(data.errorNo, data.errorTxt);
+			alert("Server meldet Fehler: \n" + msg);
+			break;
+		default:
+			break;
 		}
+	}catch (e) {
+		alert('Answer from Server does not match the expected format (JSON decode error)');
+	}
 
-	};
+};

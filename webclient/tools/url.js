@@ -11,6 +11,23 @@ URI.decodeQuery = function(string) {
 	return decodeURIComponent((string + "").replace(/\+/g, '%20'));
 };
 
+/** added by Pfeffer
+ * returns for url = "http://example.com:3000/pathname/?search=test#hash";:
+ * 	parser.protocol; // => "http:"
+	parser.host;     // => "example.com:3000"
+	parser.hostname; // => "example.com"
+	parser.port;     // => "3000"
+	parser.pathname; // => "/pathname/"
+	parser.hash;     // => "#hash"
+	parser.search;   // => "?search=test"
+ */
+URI.getParts = function (url) {
+	var parser = document.createElement('a');
+	parser.href = url;
+	return parser;
+};
+
+
 /**
  * this function added by pfefffer
  */
@@ -25,7 +42,6 @@ URI.parseURL = function(url) {
 	var query = URI.parseQuery(q); // tools/url/
 	return query;
 };
-
 URI.parseQuery = function(string) {
 	if (!string) {
 		return {};
