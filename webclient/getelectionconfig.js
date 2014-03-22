@@ -33,7 +33,7 @@ GetElectionConfig.prototype = {
 
 		handleXmlAnswer: function (xml) {
 			try {
-				var config = parseServerAnswer(xml);
+				var config = parseServerAnswer(xml, true);
 				if (config.cmd == 'error') throw new ServerReturnedAnError(1010, config.errorNo, config.errorTxt);
 				// verify if the deliverd config matches the requested hash
 				var query = URI.parseURL(this.url); 

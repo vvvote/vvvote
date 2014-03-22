@@ -97,7 +97,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 <!-- the following "<script>" is used as heredoc replacement -->
 <script  id="newElectionHtmlPre" type="mumpiz">
 	
-	Hier können Sie eine neue Abstimmung starten.     
+	Hier k&ouml;nnen Sie eine neue Abstimmung starten.     
     Zum Anlegen einer neuen Abstimmung legen Sie den Namen der Abstimmung und die Authorisierungsmethode fest. 
 	<br><br>
 	<input type="text" id="electionId"> 
@@ -188,6 +188,11 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 		     page.display();
 	    	 GetElectionConfig.submitForm();
 	    	// TODO read phase from config and load votePage(generatePermssion), votePage(submitVote), getresult()
+		}
+		if (permission) {
+	    	 page = votePage; // TODO read phase from config and
+		     page.display();
+		     BlindedVoterElection.onImportPermission(permission);
 		}
 	} 
 

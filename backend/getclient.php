@@ -1,4 +1,10 @@
 <?php
+
+require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
+
+header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
+header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"); // this allows any cross-site scripting (needed for chrome)
+
 $pathToClient = '../webclient/';
 
 $includeJsFiles = Array(
@@ -49,6 +55,7 @@ $includeJsFiles = Array(
 
 $includeCssFiles = Array('standard.css', 'substeps.css');
 
+// print HTML-Header 
 echo '
 		<!DOCTYPE html>
 		<html>
@@ -56,21 +63,27 @@ echo '
 				<meta charset="ISO-8859-1">
 				<title>VVVote</title>';
 
+// print all Javascript files 
 echo '<script>';
 foreach ($includeJsFiles as $f) {
 	readfile($pathToClient . $f);
 }
+
+// print placeholder for JSON permission file
+echo "\n//placeholder for permission file\n";
+echo "//bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpßjntt\n";
 echo '</script>';
 
+// print stylesheets
 echo '<style type="text/css">';
 foreach ($includeCssFiles as $f) {
 	readfile($pathToClient . $f);
 }
 echo '</style>';
 
-// readfile($pathToClient . 'logo125x149.svg');
 
-// print the main content take from index.html
+
+// print the main content take from index.html - logo125x149.svg is included somewhere in the middle of the following text 
 echo <<<EOT
 <script>
 /**
@@ -146,7 +159,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 <!-- the following "<script>" is used as heredoc replacement -->
 <script  id="newElectionHtmlPre" type="mumpiz">
 	
-	Hier können Sie eine neue Abstimmung starten.     
+	Hier k&ouml;nnen Sie eine neue Abstimmung starten.     
     Zum Anlegen einer neuen Abstimmung legen Sie den Namen der Abstimmung und die Authorisierungsmethode fest. 
 	<br><br>
 	<input type="text" id="electionId"> 
@@ -161,7 +174,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 			<label for="userPasswList">Liste Benuzername und Passwort hochladen</label></input>
 --->
 </script>
-
+		
 <!-- the following "<script>" is used as heredoc replacement -->
 <script  id="newElectionHtmlPost" type="mumpiz">
     </fieldset>
@@ -206,8 +219,13 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 	    	 GetElectionConfig.submitForm();
 	    	// TODO read phase from config and load votePage(generatePermssion), votePage(submitVote), getresult()
 		}
+		if (permission) {
+	    	 page = votePage; // TODO read phase from config and
+		     page.display();
+		     BlindedVoterElection.onImportPermission(permission);
+		}
 	} 
-
+		
 </script>
 
 </head>
@@ -219,7 +237,13 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 		<div id="ci">
 		<div id="logoimg">
 EOT;
+
+
+
 readfile($pathToClient . 'logo125x149.svg');
+
+
+
 echo <<<EOT
 		</div>
 			<h1>VVVote</h1>

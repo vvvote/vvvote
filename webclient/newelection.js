@@ -52,7 +52,7 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 
 NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 	try {
-		var data = parseServerAnswer(xml);
+		var data = parseServerAnswer(xml, true);
 		switch (data.cmd) {
 		case 'saveElectionUrl':
 			if (this.serverno < ClientConfig.newElectionUrl.length -1) {

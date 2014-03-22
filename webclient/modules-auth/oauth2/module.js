@@ -136,7 +136,7 @@ OAuth2.getConfigObtainedHtml = function () {
 OAuth2.getNewElectionHtml = function (serverId) {
 	// TODO put this in config 
 	var ret = 
-		'Für den Basisentscheid Online (BEO) wird für jeden Abstimmungstermin auf dem BEO-Server eine Liste der Stimmberechtigten angelegt. Geben Sie hier die ID dieser Liste ein.<br>' +
+		'F&uuml;r den Basisentscheid Online (BEO) wird f&uuml;r jeden Abstimmungstermin auf dem BEO-Server eine Liste der Stimmberechtigten angelegt. Geben Sie hier die ID dieser Liste ein.<br>' +
 		'<input name="listId" id="listId" value="" type="text">' +
 		'<label for="listId">ID der Liste, die die Abstimmungsberechtigten enth&auml;lt</label> ';
 	return ret;

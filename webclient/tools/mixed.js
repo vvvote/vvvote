@@ -47,7 +47,7 @@ function ArrayIndexOf(a, elementname, element) {
 }
 
 function sendThroughProxy() {
-	
+
 }
 
 /**
@@ -60,15 +60,26 @@ function sendThroughProxy() {
  * @returns
  */
 function myXmlSend(url, data, callbackObject, callbackFunction, proxy) {
+	myXmlSend_(url, data, callbackObject, callbackFunction, proxy, 'POST', true);
+}
+
+function httpGet(url, callbackObject, callbackFunction, log, proxy) {
+	myXmlSend_(url, data, callbackObject, callbackFunction, proxy, 'GET', log);
+}
+
+
+function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, log) {
 	if (url != null) { // if url == null: an error occoured and retry was pressed
-		myXmlSend.url = url;
-		myXmlSend.data = data;
-		myXmlSend.callbackObject = callbackObject;
-		myXmlSend.callbackFunction = callbackFunction;
-		myXmlSend.proxy = proxy;
+		myXmlSend_.url = url;
+		myXmlSend_.data = data;
+		myXmlSend_.callbackObject = callbackObject;
+		myXmlSend_.callbackFunction = callbackFunction;
+		myXmlSend_.proxy = proxy;
+		myXmlSend_.method = method;
+		myXmlSend_.log = log;
 	}
 	var xml2 = new XMLHttpRequest();
-	xml2.onload = function() { myXmlSend.callbackFunction.call(myXmlSend.callbackObject, xml2, myXmlSend.url); };
+	xml2.onload = function() { myXmlSend_.callbackFunction.call(myXmlSend_.callbackObject, xml2, myXmlSend_.url); };
 	xml2.onerror = function(e) {
 		// var t;
 		// if (e instanceof Event) t = e.target.statusText;
@@ -90,9 +101,9 @@ function myXmlSend(url, data, callbackObject, callbackFunction, proxy) {
 		//window.frames['diagnosisIFrame'].document.location.href = url;
 		var tmp   = '<div id="error"><h1>Es gab einen Fehler bei einer Verbindung zu einem Server.</h1>';
 		var testurl;
-		if (myXmlSend.url.indexOf('?') > 0) testurl = myXmlSend.url + '&connectioncheck';
-		else                                testurl = myXmlSend.url + '?connectioncheck';
-		tmp = tmp + '<ul><li>Klicken Sie <a href="' + testurl + '" target="_blank">auf diesen Link, um die Verbindung zum Server manuell zu testen.</a> Der Link wird in einem neuen Fenster geöffnet.</li> <li>Beheben Sie das Problem,</li> <li>schließen Sie das neue Fenster und </li><li>klicken anschließend auf <button id="retry" name="retry" onclick="myXmlSend(null, null, null, null)">erneut versuchen</button></li></ul></div>';
+		if (myXmlSend_.url.indexOf('?') > 0)	testurl = myXmlSend_.url + '&connectioncheck';
+		else                                	testurl = myXmlSend_.url + '?connectioncheck';
+		tmp = tmp + '<ul><li>Klicken Sie <a href="' + testurl + '" target="_blank">auf diesen Link, um die Verbindung zum Server manuell zu testen.</a> Der Link wird in einem neuen Fenster geöffnet.</li> <li>Beheben Sie das Problem,</li> <li>schließen Sie das neue Fenster und </li><li>klicken anschließend auf <button id="retry" name="retry" onclick="myXmlSend_(null, null, null, null)">erneut versuchen</button></li></ul></div>';
 		tmp = tmp + '';
 		errorDiv.innerHTML = tmp;
 		// alert(errorDiv.innerHTML);
@@ -101,10 +112,10 @@ function myXmlSend(url, data, callbackObject, callbackFunction, proxy) {
 		window.scrollTo(0, 0);
 		// var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
 
-//		diagnosisControlDiv.innerHTML = '<button id="retry" name="retry" onclick="myXmlSend(url, data, callbackObject, callbackFunction)">erneut versuchen</button>';
+//		diagnosisControlDiv.innerHTML = '<button id="retry" name="retry" onclick="myXmlSend_(url, data, callbackObject, callbackFunction)">erneut versuchen</button>';
 		// diagnosisControlDiv.style.display = "block";
 		//diagnosisIFrame.innerHtml = '<iframe  srcdoc="<h1>TITEL</h1>" width="100%" height="80%">Your Browser does not support IFrames</iframe>';
-		/*		var diagnosisWindow = window.open(myXmlSend.url, "Diagnosis Window", "width=600,height=600,scrollbars=yes");
+		/*		var diagnosisWindow = window.open(myXmlSend_.url, "Diagnosis Window", "width=600,height=600,scrollbars=yes");
 		diagnosisWindow.onLoad = function() { // funktioniert nicht, weil diagnosisWindow = null, wenn der Popup-blocker aktiv ist
 			alert("jetz hat's geklappt");
 		};
@@ -118,18 +129,18 @@ function myXmlSend(url, data, callbackObject, callbackFunction, proxy) {
 	};
 	try {
 		if (proxy && proxy.length > 0) {
-			var urlparts = URI.getParts(url);
-			myXmlSend.url = proxy + url; // urlparts.pathname + urlparts.search +urlparts.hash;
+//			var urlparts = URI.getParts(url);
+			myXmlSend_.url = proxy + url; // urlparts.pathname + urlparts.search +urlparts.hash;
 		}
 
-		xml2.open('POST', myXmlSend.url, true);
+		xml2.open(myXmlSend_.method, myXmlSend_.url, true);
 		if (proxy && proxy.length > 0) {
 			var urlparts = URI.getParts(url);
 			var realhost = urlparts.host;
 			xml2.setRequestHeader('Host', realhost);
 		}
-		xml2.send(myXmlSend.data);
-		userlog("\r\n\r\n--> gesendet an Server " + myXmlSend.url + ': ' + myXmlSend.data + "\r\n\r\n");
+		xml2.send(myXmlSend_.data);
+		if (myXmlSend_.log) userlog("\r\n\r\n--> gesendet an Server " + myXmlSend_.url + ': ' + myXmlSend_.data + "\r\n\r\n");
 		var errorDiv = document.getElementById("errorDiv");
 		// var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
 		errorDiv.style.display = "none";
@@ -137,27 +148,25 @@ function myXmlSend(url, data, callbackObject, callbackFunction, proxy) {
 	} catch (e) { // this is thrown from ff if xml2.open fails because of a non existent protocol (like http oder https)
 		// chrome calls xml2.onerror in this case
 		// an old IE throws this for "permission dinied"
-		// alert('Error trying to connect to ' + myXmlSend.url + '\n' + e.toString());
+		// alert('Error trying to connect to ' + myXmlSend_.url + '\n' + e.toString());
 		xml2.onerror(e);
 	}
 }
 
 
-// myXmlSend.myRetry = function() {myXmlSend(url, data, callbackObject, callbackFunction);};
+//myXmlSend.myRetry = function() {myXmlSend(url, data, callbackObject, callbackFunction);};
 
-function parseServerAnswer(xml) {
-	if (xml.status != 200) {
-		userlog("\n<--- empfangen Fehler " + xml.status + ": " + xml.statusText);
-		alert("ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (" + xml.status + ") " + xml.statusText);
-		throw new ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (' + xml.status + ') ' + xml.statusText);
-	}
+function parseServerAnswer(xml, jsonDecode) {
+	if (xml.status != 200) { httpError(xml); }
 	try {
 		userlog("\n<--- empfangen:\n" + xml.responseText);
 		var regex = /----vvvote----\n(.*)\n----vvvote----\n/g;
 		var tmp = regex.exec(xml.responseText);
 		if (tmp != null && 1 in  tmp)	tmp = tmp[1]; // found ----vvvote---- marker
 		else 							tmp = xml.responseText; // use complete response if no marker found
-		var data = JSON.parse(tmp);
+		var data;
+		if (jsonDecode) data = JSON.parse(tmp);
+		else			data = tmp;
 		return data;
 	} catch (e) {
 		// defined in exception.js
@@ -166,6 +175,12 @@ function parseServerAnswer(xml) {
 		// 		return Object({'action':'clientError', 'errorText': "could not JSON decode: (" + e + ") \n" + dataString});
 
 	}
+}
+
+function httpError(xml) {
+	userlog("\n<--- empfangen Fehler " + xml.status + ": " + xml.statusText);
+	alert("ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (" + xml.status + ") " + xml.statusText);
+	throw new ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (' + xml.status + ') ' + xml.statusText);
 }
 
 /**
@@ -210,13 +225,13 @@ function unicodeToBlackslashU(str) {
  */
 function shuffleArray(arrayOrig) {
 	array = arrayOrig.slice(0);
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-    return array;
+	for (var i = array.length - 1; i > 0; i--) {
+		var j = Math.floor(Math.random() * (i + 1));
+		var temp = array[i];
+		array[i] = array[j];
+		array[j] = temp;
+	}
+	return array;
 }
 
 
