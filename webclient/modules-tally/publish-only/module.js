@@ -40,7 +40,7 @@ PublishOnlyTelly.prototype.sendVote = function () {
 
 PublishOnlyTelly.prototype.handleServerAnswerStoreVote = function (xml) {
 	try {
-		var data = parseServerAnswer(xml);
+		var data = parseServerAnswer(xml, true);
 		switch (data.cmd) {
 		case 'saveYourCountedVote':
 			Page.loadMainContent('Vielen Dank f&uuml;r Ihre Stimme!');
@@ -79,7 +79,7 @@ PublishOnlyTelly.prototype.findMyVote = function() {
 PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 	var votesOnly = new Array();
 	try {
-		var data = parseServerAnswer(xml);
+		var data = parseServerAnswer(xml, true);
 		if (data.cmd != 'verifyCountVotes') {
 			throw new ErrorInServerAnswer(2003, 'Error: Expected >verifyCountVotes<', 'Got from server: ' + data.cmd);
 		}
@@ -102,7 +102,7 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 			htmlcode = htmlcode + '<td> <span id="vote">' + v + '</span></td>'; 
 			htmlcode = htmlcode + '<td> <span id="votingno">' + vno + '</span></td>'; 
 			// TODO substitude election for this.varname
-			htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften prüfen!</button>' + '</td>'; 
+			htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften pr&uuml;fen!</button>' + '</td>'; 
 //			htmlcode = htmlcode + '<td>' + this.votes[i].permission.signed.salt     + '</td>'; 
 			htmlcode = htmlcode + '</tr>';
 			// TODO add to votes only if sigOk

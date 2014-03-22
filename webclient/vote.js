@@ -6,8 +6,8 @@ function VotePage() {
 	this.steps[3] = 'Schritt 3: Abstimmen';
 	this.mainContent = '<h3>Wahlunterlagen holen</h3>'+
 	'<p><ul><li>Ich habe noch keinen Wahlschein</li>' +
-	'<li>für die Wahl wird kein Wahlschein benötigt</li>' +
-	'<li>Ich weiß nicht, ob für die Wahl ein Wahlschein benötigt wird</li></ul>' +
+	'<li>f&uuml;r die Wahl wird kein Wahlschein ben&ouml;tigt</li>' +
+	'<li>Ich wei&szlig; nicht, ob f&uuml;r die Wahl ein Wahlschein ben&ouml;tigt wird</li></ul>' +
 	GetElectionConfig.getMainContent('Wahlunterlagen holen', 'page', 'VotePage.prototype.gotElectionConfig') + '</p>' + 
 	'<p></p>&nbsp;<p></p>' +
 	'<h3>Ich habe bereits einen Wahlschein</h3>' + 
@@ -104,7 +104,7 @@ VotePage.prototype.startStep2 = function (config) {
 	'<div id="substepL" style=' +showGenerateButton + '>' +
 	'						<label for="reqPermiss"></label> ' +
 	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
-	'							  value="Wahlschein erzeugen" onclick="page.onGetPermClick();">' +
+	'							  value="Wahlschein erzeugen und speichern" onclick="page.onGetPermClick();">' +
     '                       <br>' +
     '</div>' +
     '</form>' +
@@ -154,12 +154,13 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj) {
 	if (permok) {
 		var config = {}; // TODO load this from blinder
 		config.blinding = 'blindedVoter';
-		config.auth = 'sharedPassw';
+		config.auth = 'sharedPassw'; //TODO OAuth2 !!!
 		config.electionId = this.blinder.config.electionId;
 		
 /*		this.obj.startStep2(config, false);
 		// if ballot already shown --> enable it, else: show ballot
 		if (this.displayPermFileHtmlOnPhase2) {} */
+		// TODO use the correct Tally
 		this.tally = new PublishOnlyTelly(this.blinder, config, document.getElementById('loadedmaincontent'));
 		var mc = this.tally.getMainContent();
 		mc = mc + '<p><input disabled="disabled" id="sendvote" type="submit" '+

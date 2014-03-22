@@ -1,16 +1,31 @@
 
 function savePermission(ballot) {
-	var bb = new Blob([ballot]); 
-	var p = JSON.parse(ballot); // ballot[0].transm contains the signed str which contains the electionId
-	var p2 = JSON.parse(p[0].transm.str);
-	var electionid = p2.electionId;
-	saveAs(bb, "Wahlschein " + clearForFilename(electionid) + '.vvvote');
-	// var el = document.getElementById('maincontent');
-	// el.textContent = 'jjjjjjjjjjjjjhbgggvgvvg';
-	// el.innerHTML('jjjjjjjjjjjjjjjjjjjjj');
 	// TODO check maximal loops = numServers
+	// download webclient
+	savePermission.ballot = ballot;
+	httpGet(ClientConfig.voteClientUrl, savePermission, savePermission.gotWebclient, false);
 }
+savePermission.gotWebclient = function(xml) {
+	if (xml.status != 200) {
+		// TODO we should load the webclient before obtaining the permission sigs
+		// TODO retry the other server to get the webclient
+		// TODO if the other server also fails: save the ballot only
+		httpError(xml);
+	}
+	else { 
+		clientHtml = xml.responseText;
+		// put ballot in webclient
+		var find = /\/\/bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpßjntt/;
+		var ballotWithClient = clientHtml.replace(find, 'permission=' + savePermission.ballot +';');
+		// load the electionId
+		var p = JSON.parse(savePermission.ballot); // ballot[0].transm contains the signed str which contains the electionId
+		var p2 = JSON.parse(p[0].transm.str);
+		var electionid = p2.electionId;
 
+		var bb = new Blob([ballotWithClient]); //  new Blob([ballot]); 
+		saveAs(bb, "Wahlschein " + clearForFilename(electionid) + '.html');
+	}
+};
 
 function XXhandleXmlAnswer(xml) {
 	var result = handleServerAnswer(election, xml);
@@ -46,7 +61,7 @@ function switchAction(result) {
 			page.onAuthFailed(election.xthServer);
 			break;
 		default:
-		break;
+			break;
 		}
 
 		break;
@@ -141,9 +156,9 @@ BlindedVoterElection.prototype.onGetPermClick = function(authmodule, retry)  {
  */
 BlindedVoterElection.getStep2Html = function() {
 	var ret = 'Als Ergebnis dieses Schrittes erhalten Sie einen Wahlschein, den Sie ' + 
-	'speichern und zur Stimmabgabe später wieder laden müssen. ' +
+	'speichern und zur Stimmabgabe sp&auml;ter wieder laden m&uuml;ssen. ' +
 	'Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
-	'weiter! Er ist anonym, d.h. es kann ohne Ihre Mithilfe nicht festgestellt werden, wem er gehört.'; 
+	'weiter! Er ist anonym, d.h. es kann ohne Ihre Mithilfe nicht festgestellt werden, wem er geh&ouml;rt.'; 
 	return ret;
 
 };
@@ -151,11 +166,11 @@ BlindedVoterElection.getStep2Html = function() {
 BlindedVoterElection.getStep2HtmlDetails = function() {
 	var ret = '<p><h2>Weitere technische Information</h2>' +
 	'Der Wahlschein ist digital von mindestens 2 Servern unterschrieben. Diese Unterschrift führt dazu, dass der Wahlzettel bei der Stimmabgabe akzeptiert wird.<br> ' +
-	'Der Wahlschein enthält eine eindeutige Wahlscheinnummer, die nur Ihr Computer kennt - sie wurde von Ihrem Computer erzeugt und verschlüsselt, bevor die Server den Wahlschein unterschrieben haben, und danach auf Ihrem Computer entschlüsselt (Man spricht von &quot;Blinded Signature&quot;). Die Server kennen daher die Wahlscheinnummer nicht.<br> ' +
+	'Der Wahlschein enth&auml;lt eine eindeutige Wahlscheinnummer, die nur Ihr Computer kennt - sie wurde von Ihrem Computer erzeugt und verschl&uuml;sselt, bevor die Server den Wahlschein unterschrieben haben, und danach auf Ihrem Computer entschl&uml;sselt (Man spricht von &quot;Blinded Signature&quot;). Die Server kennen daher die Wahlscheinnummer nicht.<br> ' +
 	'Man kann sich das so vorstellen:<br>  ' +
 	'Ihr Computer schreibt auf den Wahlschein die Wahlscheinnummer, die er sich selbst &quot;ausdenkt&quot; (Zufallszahl). Dieser Wahlschein wird zusammen mit einem Blatt Kohlepapier in einen Umschlag gelegt und an den Server geschickt. ' + 
-	'Der Server unterschreibt außen auf dem Umschlag (wenn Sie wahlberechtigt sind), so dass sich die Unterschrift durch das Kohlepapier auf Ihren Wahlschein überträgt. Ohne den Umschlag geöffnet zu haben (was der Server nicht kann, weil er den dafür notwendigen Schlüssel nicht kennt), schickt er den Brief an Ihren Computer zurück. ' +
-	'Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlscheinnummer) und hält einen vom Server unterschriebenen Wahlschein in der Hand, deren Nummer der Server nicht kennt.   ' +
+	'Der Server unterschreibt außen auf dem Umschlag (wenn Sie wahlberechtigt sind), so dass sich die Unterschrift durch das Kohlepapier auf Ihren Wahlschein &uuml;berträgt. Ohne den Umschlag ge&ouml;ffnet zu haben (was der Server nicht kann, weil er den daf&uuml;r notwendigen Schl&uuml;ssel nicht kennt), schickt er den Brief an Ihren Computer zur&uuml;ck. ' +
+	'Ihr Computer &ouml;ffnet den Umschlag (d.h. entschl&uuml;sselt die Wahlscheinnummer) und h&auml;lt einen vom Server unterschriebenen Wahlschein in der Hand, deren Nummer der Server nicht kennt.   ' +
 	'</p>';
 	return ret;
 };
@@ -183,8 +198,12 @@ BlindedVoterElection.prototype.getPermGeneratedHtml = function() {
 };
 
 BlindedVoterElection.onClickedLoadFile = function(event) {
-	el = new BlindedVoterElection('', '', '');
-	el.loadPermFile(event);
+	var bv = new BlindedVoterElection('', '', '');
+	bv.loadPermFile(event);
+};
+BlindedVoterElection.onImportPermission = function (permission) {
+	var bv = new BlindedVoterElection('', '', '');
+	bv.importPermission(permission);
 };
 
 /**
@@ -207,9 +226,14 @@ BlindedVoterElection.prototype.loadPermFile = function (evt) {
 BlindedVoterElection.prototype.permFileLoaded = function (ev) {
 	var permissionstr = ev.target.result; 
 	// alert(permissionstr);
-	this.permission = JSON.parse(permissionstr)[0];
-	this.permission.transm.signed = JSON.parse(this.permission.transm.str);
+	var p = JSON.parse(permissionstr); 
 	// TODO give an error if JSON parsing failed
+	this.importPermission(p);
+};
+
+BlindedVoterElection.prototype.importPermission = function (permission) {
+	this.permission = permission[0]; // TODO think about several permissions in permission array
+	this.permission.transm.signed = JSON.parse(this.permission.transm.str);
 	// TODO check if permission corresponds to the election config
 	// TODO check if all requiered fields are present
 	// TODO check signatures from permissionservers
@@ -218,7 +242,8 @@ BlindedVoterElection.prototype.permFileLoaded = function (ev) {
 	this.config.electionId = this.permission.transm.signed.electionId;
 	var me = this;
 	this.permissionOk = true;
-	page.onPermLoaded(this.permissionOk, me); // call back --> enables vote button or loades ballot
+	page.onPermLoaded(this.permissionOk, me); // call back --> enables vote button or loads ballot
+	
 };
 
 BlindedVoterElection.prototype.checkPerm = function() {
@@ -329,7 +354,7 @@ BlindedVoterElection.prototype.getAllPermissedBallots = function () {
 };
 
 BlindedVoterElection.prototype.XhandleXmlAnswerGetAllPermissedBallots = function (xml, url) {
-	var answ = parseServerAnswer(xml); 
+	var answ = parseServerAnswer(xml, true); 
 	var pServerList = ClientConfig.serverList;
 
 	var i = ArrayIndexOf(pServerList, 'url', url);

@@ -302,7 +302,7 @@ function makeVote(ballots, numRequiredSignatures, vote) {
 
 function handleServerAnswer(election, dataString) {
 	try {
-		data = parseServerAnswer(dataString);
+		data = parseServerAnswer(dataString, true);
 	var ret;
 	switch (data.cmd) {
 	case 'unblindBallots':
