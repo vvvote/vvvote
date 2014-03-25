@@ -105,7 +105,7 @@ OAuth2.getMainContent = function(conf) {
 		if (step == 1) style = '""';
 		mc = mc + 
 		'<div id="substep' + step +'" style=' + style + '>' +
-		'						<label for="login'+step+'"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Für ' + slist[permServerNr].desc +': </label> ' +
+		'						<label for="login'+step+'"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> FÃ¼r ' + slist[permServerNr].desc +': </label> ' +
 	//	'		  				     <a id="login" href="javascript:window.open(\'' + oauthAutorize + '\', \'_blank\');">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
 		'		  				     <a id="login'+step+'" href="' + oauthAutorize + '" target="_blank" onclick="OAuth2.showDoneButton(\'loginOauth2Txt2s'+step+'\');">' + slist[permServerNr].desc + ' autorisieren</a><br>'+
 //		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
@@ -129,7 +129,7 @@ OAuth2.getMainContent = function(conf) {
 }; 
 
 OAuth2.getConfigObtainedHtml = function () {
-	var ret = ''; // shared password: Teilen Sie den Wahlberechtigten außerdem das Wahlpasswort mit.
+	var ret = ''; // shared password: Teilen Sie den Wahlberechtigten auÃŸerdem das Wahlpasswort mit.
 	return ret;
 };
 

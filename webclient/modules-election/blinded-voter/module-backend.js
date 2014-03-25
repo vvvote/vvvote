@@ -43,7 +43,7 @@ function addBallothash(ballot) {
  * @param electionId
  * @param numBallots
  * @param serverList
- * @param forServer Nummer des Servers, für den der Req erzeugt werden soll
+ * @param forServer Nummer des Servers, fÃ¼r den der Req erzeugt werden soll
  * @returns {Object}
  */
 

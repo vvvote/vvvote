@@ -12,7 +12,7 @@ UserPasswList.getMainContent = function() {
 
 UserPasswList.getNewElectionHtml = function (serverId) {
 	var ret = 
-		'Die W&auml;hler m&uuml;ssen sich mit Benutzername und Passwort anmelden. Laden Sie ein .csv-Datei hoch mit den Benutzernamen und den Passwörtern aller Stimmberechtigten <br>' +
+		'Die W&auml;hler m&uuml;ssen sich mit Benutzername und Passwort anmelden. Laden Sie ein .csv-Datei hoch mit den Benutzernamen und den PasswÃ¶rtern aller Stimmberechtigten <br>' +
 		'<input type="file" id="userlist">' + 
 		'<label for="userlist">Liste der Stimmberechtigten hochladen</label>';
 	return ret;

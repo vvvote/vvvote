@@ -9,7 +9,7 @@
 //   - two lines of a form like "if (x<0) x+=n" had the "if" changed to "while" to 
 //     handle the case when x<-n. (Thanks to James Ansell for finding that bug)
 // v 5.4  3 Oct 2009
-//   - added "var i" to greaterShift() so i is not global. (Thanks to PŽter Szab— for finding that bug)
+//   - added "var i" to greaterShift() so i is not global. (Thanks to PÅ½ter Szabâ€” for finding that bug)
 //
 // v 5.3  21 Sep 2009
 //   - added randProbPrime(k) for probable primes

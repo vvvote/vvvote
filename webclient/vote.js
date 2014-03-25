@@ -136,7 +136,7 @@ function permissionLoaded(ok){
 		element.disabled = !ok;
 		setStep(3);
 } else {
-		alert('Wahlschein ungültig');
+		alert('Wahlschein ungÃ¼ltig');
 	}
 }*/
 
@@ -172,7 +172,7 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj) {
 		this.setStep(3);
 
 	} else {
-		alert('Wahlschein nicht gültig'); // TODO provide a more detailed error message
+		alert('Wahlschein nicht gÃ¼ltig'); // TODO provide a more detailed error message
 	}
 
 };

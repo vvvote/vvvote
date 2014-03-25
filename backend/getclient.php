@@ -13,10 +13,10 @@ $includeJsFiles = Array(
 		'tools/sha256.js',
 		'tools/filehandling.js',
 
-		'config/config.js',
 		'exception.js',
 		'tools/mixed.js',
 		'tools/url.js',
+		'config/config.js',
 		'getelectionconfig.js',
 		'listoferrors.js',
 
@@ -42,7 +42,7 @@ $includeJsFiles = Array(
 		'tools/jsrsasign-master/ext/rsa2.js',
 		'tools/jsrsasign-master/ext/base64.js',
 
-		// geprüft, sind notwendig ######## es wird eval() verwendet #########
+		// geprÃ¼ft, sind notwendig ######## es wird eval() verwendet #########
 		#base64: wegen rstring2hex() -->
 		'tools/jsrsasign-master/base64x-1.1.js',
 		'tools/jsrsasign-master/crypto-1.1.js',
@@ -60,7 +60,7 @@ echo '
 		<!DOCTYPE html>
 		<html>
 			<head>
-				<meta charset="ISO-8859-1">
+				<meta charset="utf-8">
 				<title>VVVote</title>';
 
 // print all Javascript files 
@@ -71,7 +71,7 @@ foreach ($includeJsFiles as $f) {
 
 // print placeholder for JSON permission file
 echo "\n//placeholder for permission file\n";
-echo "//bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpßjntt\n";
+echo "//bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpÃŸjntt\n";
 echo '</script>';
 
 // print stylesheets
@@ -145,12 +145,12 @@ echo <<<EOT
 		</div>
 	</form>
 <p><h2>Weitere technische Information</h2><br>
-Der Wahlzettel ist digital von mindestens 2 Servern unterschrieben. Diese Unterschrift führt dazu, dass der Wahlzettel bei der Stimmabgabe akzeptiert wird.<br>
-Der Wahlzettel enthält eine eindeutige Wahlzettelnummer, die nur Ihr Computer kennt - sie wurde von Ihrem Computer erzeugt und verschlüsselt, bevor die Server den Wahlzettel unterschrieben haben, und danach auf Ihrem Computer entschlüsselt (Man spricht von &quot;Blinded Signature&quot;). Die Server kennen daher die Wahlzettelnummer nicht.<br>
+Der Wahlzettel ist digital von mindestens 2 Servern unterschrieben. Diese Unterschrift fÃ¼hrt dazu, dass der Wahlzettel bei der Stimmabgabe akzeptiert wird.<br>
+Der Wahlzettel enthÃ¤lt eine eindeutige Wahlzettelnummer, die nur Ihr Computer kennt - sie wurde von Ihrem Computer erzeugt und verschlÃ¼sselt, bevor die Server den Wahlzettel unterschrieben haben, und danach auf Ihrem Computer entschlÃ¼sselt (Man spricht von &quot;Blinded Signature&quot;). Die Server kennen daher die Wahlzettelnummer nicht.<br>
 Man kann sich das so vorstellen:<br> 
 Ihr Computer schreibt auf den Wahlzettel die Wahlzettelnummer, die er sich selbst &quot;ausdenkt&quot; (Zufallszahl). Dieser Wahlzettel wird zusammen mit einem Blatt Kohlepapier in einen Umschlag gelegt und an den Server geschickt. 
-Der Server unterschreibt außen auf dem Umschlag (wenn Sie wahlberechtigt sind), so dass sich die Unterschrift durch das Kohlepapier auf Ihren Wahlzettel überträgt. Ohne den Umschlag geöffnet zu haben (was der Server nicht kann, weil er den dafür notwendigen Schlüssel nicht kennt), schickt er den Brief an Ihren Computer zurück.
-Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und hält einen vom Server unterschriebenen Wahlzettel in der Hand, deren Nummer der Server nicht kennt.  
+Der Server unterschreibt auÃŸen auf dem Umschlag (wenn Sie wahlberechtigt sind), so dass sich die Unterschrift durch das Kohlepapier auf Ihren Wahlzettel Ã¼bertrÃ¤gt. Ohne den Umschlag geÃ¶ffnet zu haben (was der Server nicht kann, weil er den dafÃ¼r notwendigen SchlÃ¼ssel nicht kennt), schickt er den Brief an Ihren Computer zurÃ¼ck.
+Ihr Computer Ã¶ffnet den Umschlag (d.h. entschlÃ¼sselt die Wahlzettelnummer) und hÃ¤lt einen vom Server unterschriebenen Wahlzettel in der Hand, deren Nummer der Server nicht kennt.  
 </p>
 </div>
 </script>
@@ -219,8 +219,8 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und h
 	    	 GetElectionConfig.submitForm();
 	    	// TODO read phase from config and load votePage(generatePermssion), votePage(submitVote), getresult()
 		}
-		if (permission) {
-	    	 page = votePage; // TODO read phase from config and
+		if ('permission' in window) {
+		   	 page = votePage; // TODO read phase from config and
 		     page.display();
 		     BlindedVoterElection.onImportPermission(permission);
 		}

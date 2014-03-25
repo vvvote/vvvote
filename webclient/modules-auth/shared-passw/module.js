@@ -24,7 +24,7 @@ SharedPasswAuth.getMainContent = function(conf) {
 
 
 SharedPasswAuth.getConfigObtainedHtml = function () {
-	var ret = 'Teilen Sie den Wahlberechtigten auﬂerdem das Wahlpasswort mit.';
+	var ret = 'Teilen Sie den Wahlberechtigten au√üerdem das Wahlpasswort mit.';
 	return ret;
 };
 

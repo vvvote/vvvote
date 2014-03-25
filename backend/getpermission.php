@@ -3,16 +3,7 @@
 require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
 
 require_once 'exception.php';
-require_once 'Crypt/RSA.php';
-require_once 'modules-db/dbMySql.php'; 
-require_once 'dbelections.php';
-require_once 'modules-election/blindedvoter/election.php';
-require_once 'modules-auth/user-passw-list/auth.php';
-require_once 'modules-auth/shared-passw/auth.php';
-require_once 'modules-auth/oauth/auth.php';
-
-require_once 'config/conf-allservers.php';
-require_once 'config/conf-thisserver.php';
+require_once 'loadmodules.php';
 
 header("Content-type: text/plain");
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
@@ -34,32 +25,12 @@ header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
  */
 
 if (isset($HTTP_RAW_POST_DATA)) {
-	// echo $HTTP_RAW_POST_DATA;
-	//$db = new DbMySql(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PREFIX, DB_TYP);
-	// TODO avoid decoding the request twice
-	try{
-		$dbElections = new DbElections($dbInfos);
-		$reqdecoded = json_decode($HTTP_RAW_POST_DATA, true); // TODO error handling
-		if (! isset($reqdecoded['electionId'])) WrongRequestException::throwException(6010, 'Election id missing in client request', $HTTP_RAW_POST_DATA);
-		$elconfig = $dbElections->loadElectionConfigFromElectionId($reqdecoded['electionId']); // TODO error handling, e.g. issset($reqdecoded['electionId'])...
-		if (count($elconfig) < 1) {
-			WrongRequestException::throwException(6000, 'Election ID not found', "ElectionId you sent: " . $reqdecoded['electionId']);
-		}
-		switch ($elconfig['auth']) {
-			case 'userPassw': $auth = new UserPasswAuth($dbInfos); break;
-			case 'sharedPassw': $auth = new SharedPasswAuth($dbInfos); break;
-			case 'oAuth2': $auth = new OAuth2($dbInfos); break;
-			default: /* TODO return an error */ break;
-		}
-		$el = new Election($elconfig['electionId'],
-				$numVerifyBallots,
-				$numSignBallots,
-				$pServerKeys,
-				$serverkey,
-				$numAllBallots,
-				$numPSigsRequiered,
-				$dbInfos,
-				$auth);
+	$electionIdPlace = function ($a) {
+		if (! isset($a['electionId'])) WrongRequestException::throwException(7200, 'Election id missing in client request'	, $httpRawPostData);
+		return      $a['electionId'];
+	};
+		try{
+		$el = loadElectionModules($HTTP_RAW_POST_DATA, $electionIdPlace);
 		$result = $el->handlePermissionReq($HTTP_RAW_POST_DATA);
 		// print "\r\n";
 	} catch (ElectionServerException $e) {

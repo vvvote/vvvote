@@ -10,7 +10,7 @@ function GetElectionConfig(url, serverkeys, gotConfigObject, gotConfigMethod) {
 //	var kw = new URI(null, null);
 	try { // check the election-URL
 		if ( this.url.indexOf('http://') !== 0 && this.url.indexOf('https://') !== 0 ) {
-			throw new UserInputError(1000, "Bitte geben Sie einen gültigen Wahl-Link ein. Gültige Wahl-Links beginnen mit 'http://' oder 'https://'", url);
+			throw new UserInputError(1000, "Bitte geben Sie einen gÃ¼ltigen Wahl-Link ein. GÃ¼ltige Wahl-Links beginnen mit 'http://' oder 'https://'", url);
 		}
 		var query = URI.parseURL(url); // tools/url/
 		if (!query || !query.confighash) throw new UserInputError(1000, "The given election URL is not in the expected format (missing ? or confighash=)", url);

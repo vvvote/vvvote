@@ -103,7 +103,7 @@ function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, 
 		var testurl;
 		if (myXmlSend_.url.indexOf('?') > 0)	testurl = myXmlSend_.url + '&connectioncheck';
 		else                                	testurl = myXmlSend_.url + '?connectioncheck';
-		tmp = tmp + '<ul><li>Klicken Sie <a href="' + testurl + '" target="_blank">auf diesen Link, um die Verbindung zum Server manuell zu testen.</a> Der Link wird in einem neuen Fenster geöffnet.</li> <li>Beheben Sie das Problem,</li> <li>schließen Sie das neue Fenster und </li><li>klicken anschließend auf <button id="retry" name="retry" onclick="myXmlSend_(null, null, null, null)">erneut versuchen</button></li></ul></div>';
+		tmp = tmp + '<ul><li>Klicken Sie <a href="' + testurl + '" target="_blank">auf diesen Link, um die Verbindung zum Server manuell zu testen.</a> Der Link wird in einem neuen Fenster geÃ¶ffnet.</li> <li>Beheben Sie das Problem,</li> <li>schlieÃŸen Sie das neue Fenster und </li><li>klicken anschlieÃŸend auf <button id="retry" name="retry" onclick="myXmlSend_(null, null, null, null)">erneut versuchen</button></li></ul></div>';
 		tmp = tmp + '';
 		errorDiv.innerHTML = tmp;
 		// alert(errorDiv.innerHTML);
@@ -123,22 +123,23 @@ function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, 
 			diagnosisWindow.focus();
 		} catch (e) {
 			if (e instanceof TypeError) { // Pop-Up-Window blocked
-				alert('Es ist ein Fehler beim Aufbau einer Verbindung aufgetreten. Um den genauen Fehler anzuzeigen, wurde versucht, die Verbindung in einem neuen Fenster zu öffnen. Bitte lassen Sie das Pop-up-Fenster zu.');
+				alert('Es ist ein Fehler beim Aufbau einer Verbindung aufgetreten. Um den genauen Fehler anzuzeigen, wurde versucht, die Verbindung in einem neuen Fenster zu Ã¶ffnen. Bitte lassen Sie das Pop-up-Fenster zu.');
 			}
 		} */
 	};
 	try {
-		if (proxy && proxy.length > 0) {
+		if (myXmlSend_.proxy && myXmlSend_.proxy.length > 0) {
 //			var urlparts = URI.getParts(url);
-			myXmlSend_.url = proxy + url; // urlparts.pathname + urlparts.search +urlparts.hash;
+			myXmlSend_.url = myXmlSend_.proxy + url; // urlparts.pathname + urlparts.search +urlparts.hash;
 		}
 
 		xml2.open(myXmlSend_.method, myXmlSend_.url, true);
-		if (proxy && proxy.length > 0) {
+		/* unfortunately this does not work because setting requestHeader Host is prohibited for security reasons
+		if (myXmlSend_.proxy && myXmlSend_.proxy.length > 0) {
 			var urlparts = URI.getParts(url);
 			var realhost = urlparts.host;
 			xml2.setRequestHeader('Host', realhost);
-		}
+		} */
 		xml2.send(myXmlSend_.data);
 		if (myXmlSend_.log) userlog("\r\n\r\n--> gesendet an Server " + myXmlSend_.url + ': ' + myXmlSend_.data + "\r\n\r\n");
 		var errorDiv = document.getElementById("errorDiv");
