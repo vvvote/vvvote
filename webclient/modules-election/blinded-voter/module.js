@@ -15,7 +15,7 @@ savePermission.gotWebclient = function(xml) {
 	else { 
 		clientHtml = xml.responseText;
 		// put ballot in webclient
-		var find = /\/\/bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpßjntt/;
+		var find = /\/\/bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpÃŸjntt/;
 		var ballotWithClient = clientHtml.replace(find, 'permission=' + savePermission.ballot +';');
 		// load the electionId
 		var p = JSON.parse(savePermission.ballot); // ballot[0].transm contains the signed str which contains the electionId
@@ -47,7 +47,7 @@ function switchAction(result) {
 		break;
 	case 'savePermission':
 		delete(election.restart);
-		alert('Speichern Sie den Wahlschein!\n Zum Abstimmen klicken Sie auf "An Abstimmung teilnehmen" und wählen Sie unter der Überschrift "Ich habe bereits einen Wahlschein" den gespeicherten Wahlschein aus.'); //+ Wahlzettelinhalt: \n result.data);
+		// alert('Speichern Sie den Wahlschein!\n Zum Abstimmen klicken Sie auf "An Abstimmung teilnehmen" und wÃ¤hlen Sie unter der Ãœberschrift "Ich habe bereits einen Wahlschein" den gespeicherten Wahlschein aus.'); //+ Wahlzettelinhalt: \n result.data);
 		savePermission(result.data);
 		page.onPermGenerated();
 		// saveAs(result.data, 'ballots.json');
@@ -55,7 +55,7 @@ function switchAction(result) {
 	case 'serverError':
 		var servername = election.pServerList[election.pServerSeq[election.xthServer]].name;
 		var errortext = translateServerError(result.errorNo, result.errorText);
-		alert(servername + ' hat Ihr Anliegen zurückgewiesen (Fehlernr. '+ result.errorNo + "):\n" + errortext);
+		alert(servername + ' hat Ihr Anliegen zurÃ¼ckgewiesen (Fehlernr. '+ result.errorNo + "):\n" + errortext);
 		switch (result.errorNo) {
 		case 1: /* authorization failed */
 			page.onAuthFailed(election.xthServer);
@@ -75,7 +75,7 @@ function switchAction(result) {
 		  xml2.open('POST', 'http://www.webhod.ra/vvvote2/backend/tallyvote.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813', true);
 		  xml2.onload = function() { handleXmlAnswer(xml2); }; // quasi resursiv
 		  var element = document.getElementById('logtextarea'); 
-		  element.value = element.value + '--> gesendet an ' + ('Zählserver') + ' (' + 'TODO URL' + ') Server: ' + result.data + "\r\n\r\n";
+		  element.value = element.value + '--> gesendet an ' + ('ZÃ¤hlserver') + ' (' + 'TODO URL' + ') Server: ' + result.data + "\r\n\r\n";
 		  xml2.send(result.data);
 		  break; */
 	default:
@@ -165,11 +165,11 @@ BlindedVoterElection.getStep2Html = function() {
 
 BlindedVoterElection.getStep2HtmlDetails = function() {
 	var ret = '<p><h2>Weitere technische Information</h2>' +
-	'Der Wahlschein ist digital von mindestens 2 Servern unterschrieben. Diese Unterschrift führt dazu, dass der Wahlzettel bei der Stimmabgabe akzeptiert wird.<br> ' +
+	'Der Wahlschein ist digital von mindestens 2 Servern unterschrieben. Diese Unterschrift fÃ¼hrt dazu, dass der Wahlzettel bei der Stimmabgabe akzeptiert wird.<br> ' +
 	'Der Wahlschein enth&auml;lt eine eindeutige Wahlscheinnummer, die nur Ihr Computer kennt - sie wurde von Ihrem Computer erzeugt und verschl&uuml;sselt, bevor die Server den Wahlschein unterschrieben haben, und danach auf Ihrem Computer entschl&uml;sselt (Man spricht von &quot;Blinded Signature&quot;). Die Server kennen daher die Wahlscheinnummer nicht.<br> ' +
 	'Man kann sich das so vorstellen:<br>  ' +
 	'Ihr Computer schreibt auf den Wahlschein die Wahlscheinnummer, die er sich selbst &quot;ausdenkt&quot; (Zufallszahl). Dieser Wahlschein wird zusammen mit einem Blatt Kohlepapier in einen Umschlag gelegt und an den Server geschickt. ' + 
-	'Der Server unterschreibt außen auf dem Umschlag (wenn Sie wahlberechtigt sind), so dass sich die Unterschrift durch das Kohlepapier auf Ihren Wahlschein &uuml;berträgt. Ohne den Umschlag ge&ouml;ffnet zu haben (was der Server nicht kann, weil er den daf&uuml;r notwendigen Schl&uuml;ssel nicht kennt), schickt er den Brief an Ihren Computer zur&uuml;ck. ' +
+	'Der Server unterschreibt auÃŸen auf dem Umschlag (wenn Sie wahlberechtigt sind), so dass sich die Unterschrift durch das Kohlepapier auf Ihren Wahlschein &uuml;bertrÃ¤gt. Ohne den Umschlag ge&ouml;ffnet zu haben (was der Server nicht kann, weil er den daf&uuml;r notwendigen Schl&uuml;ssel nicht kennt), schickt er den Brief an Ihren Computer zur&uuml;ck. ' +
 	'Ihr Computer &ouml;ffnet den Umschlag (d.h. entschl&uuml;sselt die Wahlscheinnummer) und h&auml;lt einen vom Server unterschriebenen Wahlschein in der Hand, deren Nummer der Server nicht kennt.   ' +
 	'</p>';
 	return ret;
@@ -192,9 +192,9 @@ BlindedVoterElection.getPermissionHtml = function() {
 BlindedVoterElection.prototype.getPermGeneratedHtml = function() {
 	return '<h2>Wahlschein erfolgreich erstellt. </h2>' +
 	'<p>Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
-	'weiter! Er ist anonym, d.h. es kann ohne Ihre Mithilfe nicht festgestellt werden, wem er gehört.</p>' +
-	'<p>Zum Abstimmen klicken Sie oben auf &quot;An Abstimmung teilnehmen&quot; und ' +
-	'anschlie&szlig;end laden Sie unter der &Uuml;berschrift &quot;Ich habe bereits einen Wahlschein&quot; den soeben gespeicherten Wahlschein.</p>';
+	'weiter! Er ist anonym, d.h. es kann ohne Ihre Mithilfe nicht festgestellt werden, wem er geh&ouml;rt.</p>' +
+	'<p>Zum Abstimmen &ouml;ffnen Sie den Wahlschein im Internet-Browser. ' +
+	'Eine M&ouml;glichkeit dazu ist: Klicken Sie im Datei-Explorer doppelt auf die Wahlschein-Datei.</p>';
 };
 
 BlindedVoterElection.onClickedLoadFile = function(event) {
@@ -266,7 +266,7 @@ BlindedVoterElection.prototype.signVote = function (vote) {
 	var sig = bigInt2str(sigBI, 16);
 
 	// var publickey = str2key(this.permission.transm.signed.votingno);
-	/*	scheiß library ist fehlerhaft: Die PSS-Signatur ist nur manchmal korrekt.
+	/*	scheiÃŸ library ist fehlerhaft: Die PSS-Signatur ist nur manchmal korrekt.
 	 * var rsa = new RSAKey();
 	var coeffs = getHelpingNumbers(str2bigInt(privatekey.p, 16), str2bigInt(privatekey.q, 16), str2bigInt(privatekey.exp, 16), str2bigInt(privatekey.n, 16));
 	rsa.setPrivateEx(privatekey.n, 
@@ -306,12 +306,12 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 		// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
 		var sigOk = rsaVerifySig(voteitself, sig, pubkey);
 		if (sigOk) {
-			alert('Die Unterschrift unter der Stimme ist korrekt, d.h. die Stimme wurde nicht verändert.');
+			alert('Die Unterschrift unter der Stimme ist korrekt, d.h. die Stimme wurde nicht verÃ¤ndert.');
 		} else {
-			alert('Die Unterschrift unter der Stimme ist nicht korrekt, d.h. die Stimme wurde verändert oder der Schlüssel passt nicht.');
+			alert('Die Unterschrift unter der Stimme ist nicht korrekt, d.h. die Stimme wurde verÃ¤ndert oder der SchlÃ¼ssel passt nicht.');
 		}
 	} catch (e) {
-		alert("Fehler beim überprüfen der Signatur:\n" + e);
+		alert("Fehler beim Ã¼berprÃ¼fen der Signatur:\n" + e);
 	}
 
 	var transm = addBallothash(vote.permission.signed);
@@ -328,12 +328,12 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 			// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
 			sigOk = rsaVerifySig(transm.str, sig.sig, pubkey);
 			if (sigOk) {
-				alert('Die Unterschrift von Wahlberechtigungsserver >' + sig.sigBy + '< für den Abstimmungsschlüssel ist korrekt');
+				alert('Die Unterschrift von Wahlberechtigungsserver >' + sig.sigBy + '< fÃ¼r den AbstimmungsschlÃ¼ssel ist korrekt');
 			} else {
-				alert('Die Unterschrift von Wahlberechtigungsserver >' + sig.sigBy + '< für den Abstimmungsschlüssel ist nicht korrekt');
+				alert('Die Unterschrift von Wahlberechtigungsserver >' + sig.sigBy + '< fÃ¼r den AbstimmungsschlÃ¼ssel ist nicht korrekt');
 			}
 		} catch (e) {
-			alert("Fehler beim überprüfen der Signatur:\n" + e.toString());
+			alert("Fehler beim Ã¼berprÃ¼fen der Signatur:\n" + e.toString());
 		}
 	}
 
@@ -383,7 +383,7 @@ BlindedVoterElection.prototype.XhandleXmlAnswerGetAllPermissedBallots = function
 			for (var s in permission.sigs) {
 				for (var j=0; j<min(c.length, permission.sigs[s].length); j++) {
 					if (permission.sigs[s][0] != c[0]) {
-						alert('Bei Wähler >' + curr['voterId'] + '< gibt Server >' + s + '< eine anderen Reihenfolge der Unterschriften an als Server >' + x + '<.');}
+						alert('Bei WÃ¤hler >' + curr['voterId'] + '< gibt Server >' + s + '< eine anderen Reihenfolge der Unterschriften an als Server >' + x + '<.');}
 				}
 			}
 		}

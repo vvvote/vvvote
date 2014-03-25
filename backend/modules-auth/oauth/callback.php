@@ -198,9 +198,9 @@ if (!isset($_GET['code'])) {
 		$mayvoteBoolean = ($mayvote['result']['list'] === $listId && $mayvote['result'] == 1);
 
 
-		print '<big><u>Login für Abstimmungsserver 1 erfolgreich.</u></big>';
+		print '<big><u>Login fÃ¼r Abstimmungsserver 1 erfolgreich.</u></big>';
 		print '<ul><li>Schlie&szlig;en Sie jetzt dieses Fenster und </li>';
-		print '    <li>klicken Sie in dem urspr&uuml;nglichen Fenster auf den Knopf zum Login für Abstimmungsserver 2</li></ul>';
+		print '    <li>klicken Sie in dem urspr&uuml;nglichen Fenster auf den Knopf zum Login fÃ¼r Abstimmungsserver 2</li></ul>';
 		print '<button onClick="window.close();">Fenster schlie&szlig;en</button>';
 
 		$ret = array(
@@ -220,7 +220,7 @@ if (!isset($_GET['code'])) {
 		print '<br>Election config hash: ' . $electionhash;
 		print '<br>temp secret: ' . $tmpsecret;
 		print "<br>BEO-Anzeigename: " . $userprofile['result']['public_id'];
-		print ('<br>Mitglied der Piratenpartei: ' . $membership['result']['type'] . ', überprüft: ' . $membership['result']['verified']);
+		print ('<br>Mitglied der Piratenpartei: ' . $membership['result']['type'] . ', Ã¼berprÃ¼ft: ' . $membership['result']['verified']);
 		print "<br>jetzt: " . $now->format(DateTime::ATOM);
 		print ('</body>');
 		// var_dump($response, $response['result']);

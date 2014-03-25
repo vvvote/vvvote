@@ -45,7 +45,7 @@ $unblinded = $rsa->rsaUnblind($ciphered, $unblindf);
 print "entblinded: $unblinded";
 $rsa->loadKey($mykey['publickey']);
 $decrypted = $rsa->_rsaep($unblinded);
-print "<br>entschlüsselt: /$decrypted/ <br>";
+print "<br>entschlÃ¼sselt: /$decrypted/ <br>";
 
 # print_r($rsa);
 

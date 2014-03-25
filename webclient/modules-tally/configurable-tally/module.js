@@ -86,7 +86,7 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 			mc = mc + '</table>';
 			break;
 		default: 
-			alert('Client unterstützt das Abstimmsystem >' + tallyconfig.voteSystem.type + '< nicht');
+			alert('Client unterstÃ¼tzt das Abstimmsystem >' + tallyconfig.voteSystem.type + '< nicht');
 		}
 		if (qNo>0) {
 			mc = mc + '<button id="buttonPrevQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo-1)+')">Vorhergehende Frage</button>';
@@ -240,14 +240,14 @@ ConfigurableTally.test = function() {
 					 },
 					 "options":
 						 [
-						  { "optionID": 1, "optionText": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
+						  { "optionID": 1, "optionText": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende fÃ¼r die AuswahlknÃ¶pfe. Meine Prognose ist, dass NRW das anonyme Verfahren einfÃ¼hren wird. Was glauben Sie, stimmt das?" },
 						  { "optionID": 2, "optionText": "Ja, rechtsherum" },
 						  { "optionID": 3, "optionText": "Nein. Ab durch die Mitte!" },
 						  { "optionID": 4, "optionText": "Jein. Wir drehen durch." }
 						  ],
 						  "references":
 							  [
-							   { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
+							   { "referenceName":"Abschlussparty und AuflÃ¶sung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
 							   { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
 							   ]
 				 },
@@ -264,14 +264,14 @@ ConfigurableTally.test = function() {
 					 },
 					 "options":
 						 [
-						  { "optionID": 1, "optionText": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
+						  { "optionID": 1, "optionText": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende fÃ¼r die AuswahlknÃ¶pfe. Meine Prognose ist, dass NRW das anonyme Verfahren einfÃ¼hren wird. Was glauben Sie, stimmt das?" },
 						  { "optionID": 2, "optionText": "Ja, rechtsherum" },
 						  { "optionID": 3, "optionText": "Nein. Ab durch die Mitte!" },
 						  { "optionID": 4, "optionText": "Jein. Wir drehen durch." }
 						  ],
 						  "references":
 							  [
-							   { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
+							   { "referenceName":"Abschlussparty und AuflÃ¶sung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
 							   { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
 							   ]
 				 },
@@ -288,13 +288,13 @@ ConfigurableTally.test = function() {
 					 "options":
 						 [
 						  { "optionID":1, "optionText": "Ja. Befriedigung! Ha!"},
-						  { "optionID":2, "optionText": "Ja. Streit und Ärger."},
-						  { "optionID":3, "optionText": "nö, aber wir machen's dennoch" },
+						  { "optionID":2, "optionText": "Ja. Streit und Ã„rger."},
+						  { "optionID":3, "optionText": "nÃ¶, aber wir machen's dennoch" },
 						  { "optionID":4, "optionText": "Huch? Das macht noch jemand?" }
 						  ],
 						  "references":
 							  [                
-							   { "referenceName":"piff paff puff kappotschießen", "referenceAddress":"https://twitter.com/czossi/status/436217916803911680/photo/1" }
+							   { "referenceName":"piff paff puff kappotschieÃŸen", "referenceAddress":"https://twitter.com/czossi/status/436217916803911680/photo/1" }
 							   ]
 				 }
 				 ],

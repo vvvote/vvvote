@@ -42,7 +42,6 @@ class Election {
 		$this->auth				= $auth_;
 		$this->crypt            = new Crypt($pServerKeys_, $serverkey_);
 		$this->numSigsRequiered = $numSigsRequiered_;
-		
 	}
 
 

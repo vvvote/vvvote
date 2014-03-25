@@ -34,26 +34,26 @@ PublishOnlyTelly.prototype.sendVote = function () {
 	
 	var transmstr = JSON.stringify(transm);
 	var me = this;
-	myXmlSend(ClientConfig.tallyUrl, transmstr, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
+	myXmlSend(ClientConfig.storeVoteUrl, transmstr, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
 };
 
 
 PublishOnlyTelly.prototype.handleServerAnswerStoreVote = function (xml) {
 	try {
 		var data = parseServerAnswer(xml, true);
+		// TODO check voting server sig
 		switch (data.cmd) {
 		case 'saveYourCountedVote':
 			Page.loadMainContent('Vielen Dank f&uuml;r Ihre Stimme!');
 			alert('Stimme wurde vom Server akzeptiert!');
 			break;
 		case 'error':
-			alert('Der Server hat die Stimme nicht akzeptiert.\ Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
+			alert('Der Server hat die Stimme nicht akzeptiert. Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
 			break;
 		default:
 			throw new ErrorInServerAnswer(2002, 'Error: Expected >saveYourCountedVote<', 'Got from server: ' + data.cmd);
 		break;
 		}
-		// TODO check voting server sig
 	} catch (e) {
 		if (e instanceof MyException ) {e.alert();}
 		else {throw e;}
@@ -68,7 +68,7 @@ PublishOnlyTelly.prototype.handleUserClickGetAllVotes = function () {
 	data.electionId = this.config.electionId;
 	var datastr = JSON.stringify(data);
 	// TODO add auth to data
-	myXmlSend(ClientConfig.tallyUrl, datastr, me, me.handleServerAnswerVerifyCountVotes);
+	myXmlSend(ClientConfig.getResultUrl, datastr, me, me.handleServerAnswerVerifyCountVotes);
 };
 
 PublishOnlyTelly.prototype.findMyVote = function() {

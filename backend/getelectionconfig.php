@@ -44,7 +44,7 @@ if (isset ($hash)) {
 	 		'electionId' => $electionId,
 	 		'auth'       => 'userPassw',
 	 		'blinding'   => 'blindedVoter',
-	 		'ballot'     => array('opt1' => 'Europäische Zentralbank soll künftig direkt Kredit an Staaten geben', 'opt2' => 'Europäische Zentralbank soll weiterhin keine Kredite an Staaten geben dürfen'),
+	 		'ballot'     => array('opt1' => 'EuropÃ¤ische Zentralbank soll kÃ¼nftig direkt Kredit an Staaten geben', 'opt2' => 'EuropÃ¤ische Zentralbank soll weiterhin keine Kredite an Staaten geben dÃ¼rfen'),
 	 		'tally'      => 'publishOnly'
 	 );
 	*/

@@ -18,6 +18,7 @@ if(count(get_included_files()) < 2) {
 
 require_once __DIR__ . '/../../crypt.php';
 require_once __DIR__ . '/../../exception.php';
+require_once __DIR__ . '/../../tally.php';
 require_once __DIR__ . '/dbPublishOnlyTally.php';
 
 /**
@@ -26,7 +27,7 @@ require_once __DIR__ . '/dbPublishOnlyTally.php';
  * @author r
  *
  */
-class PublishOnlyTelly {
+class PublishOnlyTelly extends Tally {
 	var $db;
 	var $crypt;
 	var $election;
