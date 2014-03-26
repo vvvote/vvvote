@@ -10,6 +10,13 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 	var mc =
 		'<p id="ballotName">' + tallyconfig.ballotName + '</p>';
 
+	mc = mc + '<div id="divVoteQuestions">';
+	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
+		mc = mc + '<p class="voteQuestion" id="voteQuestion'+tallyconfig.questions[qNo].questionID+'">' + tallyconfig.questions[qNo].questionWording + '</p>';
+		mc = mc + '<button id="buttonQid'+qNo+'" onclick="ConfigurableTally.showQuestion(' +qNo+');">An Abstimmung teilnehmen</button>';	}
+	mc = mc + '</div>';
+
+
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
 		mc = mc + '<div id="divVoteQuestion'+tallyconfig.questions[qNo].questionID+'">';
 		mc = mc + '<p class="voteQuestion" id="voteQuestion'+tallyconfig.questions[qNo].questionID+'">' + tallyconfig.questions[qNo].questionWording + '</p>';
@@ -209,7 +216,7 @@ ConfigurableTally.buttonStep = function(qNo, forward) {
 };
 
 ConfigurableTally.getInputs = function() {
-	
+
 };
 
 
@@ -253,7 +260,7 @@ ConfigurableTally.test = function() {
 				 },
 				 {
 					 "questionID":2,
-					 "questionWording":"Drehen wir uns im Kreis?",
+					 "questionWording":"Drehen wir uns im Kreis? (nur ja nein)",
 					 "voteSystem":
 					 {
 						 "type": "score",
@@ -296,12 +303,37 @@ ConfigurableTally.test = function() {
 							  [                
 							   { "referenceName":"piff paff puff kappotschießen", "referenceAddress":"https://twitter.com/czossi/status/436217916803911680/photo/1" }
 							   ]
+				 },
+				 {
+					 "questionID":4,
+					 "questionWording":"SÄA30: Modul 1: Basisentscheid in NRW einführen<br>Modul 2: Basisentscheid online anonym ermöglichen<br>Modul 3: Auch Programmanträge im Basisentscheid zulassen",
+					 "voteSystem":
+					 {
+						 "type": "score",
+						 "min-score": -3,
+						 "max-score": 3,
+						 "abstention": true,
+						 "steps": "yesNo score"
+					 },
+					 "options":
+						 [
+						  { "optionID": 1, "optionText": "SÄA30: Modul 1: Basisentscheid in NRW einführen" },
+						  { "optionID": 2, "optionText": "Modul 2: Basisentscheid online anonym ermöglichen" },
+						  { "optionID": 3, "optionText": "Modul 3: Auch Programmanträge im Basisentscheid zulassen" },
+						  { "optionID": 4, "optionText": "SÄA XY: Ständige Mitgliederversammlung einführen" }
+						  ],
+						  "references":
+							  [
+							   { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
+							   { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
+							   ]
 				 }
 				 ],
 				 "references":
 					 [
 					  {"referenceName":"Piratenpartei","referenceAddress":"https://piratenpartei.de/"}
 					  ]
+
 	};
 
 	var mc = ConfigurableTally.getMainContent(tallyConfig);
