@@ -236,7 +236,7 @@ ConfigurableTally.test = function() {
 				[
 				 {
 					 "questionID":1,
-					 "questionWording":"Drehen wir uns im Kreis?",
+					 "questionWording":"Drehen wir uns im Kreis? (zweistufig)",
 					 "voteSystem":
 					 {
 						 "type": "score",
@@ -260,7 +260,7 @@ ConfigurableTally.test = function() {
 				 },
 				 {
 					 "questionID":2,
-					 "questionWording":"Drehen wir uns im Kreis? (nur ja nein)",
+					 "questionWording":"Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
 					 "voteSystem":
 					 {
 						 "type": "score",
@@ -306,7 +306,7 @@ ConfigurableTally.test = function() {
 				 },
 				 {
 					 "questionID":4,
-					 "questionWording":"SÄA30: Modul 1: Basisentscheid in NRW einführen<br>Modul 2: Basisentscheid online anonym ermöglichen<br>Modul 3: Auch Programmanträge im Basisentscheid zulassen",
+					 "questionWording":"SÄA30: Modul 1: Basisentscheid in NRW einführen<br>SÄA30: Modul 2: Basisentscheid online anonym ermöglichen<br>SÄA30: Modul 3: Auch Programmanträge im Basisentscheid zulassen<br>SÄA XY: Ständige Mitgliederversammlung einführen",
 					 "voteSystem":
 					 {
 						 "type": "score",
