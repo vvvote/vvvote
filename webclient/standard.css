@@ -239,6 +239,16 @@ input[type="range"]::-ms-fill-lower {
 	 height: 8px;
 }
 */
+.votingOption {
+	border: 2px solid #6678b1;
+}
+
+.votingOption h1{
+	color: darkblue !important;
+	font-size: 24px;
+}
+
+
 .votingOptionText:hover {
 	outline: 2px solid #6678b1;
 	cursor: move;
