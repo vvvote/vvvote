@@ -16,25 +16,41 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 	elp.setAttribute('id', 'ballotName');
 	fragm.appendChild(elp);
 	mc = mc + '<div id="divVoteQuestions">';
-	var elp = document.createElement('div');
-	elp.setAttribute('id', 'divVoteQuestions');
-	fragm.appendChild(elp);
+	var divNode = document.createElement('div');
+	divNode.setAttribute('id', 'divVoteQuestions');
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
 		mc = mc + '<p class="voteQuestion" id="voteQuestion'+tallyconfig.questions[qNo].questionID+'">' + tallyconfig.questions[qNo].questionWording + '</p>';
 		var elp = document.createElement('p');
 		elp.setAttribute('class', 'voteQuestion');
 		elp.setAttribute('id'   , 'voteQuestion'+tallyconfig.questions[qNo].questionID);
-		elp.appendChild(document.createTextNode(tallyconfig.questions[qNo].questionWording));
-		fragm.appendChild(elp);
+		elp.appendChild(wikiSyntax2DOMFrag(tallyconfig.questions[qNo].questionWording));
+		divNode.appendChild(elp);
 		if (tallyconfig.questions[qNo].references.length > 0) {
 			mc = mc + '<ul>';
+			var listnode = document.createElement('ul');
 			for (var refNo=0; refNo<tallyconfig.questions[qNo].references.length; refNo++) {
 				mc = mc + '<li><a href="' + tallyconfig.questions[qNo].references[refNo].referenceAddress +'" target="_blank">' + tallyconfig.questions[qNo].references[refNo].referenceName +'</a></li>';
+				var elp = document.createElement('a');
+				elp.setAttribute('href', tallyconfig.questions[qNo].references[refNo].referenceAddress);
+				elp.setAttribute('target', '_blank');
+				elp.appendChild(document.createTextNode(tallyconfig.questions[qNo].references[refNo].referenceName));
+				var elp2 = document.createElement('li');
+				elp2.appendChild(elp);
+				listnode.appendChild(elp2);
 			}
 			mc = mc + '</ul>';
+			divNode.appendChild(listnode);
 		}
-		mc = mc + '<button id="buttonQid'+qNo+'" onclick="ConfigurableTally.showQuestion(' +qNo+');">An Abstimmung teilnehmen</button>';	}
+		mc = mc + '<button id="buttonQid'+qNo+'" onclick="ConfigurableTally.showQuestion(' +qNo+');">An Abstimmung teilnehmen</button>';
+		var elp = document.createElement('button');
+		elp.setAttribute('id'	  , 'buttonQid'+qNo);
+		elp.setAttribute('onclick', 'ConfigurableTally.showQuestion(' +qNo+')');
+		var elp2 = document.createTextNode('An Abstimmung teilnehmen');
+		elp.appendChild(elp2);
+		divNode.appendChild(elp);
+	}
 	mc = mc + '</div>';
+	fragm.appendChild(divNode);
 
 
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
@@ -129,7 +145,7 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 		else 	mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo+1)+');">N&auml;chste Frage</button>';
 		mc = mc + '</div>'; // end div question
 	}
-	var fragm = WikiSyntax2DOMFrag("= Ziele meiner politischen Arbeit =\n\
+	var fragm2 = wikiSyntax2DOMFrag("= Ziele meiner politischen Arbeit =\n\
 == Wirtschaft ==\n\
 * Mehr Transparenz, mehr Möglichkeiten für die Bürger, sich an politischen Entscheidungsprozessen zu beteiligen; barrierefreie Politik\n\
 * Der Mensch muss im Mittelpunkt der Politik stehen: Auch Wirtschaftspolitik ist für den Menschen da, nicht für die Unternehmen. Die Unternehmen sind aber Mittel zu dem Zweck, Wohlstand für die Menschen zu schaffen.\n\
@@ -155,9 +171,17 @@ normal'''''fett+kursiv''nicht mehr kursiv'''normal\n\
 \n\
 normal''kursiv'''+fett''nicht mehr kursiv'''normal\n\
 \n\
-normal <s>durchgestrichen '''''+fett+kursiv</s>nicht mehr durchgestrichen''Nicht mehr kursiv'''Normal");
-	
+normal <s>durchgestrichen '''''+fett+kursiv</s>nicht mehr durchgestrichen''Nicht mehr kursiv'''Normal\n\
+\n\
+normal<u>unterst\n\
+richen</u>normal\n\
+\n\
+normal<u>unterst\n\
+\n\
+richen</u>normal		");
+
 	document.getElementById('maincontent').appendChild(fragm);
+	document.getElementById('maincontent').appendChild(fragm2);
 	return mc;
 };
 
@@ -361,7 +385,7 @@ ConfigurableTally.test = function() {
 				 },
 				 {
 					 "questionID":4,
-					 "questionWording":"SÄA30: Modul 1: Basisentscheid in NRW einführen<br>SÄA30: Modul 2: Basisentscheid online anonym ermöglichen<br>SÄA30: Modul 3: Auch Programmanträge im Basisentscheid zulassen<br>SÄA XY: Ständige Mitgliederversammlung einführen",
+					 "questionWording":"* SÄA30: Modul 1: Basisentscheid in NRW einführen\n* SÄA30: Modul 2: Basisentscheid online anonym ermöglichen\n* SÄA30: Modul 3: Auch Programmanträge im Basisentscheid zulassen\n* SÄA XY: Ständige Mitgliederversammlung einführen",
 					 "voteSystem":
 					 {
 						 "type": "score",
@@ -376,13 +400,13 @@ ConfigurableTally.test = function() {
 						  { "optionID": 2, "optionText": "SÄA 18: Modul 1: 2014 keine Ressourcen für SMV bereitstellen", "optionDesc": "Das Thema SMV soll 2014 (mindestens für die Amtsperiode des derzeitgen Landesvorstandes) keine Rolle mehr spielen. Es soll insbesondere keinerlei finanzielle Förderung oder Bereitstellung von IT Infrastruktur aus Landesmitteln stattfinden." },
 						  { "optionID": 3, "optionText": "SÄA 18: Modul 2: Entwicklung auf Bundesebene abwarten", "optionDesc": "Das Thema SMV soll auf Landesebene erst wieder aktiv behandelt werden, wenn es auf Bundesebene neue Entscheidungen oder Entwicklungen zum Thema SMV gibt (z.B. Bestätigung eines Tools, Satzungsänderungen)."  },
 						  { "optionID": 4, "optionText": "SÄA 19: SMV Option 2 Ständige Mitgliederversammlung nur auf Totholz einführen", "optionDesc": "Der Landesparteitag möge beschliessen, der Satzung an geeigneter Stelle einen Abschnitt \"Basisentscheid und Basisbefragung\" mit folgendem Wortlaut hinzuzufügen: (Anmerkung 1: Der Text entspricht bis auf die hier durch Streichung bzw Fettschrift kenntlich gemachten Teile dem angenommenen SÄA003 (http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2013.1/Antragsportal/SÄA003) aus Neumarkt.)<br>\
-(Anmerkung 2: Die parallel dazu vorgeschlagene Entscheidsordnung weicht deutlich von X011 (http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2013.1/Antragsportal/X011) aus Neumarkt ab.) \
-<p>(1) Die Mitglieder fassen in einem Basisentscheid einen Beschluss, der einem des Landesparteitags gleichsteht. Ein Beschluss zu Sachverhalten, die dem Landesparteitag vorbehalten sind oder eindeutig dem Parteiprogramm widersprechen, gilt als Basisbefragung mit lediglich empfehlenden Charakter. Urabstimmungen gemäß §6 (2) Nr.11 PartG werden in Form eines Basisentscheids durchgeführt, zu dem alle stimmberechtigten Mitglieder in Textform eingeladen werden. Die nachfolgenden Bestimmungen für Anträge bzw. Abstimmungen gelten sinngemäß auch für Personen bzw. Wahlen.</p>\
-<p>(2) Teilnahmeberechtigt sind alle persönlich identifizierten, am Tag der Teilnahme stimmberechtigten Mitglieder gemäß §4(4) der Bundessatzung, die mit ihren Mitgliedsbeiträgen nicht im Rückstand sind. Um für Quoren und Abstimmungen berücksichtigt zu werden, müssen sich die teilnahmeberechtigten Mitglieder zur Teilnahme anmelden.</p>\
-<p>(3) Über einen Antrag wird nur abgestimmt, wenn er innerhalb eines Zeitraums ein Quorum von Teilnehmern als Unterstützer erreicht oder vom Bundesparteitag eingebracht wird. Der Landesvorstand darf organisatorische Anträge einbringen. Konkurrierende Anträge zu einem Sachverhalt können rechtzeitig vor der Abstimmung eingebracht und für eine Abstimmung gebündelt werden. Eine erneute Abstimmung über den gleichen oder einen sehr ähnlichen Antrag ist erst nach Ablauf einer Frist zulässig, es sei denn die Umstände haben sich seither maßgeblich geändert. Über bereits erfüllte, unerfüllbare oder zurückgezogene Anträge wird nicht abgestimmt. Der Landesparteitag soll die bisher nicht abgestimmten Anträge behandeln.</p>\
-<p>(4) Vor einer Abstimmung werden die Anträge angemessen vorgestellt und zu deren Inhalt eine für alle Teilnehmer zugängliche Debatte gefördert. Die Teilnahme an der Debatte und Abstimmung muss für die Mitglieder zumutbar und barrierefrei sein. Anträge werden nach gleichen Maßstäben behandelt. Mitglieder bzw. Teilnehmer werden rechtzeitig über mögliche Abstimmungstermine bzw. die Abstimmungen in Textform informiert.</p>\
-<p>(5) Die Teilnehmer haben gleiches Stimmrecht, das sie selbstständig und frei innerhalb des Abstimmungszeitraums ausüben. Abstimmungen außerhalb des Parteitags erfolgen entweder pseudonymisiert oder geheim. Bei pseudonymisierter Abstimmung kann jeder Teilnehmer die unverfälschte Erfassung seiner eigenen Stimme im Ergebnis überprüfen und nachweisen. Bei personellen Sachverhalten oder auf Antrag einer Minderheit muss die Abstimmung geheim erfolgen. In einer geheimen Abstimmung sind die einzelnen Schritte für jeden Teilnehmer ohne besondere Sachkenntnisse nachvollziehbar und die Stimmabgabe erfolgt nicht elektronisch. Die Manipulation einer Abstimmung oder die Veröffentlichung von Teilergebnissen vor Abstimmungsende sind ein schwerer Verstoß gegen die Ordnung der Partei.</p>\
-<p>(6) Das Nähere regelt die Entscheidsordnung, welche durch den Landesparteitag beschlossen wird und auch per Basisentscheid geändert werden kann.</p>" },
+							  (Anmerkung 2: Die parallel dazu vorgeschlagene Entscheidsordnung weicht deutlich von X011 (http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2013.1/Antragsportal/X011) aus Neumarkt ab.) \
+							  <p>(1) Die Mitglieder fassen in einem Basisentscheid einen Beschluss, der einem des Landesparteitags gleichsteht. Ein Beschluss zu Sachverhalten, die dem Landesparteitag vorbehalten sind oder eindeutig dem Parteiprogramm widersprechen, gilt als Basisbefragung mit lediglich empfehlenden Charakter. Urabstimmungen gemäß §6 (2) Nr.11 PartG werden in Form eines Basisentscheids durchgeführt, zu dem alle stimmberechtigten Mitglieder in Textform eingeladen werden. Die nachfolgenden Bestimmungen für Anträge bzw. Abstimmungen gelten sinngemäß auch für Personen bzw. Wahlen.</p>\
+							  <p>(2) Teilnahmeberechtigt sind alle persönlich identifizierten, am Tag der Teilnahme stimmberechtigten Mitglieder gemäß §4(4) der Bundessatzung, die mit ihren Mitgliedsbeiträgen nicht im Rückstand sind. Um für Quoren und Abstimmungen berücksichtigt zu werden, müssen sich die teilnahmeberechtigten Mitglieder zur Teilnahme anmelden.</p>\
+							  <p>(3) Über einen Antrag wird nur abgestimmt, wenn er innerhalb eines Zeitraums ein Quorum von Teilnehmern als Unterstützer erreicht oder vom Bundesparteitag eingebracht wird. Der Landesvorstand darf organisatorische Anträge einbringen. Konkurrierende Anträge zu einem Sachverhalt können rechtzeitig vor der Abstimmung eingebracht und für eine Abstimmung gebündelt werden. Eine erneute Abstimmung über den gleichen oder einen sehr ähnlichen Antrag ist erst nach Ablauf einer Frist zulässig, es sei denn die Umstände haben sich seither maßgeblich geändert. Über bereits erfüllte, unerfüllbare oder zurückgezogene Anträge wird nicht abgestimmt. Der Landesparteitag soll die bisher nicht abgestimmten Anträge behandeln.</p>\
+							  <p>(4) Vor einer Abstimmung werden die Anträge angemessen vorgestellt und zu deren Inhalt eine für alle Teilnehmer zugängliche Debatte gefördert. Die Teilnahme an der Debatte und Abstimmung muss für die Mitglieder zumutbar und barrierefrei sein. Anträge werden nach gleichen Maßstäben behandelt. Mitglieder bzw. Teilnehmer werden rechtzeitig über mögliche Abstimmungstermine bzw. die Abstimmungen in Textform informiert.</p>\
+							  <p>(5) Die Teilnehmer haben gleiches Stimmrecht, das sie selbstständig und frei innerhalb des Abstimmungszeitraums ausüben. Abstimmungen außerhalb des Parteitags erfolgen entweder pseudonymisiert oder geheim. Bei pseudonymisierter Abstimmung kann jeder Teilnehmer die unverfälschte Erfassung seiner eigenen Stimme im Ergebnis überprüfen und nachweisen. Bei personellen Sachverhalten oder auf Antrag einer Minderheit muss die Abstimmung geheim erfolgen. In einer geheimen Abstimmung sind die einzelnen Schritte für jeden Teilnehmer ohne besondere Sachkenntnisse nachvollziehbar und die Stimmabgabe erfolgt nicht elektronisch. Die Manipulation einer Abstimmung oder die Veröffentlichung von Teilergebnissen vor Abstimmungsende sind ein schwerer Verstoß gegen die Ordnung der Partei.</p>\
+						  <p>(6) Das Nähere regelt die Entscheidsordnung, welche durch den Landesparteitag beschlossen wird und auch per Basisentscheid geändert werden kann.</p>" },
 						  { "optionID": 5, "optionText": "SÄA 19: Modul 1: Änderung der Entscheidsordnung durch den Basisentscheid", "optionDesc": "Abschnitt (6) wird ersetzt durch:<p>(6) Das Nähere regelt die Entscheidsordnung, welche durch den Landesparteitag beschlossen wird und auch per Basisentscheid geändert werden kann.</p>" },
 						  { "optionID": 6, "optionText": "SÄA 19: Modul 2: An die Arbeit !", "optionDesc": "Regionale und kommunale Gliederungen ausreichender Größe sind aufgefordert, spätestens nach der kommenden Kommunalwahl mit der Gründung von Urnen zu beginnen. Der Landesvorstand ist aufgefordert durch Ausschreibungen (oder sofern nötig & möglich auch durch Wahlen noch auf dem LPT), entsprechendes Personal für die Organisation und Durchführung zu finden und entsprechend zu beauftragen." },
 						  { "optionID": 7, "optionText": "SÄA30: Modul 1: Basisentscheid in NRW einführen", "optionDesc": "" },
