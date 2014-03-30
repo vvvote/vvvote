@@ -235,4 +235,192 @@ function shuffleArray(arrayOrig) {
 	return array;
 }
 
+/**
+ * 
+ */
+function WikiSyntax2DOMFrag(wikisyntax) {
+	// \n == \r\n --> <p>
+	// \n* --> <ul><li>
+	// \n= TEXT = --> <h1>
+	// \n== TEXT == --> <h2>
+	// \n=== TEXT === --> <h3>
+	// \n==== TEXT ==== --> <h4>
+	// \n===== TEXT ===== --> <h5>
+	// \n====== TEXT ====== --> <h6>
+	// \n# --> <ol><li>
+	// '' --> <i>
+	// ''' --> <b>
+	// ''''' --> <i><b>
+	// new line ends: list, i, b, ib, h1, h2, h3, h4, h5, h6 =
+	// new line does not end: p
+	function charFormat(row, frag, openTag) {
+		var tags = [{"wikiOpen": "''" , 'wikiClose': "''"  , 'html': 'i' },
+		            {'wikiOpen': "'''", 'wikiClose': "'''" , 'html': 'b' },
+		            {'wikiOpen': "<s>", 'wikiClose': "</s>", 'html': 'strike' }
+		            ];
+//		var ret;
+//		var matched = false;
+//		if (frag == null) frag = document.createDocumentFragment();
+
+		// find the first tag
+		var firstmatch = Number.MAX_VALUE;
+		var firstTag = '';
+		var firstTagNo = -1;
+		for (var tagNo = 0; tagNo < tags.length; tagNo++) {
+			var pos = row.search(tags[tagNo].wikiOpen);
+			if (pos >= 0 && firstmatch >= pos) {
+				firstmatch = pos;
+				firstTagNo = tagNo;
+				firstTag = tags[tagNo].html;
+			}
+		}
+		if (firstTag.length === 0) { // no tag found
+			var e = document.createTextNode(row);
+			return {"fragm": e, "openTags":''};
+		} else { // tag found
+			//find matching closing tag
+			var secondMatch = row.substr(firstmatch + tags[firstTagNo].wikiOpen.length).search(tags[firstTagNo].wikiClose);
+			// do some magic in order to solve the problem that ''' is matching '' and ''' - solve it the same way as the wiki does: look ahead if a later '' is there
+			if (firstTag === 'i' && row.substr(firstmatch + tags[firstTagNo].wikiOpen.length).search("'''")) {
+				var secondMatch2a = row.substr(firstmatch + tags[firstTagNo].wikiOpen.length + secondMatch + tags[firstTagNo].wikiClose.length).search("[^']" + tags[firstTagNo].wikiClose + "[^']");
+				var secondMatch2b = row.substr(firstmatch + tags[firstTagNo].wikiOpen.length + secondMatch + tags[firstTagNo].wikiClose.length).search("[^']" + tags[firstTagNo].wikiClose + "$");
+				if (secondMatch2a >= 0 || secondMatch2b >=0 ) {
+					if (secondMatch2a < 0) secondMatch2a = Number.MAX_VALUE;
+					if (secondMatch2b < 0) secondMatch2b = Number.MAX_VALUE;
+					secondMatch = Math.min(secondMatch2a, secondMatch2b) + 1 + secondMatch + tags[firstTagNo].wikiClose.length;
+				}
+			}
+
+			var fragm = document.createDocumentFragment();
+			var beforeNode = document.createTextNode(row.substr(0, firstmatch));
+			var taggedNode = document.createElement(tags[firstTagNo].html);
+			var innerNode;
+			if (secondMatch >= 0)	innerNode = charFormat(row.substr(firstmatch + tags[firstTagNo].wikiOpen.length, secondMatch));
+			else					innerNode = charFormat(row.substr(firstmatch + tags[firstTagNo].wikiOpen.length));
+			taggedNode.appendChild(innerNode.fragm);
+			fragm.appendChild(beforeNode);
+			fragm.appendChild(taggedNode);
+			var openTags;
+			if (secondMatch >= 0) { // closing tag found
+				var afterNode  = charFormat(innerNode.openTags +'\u180E'+ row.substr(firstmatch + tags[firstTagNo].wikiOpen.length + secondMatch + tags[firstTagNo].wikiClose.length));
+				fragm.appendChild(afterNode.fragm);
+				openTags = afterNode.openTags;
+			} else { // closing tag not found
+				openTags = innerNode.openTags +'\u180E' + tags[firstTagNo].wikiOpen;
+			}
+			return {'fragm': fragm, 'openTags': openTags};
+		}
+		var e;
+		if (tags[firstTagNo].html === openTag) { // closing tag found	
+			e = document.createTextNode(row.substr(0, firstmatch));
+//			var secondPartInput = row.substr(firstmatch + tags[firstTagNo].wiki.length);
+//			if (secondPartInput.length > 0) e.appendChild(charFormat(secondPartInput, frag, '')); // TODO instead of '' use parent open tag
+			return e;
+		} else { // opening tag found 									
+			var secondPartInput = row.substr(firstmatch + tags[firstTagNo].wiki.length);
+			if (secondPartInput.length > 0) e.appendChild(charFormat(secondPartInput, frag, '')); // TODO instead of '' use parent open tag
+			if (firstmatch > 0)	e = document.createTextNode(row.substr(0, firstmatch+1));
+			else				e = document.createElement(tags[firstTagNo].html);
+			if (e.appendChild(charFormat(row.substr(firstmatch + tags[firstTagNo].wiki.length), frag, tags[firstTagNo].html)));
+			return e;
+		}
+	}
+
+
+	var fragm = document.createDocumentFragment();
+	var rows = wikisyntax.split("\n");
+	var ulLevel = 0;
+	var olLevel = 0;
+	var matched = false;
+	var prevTag = '';
+	var prevNode = document.createElement('div');
+	for (var rowNo in rows) {
+		matched = false;
+		if (rows[rowNo].substring(0, '* '.length) === '* ') { // unordered list item
+			matched = true;
+			if (prevTag !== 'li') {
+				if (fragm !== prevNode)	fragm.appendChild(prevNode);
+				prevNode = document.createElement('ul');
+			}
+			var li = document.createElement('li');
+			var textn = document.createTextNode(rows[rowNo].substring(2));
+			li.appendChild(textn);
+			prevNode.appendChild(li);
+			prevTag = 'li';
+		}
+		if (rows[rowNo].search(/====== (.*) ======/) >= 0) { // h6
+			matched = true;
+			var h = document.createElement('h6');
+			var textn = document.createTextNode(rows[rowNo].replace(/====== (.*) ======/, "$1"));
+			h.appendChild(textn);
+			fragm.appendChild(h);
+			prevNode = fragm;
+			prevTag = "h6";
+		}
+		if (!matched && rows[rowNo].search(/===== (.*) =====/) >= 0) { // h5
+			matched = true;
+			var h = document.createElement('h5');
+			var textn = document.createTextNode(rows[rowNo].replace(/===== (.*) =====/, "$1"));
+			h.appendChild(textn);
+			fragm.appendChild(h);
+			prevNode = fragm;
+			prevTag = "h5";
+		}
+		if (!matched && rows[rowNo].search(/==== (.*) ====/) >= 0) { // h4
+			matched = true;
+			var h = document.createElement('h4');
+			var textn = document.createTextNode(rows[rowNo].replace(/==== (.*) ====/, "$1"));
+			h.appendChild(textn);
+			fragm.appendChild(h);
+			prevNode = fragm;
+			prevTag = "h4";
+		}
+		if (!matched && rows[rowNo].search(/=== (.*) ===/) >= 0) { // h3
+			matched = true;
+			var h = document.createElement('h3');
+			var textn = document.createTextNode(rows[rowNo].replace(/=== (.*) ===/, "$1"));
+			h.appendChild(textn);
+			fragm.appendChild(h);
+			prevNode = fragm;
+			prevTag = "h3";
+		}
+		if (!matched && rows[rowNo].search(/== (.*) ==/) >= 0) { // h2
+			matched = true;
+			var h = document.createElement('h2');
+			var textn = document.createTextNode(rows[rowNo].replace(/== (.*) ==/, "$1"));
+			h.appendChild(textn);
+			fragm.appendChild(h);
+			prevNode = fragm;
+			prevTag = "h2";
+		}
+		if (!matched && rows[rowNo].search(/= (.*) =/) >= 0) { // h1
+			matched = true;
+			var h = document.createElement('h1');
+			var textn = document.createTextNode(rows[rowNo].replace(/= (.*) =/, "$1"));
+			h.appendChild(textn);
+			fragm.appendChild(h);
+			prevNode = fragm;
+			prevTag = "h1";
+		}
+
+		if (rows[rowNo].length == 0) { // new paragraph
+			if (fragm !== prevNode)	fragm.appendChild(prevNode);
+			prevNode = document.createElement('p');
+			prevTag = 'p';
+		}
+		if (!matched) {  // no tag matched --> append a TextNode
+			if (['li', 'i', 'b', 'ib', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(prevTag) >= 0) { // in this tags a new line ends the taged text
+				if (fragm !== prevNode)	fragm.appendChild(prevNode);
+				prevNode = fragm;
+			}
+			var textn = charFormat(' ' + rows[rowNo], null, '').fragm;
+			//var textn = document.createTextNode(' ' +rows[rowNo]);
+			prevNode.appendChild(textn);
+			prevTag = '';
+		}
+
+	}
+	if (fragm !== prevNode)	fragm.appendChild(prevNode);
+	return fragm;
+}
 

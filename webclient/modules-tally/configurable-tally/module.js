@@ -7,12 +7,25 @@ ConfigurableTally.prototype = new PublishOnlyTelly();
 
 ConfigurableTally.getMainContent = function(tallyconfig) {
 	ConfigurableTally.tallyConfig = tallyconfig;
+	var fragm =	document.createDocumentFragment();
 	var mc =
 		'<p id="ballotName">' + tallyconfig.ballotName + '</p>';
-
+	var elp = document.createElement('p');
+	// var elptxt = document.createTextNode(tallyconfig.ballotName);
+	elp.appendChild(document.createTextNode(tallyconfig.ballotName));
+	elp.setAttribute('id', 'ballotName');
+	fragm.appendChild(elp);
 	mc = mc + '<div id="divVoteQuestions">';
+	var elp = document.createElement('div');
+	elp.setAttribute('id', 'divVoteQuestions');
+	fragm.appendChild(elp);
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
 		mc = mc + '<p class="voteQuestion" id="voteQuestion'+tallyconfig.questions[qNo].questionID+'">' + tallyconfig.questions[qNo].questionWording + '</p>';
+		var elp = document.createElement('p');
+		elp.setAttribute('class', 'voteQuestion');
+		elp.setAttribute('id'   , 'voteQuestion'+tallyconfig.questions[qNo].questionID);
+		elp.appendChild(document.createTextNode(tallyconfig.questions[qNo].questionWording));
+		fragm.appendChild(elp);
 		if (tallyconfig.questions[qNo].references.length > 0) {
 			mc = mc + '<ul>';
 			for (var refNo=0; refNo<tallyconfig.questions[qNo].references.length; refNo++) {
@@ -116,6 +129,35 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 		else 	mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo+1)+');">N&auml;chste Frage</button>';
 		mc = mc + '</div>'; // end div question
 	}
+	var fragm = WikiSyntax2DOMFrag("= Ziele meiner politischen Arbeit =\n\
+== Wirtschaft ==\n\
+* Mehr Transparenz, mehr Möglichkeiten für die Bürger, sich an politischen Entscheidungsprozessen zu beteiligen; barrierefreie Politik\n\
+* Der Mensch muss im Mittelpunkt der Politik stehen: Auch Wirtschaftspolitik ist für den Menschen da, nicht für die Unternehmen. Die Unternehmen sind aber Mittel zu dem Zweck, Wohlstand für die Menschen zu schaffen.\n\
+* Die Politik muss den Bürgern reinen Wein einschenken: Wenn mehr Ausgaben gefordert werden, muss auch klar gesagt werden, wo das Geld dafür herkommen soll.\n\
+* Sachorientierung in der Politik.\n\
+\n\
+= Wiki-Syntax-Tests =\n\
+* Aufzählung\n\
+Text ohne Leerzeile nach der Aufzählung\n\
+\n\
+Noch ''Ein kursiver''' Text, der hier endet.\n\
+normal '''''fett und kursiv''''' normal\n\
+\n\
+Neuer '''Absatz fett ''kursiv und fett''' nur kursiv'' und dies ist '''fetter Text\n\
+mit einem Zeilen'''umbruch\n\
+\n\
+kjh kjn <s>jhjh\n\
+jlkh</s>nicht mehr\n\
+\n\
+normal <s>durchgestrichen '''+fett</s>nicht mehr durchgestrichen'''Normal\n\
+\n\
+normal'''''fett+kursiv''nicht mehr kursiv'''normal\n\
+\n\
+normal''kursiv'''+fett''nicht mehr kursiv'''normal\n\
+\n\
+normal <s>durchgestrichen '''''+fett+kursiv</s>nicht mehr durchgestrichen''Nicht mehr kursiv'''Normal");
+	
+	document.getElementById('maincontent').appendChild(fragm);
 	return mc;
 };
 
