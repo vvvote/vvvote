@@ -238,7 +238,7 @@ function shuffleArray(arrayOrig) {
 /**
  * 
  */
-function WikiSyntax2DOMFrag(wikisyntax) {
+function wikiSyntax2DOMFrag(wikisyntax) {
 	// \n == \r\n --> <p>
 	// \n* --> <ul><li>
 	// \n= TEXT = --> <h1>
@@ -251,12 +251,15 @@ function WikiSyntax2DOMFrag(wikisyntax) {
 	// '' --> <i>
 	// ''' --> <b>
 	// ''''' --> <i><b>
-	// new line ends: list, i, b, ib, h1, h2, h3, h4, h5, h6 =
-	// new line does not end: p
+	// <u> --> <u>
+	// <s> --> <strike>
+	// new line ends the following formats: list, i, b, ib, h1, h2, h3, h4, h5, h6 =
+	// new line does not end the following formats: p, <s>, <u>
 	function charFormat(row, frag, openTag) {
-		var tags = [{"wikiOpen": "''" , 'wikiClose': "''"  , 'html': 'i' },
-		            {'wikiOpen': "'''", 'wikiClose': "'''" , 'html': 'b' },
-		            {'wikiOpen': "<s>", 'wikiClose': "</s>", 'html': 'strike' }
+		var tags = [{"wikiOpen": "''" , 'wikiClose': "''"  , 'html': 'em' },
+		            {'wikiOpen': "'''", 'wikiClose': "'''" , 'html': 'strong' },
+		            {'wikiOpen': "<s>", 'wikiClose': "</s>", 'html': 'del' },
+		            {'wikiOpen': "<u>", 'wikiClose': "</u>", 'html': 'u' }
 		            ];
 
 		var firstmatch = Number.MAX_VALUE;
@@ -323,14 +326,16 @@ function WikiSyntax2DOMFrag(wikisyntax) {
 	function removeTagsAutomaticallyClosedOnNewLine(tags) {
 		var closedTags = [/'''/g, /''/g];
 		var ret = tags;
-		for (var t=0; t<closedTags.length; t++){
+		for (var t=0; t<closedTags.length; t++) {
 			ret = ret.replace(closedTags[t], '');	
 		}
+		ret = ret.replace(/\u180E\u180E/g, ''); // remove doubled separators
 		return ret;
 	}
 
 	var fragm = document.createDocumentFragment();
 	var rows = wikisyntax.split("\n");
+	var whitespace = '';
 	var ulLevel = 0;
 	var olLevel = 0;
 	var matched = false;
@@ -412,14 +417,16 @@ function WikiSyntax2DOMFrag(wikisyntax) {
 			prevTag = 'p';
 		}
 		if (!matched) {  // no tag matched --> append a TextNode
-			if (['li', 'i', 'b', 'ib', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(prevTag) >= 0) { // in this tags a new line ends the taged text
+			if (['li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].indexOf(prevTag) >= 0) { // in this tags a new line ends the taged text
 				if (fragm !== prevNode)	fragm.appendChild(prevNode);
 				prevNode = fragm;
 			}
-			var textn = charFormat(openTags + ' ' + rows[rowNo], null, '');
+			var textn = charFormat(whitespace + openTags + rows[rowNo], null, '');
 			//var textn = document.createTextNode(' ' +rows[rowNo]);
 			openTags = removeTagsAutomaticallyClosedOnNewLine(textn.openTags);
 			prevNode.appendChild(textn.fragm);
+			if (prevTag == 'p')	whitespace = ''; // do not insert a whitespace at the first line of a new paragraph
+			else 				whitespace = ' '; // usually a new line is replaced by a space
 			prevTag = '';
 		}
 
