@@ -258,11 +258,7 @@ function WikiSyntax2DOMFrag(wikisyntax) {
 		            {'wikiOpen': "'''", 'wikiClose': "'''" , 'html': 'b' },
 		            {'wikiOpen': "<s>", 'wikiClose': "</s>", 'html': 'strike' }
 		            ];
-//		var ret;
-//		var matched = false;
-//		if (frag == null) frag = document.createDocumentFragment();
 
-		// find the first tag
 		var firstmatch = Number.MAX_VALUE;
 		var firstTag = '';
 		var firstTagNo = -1;
@@ -313,8 +309,6 @@ function WikiSyntax2DOMFrag(wikisyntax) {
 		var e;
 		if (tags[firstTagNo].html === openTag) { // closing tag found	
 			e = document.createTextNode(row.substr(0, firstmatch));
-//			var secondPartInput = row.substr(firstmatch + tags[firstTagNo].wiki.length);
-//			if (secondPartInput.length > 0) e.appendChild(charFormat(secondPartInput, frag, '')); // TODO instead of '' use parent open tag
 			return e;
 		} else { // opening tag found 									
 			var secondPartInput = row.substr(firstmatch + tags[firstTagNo].wiki.length);
@@ -326,6 +320,14 @@ function WikiSyntax2DOMFrag(wikisyntax) {
 		}
 	}
 
+	function removeTagsAutomaticallyClosedOnNewLine(tags) {
+		var closedTags = [/'''/g, /''/g];
+		var ret = tags;
+		for (var t=0; t<closedTags.length; t++){
+			ret = ret.replace(closedTags[t], '');	
+		}
+		return ret;
+	}
 
 	var fragm = document.createDocumentFragment();
 	var rows = wikisyntax.split("\n");
@@ -334,6 +336,7 @@ function WikiSyntax2DOMFrag(wikisyntax) {
 	var matched = false;
 	var prevTag = '';
 	var prevNode = document.createElement('div');
+	var openTags = '';
 	for (var rowNo in rows) {
 		matched = false;
 		if (rows[rowNo].substring(0, '* '.length) === '* ') { // unordered list item
@@ -413,9 +416,10 @@ function WikiSyntax2DOMFrag(wikisyntax) {
 				if (fragm !== prevNode)	fragm.appendChild(prevNode);
 				prevNode = fragm;
 			}
-			var textn = charFormat(' ' + rows[rowNo], null, '').fragm;
+			var textn = charFormat(openTags + ' ' + rows[rowNo], null, '');
 			//var textn = document.createTextNode(' ' +rows[rowNo]);
-			prevNode.appendChild(textn);
+			openTags = removeTagsAutomaticallyClosedOnNewLine(textn.openTags);
+			prevNode.appendChild(textn.fragm);
 			prevTag = '';
 		}
 
