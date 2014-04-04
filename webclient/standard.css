@@ -241,11 +241,13 @@ input[type="range"]::-ms-fill-lower {
 */
 .votingOption {
 	border: 2px solid #6678b1;
+	width: 100%; /* needed for Internet Explorer to line wrap the legend */
+	white-space: normal; /* needed for Internet Explorer to line wrap the legend */
 }
 
 .votingOption h1{
 	color: darkblue !important;
-	font-size: 24px;
+	font-size: 18px;
 }
 
 
