@@ -280,7 +280,7 @@ function wikiSyntax2DOMFrag(wikisyntax) {
 			//find matching closing tag
 			var secondMatch = row.substr(firstmatch + tags[firstTagNo].wikiOpen.length).search(tags[firstTagNo].wikiClose);
 			// do some magic in order to solve the problem that ''' is matching '' and ''' - solve it the same way as the wiki does: look ahead if a later '' is there
-			if (firstTag === 'i' && row.substr(firstmatch + tags[firstTagNo].wikiOpen.length).search("'''")) {
+			if (firstTag === 'em' && row.substr(firstmatch + tags[firstTagNo].wikiOpen.length).search("'''")) {
 				var secondMatch2a = row.substr(firstmatch + tags[firstTagNo].wikiOpen.length + secondMatch + tags[firstTagNo].wikiClose.length).search("[^']" + tags[firstTagNo].wikiClose + "[^']");
 				var secondMatch2b = row.substr(firstmatch + tags[firstTagNo].wikiOpen.length + secondMatch + tags[firstTagNo].wikiClose.length).search("[^']" + tags[firstTagNo].wikiClose + "$");
 				if (secondMatch2a >= 0 || secondMatch2b >=0 ) {
@@ -301,11 +301,11 @@ function wikiSyntax2DOMFrag(wikisyntax) {
 			fragm.appendChild(taggedNode);
 			var openTags;
 			if (secondMatch >= 0) { // closing tag found
-				var afterNode  = charFormat(innerNode.openTags +'\u180E'+ row.substr(firstmatch + tags[firstTagNo].wikiOpen.length + secondMatch + tags[firstTagNo].wikiClose.length));
+				var afterNode  = charFormat(innerNode.openTags +'\uFEFF'+ row.substr(firstmatch + tags[firstTagNo].wikiOpen.length + secondMatch + tags[firstTagNo].wikiClose.length));
 				fragm.appendChild(afterNode.fragm);
 				openTags = afterNode.openTags;
 			} else { // closing tag not found
-				openTags = innerNode.openTags +'\u180E' + tags[firstTagNo].wikiOpen;
+				openTags = innerNode.openTags +'\uFEFF' + tags[firstTagNo].wikiOpen;
 			}
 			return {'fragm': fragm, 'openTags': openTags};
 		}
@@ -323,13 +323,18 @@ function wikiSyntax2DOMFrag(wikisyntax) {
 		}
 	}
 
+	/**
+	 * remove open tags that are automatically closed on new line from list of open tags
+	 * @param tags
+	 * @returns
+	 */
 	function removeTagsAutomaticallyClosedOnNewLine(tags) {
 		var closedTags = [/'''/g, /''/g];
 		var ret = tags;
 		for (var t=0; t<closedTags.length; t++) {
 			ret = ret.replace(closedTags[t], '');	
 		}
-		ret = ret.replace(/\u180E\u180E/g, ''); // remove doubled separators
+		ret = ret.replace(/\uFEFF\uFEFF/g, ''); // remove doubled separators
 		return ret;
 	}
 
@@ -435,3 +440,62 @@ function wikiSyntax2DOMFrag(wikisyntax) {
 	return fragm;
 }
 
+/**
+ * table[row][col]: row=0 --> head, put DOM in the array (e.g. document.createTextNode('row 1 Column 1')
+ */
+function makeTableDOM(table){
+	var tableNode = document.createElement('table');
+	var theadNode = document.createElement('thead');
+	var trNode = document.createElement('tr');
+	for (var colNo=0; colNo<table[0].length; colNo++) {
+		var tdNode = document.createElement('td');
+		tdNode.appendChild(document.createTextNode(table[0][colNo]));
+		trNode.appendChild(tdNode);
+	}
+	theadNode.appendChild(trNode);
+	tableNode.appendChild(theadNode);
+	var tbodyNode = document.createElement('tbody');
+	for (var rowNo=1; rowNo<table.length; rowNo++) {
+		// mc = mc + '<p class="voteQuestion" id="voteQuestion'+tallyconfig.questions[qNo].questionID+'">' + tallyconfig.questions[qNo].questionWording + '</p>';
+		var trNode = document.createElement('tr');
+		for (var colNo=0; colNo<table[rowNo].length; colNo++) {
+			var tdNode = document.createElement('td');
+			if ('attrib' in table[rowNo][colNo]) {
+				for (var aNo=0; aNo < table[rowNo][colNo].attrib.length; aNo++ ) {
+					tdNode.setAttribute(table[rowNo][colNo].attrib[aNo].name, table[rowNo][colNo].attrib[aNo].value);
+				}
+			}
+			tdNode.appendChild(table[rowNo][colNo].content);
+			trNode.appendChild(tdNode);
+		}
+		tbodyNode.appendChild(trNode);
+
+	}
+	tableNode.appendChild(tbodyNode);
+	return tableNode;
+}
+
+function radioBtnDOM(id, name, label, value, fieldSetNode) {
+	var radioNode = document.createElement('input');
+	radioNode.setAttribute('type', 'radio');
+	radioNode.setAttribute('name', name);
+	radioNode.setAttribute('id'  , id);
+	radioNode.setAttribute('value'  , value);
+
+	var labelNode = document.createElement('label');
+	labelNode.setAttribute('for', id);
+	labelNode.appendChild(document.createTextNode(label));
+
+	fieldSetNode.appendChild(radioNode);
+	fieldSetNode.appendChild(labelNode);
+}
+
+
+function buttonDOM(id, label, onclick, addTo) {
+	var buttonNode= document.createElement('button');
+	buttonNode.setAttribute('id'	  , id);
+	buttonNode.setAttribute('onclick', onclick);
+	var buttonNodeTxt = document.createTextNode(label);
+	buttonNode.appendChild(buttonNodeTxt);
+	addTo.appendChild(buttonNode);
+}
