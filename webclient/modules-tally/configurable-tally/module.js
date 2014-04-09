@@ -109,7 +109,6 @@ normal<u>unterst\n\
 \n\
 richen</u>normal		");
 
-	var fragm2 = wikiSyntax2DOMFrag("normal''kursiv'''+fett''nicht mehr kursiv'''normal\n");
 	document.getElementById('maincontent').appendChild(fragm);
 	document.getElementById('maincontent').appendChild(fragm2);
 	return '';

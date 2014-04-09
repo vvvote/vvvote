@@ -174,7 +174,7 @@ input#electionUrl {
 	width: 100%;
 }
 
-/*** Ranking Table ***/
+/*** tally voting phase: Ranking Table ***/
 .voteOptions th {
 	/* font-size: 14px; */
 	/* font-weight: normal; */
@@ -247,7 +247,7 @@ input[type="range"]::-ms-fill-lower {
 
 .votingOption h1{
 	color: darkblue !important;
-	font-size: 18px;
+	font-size: 15px;
 }
 
 
@@ -278,3 +278,5 @@ input[type="range"]::-ms-fill-lower {
 	text-decoration: none;
 	background-color: yellow;
 }
+
+div#divVoteQuestions 
