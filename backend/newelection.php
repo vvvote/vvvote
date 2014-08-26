@@ -12,7 +12,8 @@ require_once 'dbelections.php';
 
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept'); // this allows any cross-site scripting (needed for chrome)
-header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS'); // - See more at: http://www.wilsolutions.com.br/content/fix-request-header-field-content-type-not-allowed-access-control-allow-headers#sthash.TdDHtHfX.dpuf
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+//header('Access-Control-Allow-Methods:', 'PUT, GET, POST, DELETE, OPTIONS'); // - See more at: http://www.wilsolutions.com.br/content/fix-request-header-field-content-type-not-allowed-access-control-allow-headers#sthash.TdDHtHfX.dpuf
 /**
  * error starts at 2100
  */
