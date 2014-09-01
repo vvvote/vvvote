@@ -499,3 +499,94 @@ function buttonDOM(id, label, onclick, addTo) {
 	buttonNode.appendChild(buttonNodeTxt);
 	addTo.appendChild(buttonNode);
 }
+
+/*
+element.style {
+	display: block;
+	height: 50px;
+	overflow: hidden;
+	}
+ */
+
+/***************
+ * Langsames Aufklappen
+ *  
+ * 
+
+<style>
+        #container {
+
+        }
+        #content {
+            background: silver;
+            color: White;
+            padding: 20px;
+        }
+        .slideShow .slideHide {            
+          overflow-y: hidden;
+          transition: max-height 0.5s ease-in-out;
+        }  
+    </style>
+ */    
+/**
+ * Calculate the hight of the complete content 
+ */
+HTMLElement.prototype.ichCalculateNeededHeight = function() {
+	var el = this;
+	var tmp = el.style.maxHeight;
+	el.style.maxHeight = '';
+	var cs = getComputedStyle(el);
+	el.ichNeededHeight = el.offsetHeight + 
+		parseFloat(cs.getPropertyValue('margin-top')) + 
+		parseFloat(cs.getPropertyValue('margin-bottom')); 
+	el.style.maxHeight = tmp;
+	if (tmp.length < 1) el.style.maxHeight = 0; // it must be a number in order to make scrolling-transition working 
+};
+
+/**
+ * 
+ * @param id id of the element to show or the element object itself
+ */
+function showElement(id) {
+	var el;
+	if (typeof id == 'string') 	el = document.getElementById(id);
+	else 						el = id;
+	if (! ('ichNeededHeight' in el)) el.ichCalculateNeededHeight(); 
+	setTimeout(function() {
+		el.classList.remove('slideHide');
+		el.classList.add('slideShow');
+		el.style.maxHeight = el.ichNeededHeight + 'px'; 
+	}, 1);
+}
+
+function hideElement(id) {
+	var el;
+	if (typeof id == 'string') 	el = document.getElementById(id);
+	else 						el = id;
+	el.classList.remove('slideShow');
+	el.classList.add('slideHide');
+	el.style.maxHeight = '0px'; 
+}
+
+
+/**
+ * Call this if the height of a smoothly shrinking element has changed
+ * @param id
+ */
+function adjustMaxHeight(id) {
+	var el;
+	if (typeof id == 'string') 	el = document.getElementById(id);
+	else 						el = id;
+	el.style.transition = 'max-height 0s';
+	el.ichCalculateNeededHeight(); 
+	setTimeout(function() {
+		el.style.maxHeight = el.ichNeededHeight + 'px'; 
+		el.style.transition = '';
+	}, 1);
+}
+
+
+
+
+
+

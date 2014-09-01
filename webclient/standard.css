@@ -241,7 +241,7 @@ input[type="range"]::-ms-fill-lower {
 */
 .votingOption {
 	border: 2px solid #6678b1;
-	width: 100%; /* needed for Internet Explorer to line wrap the legend */
+	width: 95%; /* needed for Internet Explorer to line wrap the legend */
 	white-space: normal; /* needed for Internet Explorer to line wrap the legend */
 }
 
@@ -279,4 +279,28 @@ input[type="range"]::-ms-fill-lower {
 	background-color: yellow;
 }
 
-div#divVoteQuestions 
+/** this is used to show and hide the scrolling smothly **/
+.slideShow {
+	overflow-y: hidden;
+	transition: max-height 0.8s ease-in-out;
+	padding: 1em;
+}
+
+.slideHide {
+	overflow-y: hidden;
+	transition: max-height 0.2s ease-in-out;
+	padding-top: 0em;
+	padding-bottom: 0em;
+}
+
+div#divVoteQuestions {
+	
+}
+
+/** one motion group = Antragsgruppe **/
+div.voteQuestion {
+	background-color: lightblue;
+	padding-left: 1em;
+	padding-right: 1em;
+	border-radius: 0.5em;
+} 
