@@ -1,11 +1,11 @@
 <?php
 /**
  * This class handles the XmlHttp-messages between the counting server and the voter
- * (storeVote and getAllVotes)
+ * getAllVotes
  * ErrorNo start at 7200
  */
 
-require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
+require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
 
 require_once 'exception.php';
 require_once 'loadmodules.php';

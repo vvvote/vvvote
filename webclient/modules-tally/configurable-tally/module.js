@@ -116,11 +116,12 @@ richen</u>normal		");
 
 ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
 	var mc = '';
+	mc = mc + '<div id="divVoteQuestionContainer'+tallyconfig.questions[qNo].questionID+'">';
 	mc = mc + '<div id="divVoteQuestion'+tallyconfig.questions[qNo].questionID+'">';
 	mc = mc + '<p class="voteQuestion" id="voteQuestion'+qNo+'">' + tallyconfig.questions[qNo].questionWording + '</p>';
 	var divQNode = document.createElement('div');
 	divQNode.setAttribute('id', 'divVoteQuestion'+qNo);
-	divQNode.setAttribute('style', 'display:none;');
+	divQNode.setAttribute('class', 'voteQuestion');
 
 	switch (tallyconfig.questions[qNo].voteSystem.type) {
 	case 'score':
@@ -139,7 +140,8 @@ ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
 				var legendNode = document.createElement('legend');
 				legendNode.setAttribute('class', 'votingOption');
 				if (tallyconfig.questions[qNo].options[optionNo].optionTitle ) {
-					mc = mc + '<h1>Antrag    </h1>' + tallyconfig.questions[qNo].options[optionNo].optionDesc ;
+					mc = mc + '<h1>Antrag    </h1>'; 
+					if ( 'optionDesc' in tallyconfig.questions[qNo].options[optionNo]) mc = mc + tallyconfig.questions[qNo].options[optionNo].optionDesc ;
 					var pTitleNode = document.createElement('h1');
 					pTitleNode.appendChild(document.createTextNode(tallyconfig.questions[qNo].options[optionNo].optionTitle));
 					legendNode.appendChild(pTitleNode);
@@ -254,12 +256,15 @@ ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
 		mc = mc + '<button id="buttonPrevQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo-1)+')">Vorhergehende Frage</button>';
 	}
 	if (qNo == tallyconfig.questions.length-1)
-		mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.submitVote()">Abstimmen!</button>';
+			mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.submitVote()">Abstimmen!</button>';
 	else 	mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo+1)+');">N&auml;chste Frage</button>';
 	mc = mc + '</div>'; // end div question
+	mc = mc + '</div>'; // end div question container
 	buttonDOM('buttonSendQ'+qNo, 'Stimme senden', '//ConfigurableTally.sendVote('+qNo+')', divQNode);
-	fragm.appendChild(divQNode);
-
+	var divQNodeContainer = document.createElement('div');
+	divQNodeContainer.setAttribute('id', 'divVoteQuestionContainer'+qNo);
+	divQNodeContainer.appendChild(divQNode);
+	fragm.appendChild(divQNodeContainer);
 	return mc;
 };
 
@@ -269,8 +274,8 @@ ConfigurableTally.showQuestion = function(showqNo) {
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
 		var el = document.getElementById('divVoteQuestion'+qNo);
 		if (el !== null) {
-			if (qNo == showqNo)	el.style.display = 'block';
-			else       			el.style.display = 'none';
+			if (qNo == showqNo)	showElement(el); // el.style.display = 'block';
+			else       			hideElement(el); // el.style.display = 'none';
 		}
 	}
 };
@@ -280,6 +285,7 @@ ConfigurableTally.showOptionDetail = function(tag, qNo, optNo) {
 	var el = document.getElementById(tag+qNo+'O'+optNo);
 	if (el.style.display.length > 0 )	el.style.display = '';
 	else       							el.style.display = 'none';
+	adjustMaxHeight('divVoteQuestion'+qNo);
 };
 
 
