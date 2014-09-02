@@ -60,20 +60,24 @@ function sendThroughProxy() {
  * @returns
  */
 function myXmlSend(url, data, callbackObject, callbackFunction, proxy) {
+	if (typeof url !== 'string') { // typeof returns 'undefined' if url is not set
+		alert('Ein Fehler in den Einstellungen ist aufgetreten. Bitte informieren Sie den Wahlverantwortlichen (Fehlernr.: 875765: URL nicht definiert oder kein String)');
+		return;
+	} 
 	myXmlSend_(url, data, callbackObject, callbackFunction, proxy, 'POST', true);
 }
 
 function httpGet(url, callbackObject, callbackFunction, log, proxy) {
-	myXmlSend_(url, data, callbackObject, callbackFunction, proxy, 'GET', log);
+	if (typeof url !== 'string') { // typeof returns 'undefined' if url is not set
+		alert('Ein Fehler in den Einstellungen ist aufgetreten. Bitte informieren Sie den Wahlverantwortlichen (Fehlernr.: 875766: URL nicht definiert oder kein String)');
+		return;
+	} 
+	myXmlSend_(url, null, callbackObject, callbackFunction, proxy, 'GET', log);
 }
 
 
 function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, log) {
-	if (url != null) { // if url == null: an error occoured and retry was pressed
-		if (typeof url !== 'string') { // typeof returns undefined if url is not set
-			alert('Ein Fehler in den Einstellungen ist aufgetreten. Bitte informieren Sie den Wahlverantwortlichen (Fehlernr.: 875766: URL nicht definiert oder kein String)');
-			return;
-		} 
+	if (url !== null) { // if url == null: an error occoured and retry was pressed
 		myXmlSend_.url = url;
 		myXmlSend_.data = data;
 		myXmlSend_.callbackObject = callbackObject;
@@ -144,7 +148,8 @@ function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, 
 			var realhost = urlparts.host;
 			xml2.setRequestHeader('Host', realhost);
 		} */
-		xml2.send(myXmlSend_.data);
+		if ((myXmlSend_.data === null) || typeof myXmlSend_.data === 'undefined')	xml2.send();
+		else 																		xml2.send(myXmlSend_.data);
 		if (myXmlSend_.log) userlog("\r\n\r\n--> gesendet an Server " + myXmlSend_.url + ': ' + myXmlSend_.data + "\r\n\r\n");
 		var errorDiv = document.getElementById("errorDiv");
 		// var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
