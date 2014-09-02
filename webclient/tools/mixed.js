@@ -70,6 +70,10 @@ function httpGet(url, callbackObject, callbackFunction, log, proxy) {
 
 function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, log) {
 	if (url != null) { // if url == null: an error occoured and retry was pressed
+		if (typeof url !== 'string') { // typeof returns undefined if url is not set
+			alert('Ein Fehler in den Einstellungen ist aufgetreten. Bitte informieren Sie den Wahlverantwortlichen (Fehlernr.: 875766: URL nicht definiert oder kein String)');
+			return;
+		} 
 		myXmlSend_.url = url;
 		myXmlSend_.data = data;
 		myXmlSend_.callbackObject = callbackObject;

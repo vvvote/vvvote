@@ -8,8 +8,7 @@ ConfigurableTally.prototype = new PublishOnlyTelly();
 ConfigurableTally.getMainContent = function(tallyconfig) {
 	ConfigurableTally.tallyConfig = tallyconfig;
 	var fragm =	document.createDocumentFragment();
-	var mc =
-		'<p id="ballotName">' + tallyconfig.ballotName + '</p>';
+	var mc = '<p id="ballotName">' + tallyconfig.ballotName + '</p>';
 	var elp = document.createElement('h1');
 	// var elptxt = document.createTextNode(tallyconfig.ballotName);
 	elp.appendChild(document.createTextNode(tallyconfig.ballotName));
@@ -75,39 +74,39 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 	}
 
 	var fragm2 = wikiSyntax2DOMFrag("= Ziele meiner politischen Arbeit =\n\
-== Wirtschaft ==\n\
-* Mehr Transparenz, mehr Möglichkeiten für die Bürger, sich an politischen Entscheidungsprozessen zu beteiligen; barrierefreie Politik\n\
-* Der Mensch muss im Mittelpunkt der Politik stehen: Auch Wirtschaftspolitik ist für den Menschen da, nicht für die Unternehmen. Die Unternehmen sind aber Mittel zu dem Zweck, Wohlstand für die Menschen zu schaffen.\n\
-* Die Politik muss den Bürgern reinen Wein einschenken: Wenn mehr Ausgaben gefordert werden, muss auch klar gesagt werden, wo das Geld dafür herkommen soll.\n\
-* Sachorientierung in der Politik.\n\
-\n\
-= Wiki-Syntax-Tests =\n\
-* Aufzählung\n\
-Text ohne Leerzeile nach der Aufzählung\n\
-\n\
-Noch ''Ein kursiver''' Text, der hier endet.\n\
-normal '''''fett und kursiv''''' normal\n\
-\n\
-Neuer '''Absatz fett ''kursiv und fett''' nur kursiv'' und dies ist '''fetter Text\n\
-mit einem Zeilen'''umbruch\n\
-\n\
-kjh kjn <s>jhjh\n\
-jlkh</s>nicht mehr\n\
-\n\
-normal <s>durchgestrichen '''+fett</s>nicht mehr durchgestrichen'''Normal\n\
-\n\
-normal'''''fett+kursiv''nicht mehr kursiv'''normal\n\
-\n\
-normal''kursiv'''+fett''nicht mehr kursiv'''normal\n\
-\n\
-normal <s>durchgestrichen '''''+fett+kursiv</s>nicht mehr durchgestrichen''Nicht mehr kursiv'''Normal\n\
-\n\
-normal<u>unterst\n\
-richen</u>normal\n\
-\n\
-normal<u>unterst\n\
-\n\
-richen</u>normal		");
+			== Wirtschaft ==\n\
+			* Mehr Transparenz, mehr Möglichkeiten für die Bürger, sich an politischen Entscheidungsprozessen zu beteiligen; barrierefreie Politik\n\
+			* Der Mensch muss im Mittelpunkt der Politik stehen: Auch Wirtschaftspolitik ist für den Menschen da, nicht für die Unternehmen. Die Unternehmen sind aber Mittel zu dem Zweck, Wohlstand für die Menschen zu schaffen.\n\
+			* Die Politik muss den Bürgern reinen Wein einschenken: Wenn mehr Ausgaben gefordert werden, muss auch klar gesagt werden, wo das Geld dafür herkommen soll.\n\
+			* Sachorientierung in der Politik.\n\
+			\n\
+			= Wiki-Syntax-Tests =\n\
+			* Aufzählung\n\
+			Text ohne Leerzeile nach der Aufzählung\n\
+			\n\
+			Noch ''Ein kursiver''' Text, der hier endet.\n\
+			normal '''''fett und kursiv''''' normal\n\
+			\n\
+			Neuer '''Absatz fett ''kursiv und fett''' nur kursiv'' und dies ist '''fetter Text\n\
+			mit einem Zeilen'''umbruch\n\
+			\n\
+			kjh kjn <s>jhjh\n\
+			jlkh</s>nicht mehr\n\
+			\n\
+			normal <s>durchgestrichen '''+fett</s>nicht mehr durchgestrichen'''Normal\n\
+			\n\
+			normal'''''fett+kursiv''nicht mehr kursiv'''normal\n\
+			\n\
+			normal''kursiv'''+fett''nicht mehr kursiv'''normal\n\
+			\n\
+			normal <s>durchgestrichen '''''+fett+kursiv</s>nicht mehr durchgestrichen''Nicht mehr kursiv'''Normal\n\
+			\n\
+			normal<u>unterst\n\
+			richen</u>normal\n\
+			\n\
+			normal<u>unterst\n\
+			\n\
+	richen</u>normal		");
 
 	document.getElementById('maincontent').appendChild(fragm);
 	document.getElementById('maincontent').appendChild(fragm2);
@@ -187,9 +186,9 @@ ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
 				// '<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'E" value="E" checked="checked">';
 				// ' <label                                                             for="optionQ'+qNo+'O'+optionID+'A">Enthaltung</label>';
 				// 
-				radioBtnDOM('optionQ'+qNo+'O'+optionID+'Y', 'optionQ'+qNo+'O'+optionID, 'Ja'        , 'Y', fieldSetNode);
-				radioBtnDOM('optionQ'+qNo+'O'+optionID+'N', 'optionQ'+qNo+'O'+optionID, 'Nein'      , 'N',fieldSetNode);
-				radioBtnDOM('optionQ'+qNo+'O'+optionID+'A', 'optionQ'+qNo+'O'+optionID, 'Enthaltung', 'A',fieldSetNode);
+				radioBtnDOM('optionQ'+qNo+'O'+optionID+'Y', 'optionQ'+qNo+'O'+optionID, 'Ja'        , '1', fieldSetNode);
+				radioBtnDOM('optionQ'+qNo+'O'+optionID+'N', 'optionQ'+qNo+'O'+optionID, 'Nein'      , '0', fieldSetNode);
+				radioBtnDOM('optionQ'+qNo+'O'+optionID+'A', 'optionQ'+qNo+'O'+optionID, 'Enthaltung', '-1', fieldSetNode);
 
 				if (tallyconfig.questions[qNo].voteSystem.abstention) {
 					mc = mc + '<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'A" value="A" checked="checked">' +
@@ -256,7 +255,7 @@ ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
 		mc = mc + '<button id="buttonPrevQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo-1)+')">Vorhergehende Frage</button>';
 	}
 	if (qNo == tallyconfig.questions.length-1)
-			mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.submitVote()">Abstimmen!</button>';
+		mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.submitVote()">Abstimmen!</button>';
 	else 	mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo+1)+');">N&auml;chste Frage</button>';
 	mc = mc + '</div>'; // end div question
 	mc = mc + '</div>'; // end div question container
@@ -389,8 +388,45 @@ ConfigurableTally.buttonStep = function(qNo, forward) {
 	else 			{ firstStep.style.display = ''; 		secondStep.style.display = 'none'; 	}
 };
 
-ConfigurableTally.getInputs = function() {
+ConfigurableTally.getInputs = function(qNo) {
+	var vote = {"ballotID":tallyconfig.ballotID,
+			"questions": [{
+				"questionID": tallyconfig.questions[qNo].questionID,
+				"optionOrder": [],
+				"statusQuoOption": "",
+				"votes": []
+			}]};
+	for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
+		var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
+		vote.questions[0].optionOrder[optionNo] = optionID;
+		var valueYNA = -2;  // nothing selected --> -2
+		var valuePref = -1;
+		switch (tallyconfig.questions[qNo].voteSystem.type) {
+		case 'score':
+			voteOptionY = document.getElementById('optionQ'+qNo+'O'+optionNoY).checked;
+			voteOptionN = document.getElementById('optionQ'+qNo+'O'+optionNoN).checked;
+			voteOptionA = document.getElementById('optionQ'+qNo+'O'+optionNoA).checked;
+			if  (voteOptionY == true) value = 1;  // yes --> 1
+			if  (voteOptionN == true) value = 0;  // no --> 0
+			if  (voteOptionA == true) value = -1; // abstentitian --> -1
+			break;
+		}
+		vote.questions[0].votes[0] = [valueYNA, valuePref];
+	}
 
+
+	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
+		switch (tallyconfig.questions[qNo].voteSystem.type) {
+		case 'score':
+			divFirstQNode.setAttribute('id', 'FirstStepQ'+qNo);
+			if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('yesNo' >= 0)) {
+				for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
+					var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
+				}
+			}
+		}
+
+	}
 };
 
 

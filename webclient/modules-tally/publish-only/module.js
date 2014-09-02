@@ -28,10 +28,13 @@ PublishOnlyTelly.prototype.getMainContent = function() {
 PublishOnlyTelly.prototype.sendVote = function () {
 	var element = document.getElementById('vote');
 	var vote = element.value;
+	this.sendVoteData(vote);
+};
+
+PublishOnlyTelly.prototype.sendVoteData = function (vote) {
 	var transm = {};
 	transm = this.election.signVote(vote);
 	transm.cmd = 'storeVote';
-	
 	var transmstr = JSON.stringify(transm);
 	var me = this;
 	myXmlSend(ClientConfig.storeVoteUrl, transmstr, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
