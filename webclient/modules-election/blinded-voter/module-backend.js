@@ -150,11 +150,18 @@ function makePermissionReqsResume(election) {
 	return JSON.stringify(ret);
 }
 
+/**
+ * 
+ * @param election
+ * @param data data receiced from the last permission server with the commmand "savePermission"
+ * @returns the ballot which is signed by all permission servers as a JSON-encoded string
+ */
 function savePermissionEvent(election, data) {
 	var sigsOk = verifySaveElectionPermiss(election, data);
 	if (!sigsOk) throw new ErrorInServerAnswer(9238983, 0, 'Verification of server signature failed. Aborted.', '');
 
 	ret = new Array();
+	// find the ballot who got the sigs from all permission servers and save that one
 	for (var i=0; i<election.ballots.length; i++) {
 		if ('sigs' in election.ballots[i].transm) {
 			if (election.ballots[i].transm.sigs.length == election.pServerList.length) {
@@ -301,34 +308,35 @@ function makeVote(ballots, numRequiredSignatures, vote) {
 }
 
 function handleServerAnswer(election, dataString) {
+
 	try {
-		data = parseServerAnswer(dataString, true);
-	var ret;
-	switch (data.cmd) {
-	case 'unblindBallots':
-		ret = unblindBallotsEvent(election, data);
+		var data = parseServerAnswer(dataString, true);
+		var ret;
+		switch (data.cmd) {
+		case 'unblindBallots':
+			ret = unblindBallotsEvent(election, data);
+			break;
+		case 'reqSigsNextpServer':
+			if (election.xthServer < (election.pServerList.length -1)) {
+				ret = reqSigsNextpServerEvent(election, data);
+			} else {
+				return Object({'action':'clientError', 'errorText': "I already got enough sigs but server said: 'more sigs needed': \n" + dataString});
+			}
+			break;
+		case 'savePermission':
+			// create the string to be saved 
+			ballotFileContent = savePermissionEvent(election, data);
+			return Object({'action':'savePermission', 'data': ballotFileContent});
+			break;
+		case 'error':
+			return Object({'action':'serverError', 'errorText': data.errorTxt, 'errorNo': data.errorNo});
+		default:
+			return Object({'action':'clientError', 'errorText': "unknown server cmd: " + data.cmd});
 		break;
-	case 'reqSigsNextpServer':
-		if (election.xthServer < (election.pServerList.length -1)) {
-			ret = reqSigsNextpServerEvent(election, data);
-		} else {
-			return Object({'action':'clientError', 'errorText': "I already got enough sigs but server said: 'more sigs needed': \n" + dataString});
 		}
-		break;
-	case 'savePermission':
-		// create the string to be saved 
-		ballotFileContent = savePermissionEvent(election, data);
-		return Object({'action':'savePermission', 'data': ballotFileContent});
-		break;
-	case 'error':
-		return Object({'action':'serverError', 'errorText': data.errorTxt, 'errorNo': data.errorNo});
-	default:
-		return Object({'action':'clientError', 'errorText': "unknown server cmd: " + data.cmd});
-	break;
-	}
-	addCredentials(election, ret);
-	send = JSON.stringify(ret);
-	return Object({'action':'send', 'data':send});
+		addCredentials(election, ret);
+		send = JSON.stringify(ret);
+		return Object({'action':'send', 'data':send});
 	} catch (e) {
 		if (e instanceof ErrorInServerAnswer)	{
 			var m = e.getMessage();
