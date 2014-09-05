@@ -388,7 +388,12 @@ ConfigurableTally.buttonStep = function(qNo, forward) {
 	else 			{ firstStep.style.display = ''; 		secondStep.style.display = 'none'; 	}
 };
 
-ConfigurableTally.getInputs = function(qNo) {
+ConfigurableTally.prototype.sendVote = function(qNo) {
+	var votestr = this.getInputs(qNo);
+	this.sendVoteData(votestr);  // sendVoteData is inherited from publish-only-tally
+};
+
+ConfigurableTally.prototype.getInputs = function(qNo) {
 	var vote = {"ballotID":tallyconfig.ballotID,
 			"questions": [{
 				"questionID": tallyconfig.questions[qNo].questionID,
@@ -411,8 +416,9 @@ ConfigurableTally.getInputs = function(qNo) {
 			if  (voteOptionA == true) value = -1; // abstentitian --> -1
 			break;
 		}
-		vote.questions[0].votes[0] = [valueYNA, valuePref];
+		vote.questions[0].votes[optionNo] = [valueYNA, valuePref];
 	}
+	return JSON.stringify(vote);
 
 
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {

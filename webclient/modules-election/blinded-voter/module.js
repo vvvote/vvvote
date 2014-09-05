@@ -5,40 +5,32 @@ function savePermission(ballot) {
 	savePermission.ballot = ballot;
 	httpGet(ClientConfig.voteClientUrl, savePermission, savePermission.gotWebclient, false);
 }
-savePermission.gotWebclient = function(xml) {
-	if (xml.status != 200) {
-		// TODO we should load the webclient before obtaining the permission sigs
-		// TODO retry the other server to get the webclient
-		// TODO if the other server also fails: save the ballot only
-		httpError(xml);
-	}
-	else { 
-		clientHtml = xml.responseText;
-		// put ballot in webclient
-		var find = /\/\/bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpßjntt/;
-		var ballotWithClient = clientHtml.replace(find, 'permission=' + savePermission.ballot +';');
-		// load the electionId
-		var p = JSON.parse(savePermission.ballot); // ballot[0].transm contains the signed str which contains the electionId
-		var p2 = JSON.parse(p[0].transm.str);
-		var electionid = p2.electionId;
 
-		var bb = new Blob([ballotWithClient]); //  new Blob([ballot]); 
-		saveAs(bb, "Wahlschein " + clearForFilename(electionid) + '.html');
-	}
+
+/**
+ * @param varname the name of the global var that holds the instance of this object. It is used for HTML code to call back.
+ */
+var BlindedVoterElection = function (varname, onpermloaded, config) { // TODO save and load config in permission file
+	this.varname = varname; // the name of the global var that holds the instance of this object. It is used for HTML code to call back. 
+	this.callOnPermLoaded = onpermloaded;
+	this.permission = {};
+	this.permissionOk = false;
+	this.config = config; // TODO check if permission file electionId machtes the electionId given in config
 };
 
-function XXhandleXmlAnswer(xml) {
+BlindedVoterElection.prototype.XXhandleXmlAnswer = function(xml) {
 	var result = handleServerAnswer(election, xml);
-	switchAction(result);
+	this.switchAction(result);
 	// TODO check maximal loops = numServers
 };
 
-function switchAction(result) {
+
+BlindedVoterElection.prototype.switchAction = function (result) {
 	switch (result.action) {
 	case 'send':
 		serverno = election.pServerSeq[election.xthServer];
 		var me = this;
-		myXmlSend(election.pServerList[serverno].url, result.data, me, XXhandleXmlAnswer);
+		myXmlSend(election.pServerList[serverno].url, result.data, me, me.XXhandleXmlAnswer);
 		/*	  var xml2 = new XMLHttpRequest();
 	  xml2.open('POST', election.pServerList[serverno].url, true);
 	  xml2.onload = function() { XXhandleXmlAnswer(xml2); }; // quasi resursiv
@@ -48,7 +40,8 @@ function switchAction(result) {
 	case 'savePermission':
 		delete(election.restart);
 		// alert('Speichern Sie den Wahlschein!\n Zum Abstimmen klicken Sie auf "An Abstimmung teilnehmen" und wählen Sie unter der Überschrift "Ich habe bereits einen Wahlschein" den gespeicherten Wahlschein aus.'); //+ Wahlzettelinhalt: \n result.data);
-		savePermission(result.data);
+		// savePermission(result.data);
+		this.injectPermissionIntoClientSave(result.data);
 		page.onPermGenerated();
 		// saveAs(result.data, 'ballots.json');
 		break;
@@ -81,24 +74,45 @@ function switchAction(result) {
 	default:
 		alert('handleXmlAnswer(): Internal program error, got unknown action: ' + result.action);
 	}
-}
-
-/**
- * @param varname the name of the global var that holds the instance of this object. It is used for HTML code to call back.
- */
-var BlindedVoterElection = function (varname, onpermloaded, config) { // TODO save and load config in permission file
-	this.varname = varname; // the name of the global var that holds the instance of this object. It is used for HTML code to call back. 
-	this.callOnPermLoaded = onpermloaded;
-	this.permission = {};
-	this.permissionOk = false;
-	this.config = config; // TODO check if permission file electionId machtes the electionId given in config
 };
+
 
 /*
  * public members
  */
 
-BlindedVoterElection.prototype.onGetPermClick = function(authmodule, retry)  {
+BlindedVoterElection.prototype.gotWebclient = function(xml) {
+	if (xml.status != 200) {
+		// TODO retry the other server to get the webclient
+		// TODO if the other server also fails: save the ballot only
+		httpError(xml);
+	}
+	else { 
+		this.clientHtml = xml.responseText; // save the web client
+		this.obtainPermission(); // obtain the voter card (permission)
+	}
+};
+
+/**
+ * Injects the ballot permission into the web client and opens the save dialog of the web broweser
+ * @param ballot JSON encoded ballot
+ */
+BlindedVoterElection.prototype.injectPermissionIntoClientSave = function(ballot) {
+	var find = /\/\/bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpßjntt/;
+	var ballotWithClient = this.clientHtml.replace(find, 'permission=' + ballot +';');
+	// load the electionId to be used as filename
+	var p = JSON.parse(ballot); // ballot[0].transm contains the signed str which contains the electionId
+	var p2 = JSON.parse(p[0].transm.str);
+	var electionid = p2.electionId;
+
+	var bb = new Blob([ballotWithClient]); //  new Blob([ballot]); 
+	saveAs(bb, "Wahlschein " + clearForFilename(electionid) + '.html');
+};
+
+
+BlindedVoterElection.prototype.obtainPermission = function()  {
+	var authmodule = this.authModule;
+	var retry = this.retry;
 	if (!retry) {
 		election = new Object(); // TODO make this a local variable, therefor make module-backend object-oriented
 		var e = this.config['electionId']; // document.getElementById('electionId');
@@ -133,8 +147,8 @@ BlindedVoterElection.prototype.onGetPermClick = function(authmodule, retry)  {
 //	purl[1] = 'http://www2.webhod.ra/vvvote2/getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 
 	var url = election.pServerList[election.pServerSeq[election.xthServer]].url;
-	me = this;
-	myXmlSend(url, req, me, XXhandleXmlAnswer);
+	var me = this;
+	myXmlSend(url, req, me, me.XXhandleXmlAnswer);
 	/*	    var xml = new XMLHttpRequest();
 	//var serverno = getNextPermServer(election);
 	xml.open('POST', url, true);
@@ -146,6 +160,14 @@ BlindedVoterElection.prototype.onGetPermClick = function(authmodule, retry)  {
 	document.permission.log.value = document.permission.log.value + '\r\n\r\n --> gesendet an 1. Server (' + url + '): ' + req + "\r\n\r\n";  
     xml.send(req); */
 	return false;
+};
+	
+BlindedVoterElection.prototype.onGetPermClick = function(authmodule, retry)  {
+	this.authModule = authmodule;
+	this.retry = retry; // set to true if authentification failed
+	// download webclient
+	var me = this;
+	httpGet(ClientConfig.voteClientUrl, me, me.gotWebclient, ClientConfig.anonymizerUrl);
 };
 
 
