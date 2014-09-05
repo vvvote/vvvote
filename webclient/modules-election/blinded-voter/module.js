@@ -1,11 +1,11 @@
-
+/* not used anymore
 function savePermission(ballot) {
 	// TODO check maximal loops = numServers
 	// download webclient
 	savePermission.ballot = ballot;
 	httpGet(ClientConfig.voteClientUrl, savePermission, savePermission.gotWebclient, false);
 }
-
+*/
 
 /**
  * @param varname the name of the global var that holds the instance of this object. It is used for HTML code to call back.
