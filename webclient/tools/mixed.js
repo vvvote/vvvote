@@ -71,7 +71,7 @@ function httpGet(url, callbackObject, callbackFunction, log, proxy) {
 	if (typeof url !== 'string') { // typeof returns 'undefined' if url is not set
 		alert('Ein Fehler in den Einstellungen ist aufgetreten. Bitte informieren Sie den Wahlverantwortlichen (Fehlernr.: 875766: URL nicht definiert oder kein String)');
 		return;
-	} 
+	}
 	myXmlSend_(url, null, callbackObject, callbackFunction, proxy, 'GET', log);
 }
 
