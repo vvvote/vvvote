@@ -15,7 +15,7 @@ var BlindedVoterElection = function (varname, onpermloaded, config) { // TODO sa
 	this.callOnPermLoaded = onpermloaded;
 	this.permission = {};
 	this.permissionOk = false;
-	this.config = config; // TODO check if permission file electionId machtes the electionId given in config
+	this.config = config; // TODO check if permission file electionId matches the electionId given in config
 };
 
 BlindedVoterElection.prototype.XXhandleXmlAnswer = function(xml) {
@@ -167,7 +167,7 @@ BlindedVoterElection.prototype.onGetPermClick = function(authmodule, retry)  {
 	this.retry = retry; // set to true if authentification failed
 	// download webclient
 	var me = this;
-	httpGet(ClientConfig.voteClientUrl, me, me.gotWebclient, ClientConfig.anonymizerUrl);
+	httpGet(ClientConfig.voteClientUrl, me, me.gotWebclient, false);
 };
 
 
