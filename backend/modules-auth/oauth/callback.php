@@ -85,7 +85,7 @@ if (!isset($_GET['code'])) {
 } else {
 	if (!isset($_GET['state'])) {
 		printTitle('VVVote: Error', 'Daten zur Zuordnung der Anfrage fehlen.');
-		printTechInfos('URL-request-parameter >state< ist nor set.');
+		printTechInfos('URL-request-parameter >state< is not set.');
 		die();
 	}
 	$state = explode('.', $_GET['state']);
@@ -101,8 +101,6 @@ if (!isset($_GET['code'])) {
 		$tmpsecret    = $state[2];
 		$curOAuth2Config = $oauthConfig[$serverId];
 
-		print '<title>VVVote: Login erfolgreich</title>';
-		print '</head><body>';
 
 
 		//	print "<br><br>\ncurConfig: ";
@@ -114,7 +112,7 @@ if (!isset($_GET['code'])) {
 		//	print_r($response);
 		//	parse_str($response['result'], $info);
 		if (isset($response['error']) || $response['code'] != '200') {
-			// TODO better error message
+			// TODO better error message: e.g. 401 = client_secret falsch
 			printTitle('VVVote: Login fehlgeschlagen', 'Autorisierung dieser Anwendung fehlgeschlagen.');
 			print 'M&ouml;gliche Ursachen:<br>';
 			print '<ul>
@@ -139,11 +137,14 @@ if (!isset($_GET['code'])) {
 		// print_r($tokeninfos);
 		$client->setAccessToken($tokeninfos);
 		$now =  new DateTime('now');
-
-		$fetcher = new FetchFromOAuth2Server($state[0], $tokeninfos);
-		$auid        = $fetcher->fetchAuid();
-		$userProfile = $fetcher->fetchUserProilfe();
+		
+		$fetcher = new FetchFromOAuth2Server($serverId, $tokeninfos);
+		$auid        = $fetcher->fetchAuid(); // TODO error handling 404 --> $auid = empty
+		if ($auid        === false) print "Fehler: auid konnte nicht geholt werden";
+		$userProfile = $fetcher->fetchUserProilfe(); // TODO error handling 404 --> $userProfile = empty
+		if ($userProfile === false) print "Fehler: auid konnte nicht geholt werden";
 		$username  = $userProfile['username'];
+		
 		
 		global $dbInfos;
 		$oAuthDb = new DbOAuth2($dbInfos);

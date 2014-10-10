@@ -303,4 +303,29 @@ div.voteQuestion {
 	padding-left: 1em;
 	padding-right: 1em;
 	border-radius: 0.5em;
-} 
+}
+
+button.sendVoteButton {
+	background-color: red;
+	padding: 0.5em;
+	border-radius: 2em;
+}
+
+div.sendVote {
+	text-align: right;
+	padding-right: 0.5em;
+	padding-top: 1em;
+	padding-bottom: 0.5em;
+}
+
+fieldset.optionFieldSet {
+	margin-bottom: 1.5em;
+}
+
+label.scoreRadio {
+	padding-right: 1em;
+}
+
+label.yesNoRadio {
+	padding-right: 1em;
+}

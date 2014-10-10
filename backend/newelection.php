@@ -1,5 +1,6 @@
 <?php
 
+
 require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
 
 require_once __DIR__ . '/config/conf-allservers.php';

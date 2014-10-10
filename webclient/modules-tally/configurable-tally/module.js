@@ -8,7 +8,6 @@ ConfigurableTally.prototype = new PublishOnlyTelly();
 ConfigurableTally.getMainContent = function(tallyconfig) {
 	ConfigurableTally.tallyConfig = tallyconfig;
 	var fragm =	document.createDocumentFragment();
-	var mc = '<p id="ballotName">' + tallyconfig.ballotName + '</p>';
 	var elp = document.createElement('h1');
 	// var elptxt = document.createTextNode(tallyconfig.ballotName);
 	elp.appendChild(document.createTextNode(tallyconfig.ballotName));
@@ -37,41 +36,10 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 		var fragm2 = document.createDocumentFragment();
 		ConfigurableTally.getDOM1Election(tallyconfig, qNo, fragm2);
 		table[qNo * 2 + 2][0] = {'content' : fragm2, 'attrib': [{'name': 'colspan', 'value':'3'}]};
-
-
-		// mc = mc + '<p class="voteQuestion" id="voteQuestion'+tallyconfig.questions[qNo].questionID+'">' + tallyconfig.questions[qNo].questionWording + '</p>';
-		/*	var elp = document.createElement('p');
-		elp.setAttribute('class', 'voteQuestion');
-		elp.setAttribute('id'   , 'voteQuestion'+tallyconfig.questions[qNo].questionID);
-		elp.appendChild(wikiSyntax2DOMFrag(tallyconfig.questions[qNo].questionWording));
-		divNode.appendChild(elp);
-		 */	
-		/*if (tallyconfig.questions[qNo].references.length > 0) {
-			//mc = mc + '<ul>';
-			var listnode = document.createElement('ul');
-			for (var refNo=0; refNo<tallyconfig.questions[qNo].references.length; refNo++) {
-				//mc = mc + '<li><a href="' + tallyconfig.questions[qNo].references[refNo].referenceAddress +'" target="_blank">' + tallyconfig.questions[qNo].references[refNo].referenceName +'</a></li>';
-				var elp = document.createElement('a');
-				elp.setAttribute('href', tallyconfig.questions[qNo].references[refNo].referenceAddress);
-				elp.setAttribute('target', '_blank');
-				elp.appendChild(document.createTextNode(tallyconfig.questions[qNo].references[refNo].referenceName));
-				var elp2 = document.createElement('li');
-				elp2.appendChild(elp);
-				listnode.appendChild(elp2);
-			}
-			//mc = mc + '</ul>';
-			divNode.appendChild(listnode);
-		}
-		 */
-		//mc = mc + '<button id="buttonQid'+qNo+'" onclick="ConfigurableTally.showQuestion(' +qNo+');">An Abstimmung teilnehmen</button>';
-		/* divNode.appendChild(elp); */
 	}
-	//mc = mc + '</div>';
+
 	var electionsListDOM = makeTableDOM(table);
 	fragm.appendChild(electionsListDOM);
-	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
-		// ConfigurableTally.getDOM1Election(tallyconfig, qNo, fragm);
-	}
 
 	var fragm2 = wikiSyntax2DOMFrag("= Ziele meiner politischen Arbeit =\n\
 			== Wirtschaft ==\n\
@@ -114,157 +82,163 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 };
 
 ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
-	var mc = '';
-	mc = mc + '<div id="divVoteQuestionContainer'+tallyconfig.questions[qNo].questionID+'">';
-	mc = mc + '<div id="divVoteQuestion'+tallyconfig.questions[qNo].questionID+'">';
-	mc = mc + '<p class="voteQuestion" id="voteQuestion'+qNo+'">' + tallyconfig.questions[qNo].questionWording + '</p>';
 	var divQNode = document.createElement('div');
 	divQNode.setAttribute('id', 'divVoteQuestion'+qNo);
 	divQNode.setAttribute('class', 'voteQuestion');
 
-	switch (tallyconfig.questions[qNo].voteSystem.type) {
-	case 'score':
-		mc = mc +'<div id="FirstStepQ'+qNo+'">';
-		var divFirstQNode = document.createElement('div');
-		divFirstQNode.setAttribute('id', 'FirstStepQ'+qNo);
-		//if (tallyconfig.questions[qNo].voteSystem['single-step'] === true)
-		if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('yesNo' >= 0)) {
-			for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
-				var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
-				mc = mc + '<p>' +
-				'<fieldset>' +
-				'<legend class="votingOption"><h1>' + tallyconfig.questions[qNo].options[optionNo].optionTitle + '</h1>';
-				var pNode = document.createElement('p');
-				var fieldSetNode = document.createElement('fieldset');
-				var legendNode = document.createElement('legend');
-				legendNode.setAttribute('class', 'votingOption');
-				if (tallyconfig.questions[qNo].options[optionNo].optionTitle ) {
-					mc = mc + '<h1>Antrag    </h1>'; 
-					if ( 'optionDesc' in tallyconfig.questions[qNo].options[optionNo]) mc = mc + tallyconfig.questions[qNo].options[optionNo].optionDesc ;
-					var pTitleNode = document.createElement('h1');
-					pTitleNode.appendChild(document.createTextNode(tallyconfig.questions[qNo].options[optionNo].optionTitle));
-					legendNode.appendChild(pTitleNode);
+	for (var optionNo=0; optionNo < tallyconfig.questions[qNo].options.length; optionNo++) {
+		var optionFieldSet = document.createElement('fieldset');
+		var legendNode = ConfigurableTally.getOptionTextFragm(tallyconfig.questions[qNo].options[optionNo], qNo, optionNo);
+		optionFieldSet.appendChild(legendNode);
+		for (var schemetypeindex = 0; schemetypeindex < tallyconfig.questions[qNo].scheme.length; schemetypeindex++) {
+			var fieldSetNode = document.createElement('fieldset');
+			var legendNode = document.createElement('legend');
+			fieldSetNode.appendChild(legendNode);
+			var curScheme = tallyconfig.questions[qNo].scheme[schemetypeindex];
+			legendNode.setAttribute('class', curScheme.name);
+			switch (curScheme.name) {
+			case 'yesNo':
+				legendNode.appendChild(document.createTextNode('Zustimmung'));
+				radioBtnDOM('optionQ'+qNo+'O'+optionNo+'Y', 'optionQ'+qNo+'O'+optionNo+"YesNo", 'Ja'        , '1', fieldSetNode, 'yesNoRadio');
+				var noBtn = radioBtnDOM('optionQ'+qNo+'O'+optionNo+'N', 'optionQ'+qNo+'O'+optionNo+"YesNo", 'Nein'      , '0', fieldSetNode, 'yesNoRadio');
+				if (curScheme.abstention) {
+					var rBtn = radioBtnDOM('optionQ'+qNo+'O'+optionNo+'A', 'optionQ'+qNo+'O'+optionNo+"YesNo", 'Enthaltung', '-1', fieldSetNode, 'yesNoRadio');
+					rBtn.setAttribute('checked', 'checked');
+				} else {
+					noBtn.setAttribute('checked', 'checked');
 				}
-				if (tallyconfig.questions[qNo].options[optionNo].optionDesc ) {
-					buttonDOM('buttonQTid'+qNo, 'Antragstext', 'ConfigurableTally.showOptionDetail("divVoteQuestionDescQ", ' +qNo+', '+optionNo+')', legendNode);
-					var divOptionDescNode = document.createElement('div');
-					divOptionDescNode.setAttribute('id', 'divVoteQuestionDescQ' + qNo + 'O' + optionNo);
-					divOptionDescNode.setAttribute('style', 'display:none');
-					var optionDescNode = wikiSyntax2DOMFrag(tallyconfig.questions[qNo].options[optionNo].optionDesc);
-					divOptionDescNode.appendChild(optionDescNode);
-					legendNode.appendChild(divOptionDescNode);
+				break;
+			case 'score':
+				legendNode.appendChild(document.createTextNode('Bewertungspunkte'));
+				for (var score = curScheme.minScore; score <= curScheme.maxScore; score++) {
+					var rBtn = radioBtnDOM('optionQ'+qNo+'O'+optionNo+'S'+score, 'optionQ'+qNo+'O'+optionNo+'Score', score.toString(), score.toString(), fieldSetNode, 'scoreRadio');
+					if (score == curScheme.minScore) rBtn.setAttribute('checked', 'checked');
 				}
-				if (tallyconfig.questions[qNo].options[optionNo].shortDesc ) {
-					buttonDOM('buttonQSDid'+qNo, 'Zusammenfassung', 'ConfigurableTally.showOptionDetail("QuestionShortDescQ", ' +qNo+', '+optionNo+')', legendNode);
-					var divOptionDescNode = document.createElement('div');
-					divOptionDescNode.setAttribute('id', 'QuestionShortDescQ' + qNo + 'O' + optionNo);
-					divOptionDescNode.setAttribute('style', 'display:none');
-					var optionDescNode = wikiSyntax2DOMFrag(tallyconfig.questions[qNo].options[optionNo].shortDesc);
-					divOptionDescNode.appendChild(optionDescNode);
-					legendNode.appendChild(divOptionDescNode);
-				}
-				if (tallyconfig.questions[qNo].options[optionNo].reasons ) {
-					buttonDOM('buttonQRid'+qNo, 'Begründung', 'ConfigurableTally.showOptionDetail("QuestionReasonQ", ' +qNo+', '+optionNo+')', legendNode);
-					var divOptionDescNode = document.createElement('div');
-					var optionDescNode = wikiSyntax2DOMFrag(tallyconfig.questions[qNo].options[optionNo].reasons);
-					divOptionDescNode.setAttribute('id', 'QuestionReasonQ' + qNo + 'O' + optionNo);
-					divOptionDescNode.setAttribute('style', 'display:none');
-					divOptionDescNode.appendChild(optionDescNode);
-					legendNode.appendChild(divOptionDescNode);
-				}
-
-				if (tallyconfig.questions[qNo].options[optionNo].reasons ) {
-					mc = mc + '<h1>Begründung</h1>' + tallyconfig.questions[qNo].options[optionNo].reasons;
-				}
-				fieldSetNode.appendChild(legendNode);
-				mc = mc +
-				'<br></legend>'+
-				'<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'Y" value="Y">' +
-				'                                      <label          for="optionQ'+qNo+'O'+optionID+'Y">Ja</label>' +
-				'<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'N" value="N">' +
-				' <label                                               for="optionQ'+qNo+'O'+optionID+'N">Nein</label>';
-				// '<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'E" value="E" checked="checked">';
-				// ' <label                                                             for="optionQ'+qNo+'O'+optionID+'A">Enthaltung</label>';
-				// 
-				radioBtnDOM('optionQ'+qNo+'O'+optionID+'Y', 'optionQ'+qNo+'O'+optionID, 'Ja'        , '1', fieldSetNode);
-				radioBtnDOM('optionQ'+qNo+'O'+optionID+'N', 'optionQ'+qNo+'O'+optionID, 'Nein'      , '0', fieldSetNode);
-				radioBtnDOM('optionQ'+qNo+'O'+optionID+'A', 'optionQ'+qNo+'O'+optionID, 'Enthaltung', '-1', fieldSetNode);
-
-				if (tallyconfig.questions[qNo].voteSystem.abstention) {
-					mc = mc + '<input type="radio" name="optionQ'+qNo+'O'+optionID+'" id="optionQ'+qNo+'O'+optionID+'A" value="A" checked="checked">' +
-					' <label                                                for="optionQ'+qNo+'O'+optionID+'A">Einhaltung</label>';
-				}
-				mc = mc + '</fieldset>' + '</p>';
-
-				pNode.appendChild(fieldSetNode);
-				divQNode.appendChild(pNode);
+				break;
+			default: 
+				alert('Client unterstützt das Abstimmschema >' + curScheme.name + '< nicht');
 			}
-			if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('yesNo') >= 0 && tallyconfig.questions[qNo].voteSystem.steps.indexOf('score') >= 0) {
-				mc = mc + '<button id="button2ndStepQ"'+tallyconfig.questions[qNo].questionID+'" onclick="ConfigurableTally.buttonStep('+qNo+', true);" >Weiter</button>';
-			}
-			mc = mc + '</div>';
-			if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('score') >= 0) {
-				mc = mc +'<div id="SecondStepQ'+qNo+'" style="display:none">';
-				mc = mc + '<table class="voteOptions">';
-				mc = mc + '<thead>';
-				mc = mc + '<tr><th scope="col" rowspan="2">Option</th>';
-				mc = mc + '<th scope="col" rowspan="2">enthalten</th>';
-				mc = mc + '<th scope="col" colspan="3">bewerten </th></tr>';
-				mc = mc + '<tr><th style="text-align:left;">sehr schlecht</th><th style="text-align:center;">mittel</th><th style="text-align:right;">sehr gut</th></tr>';
-				mc = mc + '</thead><tbody>';
-				for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
-					var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
-					var min = tallyconfig.questions[qNo].voteSystem['min-score'];
-					var max = tallyconfig.questions[qNo].voteSystem['max-score'];
-					mc = mc +
-					'<tr>' +
-					'	<td scope="row"><label for="optionRQ'+qNo+'O'+optionNo+'">' + tallyconfig.questions[qNo].options[optionNo].optionTitle + '</label></td>' +
-					'	<td style="text-align:center;"><input type="checkbox" name="optionScore'+optionNo+'" id="optionRAQ'+qNo+'O'+optionNo+'" checked="checked" onclick="ConfigurableTally.onScoreAbstentionClick('+qNo+', '+optionNo+');"></td>' +
-//					' <label for="optionRAQ'+qNo+'O'+optionNo+'">Enthaltung</label>&emsp;'+
-					'	<td colspan="3" style="text-align:center;"><input style="width:100%;" type="range" name="optionScore'+optionNo+'" id="optionRQ'+qNo+'O'+optionNo+'" value="0" min="'+min+'" max="'+max+'" class="likeDisabled" onmousedown="ConfigurableTally.onScoreRangeClick('+qNo+', '+optionNo+');"></td>' +
-					'</tr>';
-				}
-				mc = mc + '</tbody></table>';
-				if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('yesNo') >= 0) {
-					mc = mc + '<button id="button1stStepQ"'+tallyconfig.questions[qNo].questionID+'" onclick="ConfigurableTally.buttonStep('+qNo+', false);">Zur&uuml;ck</button>';
-				}
-				mc = mc + '</div>';
-			}
+			optionFieldSet.setAttribute('class', 'optionFieldSet');
+			optionFieldSet.appendChild(fieldSetNode);
 		}
-		break;
-	case 'rank':
-		mc = mc + '<table class="voteOptions">';
-		mc = mc + '	<thead>';
-		mc = mc + '		<th>Rang</th>';
-		mc = mc + '		<th>Option</th>';
-		mc = mc + '		<th>Verschieben</th>';
-		mc = mc + '</thead>';
-		ConfigurableTally.questions = new Array();
-		var rankingTmp = [];
-		for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
-			rankingTmp[optionNo] = optionNo;
-		}
-		ConfigurableTally.questions[qNo] = {"ranking": rankingTmp};
-		mc = mc + '<tbody id="rankingTable' + qNo +'">' + ConfigurableTally.getRankingTableHtml(qNo) +'</tbody>';
-		mc = mc + '</table>';
-		break;
-	default: 
-		alert('Client unterstützt das Abstimmsystem >' + tallyconfig.voteSystem.type + '< nicht');
+		divQNode.appendChild(optionFieldSet);
 	}
-	if (qNo>0) {
-		mc = mc + '<button id="buttonPrevQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo-1)+')">Vorhergehende Frage</button>';
-	}
-	if (qNo == tallyconfig.questions.length-1)
-		mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.submitVote()">Abstimmen!</button>';
-	else 	mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo+1)+');">N&auml;chste Frage</button>';
-	mc = mc + '</div>'; // end div question
-	mc = mc + '</div>'; // end div question container
-	buttonDOM('buttonSendQ'+qNo, 'Stimme senden', '//ConfigurableTally.sendVote('+qNo+')', divQNode);
+	var divSendVote = document.createElement('div');
+	divSendVote.setAttribute('class', 'sendVote');
+	buttonDOM('buttonSendQ'+qNo, 'Stimme senden', '//ConfigurableTally.sendVote('+qNo+')', divSendVote, 'sendVoteButton');
+	divQNode.appendChild(divSendVote);
 	var divQNodeContainer = document.createElement('div');
 	divQNodeContainer.setAttribute('id', 'divVoteQuestionContainer'+qNo);
 	divQNodeContainer.appendChild(divQNode);
 	fragm.appendChild(divQNodeContainer);
-	return mc;
+	return '';
+};
+
+
+ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
+//	var divFirstQNode = document.createElement('div');
+//	divFirstQNode.setAttribute('id', 'FirstStepQ'+qNo);
+	var legendNode = document.createElement('legend');
+	legendNode.setAttribute('class', 'votingOption');
+	if ('optionTitle' in curOption) {
+		var pTitleNode = document.createElement('h1');
+		pTitleNode.appendChild(document.createTextNode(curOption.optionTitle));
+		legendNode.appendChild(pTitleNode);
+	}
+	if ('optionDesc' in curOption) {
+		buttonDOM('buttonQTid'+qNo, 'Antragstext', 'ConfigurableTally.showOptionDetail("divVoteQuestionDescQ", ' +qNo+', '+optionNo+')', legendNode);
+		var divOptionDescNode = document.createElement('div');
+		divOptionDescNode.setAttribute('id', 'divVoteQuestionDescQ' + qNo + 'O' + optionNo);
+		divOptionDescNode.setAttribute('style', 'display:none');
+		var optionDescNode = wikiSyntax2DOMFrag(curOption.optionDesc);
+		divOptionDescNode.appendChild(optionDescNode);
+		legendNode.appendChild(divOptionDescNode);
+	}
+	if ('shortDesc' in curOption) {
+		buttonDOM('buttonQSDid'+qNo, 'Zusammenfassung', 'ConfigurableTally.showOptionDetail("QuestionShortDescQ", ' +qNo+', '+optionNo+')', legendNode);
+		var divOptionDescNode = document.createElement('div');
+		divOptionDescNode.setAttribute('id', 'QuestionShortDescQ' + qNo + 'O' + optionNo);
+		divOptionDescNode.setAttribute('style', 'display:none');
+		var optionDescNode = wikiSyntax2DOMFrag(curOption.shortDesc);
+		divOptionDescNode.appendChild(optionDescNode);
+		legendNode.appendChild(divOptionDescNode);
+	}
+	if ('reasons' in curOption) {
+		buttonDOM('buttonQRid'+qNo, 'Begründung', 'ConfigurableTally.showOptionDetail("QuestionReasonQ", ' +qNo+', '+optionNo+')', legendNode);
+		var divOptionDescNode = document.createElement('div');
+		var optionDescNode = wikiSyntax2DOMFrag(curOption.reasons);
+		divOptionDescNode.setAttribute('id', 'QuestionReasonQ' + qNo + 'O' + optionNo);
+		divOptionDescNode.setAttribute('style', 'display:none');
+		divOptionDescNode.appendChild(optionDescNode);
+		legendNode.appendChild(divOptionDescNode);
+	}
+	return legendNode;
+/*	fieldSetNode.appendChild(legendNode);
+	pNode.appendChild(fieldSetNode);
+	divQNode.appendChild(pNode);
+	/*
+				if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('yesNo') >= 0 && tallyconfig.questions[qNo].voteSystem.steps.indexOf('score') >= 0) {
+					mc = mc + '<button id="button2ndStepQ"'+tallyconfig.questions[qNo].questionID+'" onclick="ConfigurableTally.buttonStep('+qNo+', true);" >Weiter</button>';
+				}
+				mc = mc + '</div>';
+				if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('score') >= 0) {
+					mc = mc +'<div id="SecondStepQ'+qNo+'" style="display:none">';
+					mc = mc + '<table class="voteOptions">';
+					mc = mc + '<thead>';
+					mc = mc + '<tr><th scope="col" rowspan="2">Option</th>';
+					mc = mc + '<th scope="col" rowspan="2">enthalten</th>';
+					mc = mc + '<th scope="col" colspan="3">bewerten </th></tr>';
+					mc = mc + '<tr><th style="text-align:left;">sehr schlecht</th><th style="text-align:center;">mittel</th><th style="text-align:right;">sehr gut</th></tr>';
+					mc = mc + '</thead><tbody>';
+					for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
+						var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
+						var min = tallyconfig.questions[qNo].voteSystem['min-score'];
+						var max = tallyconfig.questions[qNo].voteSystem['max-score'];
+						mc = mc +
+						'<tr>' +
+						'	<td scope="row"><label for="optionRQ'+qNo+'O'+optionNo+'">' + tallyconfig.questions[qNo].options[optionNo].optionTitle + '</label></td>' +
+						'	<td style="text-align:center;"><input type="checkbox" name="optionScore'+optionNo+'" id="optionRAQ'+qNo+'O'+optionNo+'" checked="checked" onclick="ConfigurableTally.onScoreAbstentionClick('+qNo+', '+optionNo+');"></td>' +
+//						' <label for="optionRAQ'+qNo+'O'+optionNo+'">Enthaltung</label>&emsp;'+
+						'	<td colspan="3" style="text-align:center;"><input style="width:100%;" type="range" name="optionScore'+optionNo+'" id="optionRQ'+qNo+'O'+optionNo+'" value="0" min="'+min+'" max="'+max+'" class="likeDisabled" onmousedown="ConfigurableTally.onScoreRangeClick('+qNo+', '+optionNo+');"></td>' +
+						'</tr>';
+					}
+					mc = mc + '</tbody></table>';
+					if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('yesNo') >= 0) {
+						mc = mc + '<button id="button1stStepQ"'+tallyconfig.questions[qNo].questionID+'" onclick="ConfigurableTally.buttonStep('+qNo+', false);">Zur&uuml;ck</button>';
+					}
+					mc = mc + '</div>';
+				}
+			}
+			break;
+		case 'rank':
+			mc = mc + '<table class="voteOptions">';
+			mc = mc + '	<thead>';
+			mc = mc + '		<th>Rang</th>';
+			mc = mc + '		<th>Option</th>';
+			mc = mc + '		<th>Verschieben</th>';
+			mc = mc + '</thead>';
+			ConfigurableTally.questions = new Array();
+			var rankingTmp = [];
+			for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
+				rankingTmp[optionNo] = optionNo;
+			}
+			ConfigurableTally.questions[qNo] = {"ranking": rankingTmp};
+			mc = mc + '<tbody id="rankingTable' + qNo +'">' + ConfigurableTally.getRankingTableHtml(qNo) +'</tbody>';
+			mc = mc + '</table>';
+			break;
+		default: 
+			alert('Client unterstützt das Abstimmsystem >' + tallyconfig.voteSystem.type + '< nicht');
+		}
+		if (qNo>0) {
+			mc = mc + '<button id="buttonPrevQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo-1)+')">Vorhergehende Frage</button>';
+		}
+		if (qNo == tallyconfig.questions.length-1)
+			mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.submitVote()">Abstimmen!</button>';
+		else 	mc = mc + '<button id="buttonNextQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo+1)+');">N&auml;chste Frage</button>';
+		mc = mc + '</div>'; // end div question
+		mc = mc + '</div>'; // end div question container
+	}
+	*/
 };
 
 
@@ -562,6 +536,145 @@ ConfigurableTally.test = function() {
 					 [
 					  {"referenceName":"Piratenpartei","referenceAddress":"https://piratenpartei.de/"}
 					  ]
+
+	};
+
+	var mc = ConfigurableTally.getMainContent(tallyConfig);
+	Page.loadMainContent(mc);
+	ConfigurableTally.showQuestion(0);
+};
+
+
+
+ConfigurableTally.test2 = function() {
+	var tallyConfig = 
+	{
+			"ballotID":"GTVsdffgsdwt40QXffsd452re",
+			"votingStart": "2014-02-10T21:20:00Z", 
+			"votingEnd": "2014-03-04T00:00:00Z",
+			"access":
+			{
+				"listID": "DEADBEEF",
+				"groups": [ 1,2,3] 
+			},     
+			"ballotName": "1. Basisentscheid NRW (online, anonym, Test)",
+			"questions":
+				[
+				 {
+					 "questionID":1,
+					 "questionWording":"Drehen wir uns im Kreis? (zweistufig)",
+					 "scheme":
+						 [ 
+						  {
+							  "name": "yesNo", /* "yesNo" "score", "pickOne" "rank" */ 
+							  "abstention": true
+						  },
+						  {
+							  "name": "score", 
+							  "minScore": -3,
+							  "maxScore": 3
+						  }
+						  ]
+				 ,
+				 "options":
+					 [
+					  { "optionID": 1, "optionTitle": "Ja, linksherum.", "optionDesc": "Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.\n\n Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
+					  { "optionID": 2, "optionTitle": "Ja, rechtsherum" },
+					  { "optionID": 3, "optionTitle": "Nein. Ab durch die Mitte!" },
+					  { "optionID": 4, "optionTitle": "Jein. Wir drehen durch." }
+					  ],
+					  "references":
+						  [
+						   { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
+						   { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
+						   ]
+				 },
+				 {
+					 "questionID":2,
+					 "questionWording":"Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
+					 "scheme":
+						 [ 
+						  {
+							  "name": "yesNo", /* "yesNo" "score", "pickOne" "rank" */ 
+							  "abstention": false
+						  }
+						  ],
+						  "options":
+							  [
+							   { "optionID": 1, "optionTitle": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
+							   { "optionID": 2, "optionTitle": "Ja, rechtsherum" },
+							   { "optionID": 3, "optionTitle": "Nein. Ab durch die Mitte!" },
+							   { "optionID": 4, "optionTitle": "Jein. Wir drehen durch." }
+							   ],
+							   "references":
+								   [
+								    { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
+								    { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
+								    ]
+				 },
+				 {
+					 "questionID":3,
+					 "questionWording":"Bringen uns Schuldzuweisungen irgendwas?",
+					 "scheme":
+						 [ 
+						  {
+							  "name": "rank", /* "yesNo" "score", "pickOne" "rank" */ 
+						  }
+						  ],
+						  "options":
+							  [
+							   { "optionID":1, "optionTitle": "Ja. Befriedigung! Ha!"},
+							   { "optionID":2, "optionTitle": "Ja. Streit und Ärger."},
+							   { "optionID":3, "optionTitle": "nö, aber wir machen's dennoch" },
+							   { "optionID":4, "optionTitle": "Huch? Das macht noch jemand?" }
+							   ],
+						   "references":
+								   [                
+								    { "referenceName":"piff paff puff kappotschießen", "referenceAddress":"https://twitter.com/czossi/status/436217916803911680/photo/1" }
+								    ]
+				 },
+				 {
+					 "questionID":4,
+					 "questionWording":"Basisentscheid / Ständige Mitgliederversammlung\n* SÄA30: Modul 1: Basisentscheid in NRW einführen\n* SÄA30: Modul 2: Basisentscheid online anonym ermöglichen\n* SÄA30: Modul 3: Auch Programmanträge im Basisentscheid zulassen\n* SÄA XY: Ständige Mitgliederversammlung einführen",
+					 "scheme":
+						 [ 
+						  {
+							  "name": "score", 
+							  "minScore": 0,
+							  "maxScore": 3
+						  }
+						 ],
+					 "options":
+							  [
+							   { "optionID": 1, "optionTitle": "SÄA 18: SMV Option 1 - Ablehnung von verbindlicher Online-SMV", "optionDesc": "Der Landesverband NRW lehnt es grundsätzlich ab, zum jetzigen Zeitpunkt ein System einzuführen, welches unter zuhilfenahme von Online-Werkzeugen irgendeine Form von verbindlicher Abstimmung umsetzen soll.\n\nZu diesem Zweck werden aus §8 (2) der Landessatzung die Worte \"oder in einem vom Landesparteitag legitimierten Werkzeug\" gestrichen. ", "reasons": "== Glaubwürdigkeit ==\n* Beschluss/PM aus der Gründungszeit der Piratenpartei: https://wiki.piratenpartei.de/Pressemitteilung_vom_12.11.2006_zu_Wahlmaschinen\n* Wir machen uns absolut unglaubwürdig, wenn wir verbindliche Onlineabstimmungen beschliessen und durchführen.\n\n== Toolproblem ==\nEs gibt zum jetzigen Zeitpunkt kein einziges Tool, welches die elementaren Anforderungen an geheime Wahlen erfüllt (anonym/pseudonym, Nachvollzieh- und Überprüfbarkeit). Auf absehbare Zeit nicht umsetzbare Mitbestimmungswerkzeuge in die Satzung zu schreiben ist Zeitverschwendung und Wahlbetrug."},
+							   { "optionID": 2, "optionTitle": "SÄA 18: Modul 1: 2014 keine Ressourcen für SMV bereitstellen", "optionDesc": "Das Thema SMV soll 2014 (mindestens für die Amtsperiode des derzeitgen Landesvorstandes) keine Rolle mehr spielen. Es soll insbesondere keinerlei finanzielle Förderung oder Bereitstellung von IT Infrastruktur aus Landesmitteln stattfinden." },
+							   { "optionID": 3, "optionTitle": "SÄA 18: Modul 2: Entwicklung auf Bundesebene abwarten", "optionDesc": "Das Thema SMV soll auf Landesebene erst wieder aktiv behandelt werden, wenn es auf Bundesebene neue Entscheidungen oder Entwicklungen zum Thema SMV gibt (z.B. Bestätigung eines Tools, Satzungsänderungen)."  },
+							   { "optionID": 4, "optionTitle": "SÄA 19: SMV Option 2 Ständige Mitgliederversammlung nur auf Totholz einführen", "optionDesc": "Der Landesparteitag möge beschliessen, der Satzung an geeigneter Stelle einen Abschnitt \"Basisentscheid und Basisbefragung\" mit folgendem Wortlaut hinzuzufügen: (Anmerkung 1: Der Text entspricht bis auf die hier durch Streichung bzw Fettschrift kenntlich gemachten Teile dem angenommenen SÄA003 (http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2013.1/Antragsportal/SÄA003) aus Neumarkt.)\n\n\
+								   (Anmerkung 2: Die parallel dazu vorgeschlagene Entscheidsordnung weicht deutlich von X011 (http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2013.1/Antragsportal/X011) aus Neumarkt ab.) \
+								   \n\n(1) Die Mitglieder fassen in einem Basisentscheid einen Beschluss, der einem des Landesparteitags gleichsteht. Ein Beschluss zu Sachverhalten, die dem Landesparteitag vorbehalten sind oder eindeutig dem Parteiprogramm widersprechen, gilt als Basisbefragung mit lediglich empfehlenden Charakter. Urabstimmungen gemäß §6 (2) Nr.11 PartG werden in Form eines Basisentscheids durchgeführt, zu dem alle stimmberechtigten Mitglieder in Textform eingeladen werden. Die nachfolgenden Bestimmungen für Anträge bzw. Abstimmungen gelten sinngemäß auch für Personen bzw. Wahlen.\
+								   \n\n(2) Teilnahmeberechtigt sind alle persönlich identifizierten, am Tag der Teilnahme stimmberechtigten Mitglieder gemäß §4(4) der Bundessatzung, die mit ihren Mitgliedsbeiträgen nicht im Rückstand sind. Um für Quoren und Abstimmungen berücksichtigt zu werden, müssen sich die teilnahmeberechtigten Mitglieder zur Teilnahme anmelden.\
+								   \n\n(3) Über einen Antrag wird nur abgestimmt, wenn er innerhalb eines Zeitraums ein Quorum von Teilnehmern als Unterstützer erreicht oder vom Bundesparteitag eingebracht wird. Der Landesvorstand darf organisatorische Anträge einbringen. Konkurrierende Anträge zu einem Sachverhalt können rechtzeitig vor der Abstimmung eingebracht und für eine Abstimmung gebündelt werden. Eine erneute Abstimmung über den gleichen oder einen sehr ähnlichen Antrag ist erst nach Ablauf einer Frist zulässig, es sei denn die Umstände haben sich seither maßgeblich geändert. Über bereits erfüllte, unerfüllbare oder zurückgezogene Anträge wird nicht abgestimmt. Der Landesparteitag soll die bisher nicht abgestimmten Anträge behandeln.\
+								   \n\n(4) Vor einer Abstimmung werden die Anträge angemessen vorgestellt und zu deren Inhalt eine für alle Teilnehmer zugängliche Debatte gefördert. Die Teilnahme an der Debatte und Abstimmung muss für die Mitglieder zumutbar und barrierefrei sein. Anträge werden nach gleichen Maßstäben behandelt. Mitglieder bzw. Teilnehmer werden rechtzeitig über mögliche Abstimmungstermine bzw. die Abstimmungen in Textform informiert.\
+								   \n\n(5) Die Teilnehmer haben gleiches Stimmrecht, das sie selbstständig und frei innerhalb des Abstimmungszeitraums ausüben. Abstimmungen außerhalb des Parteitags erfolgen entweder pseudonymisiert oder geheim. Bei pseudonymisierter Abstimmung kann jeder Teilnehmer die unverfälschte Erfassung seiner eigenen Stimme im Ergebnis überprüfen und nachweisen. Bei personellen Sachverhalten oder auf Antrag einer Minderheit muss die Abstimmung geheim erfolgen. In einer geheimen Abstimmung sind die einzelnen Schritte für jeden Teilnehmer ohne besondere Sachkenntnisse nachvollziehbar und die Stimmabgabe erfolgt nicht elektronisch. Die Manipulation einer Abstimmung oder die Veröffentlichung von Teilergebnissen vor Abstimmungsende sind ein schwerer Verstoß gegen die Ordnung der Partei.\
+							   \n\n(6) Das Nähere regelt die Entscheidsordnung, welche durch den Landesparteitag beschlossen wird und auch per Basisentscheid geändert werden kann." },
+							   { "optionID": 5, "optionTitle": "SÄA 19: Modul 1: Änderung der Entscheidsordnung durch den Basisentscheid", "optionDesc": "Abschnitt (6) wird ersetzt durch:\n\n(6) Das Nähere regelt die Entscheidsordnung, welche durch den Landesparteitag beschlossen wird und auch per Basisentscheid geändert werden kann." },
+							   { "optionID": 6, "optionTitle": "SÄA 19: Modul 2: An die Arbeit !", "optionDesc": "Regionale und kommunale Gliederungen ausreichender Größe sind aufgefordert, spätestens nach der kommenden Kommunalwahl mit der Gründung von Urnen zu beginnen. Der Landesvorstand ist aufgefordert durch Ausschreibungen (oder sofern nötig & möglich auch durch Wahlen noch auf dem LPT), entsprechendes Personal für die Organisation und Durchführung zu finden und entsprechend zu beauftragen." },
+							   { "optionID": 7, "optionTitle": "SÄA30: Modul 1: Basisentscheid in NRW einführen", "optionDesc": "" },
+							   { "optionID": 8, "optionTitle": "SÄA30: Modul 2: Basisentscheid online anonym ermöglichen", "optionDesc": "" },
+							   { "optionID": 9, "optionTitle": "SÄA30: Modul 3: Auch Programmanträge im Basisentscheid zulassen"}
+							   ],
+							   "references":
+								   [
+								    { "referenceName":"Vollständiger Antrag zur SMV Option 1 - Ablehnung von verbindlicher Online-SMV mit Modulen", "referenceAddress":"https://wiki.piratenpartei.de/NRW:Landesparteitag_2014.1/Antr%C3%A4ge/S%C3%84A019" },
+								    { "referenceName":"Vollständiger Antrag zur SMV Option 2 - Totholz SMV mit Modulen", "referenceAddress":"https://wiki.piratenpartei.de/NRW:Landesparteitag_2014.1/Antr%C3%A4ge/S%C3%84A019" },
+								    { "referenceName":"Vollständiger Antrag zum Basisentscheid mit Begründung und Modulen", "referenceAddress":"https://wiki.piratenpartei.de/NRW:Landesparteitag_2014.1/Antr%C3%A4ge/S%C3%84A030" }
+								   ]
+				 }
+				 ],
+				 "references":
+					 [
+					  {"referenceName":"Piratenpartei","referenceAddress":"https://piratenpartei.de/"}
+					 ]
 
 	};
 
