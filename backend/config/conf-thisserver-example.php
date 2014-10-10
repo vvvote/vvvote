@@ -37,19 +37,24 @@ if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
 			'dbname'  => 'election_server1',
 			'prefix'  => 'el1_'
 	);
-	
-	// OAuth config
+
+	// OAuth 2.0 config
 	$oauthBEObayern = array(
-			'name'          => 'BEO Bayern', // Name of this OAuth service do not use special characters
-	        'client_id'     => 'vvvote',
-	        'client_secret' => 'your client secret',
-			// 'redirect_uri'  => $configUrlBase . '/modules-auth/oauth/callback.php',
-			'redirect_uri'  => 'https://' . $_SERVER['HTTP_HOST'] . '/modules-auth/oauth/callback.php',
-			'authorization_endp'  => 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/',
-	        'token_endp'          => 'https://beoauth.piratenpartei-bayern.de/oauth2/token/',
-	  		'get_membership_endp' => 'https://beoauth.piratenpartei-bayern.de/api/self/membership/'
+			'serverId'      => 'BEOBayern',
+			'client_id'     => 'vvvote',
+			'client_secret' => 'your_Client_Secret',
+			'redirect_uri'  => $configUrlBase . '/modules-auth/oauth/callback.php',
+			// 	'redirect_uri'  => 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php',
+				
+			'authorization_endp'    => 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/',
+			'token_endp'            => 'https://beoauth.piratenpartei-bayern.de/oauth2/token/',
+			'get_profile_endp'      => 'https://beoauth.piratenpartei-bayern.de/api/v1/user/profile/',
+			'is_in_voter_list_endp' => 'https://beoauth.piratenpartei-bayern.de/api/v1/user/listmember/',
+			'get_membership_endp'   => 'https://beoauth.piratenpartei-bayern.de/api/v1/user/membership/',
+			'get_auid_endp'			=> 'https://beoauth.piratenpartei-bayern.de/api/v1/user/auid/',
+			'sendmail_endp'			=> 'https://beoauth.piratenpartei-bayern.de/api/v1/user/mails/'
 	);
-	$oauthConfig = array($oauthBEObayern['name'] => $oauthBEObayern);
+	$oauthConfig = array($oauthBEObayern['serverId'] => $oauthBEObayern);
 }
 
 ?>

@@ -89,6 +89,10 @@ class DbMySql { // TODO dbBase
 		}
 	}
 */
+	
+	/**
+	 * creates the tables and adds coulumns if not already present
+	 */
 	function createTables() { // throws PDOException
 		// echo "create Tables<br>\n";
 		foreach ($this->evtables as $tname => $tabledef) {
@@ -107,6 +111,30 @@ class DbMySql { // TODO dbBase
 			// echo $sql;
 			$this->connection->exec($sql);
 			$status = $this->connection->errorInfo();
+
+			// add all columns to the table (ignoring error if coulumn not already exists)
+			$sql2 = 'DROP PROCEDURE IF EXISTS foo;'; //"delimiter //";
+			$this->connection->exec($sql2);
+			$status = $this->connection->errorInfo();
+				
+			$sql2 = 'create procedure foo()
+					begin 
+					declare continue handler for 1060 begin end;'; // ignore error if column already exists
+			foreach ($tabledef as $col) {
+				$sql2 = $sql2 . 'alter table ' . $tablename . ' add '. $col['name'] . " varchar(${col['digits']}); ";
+			}
+			$sql2 = $sql2 . 'end;';
+			$this->connection->exec($sql2);
+			$status = $this->connection->errorInfo();
+			
+			$sql2 = 'call foo();';
+			$this->connection->exec($sql2);
+			$status = $this->connection->errorInfo();
+			
+			$sql2 = 'DROP PROCEDURE IF EXISTS foo;';
+			$this->connection->exec($sql2);
+			$status = $this->connection->errorInfo();
+				
 			// echo "<br>\n $status";
 		}
 	}

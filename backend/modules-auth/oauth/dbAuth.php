@@ -22,9 +22,10 @@ class DbOAuth2 extends DbBase {
 	function __construct($dbInfos) {
 		$dbtables =
 		array('oa_elections' /* Table name */ => array(
-				array('name' => 'electionId'        , 'digits' => '100', 'json' => false), /* colunm definition */
-				array('name' => 'serverId'          , 'digits' => '100', 'json' => false),
-				array('name' => 'listId'            , 'digits' => '100', 'json' => false)
+				array('name' => 'electionId'          , 'digits' => '100', 'json' => false), /* colunm definition */
+				array('name' => 'serverId'            , 'digits' => '100', 'json' => false),
+/*				array('name' => 'listId'              , 'digits' => '100', 'json' => false), */
+				array('name' => 'eligibilityCriteria' , 'digits' => '500', 'json' => true) /* ca. 230 chars are used -> 500 makes a lot of room for lidtId */
 		),
 			  'oa_voters' /* table name */ => array(
 				array('name' => 'serverId'       , 'digits' => '100', 'json' => false), /* colunm definition: Id of the OAuth 2.0 server */
@@ -42,12 +43,12 @@ class DbOAuth2 extends DbBase {
 		parent::__construct($dbInfos, $dbtables, true);
 	}
 
-	function newElection($electionId, $listId, $serverId) {
-		$exists = $this->load(array('electionId' => $electionId), 'oa_elections', 'listId');
+	function newElection($electionId, $serverId, $eligibilityCriteria) {
+		$exists = $this->load(array('electionId' => $electionId), 'oa_elections', 'serverId');
 		if (isset($exists[0])) { 
 			WrongRequestException::throwException(3000, 'election ID already used', $electionId);
 		}
-		$saved = $this->save(array('electionId' => $electionId, 'listId' => $listId, 'serverId' => $serverId), 'oa_elections');
+		$saved = $this->save(array('electionId' => $electionId, 'serverId' => $serverId, 'eligibilityCriteria' => $eligibilityCriteria), 'oa_elections');
 		if (! $saved) {
 			InternalServerError::throwException(3001, 'internal server error; election not saved', $electionId);
 		}
@@ -57,10 +58,17 @@ class DbOAuth2 extends DbBase {
 	function getListIdByElectionId($electionId) {
 		return $this->load(array('electionId' => $electionId), 'oa_elections', 'listId');
 	}
+	
+	function getEligibaleCriteria($electionId) {
+		$rettmp = $this->load(array('electionId' => $electionId), 'oa_elections', 'eligibilityCriteria');
+		if (count($rettmp) < 1) InternalServerError::throwException(3000, 'election id not found', "election >$electionId< not found in table oa_elections");
+		if (count($rettmp) > 1) InternalServerError::throwException(3010, 'more than 1 election id found', "several >$electionId< found in table oa_elections");
+		return $rettmp[0];
+	}
 
-	function getListIdandServerIdByElectionId($electionId) {
+	function getOAuthServerIdByElectionId($electionId) {
 		$rettmp = $this->load(array('electionId' => $electionId), 'oa_elections', 
-				array('listId', 'serverId'));
+				'serverId');
 		if (count($rettmp) < 1) InternalServerError::throwException(3000, 'election id not found', "election >$electionId< not found in table oa_elections");
 		if (count($rettmp) > 1) InternalServerError::throwException(3010, 'more than 1 election id found', "several >$electionId< found in table oa_elections");
 		return $rettmp[0];

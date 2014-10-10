@@ -1,6 +1,6 @@
 /**
  * config
- * @returns {Array}
+ * 
  */
 
 var server1url = 'http://www.webhod.ra/vvvote2/backend/';
@@ -8,10 +8,7 @@ var server2url = 'http://127.0.0.1/vvvote2/backend/';
 
 var server1urlParts = URI.getParts(server1url);
 
-function ClientConfig() {
-	 
-}
-
+function ClientConfig() { }
 
 ClientConfig.newElectionUrl    = new Array(	server1url +'newelection.php',
 											server2url +'newelection.php');
@@ -73,7 +70,7 @@ var oAuth2ConfigBEOBayern = {
 		serverDesc: 	'Basisentscheid Online der Piraten (Bayerischer Testserver)',
 		authorizeUri: 	'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/?', // must end with ?
 		loginUri:		'https://beoauth.piratenpartei-bayern.de/',
-		scope: 			'member+profile',
+		scope: 			'member+profile+unique',
 		redirectUri: 	redirectUriTMP,
 		clientId: 		clientIdTMP
 };

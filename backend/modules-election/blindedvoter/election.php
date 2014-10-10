@@ -149,6 +149,7 @@ class Election {
 			}
 		} // TODO check if all first/second... signatures come from the same servers
 		// TODO check if all prev sigs came from different servers
+		// TODO check if all prev sigs did not come from this server
 		// check if all previous servers signed the correct number of ballots/blindedHashes
 		foreach ($numSigned as $i => $num) {
 			if ($num != $this->numSignBallots[$i] ) WrongRequestException::throwException(401, "Error: the number of already acquiered signatures does not match the configured number of signatures", "from server $i, sigs acquiered $num should have acquiered " . $this->numSignBallots[$i]);

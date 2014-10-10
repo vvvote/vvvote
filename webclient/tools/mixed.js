@@ -327,7 +327,7 @@ function wikiSyntax2DOMFrag(wikisyntax) {
 			if (secondPartInput.length > 0) e.appendChild(charFormat(secondPartInput, frag, '')); // TODO instead of '' use parent open tag
 			if (firstmatch > 0)	e = document.createTextNode(row.substr(0, firstmatch+1));
 			else				e = document.createElement(tags[firstTagNo].html);
-			if (e.appendChild(charFormat(row.substr(firstmatch + tags[firstTagNo].wiki.length), frag, tags[firstTagNo].html)));
+			// if (e.appendChild(charFormat(row.substr(firstmatch + tags[firstTagNo].wiki.length), frag, tags[firstTagNo].html)));
 			return e;
 		}
 	}
@@ -484,26 +484,30 @@ function makeTableDOM(table){
 	return tableNode;
 }
 
-function radioBtnDOM(id, name, label, value, fieldSetNode) {
+function radioBtnDOM(id, name, label, value, fieldSetNode, klasse) {
 	var radioNode = document.createElement('input');
 	radioNode.setAttribute('type', 'radio');
 	radioNode.setAttribute('name', name);
 	radioNode.setAttribute('id'  , id);
 	radioNode.setAttribute('value'  , value);
+	if (typeof klasse === 'string') radioNode.setAttribute('class', klasse);
 
 	var labelNode = document.createElement('label');
 	labelNode.setAttribute('for', id);
 	labelNode.appendChild(document.createTextNode(label));
+	if (typeof klasse === 'string') labelNode.setAttribute('class', klasse);
 
 	fieldSetNode.appendChild(radioNode);
 	fieldSetNode.appendChild(labelNode);
+	return radioNode;
 }
 
 
-function buttonDOM(id, label, onclick, addTo) {
+function buttonDOM(id, label, onclick, addTo, klasse) {
 	var buttonNode= document.createElement('button');
 	buttonNode.setAttribute('id'	  , id);
 	buttonNode.setAttribute('onclick', onclick);
+	if (typeof klasse === 'string') buttonNode.setAttribute('class', klasse);
 	var buttonNodeTxt = document.createTextNode(label);
 	buttonNode.appendChild(buttonNodeTxt);
 	addTo.appendChild(buttonNode);
