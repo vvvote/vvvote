@@ -96,7 +96,7 @@ class OAuth2 extends Auth {
 		} else $isInVoterList = true; // test not requiered
 
 		// is a member and entitled for voting (stimmberechtigt)
-		if (isset($eligCrit['nested_groups']) ) {
+		if (isset($eligCrit['nested_groups']) && (count($eligCrit['nested_groups'] > 0)) ) {
 			$isInGroup = $this->oAuthConnection->isInGroup($eligCrit['nested_groups']);
 			if ($isInGroup !== true) return false;
 		} else $isInGroup = true; // test not requiered
