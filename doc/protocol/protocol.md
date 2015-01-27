@@ -1,239 +1,32 @@
-Welcome to StackEdit!
+Welcome to VVVote!
 ===================
 
+Short Explanation of the VVVote Protocol
 
-Hey! I'm your first Markdown document in **StackEdit**[^stackedit]. Don't delete me, I'm very helpful! I can be recovered anyway in the **Utils** tab of the <i class="icon-cog"></i> **Settings** dialog.
-
-----------
-
-
-Documents
--------------
-
-StackEdit stores your documents in your browser, which means all your documents are automatically saved locally and are accessible **offline!**
-
-> **Note:**
-
-> - StackEdit is accessible offline after the application has been loaded for the first time.
-> - Your local documents are not shared between different browsers or computers.
-> - Clearing your browser's data may **delete all your local documents!** Make sure your documents are synchronized with **Google Drive** or **Dropbox** (check out the [<i class="icon-refresh"></i> Synchronization](#synchronization) section).
-
-#### <i class="icon-file"></i> Create a document
-
-The document panel is accessible using the <i class="icon-folder-open"></i> button in the navigation bar. You can create a new document by clicking <i class="icon-file"></i> **New document** in the document panel.
-
-#### <i class="icon-folder-open"></i> Switch to another document
-
-All your local documents are listed in the document panel. You can switch from one to another by clicking a document in the list or you can toggle documents using <kbd>Ctrl+[</kbd> and <kbd>Ctrl+]</kbd>.
-
-#### <i class="icon-pencil"></i> Rename a document
-
-You can rename the current document by clicking the document title in the navigation bar.
-
-#### <i class="icon-trash"></i> Delete a document
-
-You can delete the current document by clicking <i class="icon-trash"></i> **Delete document** in the document panel.
-
-#### <i class="icon-hdd"></i> Export a document
-
-You can save the current document to a file by clicking <i class="icon-hdd"></i> **Export to disk** from the <i class="icon-provider-stackedit"></i> menu panel.
-
-> **Tip:** Check out the [<i class="icon-upload"></i> Publish a document](#publish-a-document) section for a description of the different output formats.
-
-
-----------
-
-
-Synchronization
--------------------
-
-StackEdit can be combined with <i class="icon-provider-gdrive"></i> **Google Drive** and <i class="icon-provider-dropbox"></i> **Dropbox** to have your documents saved in the *Cloud*. The synchronization mechanism takes care of uploading your modifications or downloading the latest version of your documents.
-
-> **Note:**
-
-> - Full access to **Google Drive** or **Dropbox** is required to be able to import any document in StackEdit. Permission restrictions can be configured in the settings.
-> - Imported documents are downloaded in your browser and are not transmitted to a server.
-> - If you experience problems saving your documents on Google Drive, check and optionally disable browser extensions, such as Disconnect.
-
-#### <i class="icon-refresh"></i> Open a document
-
-You can open a document from <i class="icon-provider-gdrive"></i> **Google Drive** or the <i class="icon-provider-dropbox"></i> **Dropbox** by opening the <i class="icon-refresh"></i> **Synchronize** sub-menu and by clicking **Open from...**. Once opened, any modification in your document will be automatically synchronized with the file in your **Google Drive** / **Dropbox** account.
-
-#### <i class="icon-refresh"></i> Save a document
-
-You can save any document by opening the <i class="icon-refresh"></i> **Synchronize** sub-menu and by clicking **Save on...**. Even if your document is already synchronized with **Google Drive** or **Dropbox**, you can export it to a another location. StackEdit can synchronize one document with multiple locations and accounts.
-
-#### <i class="icon-refresh"></i> Synchronize a document
-
-Once your document is linked to a <i class="icon-provider-gdrive"></i> **Google Drive** or a <i class="icon-provider-dropbox"></i> **Dropbox** file, StackEdit will periodically (every 3 minutes) synchronize it by downloading/uploading any modification. A merge will be performed if necessary and conflicts will be detected.
-
-If you just have modified your document and you want to force the synchronization, click the <i class="icon-refresh"></i> button in the navigation bar.
-
-> **Note:** The <i class="icon-refresh"></i> button is disabled when you have no document to synchronize.
-
-#### <i class="icon-refresh"></i> Manage document synchronization
-
-Since one document can be synchronized with multiple locations, you can list and manage synchronized locations by clicking <i class="icon-refresh"></i> **Manage synchronization** in the <i class="icon-refresh"></i> **Synchronize** sub-menu. This will let you remove synchronization locations that are associated to your document.
-
-> **Note:** If you delete the file from **Google Drive** or from **Dropbox**, the document will no longer be synchronized with that location.
-
-----------
-
-
-Publication
--------------
-
-Once you are happy with your document, you can publish it on different websites directly from StackEdit. As for now, StackEdit can publish on **Blogger**, **Dropbox**, **Gist**, **GitHub**, **Google Drive**, **Tumblr**, **WordPress** and on any SSH server.
-
-#### <i class="icon-upload"></i> Publish a document
-
-You can publish your document by opening the <i class="icon-upload"></i> **Publish** sub-menu and by choosing a website. In the dialog box, you can choose the publication format:
-
-- Markdown, to publish the Markdown text on a website that can interpret it (**GitHub** for instance),
-- HTML, to publish the document converted into HTML (on a blog for example),
-- Template, to have a full control of the output.
-
-> **Note:** The default template is a simple webpage wrapping your document in HTML format. You can customize it in the **Advanced** tab of the <i class="icon-cog"></i> **Settings** dialog.
-
-#### <i class="icon-upload"></i> Update a publication
-
-After publishing, StackEdit will keep your document linked to that publication which makes it easy for you to update it. Once you have modified your document and you want to update your publication, click on the <i class="icon-upload"></i> button in the navigation bar.
-
-> **Note:** The <i class="icon-upload"></i> button is disabled when your document has not been published yet.
-
-#### <i class="icon-upload"></i> Manage document publication
-
-Since one document can be published on multiple locations, you can list and manage publish locations by clicking <i class="icon-upload"></i> **Manage publication** in the <i class="icon-provider-stackedit"></i> menu panel. This will let you remove publication locations that are associated to your document.
-
-> **Note:** If the file has been removed from the website or the blog, the document will no longer be published on that location.
-
-----------
-
-
-Markdown Extra
---------------------
-
-StackEdit supports **Markdown Extra**, which extends **Markdown** syntax with some nice features.
-
-> **Tip:** You can disable any **Markdown Extra** feature in the **Extensions** tab of the <i class="icon-cog"></i> **Settings** dialog.
-
-> **Note:** You can find more information about **Markdown** syntax [here][2] and **Markdown Extra** extension [here][3].
-
-
-### Tables
-
-**Markdown Extra** has a special syntax for tables:
-
-Item     | Value
--------- | ---
-Computer | $1600
-Phone    | $12
-Pipe     | $1
-
-You can specify column alignment with one or two colons:
-
-| Item     | Value | Qty   |
-| :------- | ----: | :---: |
-| Computer | $1600 |  5    |
-| Phone    | $12   |  12   |
-| Pipe     | $1    |  234  |
-
-
-### Definition Lists
-
-**Markdown Extra** has a special syntax for definition lists too:
-
-Term 1
-Term 2
-:   Definition A
-:   Definition B
-
-Term 3
-
-:   Definition C
-
-:   Definition D
-
-	> part of definition D
-
-
-### Fenced code blocks
-
-GitHub's fenced code blocks are also supported with **Highlight.js** syntax highlighting:
-
-```
-// Foo
-var bar = 0;
-```
-
-> **Tip:** To use **Prettify** instead of **Highlight.js**, just configure the **Markdown Extra** extension in the <i class="icon-cog"></i> **Settings** dialog.
-
-> **Note:** You can find more information:
-
-> - about **Prettify** syntax highlighting [here][5],
-> - about **Highlight.js** syntax highlighting [here][6].
-
-
-### Footnotes
-
-You can create footnotes like this[^footnote].
-
-  [^footnote]: Here is the *text* of the **footnote**.
-
-
-### SmartyPants
-
-SmartyPants converts ASCII punctuation characters into "smart" typographic punctuation HTML entities. For example:
-
-|                  | ASCII                        | HTML              |
- ----------------- | ---------------------------- | ------------------
-| Single backticks | `'Isn't this fun?'`            | 'Isn't this fun?' |
-| Quotes           | `"Isn't this fun?"`            | "Isn't this fun?" |
-| Dashes           | `-- is en-dash, --- is em-dash` | -- is en-dash, --- is em-dash |
-
-
-### Table of contents
-
-You can insert a table of contents using the marker `[TOC]`:
-
+Table of Content
+-----------------------
 [TOC]
 
+Overview
+-------------
 
-### MathJax
+vvvote protocol consits of three phases:
 
-You can render *LaTeX* mathematical expressions using **MathJax**, as on [math.stackexchange.com][1]:
+ 1. obtaining an anonymous return envelope 
+ 2. using the anonymous return envelope in order to post the vote
+ 3. publish all votes 
 
-The *Gamma function* satisfying $\Gamma(n) = (n-1)!\quad\forall n\in\mathbb N$ is via the Euler integral
+The phases are fixed periods and publicly announced.
 
-$$
-\Gamma(z) = \int_0^\infty t^{z-1}e^{-t}dt\,.
-$$
-
-> **Tip:** To make sure mathematical expressions are rendered properly on your website, include **MathJax** into your template:
-
-```
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
-```
-
-> **Note:** You can find more information about **LaTeX** mathematical expressions [here][4].
+In the first phase the voter, to be precise the computer of the voter (in the following just the called the voter), generates an RSA key pair. Then the voter blindes the public part of it and sends it to the server, together with the voter's credentials. 
 
 
-### UML diagrams
-
-You can also render sequence diagrams like this:
-
+# Phase 1: Obtaining the Return Envelope
 ```sequence
-Alice->Bob: Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!
-```
-
-And flow charts like this:
-
-```sequence
-title: Obtaining the Return Envelope
-Voter->Server: (1) I am Bob, my password is <secret>,\n the blinded hashes of the public keys I generated are []
+Note left of Voter: subroutine: "Generate Return Envelops" \ngenerates \n - 5 RSA key pairs and \n - 5 corresponding blindung factors\n - blinded hashes of the public parts of the RSA key pairs
+Voter->Server: (1) I am Bob, my password is <secret>,\n the blinded hashes of the 5 public keys I generated are []
 Note right of Server: - verify password,\n - is first request for a ballot?
+Note right of Server: randomly select 3 of the generated keys,\n e.g. key numbers 1, 3 and 4
 Server->Voter: (2) Send me the unblinding factors of hashes 1,3 and 4\nas well as the string belonging to the corresponding hashes
 Voter-Server: (3) (str, unblindFactor)[1], [3] and [4]
 Note right of Server: verify if voter has done everything correctly:\n - unblind the hashes 1, 3 and 4 sent in (1),\n - verify if they match the corresponding hashes of str,\n - verify that the public key contained in str is not used already,\n - verify electionId
@@ -243,25 +36,22 @@ Note left of Voter: ServerSig = unblind BlindServerSig
 Note left of Voter: Save(private key, ServerSig) = returnEnvelope
 ```
 
+# Phase 2: Post the Vote
 ```sequence
-title: Vote
-participant: Voter
-participant: Server
-Note left of Voter: kjhnkjh
+Note left of Voter: load returnEnvelope
+Note left of Voter: let the voter make his decisions,\n save the decisions in vote
 Voter->Server: singedVote = vote + sig(vote) + ServerSig(public key) + public key
-Server->Voter: ServerSigned(signedVote)
+Note right of Server: - verifiy ServerSig,\n - verify sig(vote)
+Note right of Server: serverSigned = sign signedVote
+Note right of Server: store serverSigned
+Server->Voter: serverSigned(signedVote)
+Note left of Voter: save serverSigned(signedVote)
 ```
 
 
-
+# Routine to Prepare Return Envelops in the Client 
 ```flow
-st=>start: Start
-e=>end: End
-st->e
-```
-
-```flow
-st=>start: Generate Ballots
+st=>start: Generate Return Envelops
 opRSAgen=>operation: keys[] = Generate 10 RSA key pairs
 opBlindFgen=>operation: - blindf[] = Generate 10 blinding factors 
 - unblindf[] = compute the corresopnding unblinding factors
@@ -269,7 +59,7 @@ opBallotGen=>operation: For each RSA-key-pair:
 - str = concanate electionId, RSA public key, salt
 - hash = Hash it /sha256/
 - blindedHash = blind the hash
-e=>end: return secretBallots = array[object(keys[index], blindf[index], unblindf[index], str, hash, blindedHash) for each key]
+e=>end: return returnEnvelops = array[object(keys[index], blindf[index], unblindf[index], str, hash, blindedHash) for each key]
 
 cond=>condition: Yes or No?
 
@@ -277,6 +67,17 @@ st->opRSAgen->opBlindFgen->opBallotGen->e
 cond(yes)->e
 cond(no)->op
 ```
+
+# Phase 3: Publish All Votes
+All Votes are published and can be obtained from the server in order to...
+
+ - verify that no vote was changed (e.g. on each vote the voter's signature is valid)
+ - verify that all votes come from legitimate voters (e.g. the server signature of the public key of each voter is valid)
+ - verify that my vote is contained
+ - tally the votes
+
+
+----------
 
 > **Note:** You can find more information:
 
