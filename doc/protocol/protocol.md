@@ -13,12 +13,10 @@ Overview
 vvvote protocol consits of three phases:
 
  1. obtaining an anonymous return envelope 
- 2. using the anonymous return envelope in order to post the vote
+ 2. using the anonymous return envelope in order to cast the vote
  3. publish all votes 
 
 The phases are fixed periods and publicly announced.
-
-In the first phase the voter, to be precise the computer of the voter (in the following just the called the voter), generates an RSA key pair. Then the voter blindes the public part of it and sends it to the server, together with the voter's credentials. 
 
 
 # Phase 1: Obtaining the Return Envelope
@@ -27,8 +25,9 @@ In the first phase, the voter identifies to the server and let the server sign a
 The return envelope consists mainly of an RSA public key which was signed blindly by the server. The server signature indicates that this is a valid key for signing a vote, e.g. the key pair belongs to an entitled voter.
 >Note: nobody except the voter itelf can do a matching between the RSA key used to sign a vote and the individual voter. This is because the server signs the corresponding public key blindly, meaning it is encrypted by the voter beforehand and decrypted after the server had singed the voter's anonymous public key. 
 
-In the first phase the voter, to be precise the computer of the voter (in the following just the called the voter), generates an RSA key pair. Then the voter blindes the public part of it and sends it to the server, together with the voter's credentials. 
+In order to achiev this, the voter, to be precise the computer of the voter (in the following just the called the voter), generates an RSA key pair. Then the voter blindes the public part of it and sends it to the server, together with the voter's credentials. 
 The server checks the credentials and weather it's the first request of this vote for a return envelope.
+
 ```sequence
 Note left of Voter: subroutine: "Generate Return Envelops" \ngenerates \n - 5 RSA key pairs and \n - 5 corresponding blindung factors\n - blinded hashes of the public parts of the RSA key pairs
 Voter->Server: (1) I am Bob, my password is <secret>,\n the blinded hashes of the 5 public keys I generated are []
