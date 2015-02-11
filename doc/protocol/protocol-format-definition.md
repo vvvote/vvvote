@@ -1,4 +1,10 @@
 view this document showing the included diagrams: https://stackedit.io/viewer#!url=https://raw.githubusercontent.com/pfefffer/vvvote/master/doc/protocol/protocol-format-definition.md
+# Description of the JSON Format Used in VVVote Method to Blind the Voter
+
+# Table of Content
+
+[TOC]
+
 # Create a New Election
 
 	POST /backend/newelection.php

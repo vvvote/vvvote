@@ -22,7 +22,7 @@ The phases are fixed periods and publicly announced.
 
 # Definitions
 voter
-	the computer of the voter (in the following just the called the voter)
+:	the computer of the voter (in the following just the called the voter)
 
 # Phase 1: Obtaining the Return Envelope
 
@@ -33,8 +33,8 @@ The return envelope consists mainly of an RSA public key which was signed blindl
 ## The General Idea
 
 In this phase the voter will obtain an RSA key which is signed blindly by the server indicating that it is allowed for signing the vote and thereby giving the right to vote.
-In order to achieve this, the voter, generates an RSA key pair. Then the voter blinds the public part of it and sends it to the server, together with the voter's credentials. 
-The server checks the credentials and weather it's the first request of this vote for a return envelope. If everything is ok, the server signs the blinded public key and sends it back to the voter.
+In order to achieve this, the voter generates an RSA key pair. Then the voter blinds the public part of it and sends it to the server, together with the voter's credentials. 
+The server checks the credentials and weather it's the first request of this voter for a return envelope. If everything is ok, the server signs the blinded public key and sends it back to the voter.
 
 ## The Process in More Detail
 Two problems are additionally addressed:
