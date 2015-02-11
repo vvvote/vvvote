@@ -1,3 +1,5 @@
+view this document showing the sequence diagrams: https://stackedit.io/viewer#!url=https://raw.githubusercontent.com/pfefffer/vvvote/master/doc/protocol/protocol.md
+
 Welcome to VVVote!
 ===================
 
@@ -111,8 +113,11 @@ All Votes are published and can be obtained from the server in order to...
  - tally the votes
 
 
-----------
 
+# More Information
+ - Description of the JSON format used to transmit the data:   https://stackedit.io/viewer#!url=https://raw.githubusercontent.com/pfefffer/vvvote/master/doc/protocol/protocol-format-definition.md
+
+-----
 > **Note:** You can find more information:
 
 > - about **Sequence diagrams** syntax [here][7],

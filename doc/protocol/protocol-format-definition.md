@@ -1,3 +1,4 @@
+view this document showing the included diagrams: https://stackedit.io/viewer#!url=https://raw.githubusercontent.com/pfefffer/vvvote/master/doc/protocol/protocol-format-definition.md
 # Create a New Election
 
 	POST /backend/newelection.php
@@ -254,3 +255,4 @@ Answer, if everything is ok:
 
 
 > Written with [StackEdit](https://stackedit.io/).
+
