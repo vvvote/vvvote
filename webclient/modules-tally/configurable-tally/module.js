@@ -1,9 +1,9 @@
 function ConfigurableTally(election, config, onGotVotesObj, onGotVotesMethod) {
-	PublishOnlyTelly.call(this, election, config, onGotVotesObj, onGotVotesMethod);
+	PublishOnlyTally.call(this, election, config, onGotVotesObj, onGotVotesMethod);
 }
 
 
-ConfigurableTally.prototype = new PublishOnlyTelly();
+ConfigurableTally.prototype = new PublishOnlyTally();
 
 ConfigurableTally.getMainContent = function(tallyconfig) {
 	ConfigurableTally.tallyConfig = tallyconfig;

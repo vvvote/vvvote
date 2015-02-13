@@ -14,7 +14,7 @@ if(count(get_included_files()) < 2) {
 require_once 'modules-db/dbMySql.php';
 require_once 'dbBase.php';
 
-class DbPublishOnlyTelly extends DbBase {
+class DbPublishOnlyTally extends DbBase {
 	function __construct($dbInfos) {
 		$dbtables = 
 		array('storedCorrectVotes' /* Table name */ => array(
@@ -65,5 +65,4 @@ class DbPublishOnlyTelly extends DbBase {
 		return $got;
 	}
 	
-
 }

@@ -208,13 +208,13 @@ function int2hex(num, digits) {
 
 /**
  * @param str
- * @returns {String} a string where all not asci characters are encoded to \uXXXX resp. \UXXXXXXXX
+ * @returns {String} a string where all not asci characters are encoded to \uXXXX resp. \UXXXXXXXX which is the default behavior of php so we need to do the same here in order to verify the hash
  */
 function unicodeToBlackslashU(str) {
 	var ret = '';
 	for (var i = 0; i < str.length; ++i) {
 		var unicode = str.charCodeAt(i);
-		if (unicode < 128) {
+		if ( (unicode < 128) ) { // && (unicode != 60)  && (unicode != 62) spitze Klammern werden von PHP 5.3 auch mit \u kodiert
 			ret = ret + str.charAt(i);
 		} else {
 			if (unicode < 65536) {
@@ -224,6 +224,7 @@ function unicodeToBlackslashU(str) {
 			}
 		}
 	}
+	ret = ret.replace(/\//g,'\\/'); // php defaults to escaping '/' with a backslash to '\/'
 	return ret;
 }
 

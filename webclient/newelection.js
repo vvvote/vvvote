@@ -27,6 +27,7 @@ NewElectionPage.prototype.setAuthMethod = function(method, authServerId) {
 	case 'sharedPassw':		this.authModule = SharedPasswAuth; 	break;
 	case 'userPasswList':	this.authModule = UserPasswList;   	break;
 	case 'OAuth2':		    this.authModule = OAuth2;       	break;
+	case 'sharedAuth':	    this.authModule = SharedAuth;      	break;
 	default:		alert('Program error 8769867'); 			break;
 	}
 	var html = this.authModule.getNewElectionHtml(authServerId);
@@ -36,7 +37,74 @@ NewElectionPage.prototype.setAuthMethod = function(method, authServerId) {
 
 
 NewElectionPage.prototype.handleNewElectionButton = function () {
-	var ret = this.authModule.getNewElectionData();
+	var ret = 	{'auth': 'sharedAuth', 
+				'authData': {}
+	};
+	
+	ret.authData = this.authModule.getNewElectionData();
+	ret.tally = 'tallyCollection'; // TODO read this from a form
+	ret.tallyData = // TODO implement this.tallyModule.getNewElectionData(); 
+		{	"subTally": "configurableTally",
+			"subTallyData": 
+				{
+			"questions":
+				[
+				 {
+					 "questionID":1,
+					 "questionWording":"Drehen wir uns im Kreis? (zweistufig)",
+					 "scheme":
+						 [ 
+						  {
+							  "name": "yesNo", /* "yesNo" "score", "pickOne" "rank" */ 
+							  "abstention": true
+						  },
+						  {
+							  "name": "score", 
+							  "minScore": -3,
+							  "maxScore": 3
+						  }
+						  ]
+				 ,
+				 "options":
+					 [
+					  { "optionID": 1, "optionTitle": "Ja, linksherum.", "optionDesc": "Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.\n\n Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
+					  { "optionID": 2, "optionTitle": "Ja, rechtsherum" },
+					  { "optionID": 3, "optionTitle": "Nein. Ab durch die Mitte!" },
+					  { "optionID": 4, "optionTitle": "Jein. Wir drehen durch." }
+					  ],
+					  "references":
+						  [
+						   { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
+						   { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
+						   ]
+				 },
+				 {
+					 "questionID":2,
+					 "questionWording":"Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
+					 "scheme":
+						 [ 
+						  {
+							  "name": "yesNo", /* "yesNo" "score", "pickOne" "rank" */ 
+							  "abstention": false
+						  }
+						 ],
+					  "options":
+							  [
+							   { "optionID": 1, "optionTitle": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
+							   { "optionID": 2, "optionTitle": "Ja, rechtsherum" },
+							   { "optionID": 3, "optionTitle": "Nein. Ab durch die Mitte!" },
+							   { "optionID": 4, "optionTitle": "Jein. Wir drehen durch." }
+							  ],
+					  "references":
+								   [
+								    { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
+								    { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
+								   ]
+				 }
+			]
+		}
+	};
+
 	var element = document.getElementById('electionId');
 	ret.electionId = element.value;
 	this.config = ret;

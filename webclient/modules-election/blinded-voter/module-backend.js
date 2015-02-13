@@ -141,13 +141,13 @@ function reqSigsNextpServerEvent(election, data) {
 function makeFirstPermissionReqs(election) {
 	var ret = makePermissionReqs(election);
 	addCredentials(election, ret);
-	return JSON.stringify(ret);
+	return ret;
 }
 
 function makePermissionReqsResume(election) {
 	var ret = makePermissionReqsFromBallots(election, election.ballots);
 	addCredentials(election, ret);
-	return JSON.stringify(ret);
+	return ret;
 }
 
 /**
@@ -172,7 +172,7 @@ function savePermissionEvent(election, data) {
 			}
 		};
 	}
-	return JSON.stringify(ret);
+	return ret;
 }
 
 function unblindBallotsEvent(election, requestedBallots) {
@@ -326,7 +326,7 @@ function handleServerAnswer(election, dataString) {
 		case 'savePermission':
 			// create the string to be saved 
 			ballotFileContent = savePermissionEvent(election, data);
-			return Object({'action':'savePermission', 'data': ballotFileContent});
+			return Object({'action':'savePermission', 'data': JSON.stringify(ballotFileContent)});
 			break;
 		case 'error':
 			return Object({'action':'serverError', 'errorText': data.errorTxt, 'errorNo': data.errorNo});

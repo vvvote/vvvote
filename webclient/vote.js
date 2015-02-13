@@ -128,8 +128,8 @@ VotePage.prototype.onAuthFailed = function(xthserver) {
 /*
 function permissionLoaded(ok){
 	if (ok) {
-		telly = new PublishOnlyTelly(election, election.config, document.getElementById('loadedmaincontent'));
-		var mc = telly.getMainContent();
+		tally = new PublishOnlyTally(election, election.config, document.getElementById('loadedmaincontent'));
+		var mc = tally.getMainContent();
 		mc = mc + sendVoteHtml;
 		loadMainContent(mc);
 		var element = document.getElementById('sendvote');
@@ -161,7 +161,7 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj) {
 		// if ballot already shown --> enable it, else: show ballot
 		if (this.displayPermFileHtmlOnPhase2) {} */
 		// TODO use the correct Tally
-		this.tally = new PublishOnlyTelly(this.blinder, config, document.getElementById('loadedmaincontent'));
+		this.tally = new PublishOnlyTally(this.blinder, config, document.getElementById('loadedmaincontent'));
 		var mc = this.tally.getMainContent();
 		mc = mc + '<p><input disabled="disabled" id="sendvote" type="submit" '+
         'value="abstimmen!" ' + 
@@ -180,7 +180,7 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj) {
 VotePage.prototype.startPublishOnlyVote = function(config, needElection) {
 	var mc = '';
 	if (needElection) {mc = mc + BlindedVoterElection.getPermissionHtml();}
-	tally = new PublishOnlyTelly(this.blinder);
+	tally = new PublishOnlyTally(this.blinder);
 	mc = mc + tally.getMainContent();
 	mc = mc + '<p><input disabled="disabled" id="sendvote" type="submit" '+
 	          'value="abstimmen!" ' + 

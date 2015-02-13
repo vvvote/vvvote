@@ -19,9 +19,9 @@ GetResultPage.prototype.showResult = function() {
 	
 	// var element = document.getElementById("loadedmaincontent");
 	var me = this;
-	switch (this.config.telly) {
+	switch (this.config.tally) {
 	case 'publishOnly':
-		this.tally = new PublishOnlyTelly(blinder, this.config, me, me.gotVotes);
+		this.tally = new PublishOnlyTally(blinder, this.config, me, me.gotVotes);
 		break;
 	default: // TODO throw some error
 		break;
@@ -31,7 +31,7 @@ GetResultPage.prototype.showResult = function() {
 };
 /*
 function startStep4(config){
-	switch (config.telly) {
+	switch (config.tally) {
 	case 'publishOnly':
 		showResultPublishOnlyVote(config);
 		break;
@@ -52,7 +52,7 @@ GetResultPage.prototype.gotVotes = function (html) {
 
 
 function startLoadingResult() {
-	var mc = GetElectionConfig.getMainContent('gotElectionConfigForTelly');
+	var mc = GetElectionConfig.getMainContent('gotElectionConfigForTally');
 	loadMainContent(mc);
 	currAction = 'getResult'; // this is used in order to determine what should happen after the config was loaded
 }

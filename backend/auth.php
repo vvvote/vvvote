@@ -20,6 +20,14 @@ class Auth {
 	}
 	
 	/**
+	 * load the auth part of the election config which is public
+	 * @param unknown $authData
+	 */
+	function setup($electionId, $authData) {
+		
+	}
+	
+	/**
 	 * return server credentials which are added to the answer to the voter
 	 * it can also return a nonce or one time pad to be transformed by the voter
 	 * in order to check voter credentials

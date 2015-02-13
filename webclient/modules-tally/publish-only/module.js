@@ -4,7 +4,7 @@
  * constructor and public-preveleged (can access private methods) methods which are instantiated each time
  * @param election Election
  */
-var PublishOnlyTelly = function (election, config, onGotVotesObj, onGotVotesMethod) { // TODO store config also
+var PublishOnlyTally = function (election, config, onGotVotesObj, onGotVotesMethod) { // TODO store config also
 	this.election = election;
 	this.config = config;
 	this.onGotVotesObj    = onGotVotesObj;
@@ -14,8 +14,8 @@ var PublishOnlyTelly = function (election, config, onGotVotesObj, onGotVotesMeth
 /**
  * public functions
  */
-PublishOnlyTelly.prototype.getMainContent = function() {
-//	var element = document.getElementById('PublishOnlyTellyHtml'); // this is in index.html in order to have a substitute for heredoc
+PublishOnlyTally.prototype.getMainContent = function() {
+//	var element = document.getElementById('PublishOnlyTallyHtml'); // this is in index.html in order to have a substitute for heredoc
 //	ret = element.innerHTML
 	var ret = ''; // this.election.getPermissionHtml();
 	ret = ret + '\n<p>\n'; // TODO present options from config
@@ -25,13 +25,13 @@ PublishOnlyTelly.prototype.getMainContent = function() {
 	
 };
 
-PublishOnlyTelly.prototype.sendVote = function () {
+PublishOnlyTally.prototype.sendVote = function () {
 	var element = document.getElementById('vote');
 	var vote = element.value;
 	this.sendVoteData(vote);
 };
 
-PublishOnlyTelly.prototype.sendVoteData = function (vote) {
+PublishOnlyTally.prototype.sendVoteData = function (vote) {
 	var transm = {};
 	transm = this.election.signVote(vote);
 	transm.cmd = 'storeVote';
@@ -41,7 +41,7 @@ PublishOnlyTelly.prototype.sendVoteData = function (vote) {
 };
 
 
-PublishOnlyTelly.prototype.handleServerAnswerStoreVote = function (xml) {
+PublishOnlyTally.prototype.handleServerAnswerStoreVote = function (xml) {
 	try {
 		var data = parseServerAnswer(xml, true);
 		// TODO check voting server sig
@@ -64,7 +64,7 @@ PublishOnlyTelly.prototype.handleServerAnswerStoreVote = function (xml) {
 };
 
 
-PublishOnlyTelly.prototype.handleUserClickGetAllVotes = function () {
+PublishOnlyTally.prototype.handleUserClickGetAllVotes = function () {
 	var me = this; 
 	var data = {};
 	data.cmd = 'getAllVotes';
@@ -74,12 +74,12 @@ PublishOnlyTelly.prototype.handleUserClickGetAllVotes = function () {
 	myXmlSend(ClientConfig.getResultUrl, datastr, me, me.handleServerAnswerVerifyCountVotes);
 };
 
-PublishOnlyTelly.prototype.findMyVote = function() {
+PublishOnlyTally.prototype.findMyVote = function() {
 	
 	var myVoteIndex = ArrayIndexOf(this.votes, 'permission.signed.votingno', myvotingno);
 };
 
-PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
+PublishOnlyTally.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 	var votesOnly = new Array();
 	try {
 		var data = parseServerAnswer(xml, true);
@@ -147,9 +147,9 @@ PublishOnlyTelly.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 	}
 };
 
-PublishOnlyTelly.prototype.handleUserClickVerifySig = function (no) {
+PublishOnlyTally.prototype.handleUserClickVerifySig = function (no) {
 	this.election.verifyVoteSigs(this.votes[no]);
 };
-PublishOnlyTelly.prototype.handleUserClickGetPermissedBallots = function () {
+PublishOnlyTally.prototype.handleUserClickGetPermissedBallots = function () {
 	this.election.getAllPermissedBallots();
 };

@@ -29,7 +29,7 @@ if (isset($HTTP_RAW_POST_DATA)) {
 		if (! isset($a['electionId'])) WrongRequestException::throwException(7200, 'Election id missing in client request'	, $httpRawPostData);
 		return      $a['electionId'];
 	};
-		try{
+	try{
 		$el = loadElectionModules($HTTP_RAW_POST_DATA, $electionIdPlace);
 		$result = $el->handlePermissionReq($HTTP_RAW_POST_DATA);
 		// print "\r\n";

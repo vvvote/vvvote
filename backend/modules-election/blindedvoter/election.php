@@ -12,6 +12,7 @@ if(count(get_included_files()) < 2) {
 require_once 'dbBlindedVoter.php';
 require_once 'exception.php'; // I dont know why this works - the files are in different directories but this way php finds both
 require_once 'crypt.php';
+require_once 'blinder.php';
 
 /**
  * Class that implements the blinded voter scheme
@@ -23,7 +24,7 @@ require_once 'crypt.php';
  *
  */
 
-class Election {
+class BlindedVoter extends Blinder {
 	var $electionId; // = 'wahl1';
 	var $numVerifyBallots;
 	var $numSignBallots;
@@ -59,11 +60,11 @@ class Election {
 		// TODO save req in log-database and check if first req
 		// TODO check if correct number of ballots was sent
 		$inlist = $this->isInVoterList($credentials, $electionID_);
-		if (!$inlist) {
+		if ($inlist !== true) {
 			WrongRequestException::throwException(1, "Error: check of credentials failed. You are not in the list of allowed voters for this election or secret not accepted", 'isPermitted: credentials ' . print_r($credentials, true));
 		}
 
-		if ($this->electionId != $electionID_) {
+		if ($this->electionId !== $electionID_) {
 			WrongRequestException::throwException(2, 'Error: wrong election id', "isPermitted: No voting permission is given for election $electionID_, only $this->electionId is accepted");
 		}
 /* at the moment, this is tested later
@@ -72,7 +73,7 @@ class Election {
 			WrongRequestException::throwException(3, "Error: This voter is already a voting permission given for the election $this->electionId If you lost your permission use the recover button.", "isPermitted: $voterReq[voterId] already got a voting permission from this server.");
 		}
 */
-		return true;
+		return $inlist;
 	}
 	/**
 	 * randomly chooses $numPick out of $numBallots
@@ -312,7 +313,7 @@ class Election {
 	}
 
 	/**
-	 * This functin is called from telly to check if the
+	 * This functin is called from tally to check if the
 	 * vote should be accepted
 	 * @param unknown $vote
 	 * @return boolean
@@ -367,6 +368,8 @@ class Election {
 		$ret = json_encode($result);
 		return $ret;
 	}
+	
+	
 }
 
 

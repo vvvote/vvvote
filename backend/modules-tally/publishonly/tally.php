@@ -27,12 +27,12 @@ require_once __DIR__ . '/dbPublishOnlyTally.php';
  * @author r
  *
  */
-class PublishOnlyTelly extends Tally {
+class PublishOnlyTally extends Tally {
 	var $db;
 	var $crypt;
 	var $election;
-	function __construct($dbInfo, Crypt $crypt, Election $election_) {
-		$this->db = new DbPublishOnlyTelly($dbInfo);
+	function __construct($dbInfo, Crypt $crypt, Blinder $election_) {
+		$this->db = new DbPublishOnlyTally($dbInfo);
 		$this->crypt = $crypt;
 		$this->election = $election_;
 	}
@@ -84,12 +84,12 @@ class PublishOnlyTelly extends Tally {
 			break;
 			
 			default:
-				WrongRequestException::throwException(1102, 'Telly-decryptVoterReq: cipher not supported', "requested cipher: $method, supported aes160 only");
+				WrongRequestException::throwException(1102, 'tally-decryptVoterReq: cipher not supported', "requested cipher: $method, supported aes160 only");
 			break;
 		}
 		$decryptedVote = json_decode($decryptedVoteStr);
 		if ($decryptedVote == null) { // json could not be decoded
-			WrongRequestException::throwException(1103, 'Telly-decrypt: Error while decoding JSON request', $req);
+			WrongRequestException::throwException(1103, 'tally-decrypt: Error while decoding JSON request', $req);
 		}
 		return $decryptedVote; 
 	}
