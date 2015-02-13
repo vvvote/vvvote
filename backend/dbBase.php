@@ -73,7 +73,7 @@ class DbBase {
 		foreach($cols as $colname => $colvalue) { // encode the json==true columns
 			$colnum = find_in_subarray($this->connection->evtables[$tablename], 'name', $colname);
 			if ($this->connection->evtables[$tablename][$colnum]['json']) {
-				$colsEnc[$colname] = json_encode($colvalue, true);
+				$colsEnc[$colname] = json_encode($colvalue, 0);
 			} else {
 				$colsEnc[$colname] = $colvalue;
 			}

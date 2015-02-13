@@ -11,15 +11,15 @@ function savePermission(ballot) {
  * @param varname the name of the global var that holds the instance of this object. It is used for HTML code to call back.
  */
 var BlindedVoterElection = function (varname, onpermloaded, config) { // TODO save and load config in permission file
-	this.varname = varname; // the name of the global var that holds the instance of this object. It is used for HTML code to call back. 
-	this.callOnPermLoaded = onpermloaded;
+// not used anymore:	this.varname = varname; // the name of the global var that holds the instance of this object. It is used for HTML code to call back. 
+	//this.callOnPermLoaded = onpermloaded; // not used
 	this.permission = {};
 	this.permissionOk = false;
 	this.config = config; // TODO check if permission file electionId matches the electionId given in config
 };
 
 BlindedVoterElection.prototype.XXhandleXmlAnswer = function(xml) {
-	var result = handleServerAnswer(election, xml);
+	var result = handleServerAnswer(this.election, xml);
 	this.switchAction(result);
 	// TODO check maximal loops = numServers
 };
@@ -28,9 +28,9 @@ BlindedVoterElection.prototype.XXhandleXmlAnswer = function(xml) {
 BlindedVoterElection.prototype.switchAction = function (result) {
 	switch (result.action) {
 	case 'send':
-		serverno = election.pServerSeq[election.xthServer];
+		serverno = this.election.pServerSeq[this.election.xthServer];
 		var me = this;
-		myXmlSend(election.pServerList[serverno].url, result.data, me, me.XXhandleXmlAnswer);
+		myXmlSend(this.election.pServerList[serverno].url, result.data, me, me.XXhandleXmlAnswer);
 		/*	  var xml2 = new XMLHttpRequest();
 	  xml2.open('POST', election.pServerList[serverno].url, true);
 	  xml2.onload = function() { XXhandleXmlAnswer(xml2); }; // quasi resursiv
@@ -38,7 +38,7 @@ BlindedVoterElection.prototype.switchAction = function (result) {
 	  xml2.send(result.data); */
 		break;
 	case 'savePermission':
-		delete(election.restart);
+		delete(this.election.restart);
 		// alert('Speichern Sie den Wahlschein!\n Zum Abstimmen klicken Sie auf "An Abstimmung teilnehmen" und wählen Sie unter der Überschrift "Ich habe bereits einen Wahlschein" den gespeicherten Wahlschein aus.'); //+ Wahlzettelinhalt: \n result.data);
 		// savePermission(result.data);
 		this.injectPermissionIntoClientSave(result.data);
@@ -46,12 +46,12 @@ BlindedVoterElection.prototype.switchAction = function (result) {
 		// saveAs(result.data, 'ballots.json');
 		break;
 	case 'serverError':
-		var servername = election.pServerList[election.pServerSeq[election.xthServer]].name;
+		var servername = this.election.pServerList[this.election.pServerSeq[this.election.xthServer]].name;
 		var errortext = translateServerError(result.errorNo, result.errorText);
 		alert(servername + ' hat Ihr Anliegen zurückgewiesen (Fehlernr. '+ result.errorNo + "):\n" + errortext);
 		switch (result.errorNo) {
 		case 1: /* authorization failed */
-			page.onAuthFailed(election.xthServer);
+			page.onAuthFailed(this.election.xthServer);
 			break;
 		default:
 			break;
@@ -61,10 +61,10 @@ BlindedVoterElection.prototype.switchAction = function (result) {
 	case 'clientError':
 		alert('Client found error:\n '+ result.errorText);
 		break;
-		// telly
+		// tally
 		/*	case 'sendVote':
 		  var xml2 = new XMLHttpRequest();
-		  // serverno = election.pServerSeq.slice(-1)[0]; // TODO use different config for telly servers
+		  // serverno = election.pServerSeq.slice(-1)[0]; // TODO use different config for tally servers
 		  xml2.open('POST', 'http://www.webhod.ra/vvvote2/backend/tallyvote.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813', true);
 		  xml2.onload = function() { handleXmlAnswer(xml2); }; // quasi resursiv
 		  var element = document.getElementById('logtextarea'); 
@@ -110,25 +110,25 @@ BlindedVoterElection.prototype.injectPermissionIntoClientSave = function(ballot)
 };
 
 
-BlindedVoterElection.prototype.obtainPermission = function()  {
+BlindedVoterElection.prototype.obtainPermission_ = function()  {
 	var authmodule = this.authModule;
 	var retry = this.retry;
 	if (!retry) {
-		election = new Object(); // TODO make this a local variable, therefor make module-backend object-oriented
+		this.election = new Object();
 		var e = this.config['electionId']; // document.getElementById('electionId');
-		election.electionId = e; //e.value;
-		election.numBallots = 5; // TODO move this to config
-		election.pServerList = ClientConfig.serverList;
-		election.pServerSeq = [];
-		for (var i=election.pServerList.length -1; i >= 0; i--) {
-			election.pServerSeq[i] = i; 
+		this.election.electionId = e; //e.value;
+		this.election.numBallots = 5; // TODO move this to config
+		this.election.pServerList = ClientConfig.serverList;
+		this.election.pServerSeq = [];
+		for (var i=this.election.pServerList.length -1; i >= 0; i--) {
+			this.election.pServerSeq[i] = i; 
 		}
 		// TODO let it shuffle again: election.pServerSeq = shuffleArray(election.pServerSeq);
-		election.xthServer = 0;
+		this.election.xthServer = 0;
 	}
-	election.credentials = [];
-	for ( var i = 0; i < election.pServerList.length; i++) {
-		election.credentials[i] = authmodule.getCredentials(this.config, election.pServerList[i].name); 
+	this.election.credentials = [];
+	for ( var i = 0; i < this.election.pServerList.length; i++) {
+		this.election.credentials[i] = authmodule.getCredentials(this.config, this.election.pServerList[i].name); 
 	}
 	// var e = document.getElementById('voterId');
 	// election.voterId    = e.value;
@@ -138,17 +138,16 @@ BlindedVoterElection.prototype.obtainPermission = function()  {
 	//        '\r\nelectionID: ' + electionID);
 
 	var req;
-	if (retry) req = makePermissionReqsResume(election);
-	else       req = makeFirstPermissionReqs (election);
+	if (retry) req = makePermissionReqsResume(this.election);
+	else       req = makeFirstPermissionReqs (this.election);
 	// save req as local file in order to have a backup in case something goes wrong
 
 	//	purl = new Array();
 	//	purl[0] = 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 //	purl[1] = 'http://www2.webhod.ra/vvvote2/getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 
-	var url = election.pServerList[election.pServerSeq[election.xthServer]].url;
-	var me = this;
-	myXmlSend(url, req, me, me.XXhandleXmlAnswer);
+	return req;
+//	myXmlSend(url, req, me, me.XXhandleXmlAnswer);
 	/*	    var xml = new XMLHttpRequest();
 	//var serverno = getNextPermServer(election);
 	xml.open('POST', url, true);
@@ -161,7 +160,17 @@ BlindedVoterElection.prototype.obtainPermission = function()  {
     xml.send(req); */
 	return false;
 };
-	
+
+
+BlindedVoterElection.prototype.obtainPermission = function()  {
+	var send = this.obtainPermission_();
+	var url = this.election.pServerList[this.election.pServerSeq[this.election.xthServer]].url;
+	var me = this;
+	myXmlSend(url, JSON.stringify(send), me, me.meXXhandleXmlAnswer);
+	return false;
+};
+
+
 BlindedVoterElection.prototype.onGetPermClick = function(authmodule, retry)  {
 	this.authModule = authmodule;
 	this.retry = retry; // set to true if authentification failed

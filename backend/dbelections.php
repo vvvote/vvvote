@@ -18,9 +18,9 @@ class DbElections extends DbBase {
 	function __construct($dbInfos) {
 		$dbtables =
 		array('elections' /* Table name */ => array(
-				array('name' => 'electionId', 'digits' => '100' , 'json' => false), /* colunm definition */
-				array('name' => 'config'    , 'digits' => '1000', 'json' => true),
-				array('name' => 'hash'      , 'digits' => '257' , 'json' => false)
+				array('name' => 'electionId', 'digits' => '100'  , 'json' => false), /* colunm definition */
+				array('name' => 'config'    , 'digits' => '50000', 'json' => true),
+				array('name' => 'hash'      , 'digits' => '257'  , 'json' => false)
 		));
 		parent::__construct($dbInfos, $dbtables, true);
 	}
@@ -37,7 +37,7 @@ class DbElections extends DbBase {
 	}
 
 	function generateConfigHash($config) {
-		$configstr = json_encode($config);
+		$configstr = json_encode($config, 0);
 		$hash = hash('sha256', $configstr);
 		return $hash;
 	}

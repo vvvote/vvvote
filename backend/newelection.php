@@ -9,7 +9,14 @@ require_once 'exception.php';
 require_once 'modules-auth/shared-passw/auth.php';
 require_once 'modules-auth/user-passw-list/auth.php';
 require_once 'modules-auth/oauth/auth.php';
+require_once 'modules-auth/shared-auth/auth.php';
 require_once 'dbelections.php';
+require_once 'modules-election/blindedvoter/election.php';
+require_once 'modules-tally/publishonly/tally.php';
+require_once 'modules-tally/configurable-tally/tally.php';
+require_once 'modules-tally/tally-collection/tally.php';
+
+
 
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept'); // this allows any cross-site scripting (needed for chrome)
@@ -30,8 +37,8 @@ if (isset ($electionconfigStr)) {
 		$electionconfig = json_decode($electionconfigStr, true);
 		// TODO verify auth
 		if (isset($electionconfig) && 
-     		isset($electionconfig['electionId']) && gettype($electionconfig['electionId']) == 'string' &&
-     		isset($electionconfig['authModule']) && gettype($electionconfig['authModule']) == 'string' &&
+     		isset($electionconfig['electionId']) && is_string($electionconfig['electionId']) &&
+     		isset($electionconfig['auth']) && is_string($electionconfig['auth'])  &&
      		isset($electionconfig['authData']) ) {
 			$electionId = $electionconfig['electionId'];
 		}
@@ -45,7 +52,7 @@ if (isset ($electionconfigStr)) {
 		
 		// auth
 		$newconfig['electionId'] = $electionId;
-		switch ($electionconfig['authModule']) {
+		switch ($electionconfig['auth']) {
 			case 'sharedPassw':
 				$authm = new SharedPasswAuth($dbInfos);
 				$newconfig['auth'] = 'sharedPassw';
@@ -58,18 +65,41 @@ if (isset ($electionconfigStr)) {
 				$authm = new OAuth2($dbInfos);
 				$newconfig['auth'] = 'oAuth2';
 				break;
+			case 'sharedAuth':
+				$authm = new SharedAuth($dbInfos);
+				$newconfig['auth'] = 'sharedAuth';
+				break;
 			default:
 				WrongRequestException::throwException(2110, 'Authorisation module not supported by this server', "you requested: " . $electionconfig['authModule']);
 				break; 
 		}
 		$newconfig['authConfig'] = $authm->handleNewElectionReq($electionId, $electionconfig['authData']);
-
+		
 		// TODO election
 		$newconfig['blinding'] = 'blindedVoter';
+		global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $serverkey, $numAllBallots, $numPSigsRequiered;
+		$blinder = new BlindedVoter($electionId, $numVerifyBallots, $numSignBallots, $pServerKeys, $serverkey, $numAllBallots, $numPSigsRequiered, $dbInfos, $authm);
 		
 		// TODO tally
-		$newconfig['telly'] = 'publishOnly';
-				
+		switch ($electionconfig['tally']) {
+			case 'publishOnly':
+				$tallym = new PublishOnlyTally($dbInfo, $crypt, $election_);
+				$newconfig['tally'] = 'publishOnlyTally';
+				break;
+			case 'configurableTally':
+				$tallym = new ConfigurableTally($dbInfo, $crypt, $election_);
+				$newconfig['tally'] = 'configurableTally';
+				break;
+			case 'tallyCollection':
+				$tallym = new TallyCollection($dbInfo);
+				$newconfig['tally'] = 'tallyCollection';
+				break;
+			default:
+				WrongRequestException::throwException(2120, 'Tally module not supported by this server', "you requested: " . $electionconfig['tallyModule']);
+				break;
+		}
+		$newconfig['tallyData'] = $tallym->handleNewElectionReq($electionId, $authm, $blinder, $electionconfig['tallyData']);
+		
 		$hash = $db->saveElectionConfig($electionId, $newconfig);
 		//e.g. http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=
 		$configurl = "${configUrlBase}/getelectionconfig.php?confighash=${hash}";
@@ -78,6 +108,7 @@ if (isset ($electionconfigStr)) {
 		$result['configUrl'] = $configurl;
 		// TODO sign the answer
 	} catch (ElectionServerException $e) {
+		// TODO: think about: the auth module is saving data in db which stays there and blocks another try in case the same electionId is used again - implement a reverseNewElection() oder reversTransaction in each module
 		$result = $e->makeServerAnswer();
 	}
 	

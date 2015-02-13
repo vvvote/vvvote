@@ -148,7 +148,7 @@ OAuth2.getNewElectionHtml = function (serverId) {
  */
 OAuth2.getNewElectionData = function () {
 	var ret = {};
-	ret.authModule = 'oAuth2'; 
+	ret.auth = 'oAuth2'; 
 	ret.authData = { 
 			"nested_groups": [2],
 			"verified": true,

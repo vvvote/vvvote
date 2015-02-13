@@ -47,7 +47,7 @@ SharedPasswAuth.getNewElectionHtml = function () {
  */
 SharedPasswAuth.getNewElectionData = function (serverId) {
 	var ret = {};
-	ret.authModule = 'sharedPassw'; 
+	ret.auth = 'sharedPassw'; 
 	ret.authData = {};
 	var element = document.getElementById('givenPassword');
 	ret.authData.sharedPassw = element.value;

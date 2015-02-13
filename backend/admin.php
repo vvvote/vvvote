@@ -26,7 +26,7 @@ require_once 'modules-election/blindedvoter/dbBlindedVoter.php';
 if ((isset($_GET['createTables' ])) || (isset($_POST['createTables' ]))) {
 	$dbauth = new DbAuth($dbInfos);
 	$dbblindedvoter = new DbBlindedVoter($dbInfos);
-	$dbpublishonlytelly = new DbPublishOnlyTelly($dbInfos);
+	$dbpublishonlyTally = new DbPublishOnlyTally($dbInfos);
 	echo  "fertig. Database tables created";
 }
 
