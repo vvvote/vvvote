@@ -1,6 +1,6 @@
 <?php
 
-require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
+require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
 
 require_once 'exception.php';
 require_once 'loadmodules.php';
@@ -26,7 +26,7 @@ header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 
 if (isset($HTTP_RAW_POST_DATA)) {
 	$electionIdPlace = function ($a) {
-		if (! isset($a['electionId'])) WrongRequestException::throwException(7200, 'Election id missing in client request'	, $httpRawPostData);
+		if (! isset($a['electionId'])) WrongRequestException::throwException(7200, 'Election id missing in client request'	, $GLOBALS['HTTP_RAW_POST_DATA']);
 		return      $a['electionId'];
 	};
 	try{

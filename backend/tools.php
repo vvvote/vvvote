@@ -14,4 +14,14 @@ function find_in_subarray($array, $subarraykey, $subarrayvalue) {
 	return false;
 }
 
+function makeCompleteElectionId($mainElectionId, $questionID) {
+	$completeElectionId = json_encode(array('mainElectionId' => $mainElectionId,  'subElectionId' => $questionID));
+	return $completeElectionId;
+}
+
+function splitCompleteElectionId($completeElectionId) {
+	return json_decode($completeElectionId);
+}
+
+
 ?>

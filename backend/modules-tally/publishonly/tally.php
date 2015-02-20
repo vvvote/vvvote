@@ -28,31 +28,28 @@ require_once __DIR__ . '/dbPublishOnlyTally.php';
  *
  */
 class PublishOnlyTally extends Tally {
+	const name = "publishOnly";
+	
 	var $db;
 	var $crypt;
-	var $election;
-	function __construct($dbInfo, Crypt $crypt, Blinder $election_) {
+	var $blinder;
+	function __construct($dbInfo, Crypt $crypt, Blinder $blinder_) {
 		$this->db = new DbPublishOnlyTally($dbInfo);
 		$this->crypt = $crypt;
-		$this->election = $election_;
+		$this->blinder = $blinder_;
 	}
 	
 	function isFirstVote($electionId, $votingno) { // TODO make sure that this is called only after the sigs have been checked
 		return $this->db->isFirstVote($electionId, $votingno);
 	}
 	
-	/*function makeStrFromBallot(ballot) {
-		var tmp = Object();
-		tmp. 
-	}
-	*/
 	
 	function sigsOk($vote) {
 		// check the sig of the voter on the vote
 		$votersigOk = $this->crypt->verifyVoterSig($vote);
 		if (! ($votersigOk === true) ) return false;
 		// check the sigs of the permission servers
-		$permissionSigsOk = $this->election->verifyPermission($vote);
+		$permissionSigsOk = $this->blinder->verifyPermission($vote);
 		
 		return  ($votersigOk && $permissionSigsOk);
 	}

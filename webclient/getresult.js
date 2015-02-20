@@ -15,7 +15,7 @@ GetResultPage.prototype = new Page();
 GetResultPage.prototype.showResult = function() {
 	this.setStep(2);
 	// TODO add switch (blinder)
-	var blinder = new BlindedVoterElection('election', null, this.config); // use global namespace because
+	var blinder = new BlindedVoterElection(this.config); // use global namespace because
 	
 	// var element = document.getElementById("loadedmaincontent");
 	var me = this;
@@ -54,12 +54,12 @@ GetResultPage.prototype.gotVotes = function (html) {
 function startLoadingResult() {
 	var mc = GetElectionConfig.getMainContent('gotElectionConfigForTally');
 	loadMainContent(mc);
-	currAction = 'getResult'; // this is used in order to determine what should happen after the config was loaded
+	currAction = 'getResult'; // this is used in order to determine what should happens after the config was loaded
 }
 
 function getAuthModuleStatic(config) {
 	var a;
-	switch (config.authModule) {
+	switch (config.auth) {
 	case 'userPassw':    a = UserPasswList;   break;
 	case 'sharedPassw':  a = SharedPasswAuth; break;
 	case 'oAuth2':       a = OAuth2;          break;

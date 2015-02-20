@@ -58,7 +58,7 @@ SharedPasswAuth.getNewElectionData = function (serverId) {
  * This is only needed in case the auth module needs several steps
  * so this method can load the apropiate step
  */
-SharedPasswAuth.prototype.onAuthFailed = function(xthserver){
+SharedPasswAuth.prototype.onAuthFailed = function(curServer){
 
 };
 

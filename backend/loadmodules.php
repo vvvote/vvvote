@@ -19,7 +19,7 @@ require_once 'modules-db/dbMySql.php';
 require_once 'dbelections.php';
 require_once 'blinder.php';
 require_once 'modules-election/blindedvoter/election.php';
-require_once 'modules-election/blinder-collection/election.php';
+// require_once 'modules-election/blinder-collection/election.php';
 require_once 'modules-auth/user-passw-list/auth.php';
 require_once 'modules-auth/shared-passw/auth.php';
 require_once 'modules-auth/oauth/auth.php';

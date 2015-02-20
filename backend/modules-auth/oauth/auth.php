@@ -29,6 +29,8 @@ class OAuth2 extends Auth {
 	 * TODO $dbInfos are also used to setup the DbElections
 	 * @param unknown $dbInfo
 	 */
+	const name = "oAuth2";
+	
 	function __construct($dbInfo) {
 		parent::__construct();
 		$this->db = new DbOAuth2($dbInfo);
@@ -58,7 +60,7 @@ class OAuth2 extends Auth {
 		// verify transaction credentials
 		$webclientAuthFromDb = $this->db->loadAuthData($configHash, $credentials['identifier']); // TODO error handling $webclientAuthFromDb empty // TODO error handling if not set (or not string)
 		if (! isset($webclientAuthFromDb['username'])) return false; // did not log in in OAuth2 / BEO server
-		$secretFromDb = hash('sha256', $configHash . $oauthConfig[$oAuthServerId]['client_id'] . $webclientAuthFromDb['username'] . $credentials['identifier']);
+		$secretFromDb = hash('sha256', $electionId . $oauthConfig[$oAuthServerId]['client_id'] . $webclientAuthFromDb['username'] . $credentials['identifier']);
 		if ($secretFromDb !== $credentials['secret'] ) return false;
 
 		// $authInfos = $this->db->loadAuthData($configHash, $Ids['serverId'], $credentials['identifier']);
@@ -192,6 +194,8 @@ class OAuth2 extends Auth {
 			if ($regEndDate === false) WrongRequestException::throwException(12011, '/RegistrationEndDate/ is set but could not be paresed'     , "request received: \n" . print_r($req, true));
 			$authconfig['RegistrationEndDate'] = date('c', $regEndDate);
 		}
+		// TODO don't save any data until everything is completed (no error occured in the further steps)
+		// TODO don't save any publuc config data in separate data base - just use the config
 		$ok = $this->newElection($electionId, $req['serverId'], $authconfig); // TODO think about taking serverId always from election-config
 		if (! $ok) InternalServerError::throwException(12020, 'Internal server error: error saving election auth information', "request received: \n" . print_r($req, true));
 		return $authconfig;

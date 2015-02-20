@@ -30,6 +30,7 @@ function getFrequencies(list) {
 	return freqs;
 }
 
+
 /**
  * returns the index in an array of objects which matches
  * a given property of the object
@@ -45,6 +46,21 @@ function ArrayIndexOf(a, elementname, element) {
 	}
 	return -1;
 }
+
+/**
+ * this is used becaus JSON.stringify() does not work for exceptions stemming form the Browser itself
+ * @param obj
+ */
+function obj2str(obj) {
+	var str = '';
+	var propValue;
+	for(var propName in obj) {
+		propValue = nyc[propName];
+		str = str + propName + ': ' + propValue +"\n" ;
+	}
+	return str;
+}
+
 
 function sendThroughProxy() {
 

@@ -24,6 +24,8 @@ require_once 'exception.php';
  */
 
 class SharedPasswAuth extends Auth {
+	const name = "sharedPassw";
+	
 	function __construct($dbInfo) {
 		parent::__construct();
 		$this->db = new DbSharedPasswAuth($dbInfo);

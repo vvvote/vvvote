@@ -25,7 +25,7 @@ if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
 	$rsa       = new rsaMyExts();
 	$serverkey = $rsa->rsaGetHelpingNumbers($p, $q, $exppriv, $exppubl, $n);
 	$serverkey['serverName'] = 'PermissionServer1';
-	$debug     = true;
+	$debug     = false;
 
 	// define('DB_PREFIX', 'server1_');
 
@@ -34,18 +34,17 @@ if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
 			'dbhost'  => 'localhost',
 			'dbuser'  => 'root',
 			'dbpassw' => 'bernAl821',
-			'dbname'  => 'election_server1',
-			'prefix'  => 'el1_'
+			'dbname'  => 'election_server1', 
+			'prefix'  => 'el1_'  // this will be prepended to all table names - you can just leave it the way it is
 	);
-
 	// OAuth 2.0 config
 	$oauthBEObayern = array(
 			'serverId'      => 'BEOBayern',
 			'client_id'     => 'vvvote',
-			'client_secret' => 'your_Client_Secret',
+			'client_secret' => 'bswyV4cjDAryP6sD',
 			'redirect_uri'  => $configUrlBase . '/modules-auth/oauth/callback.php',
 			// 	'redirect_uri'  => 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php',
-				
+			
 			'authorization_endp'    => 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/',
 			'token_endp'            => 'https://beoauth.piratenpartei-bayern.de/oauth2/token/',
 			'get_profile_endp'      => 'https://beoauth.piratenpartei-bayern.de/api/v1/user/profile/',
@@ -55,6 +54,7 @@ if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
 			'sendmail_endp'			=> 'https://beoauth.piratenpartei-bayern.de/api/v1/user/mails/'
 	);
 	$oauthConfig = array($oauthBEObayern['serverId'] => $oauthBEObayern);
+	
 }
 
 ?>
