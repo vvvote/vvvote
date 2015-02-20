@@ -27,14 +27,38 @@ electionIdUnique(yes, right)->error
 
 	GET /backend/getelectionconfig.php?confighash=1c1038751a8f5202caabdec3413042da3ec54683b5f1d8069333371c0d61a22e&api
 
-## Obtain Return Enveleope
+## Obtain Return Envelope
 	POST /backend/getpermission.php
+
+```flow
+start=>start: Start
+loadModules=>subroutine: Load auth, tally and blinder module
+
+handleReq=>subroutine: Let blinder handle the request
+
+end=>end: End
+
+start->loadModules->handleReq->end
+```
 
 	 "cmd": "pickBallots"
 	 "cmd": "signBallots"
 	 
+
 ## Cast the Vote
 	POST /backend/storevote.php
+
+```flow
+start=>start: Start
+loadModules=>subroutine: Load auth, tally and blinder module
+handleReq=>subroutine: Let tally handle the request
+encapsulateAnswer=>operation: surround the JSON encoded answer with "---vvvote---" 
+in order to encapsulate it from data inserted by an anonymizing service
+end=>end: End
+
+start->loadModules->handleReq->encapsulateAnswer->end
+```
+
 
 ## Get the Result
 	POST /backend/getresult.php

@@ -18,8 +18,8 @@ $configUrlBase = 'http://www.webhod.ra/vvvote2/backend'; // without trailing sla
 // last server always must be set to 1.
 //     $numBallots = 2; 
 $numSignBallots   = array(0 => 3, 1 => 1);  
-$numVerifyBallots = array(0 => 3, 1 => 2);
-$numPSigsRequiered = 2;
+$numVerifyBallots = array(0 => 2, 1 => 2);
+$numPSigsRequiered = count($numSignBallots); // this number of sigs from permission servers are requiered in order for a return envelope to be accepted
 
 $pServerKey0 = array(
 		'name'     => 'PermissionServer1',

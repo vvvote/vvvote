@@ -394,7 +394,7 @@ ConfigurableTally.prototype.getInputs = function(qNo) {
 	}
 	return JSON.stringify(vote);
 
-
+/*
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
 		switch (tallyconfig.questions[qNo].voteSystem.type) {
 		case 'score':
@@ -407,6 +407,8 @@ ConfigurableTally.prototype.getInputs = function(qNo) {
 		}
 
 	}
+*/	
+	
 };
 
 

@@ -50,55 +50,43 @@ if (isset ($electionconfigStr)) {
 		$alreadyGiven = $db->loadElectionConfigFromElectionId($electionId);
 		if (count($alreadyGiven) > 0) WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
 		
-		// auth
+		// create public election config and secret election config
 		$newconfig['electionId'] = $electionId;
-		switch ($electionconfig['auth']) {
-			case 'sharedPassw':
-				$authm = new SharedPasswAuth($dbInfos);
-				$newconfig['auth'] = 'sharedPassw';
-				break;
-			case 'userPasswList':
-				$authm = new UserPasswAuth($dbInfos);
-				$newconfig['auth'] = 'userPasswList';
-				break;
-			case 'oAuth2':
-				$authm = new OAuth2($dbInfos);
-				$newconfig['auth'] = 'oAuth2';
-				break;
-			case 'sharedAuth':
-				$authm = new SharedAuth($dbInfos);
-				$newconfig['auth'] = 'sharedAuth';
-				break;
-			default:
-				WrongRequestException::throwException(2110, 'Authorisation module not supported by this server', "you requested: " . $electionconfig['authModule']);
-				break; 
-		}
-		$newconfig['authConfig'] = $authm->handleNewElectionReq($electionId, $electionconfig['authData']);
 		
-		// TODO election
+//		$authm = LoadModules::laodAuthModule($electionconfig['auth']);
+		global $dbInfos;
+		$authm = new SharedAuth($dbInfos);
+		$authTmp = $authm->handleNewElectionReq($electionId, $electionconfig);
+		$newconfig['authConfig'] = $authTmp['authConfig']; 
+		$newconfig["auth"] = $authTmp['auth'];
+		
+		// blinder
 		$newconfig['blinding'] = 'blindedVoter';
-		global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $serverkey, $numAllBallots, $numPSigsRequiered;
+		global $numVerifyBallots, $numSignBallots, $pServerKeys, $serverkey, $numAllBallots, $numPSigsRequiered;
 		$blinder = new BlindedVoter($electionId, $numVerifyBallots, $numSignBallots, $pServerKeys, $serverkey, $numAllBallots, $numPSigsRequiered, $dbInfos, $authm);
 		
-		// TODO tally
-		switch ($electionconfig['tally']) {
-			case 'publishOnly':
-				$tallym = new PublishOnlyTally($dbInfo, $crypt, $election_);
-				$newconfig['tally'] = 'publishOnlyTally';
-				break;
-			case 'configurableTally':
-				$tallym = new ConfigurableTally($dbInfo, $crypt, $election_);
-				$newconfig['tally'] = 'configurableTally';
-				break;
-			case 'tallyCollection':
-				$tallym = new TallyCollection($dbInfo);
-				$newconfig['tally'] = 'tallyCollection';
-				break;
-			default:
-				WrongRequestException::throwException(2120, 'Tally module not supported by this server', "you requested: " . $electionconfig['tallyModule']);
-				break;
+		// tally
+		$tallym = LoadModules::loadTally($electionconfig['tally'], $blinder);
+		
+		$newconfig['tally'] = constant(get_class($tallym) . '::name');
+//		$newconfig['tallyData'] = $tallym->handleNewElectionReq($electionId, $authm, $blinder, $electionconfig['tallyData']);
+		
+		// $this->subTally->handleNewElectionReq($req['subTallyData']);
+		foreach ($electionconfig['questions'] as $i => $question) {
+			$completeElectionId = json_encode(array ('mainElectionId' => $electionId,  'subElectionId' => $question['questionID']));
+			
+//			$subAuthConf = $authm->newSubElection($completeElectionId);
+			
+			$subBlinderConf = $blinder->handleNewElectionReq($completeElectionId);
+			$subTallyConf = $tallym->handleNewElectionReq($completeElectionId, $authm, $blinder, $question);
+			$ret[$i] = array( // TODO take the names of the modules from config / use a new function getModuleName()
+					'questionID'  => $question['questionID'],
+					'questionWording' => $question['questionID'],
+					'options'         => $question['options'],
+					'blinderData' => $subBlinderConf,
+					'tallyData'   => $subTallyConf);
 		}
-		$newconfig['tallyData'] = $tallym->handleNewElectionReq($electionId, $authm, $blinder, $electionconfig['tallyData']);
+		$newconfig['questions']  = $ret;
 		
 		$hash = $db->saveElectionConfig($electionId, $newconfig);
 		//e.g. http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=

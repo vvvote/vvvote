@@ -14,6 +14,8 @@ require_once 'dbAuth.php';
 require_once 'auth.php';
 
 class UserPasswAuth extends Auth {
+	const name = "userPassw";
+	
 	function __construct($dbInfo) {
 		parent::__construct();
 		$this->db = new DbAuth($dbInfo);

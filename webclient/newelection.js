@@ -5,7 +5,7 @@ function NewElectionPage() {
 	Page.call(this);
 	this.steps[1] = 'Schritt 1: Abstimmungseinstellungen festlegen'; 
 	this.steps[2] = 'Schritt 2: Abstimmungslink speichern';
-	OauthHtml = '';
+	var OauthHtml = '';
 	for ( var curroauthconfig in ClientConfig.oAuth2Config) {
 		OauthHtml  = '<input type="radio" onclick="page.setAuthMethod(\'OAuth2\',\'' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '\');"     name="authMethod" id="' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '">';
 		OauthHtml += '<label for="' + ClientConfig.oAuth2Config[curroauthconfig].serverId +'">' + ClientConfig.oAuth2Config[curroauthconfig].serverDesc + '</label></input>';
@@ -43,68 +43,93 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 	
 	ret.authData = this.authModule.getNewElectionData();
 	ret.tally = 'tallyCollection'; // TODO read this from a form
-	ret.tallyData = // TODO implement this.tallyModule.getNewElectionData(); 
-		{	"subTally": "configurableTally",
-			"subTallyData": 
+	ret = // TODO implement this.tallyModule.getNewElectionData(); 
+	{
+			"auth": "sharedPassw",
+			"authData": {
+				"sharedPassw": "1",
+				"nested_groups": [2],
+				"verified": true,
+				"eligible": true,
+				"RegistrationStartDate": "2014-01-27T21:20:00Z",
+				"RegistrationEndDate": "2014-10-10T21:20:00Z",
+				"serverId": "BEOBayern",
+				"listId": "1234"
+			},
+			"blinder": "blindedVoter",
+			"tally": "configurableTally",
+			"questions": [{
+				"questionID": 1,
+				"questionWording": "Drehen wir uns im Kreis? (zweistufig)",
+				"scheme": [{
+					"name": "yesNo",
+					"abstention": true
+				},
 				{
-			"questions":
-				[
-				 {
-					 "questionID":1,
-					 "questionWording":"Drehen wir uns im Kreis? (zweistufig)",
-					 "scheme":
-						 [ 
-						  {
-							  "name": "yesNo", /* "yesNo" "score", "pickOne" "rank" */ 
-							  "abstention": true
-						  },
-						  {
-							  "name": "score", 
-							  "minScore": -3,
-							  "maxScore": 3
-						  }
-						  ]
-				 ,
-				 "options":
-					 [
-					  { "optionID": 1, "optionTitle": "Ja, linksherum.", "optionDesc": "Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.\n\n Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
-					  { "optionID": 2, "optionTitle": "Ja, rechtsherum" },
-					  { "optionID": 3, "optionTitle": "Nein. Ab durch die Mitte!" },
-					  { "optionID": 4, "optionTitle": "Jein. Wir drehen durch." }
-					  ],
-					  "references":
-						  [
-						   { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
-						   { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
-						   ]
-				 },
-				 {
-					 "questionID":2,
-					 "questionWording":"Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
-					 "scheme":
-						 [ 
-						  {
-							  "name": "yesNo", /* "yesNo" "score", "pickOne" "rank" */ 
-							  "abstention": false
-						  }
-						 ],
-					  "options":
-							  [
-							   { "optionID": 1, "optionTitle": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
-							   { "optionID": 2, "optionTitle": "Ja, rechtsherum" },
-							   { "optionID": 3, "optionTitle": "Nein. Ab durch die Mitte!" },
-							   { "optionID": 4, "optionTitle": "Jein. Wir drehen durch." }
-							  ],
-					  "references":
-								   [
-								    { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
-								    { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
-								   ]
-				 }
-			]
-		}
+					"name": "score",
+					"minScore": -3,
+					"maxScore": 3
+				}],
+				"options": [{
+					"optionID": 1,
+					"optionTitle": "Ja, linksherum.",
+					"optionDesc": "Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.\n\n Ich bin gespannt, wie die angezeigt wird als Legende f?r die Auswahlkn?pfe. Meine Prognose ist, dass NRW das anonyme Verfahren einf?hren wird. Was glauben Sie, stimmt das?"
+				},
+				{
+					"optionID": 2,
+					"optionTitle": "Ja, rechtsherum"
+				},
+				{
+					"optionID": 3,
+					"optionTitle": "Nein. Ab durch die Mitte!"
+				},
+				{
+					"optionID": 4,
+					"optionTitle": "Jein. Wir drehen durch."
+				}],
+				"references": [{
+					"referenceName": "Abschlussparty und Aufl?sung",
+					"referenceAddress": "https://lqfb.piratenpartei.de/lf/initiative/show/5789.html"
+				},
+				{
+					"referenceName": "Bilder zur Motivation",
+					"referenceAddress": "https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content"
+				}]
+			},
+			{
+				"questionID": 2,
+				"questionWording": "Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
+				"scheme": [{
+					"name": "yesNo",
+					"abstention": false
+				}],
+				"options": [{
+					"optionID": 1,
+					"optionTitle": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende f?r die Auswahlkn?pfe. Meine Prognose ist, dass NRW das anonyme Verfahren einf?hren wird. Was glauben Sie, stimmt das?"
+				},
+				{
+					"optionID": 2,
+					"optionTitle": "Ja, rechtsherum"
+				},
+				{
+					"optionID": 3,
+					"optionTitle": "Nein. Ab durch die Mitte!"
+				},
+				{
+					"optionID": 4,
+					"optionTitle": "Jein. Wir drehen durch."
+				}],
+				"references": [{
+					"referenceName": "Abschlussparty und Auflösung",
+					"referenceAddress": "https://lqfb.piratenpartei.de/lf/initiative/show/5789.html"
+				},
+				{
+					"referenceName": "Bilder zur Motivation",
+					"referenceAddress": "https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content"
+				}]
+			}],
+			"electionId": "lkmlkn"
 	};
-
 	var element = document.getElementById('electionId');
 	ret.electionId = element.value;
 	this.config = ret;

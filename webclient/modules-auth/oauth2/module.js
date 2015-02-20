@@ -3,15 +3,14 @@ var OAuth2 = function(authConfig) {
 	this.hasSubSteps = true;
 };
 
-OAuth2.prototype.getCredentials = function (config, permissionServerId) {
-	var configHash = GetElectionConfig.generateConfigHash(config);
+OAuth2.prototype.getCredentials = function (electionId, permissionServerId) {
 	var el = document.getElementById('username');
 	var username = el.value;
 	el = document.getElementById('displayname');
 	var displayname = el.value;
 	var clientId = ClientConfig.oAuth2Config[config.authConfig.serverId].clientId[permissionServerId];
 	var credentials = {
-			secret: SHA256(configHash  + clientId + username + OAuth2.random[clientId]),
+			secret: SHA256(electionId  + clientId + username + OAuth2.random[clientId]),
 			identifier: OAuth2.random[clientId],
 			displayname: displayname
 	};
@@ -90,7 +89,7 @@ OAuth2.getMainContent = function(conf) {
 		'<br>';
 //	step++;
 	
-	var slist = getPermissionServerList();
+	var slist = ClientConfig.serverList;
 	for ( var permissionServerId in ClientConfig.oAuth2Config[serverId].clientId) {
 		var clientId = ClientConfig.oAuth2Config[conf.authConfig.serverId].clientId[permissionServerId];
 		OAuth2.random[clientId] = bigInt2str(randBigInt(200,0), 62);
@@ -162,7 +161,8 @@ OAuth2.getNewElectionData = function () {
 	return ret;
 };
 
-OAuth2.prototype.onAuthFailed = function(xthserver){
+OAuth2.prototype.onAuthFailed = function(curServer) {
+	var xthserver = ArrayIndexOf(ClientConfig.serverList, 'name', curServer.name);
 	var ss = 1; 
 	if (xthserver > 0) {
 		// pa = Math.min(xthserver, election.pServerSeq[xthserver]); // in case "Server 2"-auth was failing first, take the user to "server 1", because this one was not tried.

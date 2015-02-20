@@ -9,10 +9,10 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-class Auth {
+abstract class Auth {
 	var $db;
-	
-	/**
+	const name = "*fill in*";
+		/**
 	 * creates the connection to the database
 	 */
 	function __construct() {

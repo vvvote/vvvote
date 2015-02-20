@@ -44,6 +44,10 @@ class BlindedVoter extends Blinder {
 		$this->crypt            = new Crypt($pServerKeys_, $serverkey_);
 		$this->numSigsRequiered = $numSigsRequiered_;
 	}
+	
+	function setElectionId($electionId_) {
+		$this->electionId = $electionId_;
+	}
 
 
 	function isInVoterList($credentials, $electionId) { 
@@ -100,18 +104,28 @@ class BlindedVoter extends Blinder {
 	}
 
 	function pickBallotsEvent($voterReq) {
+		if (! isset($voterReq['credentials'])) WrongRequestException::throwException(436, 'Request does not contain credentials', print_r($voterReq, true));
 		$permitted = $this->isPermitted($voterReq['credentials'], $this->electionId, 1); // $voterReq['voterId'], $voterReq['secret'], $voterReq['electionId'], 1); // @TODO substitude ThreadId for 1
 		$voterId = $this->auth->getVoterId($voterReq['credentials'], $this->electionId);
 		// TODO check if this is the first req for picking ballots
-		$numPick = $this->numVerifyBallots[$voterReq['xthServer']]; // TODO think about: trust the xthServer from voterReq? - better check the number of already obained sigs?
-		$numBallots = count($voterReq['ballots']); // TODO take from config?
-		// TODO care for not picking too much ballots so that no one ist left to sign. 
-		// Take the number of ballots which has to be left to sign from $numSignBallots in conf-allservers.php 
-		$requestBallots['picked'] = $this->pickBallots($numPick, $numBallots);
+		foreach ($voterReq['questions'] as $i => $question) {
+			// verify that there are the same numer of sigs on each question
+			if ($i > 0) $prev_xthServer = $xthServer;
+			$xthServer = $this->getXthServer($question['ballots']);
+			if ($i > 0 && $xthServer !== $prev_xthServer) WrongRequestException::throwException(412, 'On each questition the number of already obtained sigs must be equal', $voterReq);
+			// TODO verify that all properties of ballots are sent
+			$numPick = $this->numVerifyBallots[$xthServer]; 
+			$numBallots = count($question['ballots']); // TODO take from config?
+			if ($numBallots <= array_sum($this->numSignBallots) ) WrongRequestException::throwException(432, 'not enough ballots sent', "$numBallots sent, at least " . array_sum($this->numSignBallots) + 1 . ' are necessary');
+			// Take the number of ballots which has to be left to sign from $numSignBallots in conf-allservers.php
+			$requestBallots['questions'][$i]['picked'] = $this->pickBallots($numPick, $numBallots);
+			$requestBallots['questions'][$i]['questionID'] = $question['questionID'];
+		}
 		$requestBallots['cmd'] = 'unblindBallots';
 		// save requested Ballots(voterId, electionId);
-		$toSave = array('requestedBallots' => $requestBallots['picked'],
-				        'blindedHashes'    => $voterReq['ballots']);
+		unset($voterReq['credentials']);
+		$toSave = array('requestedBallots' => $requestBallots,
+						'blindedHashes'    => $voterReq);
 		$this->db->saveBlindedHashes($this->electionId, $voterId, $toSave);
 		return $requestBallots;
 	}
@@ -131,69 +145,85 @@ class BlindedVoter extends Blinder {
 		
 	//}
 
-	function signBallots($voterReq, $blindedHashesFromDB) {
-		/*if (isset($voterReq['ballots'][0]['sigs'])) { // TODO take from DB instead of voterReq, from voterReq is not working because sigs are not sent in disclosing event
-			$xtserver = count($voterReq['ballots'][0]["sigs"]);
-		} else {
-		$xtserver = 0;
-		}
-		*/
-		// find out the x-th server I am
+	/**
+	 * find out the x-th server I am
+	 * perfom some checks on the sigs
+	 * @param unknown $voterReq
+	 */
+	function getXthServer($blindedHashesFromDbBallots) {
 		$xthserver = 0;
 		$numSigned = array();
-		foreach ($blindedHashesFromDB['blindedHashes'] as $bh) {
+		foreach ($blindedHashesFromDbBallots as $bh) {
 			if (isset($bh['sigs'])) {
 				$tmp = count($bh['sigs']);
 				if (! isset($numSigned[$tmp -1]) ) $numSigned[$tmp -1] = 0;
 				$numSigned[$tmp -1]++;
 				if ($tmp > $xthserver) $xthserver = $tmp;
 			}
-		} // TODO check if all first/second... signatures come from the same servers
+		} 
+		// TODO check if all first/second... signatures come from the same servers
 		// TODO check if all prev sigs came from different servers
 		// TODO check if all prev sigs did not come from this server
+		
 		// check if all previous servers signed the correct number of ballots/blindedHashes
-		foreach ($numSigned as $i => $num) {
-			if ($num != $this->numSignBallots[$i] ) WrongRequestException::throwException(401, "Error: the number of already acquiered signatures does not match the configured number of signatures", "from server $i, sigs acquiered $num should have acquiered " . $this->numSignBallots[$i]);
+		foreach ($numSigned as $xth => $num) { 
+			if ($num != $this->numSignBallots[$xth] ) WrongRequestException::throwException(401, "Error: the number of already acquiered signatures does not match the configured number of signatures", "from server $xth, sigs acquiered $num should have acquiered " . $this->numSignBallots[$xth]);
 		}
+	return $xthserver;		
+	}
+	
 
-		// make an array of ballot numbers that can be signed (e.g. only already signed ones by previous servers are allowed that are not disclosed to this server
-		$allowedBallots = array();
-		foreach ($blindedHashesFromDB['blindedHashes'] as $ballot) {
-			if ($xthserver == 0) array_push($allowedBallots, $ballot['ballotno']);
-			else {
-				if (isset($ballot['sigs'])
-				&& count($ballot['sigs']) == $xthserver
-				&& (!in_array($ballot['ballotno'], $blindedHashesFromDB['requestedBallots'])))
-					array_push($allowedBallots, $ballot['ballotno']);
+	function signBallots($blindedHashesFromDB) {
+		$ret = array();
+		$xthserver = $this->getXthServer($blindedHashesFromDB['blindedHashes']['questions'][0]['ballots']); // find out the x-th server I am // verifyBallots already checked that the x-th server is identical on all questions
+		foreach ($blindedHashesFromDB['blindedHashes']['questions'] as $q => $question) {
+			
+			// make an array of ballot numbers that can be signed (e.g. only already signed ones by previous servers are allowed that are not disclosed to this server
+			$allowedBallots = array();
+			foreach ($question['ballots'] as $ballot) {
+				if (!in_array($ballot['ballotno'], $blindedHashesFromDB['requestedBallots']['questions'][$q]['picked'])) { // not disclosed to this server
+					if ($xthserver == 0) array_push($allowedBallots, $ballot['ballotno']);
+					else {
+						if (isset($ballot['sigs']) && count($ballot['sigs']) == $xthserver)
+							array_push($allowedBallots, $ballot['ballotno']);
+					}
+				}
 			}
+			if (count($allowedBallots) < 1) {
+				WrongRequestException::throwException(301, "Error: no non-disclosed ballots left to sign", "signBallots: " . json_encode($allowedBallots));
+			}
+			if (count($allowedBallots) < $this->numSignBallots[$xthserver]) WrongRequestException::throwException(300, "Error: not enough non-disclosed ballots left to sign", "signBallots: left to sign: " . json_encode($allowedBallots));
+			
+			// pick the requiered number of ballots to be signed randomly
+			$pickedtmp = $this->pickBallots($this->numSignBallots[$xthserver], count($allowedBallots));
+			$picked = array();
+			foreach ($pickedtmp as $num => $p) {
+				$picked[$num] = $allowedBallots[$p];
+			}
+			// sign the picked ballots
+			$ballots = array();
+			for ($i=0; $i<count($picked); $i++) {
+				$ballot = array();
+				$ballot['ballotno']    = $question['ballots'][$picked[$i]]['ballotno'];
+				$ballot['blindedHash'] = $question['ballots'][$picked[$i]]['blindedHash'];
+				if (isset ($question['ballots'][$picked[$i]]['sigs'])) $ballot['sigs'] = array_slice($question['ballots'][$picked[$i]]['sigs'], 0, null ,true);
+				else                                                   $ballot['sigs'] = array();
+				$ballot = $this->crypt->signBlindedHash($ballot['blindedHash'], $ballot);
+				$ballots[$i] = $ballot;
+			}
+			$ret[$q] = array(
+					'ballots'    => $ballots,
+					'questionID' => $question['questionID']);
 		}
-		if (count($allowedBallots) < 1) {
-			WrongRequestException::throwException(301, "Error: no non-disclosed ballots left to sign", "signBallots: " . json_encode($allowedBallots));
-		}
-		if (count($allowedBallots) < $this->numSignBallots[$xthserver]) WrongRequestException::throwException(300, "Error: not enough non-disclosed ballots left to sign", "signBallots: left to sign: " . json_encode($allowedBallots));
-		// $picked = $this->pickBallots($this->numSignBallots[$xthserver], count($allowedBallots));
-		$pickedtmp = $this->pickBallots($this->numSignBallots[$xthserver], count($allowedBallots));
-		$picked = array();
-		foreach ($pickedtmp as $num => $p) {
-			$picked[$num] = $allowedBallots[$p];
-		}
-		$ballots = array();
-		for ($i=0; $i<count($picked); $i++) {
-			$ballot = array();
-			$ballot['ballotno']    = $blindedHashesFromDB['blindedHashes'][$picked[$i]]['ballotno'];
-			$ballot['blindedHash'] = $blindedHashesFromDB['blindedHashes'][$picked[$i]]['blindedHash'];
-			if (isset ($blindedHashesFromDB['blindedHashes'][$picked[$i]]['sigs'])) $ballot['sigs'] = array_slice($blindedHashesFromDB['blindedHashes'][$picked[$i]]['sigs'], 0, null ,true);
-			else                                                                    $ballot['sigs'] = array();
-			$ballot = $this->crypt->signBlindedHash($ballot['blindedHash'], $ballot);
-			$ballots[$i] = $ballot;
-		}
-		return $ballots;
+		return $ret;
 	}
 
 
 
+
 	function signBallotsEvent($voterReq) {
-		// TODO: check credentials
+		// TODO: check credentials? It is not necassary because providing the correct unblinding factors show that the Client is the one who sent the pickBallots-Request and back then the credentials have been verified. 
+
 		// load the blinded Hashes from cmd 'pickBallots'
 		$voterId = $this->auth->getVoterId($voterReq['credentials'], $voterReq['electionId']);
 		$blindedHashesFromDB = $this->db->loadBlindedHashes($this->electionId, $voterId);
@@ -211,15 +241,14 @@ class BlindedVoter extends Blinder {
 			WrongRequestException::throwException(300, 'Error: Ballot verification failed. I will not sign a ballot.', "voterreq: \n" . json_encode($voterReq)) . "loaded blinded hashes: " .  json_encode($blindedHashesFromDB);
 		} // TODO: for debugging purpose only: add loaded ballots here
 
-		// sign ballots
-		$signedBallots = $this->signBallots($voterReq, $blindedHashesFromDB);
+		// sign ballots 
+		$signedBallots = $this->signBallots($blindedHashesFromDB);
 		// encrypt $signedBallots so that only the voter can decrypt it
 
-		$ret = array();
-		$ret['ballots'] = $signedBallots;
+		$ret = array('questions' => $signedBallots);
 		$tmp = array('voterId' => $voterId, 'signedBallots' => $signedBallots);
 		$this->db->saveSignedBallots($this->electionId, $voterId, $tmp);
-		if (count($ret['ballots'][0]['sigs']) >= $this->crypt->getNumServers() ) {
+		if (count($ret['questions'][0]['ballots'][0]['sigs']) >= $this->crypt->getNumServers() ) {
 			$ret['cmd'] = 'savePermission';
 			// TODO think about: save all signed ballots not only the ones where this server is the last signer?
 			// up to now it is only used for tally.js to show who requested a Wahlschein
@@ -247,9 +276,9 @@ class BlindedVoter extends Blinder {
 	return $ret;
 	*/
 
-	function ballot2strForSig(array $ballot) {
+	function ballot2strForSig(array $ballot, $completeElectionId) {
 		$raw = array();
-		$raw['electionId'] = $ballot['electionId'];
+		$raw['electionId'] = $completeElectionId;
 		$raw['votingno'  ] = $ballot['votingno'];
 		$raw['salt'      ] = $ballot['salt'];
 		$str = str_replace("\\/",'/', json_encode($raw)); // json_encode escapes / with \/ while JavaScript JSON.encode() does not 
@@ -263,53 +292,63 @@ class BlindedVoter extends Blinder {
 		// verify content of the ballot
 		// verify if the correct number of ballots was sent: if (count($voterReq["ballots"]) != $this->numVerifyBallots) { WrongRequestException::throwException('not the correct number of ballots sent'); }
 		$tmpret = array();
-		for ($i=0; $i<count($voterReq["ballots"]); $i++) {
-			// verify electionID
-			if ($voterReq["ballots"][$i]['electionId'] != $this->electionId)               {
-				WrongRequestException::throwException(210, 'Error: electionID is wrong', "expected electionID: $this->electionId, received electionID in ballot $i: " . $voterReq['ballots'][$i]['electionId']);
-			}
-			// verify if the sent ballot was requested
-			$kw = in_array($voterReq['ballots'][$i]['ballotno'], $blindedHashesFromDB['requestedBallots']);
-			if ($kw >= 0) {
-				$requestedballots['sent'][$kw] = true;
-			} else {
-				WrongRequestException::throwException(211, "A Ballot was sent for verification purpose that was not requested", "verifyBallots: not requested ballot: " . $voterReq['ballots'][$i]['ballotno'] . "requested ballots: " . print_r($blindedHashesFromDB['requestedBallots'], true));
-			}
-			// verify hash
-			$str = $this->ballot2strForSig($voterReq["ballots"][$i]);
-			$blindedHashFromDatabase    = $blindedHashesFromDB['blindedHashes'][$voterReq['ballots'][$i]['ballotno']]['blindedHash'];
-			$unblindf                   = $voterReq["ballots"][$i]['unblindf'];
-			$hashOk = $this->crypt->verifyBlindedHash($str, $unblindf, $blindedHashFromDatabase);
-  			if (! ($hashOk === true)) {
-				WrongRequestException::throwException(212, "Error: hash wrong", "hash from signature: " . $verifyHash->toHex() . "calculated hash: $hashByMe");
-			}
-			// verify sigs from previous servers .ballots.sigs: .sig(encryptet previous sig or hash if first sig) .sigBy (name of the signing server in order to identify the correct public key)
-			$sigsOk = false;
-			if (isset($voterReq["ballots"][$i]['sigs'])) {
-				$sigsOk = $this->crypt->verifySigs($str, $voterReq["ballots"][$i]['sigs']);
-			} else { $sigsOk = true; } // no sigs there
-			$tmpret[$i] = ($hashOk === true) && ($sigsOk === true);
-			if ($i == 0) {
-				$ret = ($tmpret[$i] === true);
-			}
-			else         { $ret = ($ret === true) && ($tmpret[$i] === true);
-			}
+		if ($voterReq['electionId'] != $this->electionId) 	WrongRequestException::throwException(210, 'Error: electionID is wrong', "expected electionID: $this->electionId, received electionID in ballot $i: " . $voterReq['ballots'][$i]['electionId']);
+		if ( (      ! isset($voterReq['questions'])) || (! is_array($voterReq['questions'])) ) WrongRequestException::throwException(223, "Error: questions must be set and an array", print_r($voterReq, true));
+		for ($q=0; $q<count($voterReq['questions']); $q++) {
+			if (         (!isset($voterReq["questions"][$q]['questionID'])) || (! is_int($voterReq["questions"][$q]['questionID'] )) ) WrongRequestException::throwException(227, 'Error: verifyBallots(): missing questionID or it is not of type int', $q);
+			$qno = find_in_subarray($voterReq["questions"], 'questionID', $blindedHashesFromDB['blindedHashes']['questions'][$q]['questionID']);
+			if ($qno === false) WrongRequestException::throwException(237, 'Error: All questions must be disclosed', 'Number in question array for which no questionID was found in voterrequest: ' . $q);
+			if ( (! isset($voterReq['questions'][$q]['ballots'])) || (! is_array($voterReq['questions'][$q]['ballots'])) ) WrongRequestException::throwException(224, "/questions[].['ballots']/ must be set and of type array", print_r($voterReq, true));
+			foreach ($blindedHashesFromDB['requestedBallots']['questions'][$q]['picked'] as $p) {
+				$i = find_in_subarray($voterReq['questions'][$q]['ballots'], 'ballotno', $p); 
+				if ($i === false) WrongRequestException::throwException(211, "A picked Ballot was not sent", "verifyBallots: not sent ballot: $p");
+				$curVoterBallot = $voterReq["questions"][$qno]["ballots"][$i];
+				
+				if ( (!isset($curVoterBallot['unblindf'])  || (!is_string($curVoterBallot['unblindf']))) ) 	WrongRequestException::throwException(225, 'Error: /unblindf/ must be set and of type /string/', print_r($curVoterBallot, true));
+				// verify if the sent ballot was requested
+			//	$kw = array_search($curVoterBallot['ballotno'], $blindedHashesFromDB['requestedBallots']['questions'][$q]['picked']);
+			//	if ($kw === false) WrongRequestException::throwException(211, "A Ballot was sent for verification purpose that was not requested", "verifyBallots: not requested ballot: " . $voterReq['ballots'][$i]['ballotno'] . "requested ballots: " . print_r($blindedHashesFromDB['requestedBallots'], true));
+			//	$requestedballots['sent'][$kw] = true;
+			//	}
+				// verify hash
+				$str = $this->ballot2strForSig($curVoterBallot, makeCompleteElectionId($this->electionId, $blindedHashesFromDB['blindedHashes']['questions'][$q]['questionID']));
+				$blindedHashFromDatabase    = $blindedHashesFromDB['blindedHashes']['questions'][$q]['ballots'][$curVoterBallot['ballotno']]['blindedHash'];
+				$unblindf                   = $curVoterBallot['unblindf'];
+				$hashOk = $this->crypt->verifyBlindedHash($str, $unblindf, $blindedHashFromDatabase);
+				if (! ($hashOk === true)) {
+					WrongRequestException::throwException(212, "Error: hash wrong", "hash from signature: " . $verifyHash->toHex() . "calculated hash: $hashByMe");
+				}
+				// verify sigs from previous servers .ballots.sigs: .sig(encryptet previous sig or hash if first sig) .sigBy (name of the signing server in order to identify the correct public key)
+				$sigsOk = false;
+				if (isset($curVoterBallot['sigs'])) {
+					$sigsOk = $this->crypt->verifySigs($str, $curVoterBallot['sigs']);
+				} else { $sigsOk = true;
+				} // no sigs there
+				$tmpret[$i] = ($hashOk === true) && ($sigsOk === true);
+				if ($i == 0) {
+					$ret = ($tmpret[$i] === true);
+				}
+				else         { $ret = ($ret === true) && ($tmpret[$i] === true);
+				}
 
-			// TODO verify if votingId is unique
-			// load $allvotingno from database
-			// if (array_search($raw['votingno'], $allvotingno) == false) {$e = WrongRequestException::throwException... error("Voting number allocated"); return $e;}
+				// TODO verify if votingId is unique
+				// load $allvotingno from database
+				// if (array_search($raw['votingno'], $allvotingno) == false) {$e = WrongRequestException::throwException... error("Voting number allocated"); return $e;}
 
-			//
+				//
+			}
+			// verify if all requested ballots were sent
+			/*		for ($i=0; $i<count($requestedballots["num"]); $i++) {
+			 if (! $requestedballots['sent']) {
+			$e = throwExeption...("Not all requested ballots were sent for verification. Ballots $requestedballots[num][$i] is missing.");
+			}
+			}
+			*/
+			// array($tmpret, $hashByMe, $unblindethashFromDatabaseStr);
+			if ($q == 0) $retQ = $ret;
+			else         $retQ = ($retQ === true) && ($ret === true);
 		}
-		// verify if all requested ballots were sent
-		/*		for ($i=0; $i<count($requestedballots["num"]); $i++) {
-		 if (! $requestedballots['sent']) {
-		$e = throwExeption...("Not all requested ballots were sent for verification. Ballots $requestedballots[num][$i] is missing.");
-		}
-		}
-		*/
-		// array($tmpret, $hashByMe, $unblindethashFromDatabaseStr);
-		return $ret;
+	return $retQ;
 	}
 
 	/**
@@ -318,7 +357,7 @@ class BlindedVoter extends Blinder {
 	 * @param unknown $vote
 	 * @return boolean
 	 */
-	function verifyPermission($vote) {
+	function verifyPermission($vote, $completeElectionId) {
 		if (! isset($vote['permission']['sigs']) ) {
 			WrongRequestException::throwException(400, "Error: permission does not have a signature from a permission server", "verifyPermission: complete vote: " . print_r($vote, true));
 			return false;
@@ -327,7 +366,7 @@ class BlindedVoter extends Blinder {
 			WrongRequestException::throwException(401, "Error: permission does not have the requiered number of signatures from permission servers", "verifyPermission: requiered number of sigs from permission servers: " . $this->numSigsRequiered . 'number of sigs received: ' . count($vote['sigs']));
 			return false;
 		}
-		$str = $this->ballot2strForSig($vote['permission']['signed']);
+		$str = $this->ballot2strForSig($vote['permission']['signed'], $completeElectionId);
 		return $this->crypt->verifySigs($str, $vote['permission']['sigs']);
 	}
 	

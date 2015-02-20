@@ -63,7 +63,7 @@ VotePage.prototype.startStep2 = function (config) {
 	case 'blindedVoter':
 		mc = mc + BlindedVoterElection.getStep2Html();
 		techinfo =  BlindedVoterElection.getStep2HtmlDetails();
-		this.blinder = new BlindedVoterElection('page.election', VotePage.onPermLoaded, config);
+		this.blinder = new BlindedVoterElection(config);
 		break;
 	default:
 		alert('The election requieres election module >' + config.blinding + "< which is not supported by this client.\nUse a compatible client.");
@@ -100,7 +100,7 @@ VotePage.prototype.startStep2 = function (config) {
 	}
 	var showGenerateButton = '""';
 	if (this.authModule.hasSubSteps) showGenerateButton = '"display:none;"';
-	mc = mc + // TODO take this or some part of it from election module
+	mc = mc + // TODO take this or some part of it from blinder module
 	'<div id="substepL" style=' +showGenerateButton + '>' +
 	'						<label for="reqPermiss"></label> ' +
 	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
@@ -119,9 +119,9 @@ VotePage.prototype.onGetPermClick = function () {
 	this.blinder.onGetPermClick(this.authModule, this.authFailed);
 };
 
-VotePage.prototype.onAuthFailed = function(xthserver) {
+VotePage.prototype.onAuthFailed = function(curServer) {
 	this.authFailed = true;
-	this.authModule.onAuthFailed(xthserver);
+	this.authModule.onAuthFailed(curServer);
 };
 
 
