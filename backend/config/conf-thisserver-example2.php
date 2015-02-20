@@ -38,7 +38,7 @@ $dbInfos = array(
 $oauthBEObayern = array(
 		'serverId'      => 'BEOBayern',
 		'client_id'     => 'vvvote2',
-		'client_secret' => 'bswyV4cjDAryP6sD',
+		'client_secret' => 'your_client_secret',
 		'redirect_uri'  => 'http://www2.webhod.ra/vvvote2/backend/modules-auth/oauth/callback.php',
 		// 	'redirect_uri'  => 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php',
 			
