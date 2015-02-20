@@ -41,7 +41,7 @@ if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
 	$oauthBEObayern = array(
 			'serverId'      => 'BEOBayern',
 			'client_id'     => 'vvvote',
-			'client_secret' => 'bswyV4cjDAryP6sD',
+			'client_secret' => 'your_client_secret',
 			'redirect_uri'  => $configUrlBase . '/modules-auth/oauth/callback.php',
 			// 	'redirect_uri'  => 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php',
 			
