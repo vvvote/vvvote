@@ -156,23 +156,16 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config) {
 		default:
 			alert('Abstimmunsmodus /' + config.tally + '/ wird vom Client nicht unetrstützt');
 		}
-/*		if (typeof this.tally.getMainContentFragm == 'undefined') {
-			var mc = this.tally.getMainContent();
-			mc = mc + '<p><input disabled="disabled" id="sendvote" type="submit" '+
-			'value="abstimmen!" ' + 
-			'onclick="page.sendVote(event);" >';
-			Page.loadMainContent(mc);
-		} else { */
-			var fragm = this.tally.getMainContentFragm(config);
-			var inp = document.createElement('input');
-			inp.setAttribute('type', 'submit');
-			inp.setAttribute('value', 'abstimmen!');
-			inp.setAttribute('id', 'sendvote');
-			inp.setAttribute('disabled', 'disabled');
-			inp.setAttribute('onclick', 'page.sendVote(event);');
-			fragm.appendChild(inp);
-			Page.loadMainContentFragm(fragm);
-//		}
+		var fragm = this.tally.getMainContentFragm(config);
+		var inp = document.createElement('input');
+		inp.setAttribute('type', 'submit');
+		inp.setAttribute('value', 'abstimmen!');
+		inp.setAttribute('id', 'sendvote');
+		inp.setAttribute('disabled', 'disabled');
+		inp.setAttribute('onclick', 'page.sendVote(event);');
+		fragm.appendChild(inp);
+		Page.loadMainContentFragm(fragm);
+		this.tally.collapseAllQuestions();
 		var element = document.getElementById('sendvote');
 		element.disabled = !permok;
 		this.setStep(3);

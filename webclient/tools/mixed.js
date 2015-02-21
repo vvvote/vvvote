@@ -599,6 +599,14 @@ function hideElement(id) {
 	el.style.maxHeight = '0px'; 
 }
 
+function isShown(id) {
+	var el;
+	if (typeof id == 'string') 	el = document.getElementById(id);
+	else 						el = id;
+	var ret = (parseInt(el.style.maxHeight) > 0);
+	return ret;
+}
+
 
 /**
  * Call this if the height of a smoothly shrinking element has changed
