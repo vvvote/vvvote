@@ -45,8 +45,11 @@ Page.loadMainContent = function (contentHtml) {
 };
 
 Page.loadMainContentFragm = function (contentFragm) {
-	var mc = document.getElementById('maincontent');
-	mc.parentNode.replaceChild(contentFragm, mc);
+	var div = document.createElement('div');
+	div.setAttribute('id', 'loadedmaincontent');
+	div.appendChild(contentFragm);
+	var mc = document.getElementById('loadedmaincontent');
+	mc.parentNode.replaceChild(div, mc);
 };
 
 

@@ -10,7 +10,6 @@ ConfigurableTally.prototype.getMainContentFragm = function(tallyconfig) {
 	ConfigurableTally.tallyConfig = tallyconfig;
 	var fragm =	document.createDocumentFragment();
 	var elp = document.createElement('h1');
-	// var elptxt = document.createTextNode(tallyconfig.ballotName);
 	elp.appendChild(document.createTextNode(tallyconfig.electionId));
 	elp.setAttribute('id', 'ballotName');
 	fragm.appendChild(elp);
@@ -242,20 +241,48 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 	*/
 };
 
+ConfigurableTally.prototype.collapseAllQuestions = function() {
+	for (var qNo=0; qNo<this.config.questions.length; qNo++) {
+		var el = document.getElementById('divVoteQuestion'+qNo);
+		if (el !== null) {
+			hideElement(el); // el.style.display = 'none';
+		}
+	}
+};
+
 
 ConfigurableTally.showQuestion = function(showqNo) {
 	var tallyconfig = ConfigurableTally.tallyConfig;
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
 		var el = document.getElementById('divVoteQuestion'+qNo);
 		if (el !== null) {
-			if (qNo == showqNo)	showElement(el); // el.style.display = 'block';
-			else       			hideElement(el); // el.style.display = 'none';
+			if (qNo == showqNo && isShown(el)) {
+				hideElement(el); // clicked on an already shown question -> just hide it
+				var btn = document.getElementById('buttonShowQid'+qNo);
+				btn.childNodes[0].nodeValue = "Anzeigen";
+				return;
+			}
+		}
+	}
+	// clicked on a question which is hidden -> show that and hide all others
+	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
+		var el = document.getElementById('divVoteQuestion'+qNo);
+		if (el !== null) {
+			if (qNo == showqNo)	{
+				showElement(el); // el.style.display = 'block';
+				var btn = document.getElementById('buttonShowQid'+qNo);
+				btn.childNodes[0].nodeValue = "Verbergen";
+			}
+			else {
+				hideElement(el); // el.style.display = 'none';
+				var btn = document.getElementById('buttonShowQid'+qNo);
+				btn.childNodes[0].nodeValue = "Anzeigen";
+			}
 		}
 	}
 };
 
 ConfigurableTally.showOptionDetail = function(tag, qNo, optNo) {
-	var tallyconfig = ConfigurableTally.tallyConfig;
 	var el = document.getElementById(tag+qNo+'O'+optNo);
 	if (el.style.display.length > 0 )	el.style.display = '';
 	else       							el.style.display = 'none';
@@ -414,7 +441,7 @@ ConfigurableTally.prototype.getInputs = function(qNo) {
 
 
 ConfigurableTally.test = function() {
-	var tallyConfig = 
+	var config = 
 	{
 			"ballotID":"GTVsdffgsdwt40QXffsd452re",
 			"votingStart": "2014-02-10T21:20:00Z", 
@@ -424,19 +451,22 @@ ConfigurableTally.test = function() {
 				"listID": "DEADBEEF",
 				"groups": [ 1,2,3] 
 			},     
-			"ballotName": "1. Basisentscheid NRW (online, anonym, Test)",
+			"electionID": /* "ballotName": */ "1. Basisentscheid NRW (online, anonym, Test)",
 			"questions":
 				[
 				 {
 					 "questionID":1,
 					 "questionWording":"Drehen wir uns im Kreis? (zweistufig)",
-					 "voteSystem":
-					 {
-						 "type": "score",
-						 "min-score": -3,
-						 "max-score": 3,
-						 "abstention": true,
-						 "steps": "yesNo score"
+					 "tallyData": {
+						 "scheme": /*"voteSystem":*/
+							 [{
+								 "name": "yesNo",
+								 "abstention": true
+							 }, {
+								 "name": "score",
+								 "minScore": -3,
+								 "maxScore": 3,
+							 }]
 					 },
 					 "options":
 						 [
@@ -454,13 +484,12 @@ ConfigurableTally.test = function() {
 				 {
 					 "questionID":2,
 					 "questionWording":"Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
-					 "voteSystem":
-					 {
-						 "type": "score",
-						 "max-score": 3,
-						 "min-score": -3,
-						 "abstention": true,
-						 "steps": "yesNo"
+					 "tallyData": {
+						 "scheme": /*"voteSystem":*/
+							 [{
+								 "name": "yesNo",
+								 "abstention": true
+							 }]
 					 },
 					 "options":
 						 [
@@ -478,12 +507,12 @@ ConfigurableTally.test = function() {
 				 {
 					 "questionID":3,
 					 "questionWording":"Bringen uns Schuldzuweisungen irgendwas?",
-					 "voteSystem":
-					 {
-						 "type": "rank",
-						 "max-score": 1,
-						 "abstention": false,
-						 "steps": ""
+					 "tallyData": {
+						 "scheme": /*"voteSystem":*/
+							 [{
+								 "name": "yesNo",
+								 "abstention": false
+							 }]
 					 },
 					 "options":
 						 [
@@ -500,13 +529,13 @@ ConfigurableTally.test = function() {
 				 {
 					 "questionID":4,
 					 "questionWording":"Basisentscheid / Ständige Mitgliederversammlung\n* SÄA30: Modul 1: Basisentscheid in NRW einführen\n* SÄA30: Modul 2: Basisentscheid online anonym ermöglichen\n* SÄA30: Modul 3: Auch Programmanträge im Basisentscheid zulassen\n* SÄA XY: Ständige Mitgliederversammlung einführen",
-					 "voteSystem":
-					 {
-						 "type": "score",
-						 "min-score": -3,
-						 "max-score": 3,
-						 "abstention": true,
-						 "steps": "yesNo score"
+					 "tallyData": {
+						 "scheme": /*"voteSystem":*/
+							 [{
+								 "name": "score",
+								 "minScore": -3,
+								 "maxScore": 3,
+							 }]
 					 },
 					 "options":
 						 [
@@ -542,15 +571,16 @@ ConfigurableTally.test = function() {
 
 	};
 
-	var mc = ConfigurableTally.getMainContent(tallyConfig);
-	Page.loadMainContent(mc);
+	var tally = new ConfigurableTally('', config);
+	var fragm = tally.getMainContentFragm(config);
+	Page.loadMainContentFragm(fragm);
 	ConfigurableTally.showQuestion(0);
 };
 
 
 
 ConfigurableTally.test2 = function() {
-	var tallyConfig = 
+	var config = 
 	{
 			"ballotID":"GTVsdffgsdwt40QXffsd452re",
 			"votingStart": "2014-02-10T21:20:00Z", 
@@ -566,122 +596,126 @@ ConfigurableTally.test2 = function() {
 				 {
 					 "questionID":1,
 					 "questionWording":"Drehen wir uns im Kreis? (zweistufig)",
-					 "scheme":
-						 [ 
-						  {
-							  "name": "yesNo", /* "yesNo" "score", "pickOne" "rank" */ 
-							  "abstention": true
-						  },
-						  {
-							  "name": "score", 
-							  "minScore": -3,
-							  "maxScore": 3
-						  }
-						  ]
-				 ,
-				 "options":
-					 [
-					  { "optionID": 1, "optionTitle": "Ja, linksherum.", "optionDesc": "Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.\n\n Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
-					  { "optionID": 2, "optionTitle": "Ja, rechtsherum" },
-					  { "optionID": 3, "optionTitle": "Nein. Ab durch die Mitte!" },
-					  { "optionID": 4, "optionTitle": "Jein. Wir drehen durch." }
-					  ],
-					  "references":
-						  [
-						   { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
-						   { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
-						   ]
+					 "tallyData": {
+						 "scheme":
+							 [ 
+							  {
+								  "name": "yesNo", /* "yesNo" "score", "pickOne" "rank" */ 
+								  "abstention": true
+							  },
+							  {
+								  "name": "score", 
+								  "minScore": -3,
+								  "maxScore": 3
+							  }
+							  ]
+					 },
+					 "options":
+						 [
+						  { "optionID": 1, "optionTitle": "Ja, linksherum.", "optionDesc": "Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.\n\n Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
+						  { "optionID": 2, "optionTitle": "Ja, rechtsherum" },
+						  { "optionID": 3, "optionTitle": "Nein. Ab durch die Mitte!" },
+						  { "optionID": 4, "optionTitle": "Jein. Wir drehen durch." }
+						  ],
+						  "references":
+							  [
+							   { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
+							   { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
+							   ]
 				 },
 				 {
 					 "questionID":2,
 					 "questionWording":"Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
-					 "scheme":
-						 [ 
-						  {
-							  "name": "yesNo", /* "yesNo" "score", "pickOne" "rank" */ 
-							  "abstention": false
-						  }
+					 "tallyData": {
+						 "scheme":
+							 [{
+								 "name": "yesNo", /* "yesNo" "score", "pickOne" "rank" */ 
+								 "abstention": false
+							 }]
+					 },
+					 "options":
+						 [
+						  { "optionID": 1, "optionTitle": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
+						  { "optionID": 2, "optionTitle": "Ja, rechtsherum" },
+						  { "optionID": 3, "optionTitle": "Nein. Ab durch die Mitte!" },
+						  { "optionID": 4, "optionTitle": "Jein. Wir drehen durch." }
 						  ],
-						  "options":
+						  "references":
 							  [
-							   { "optionID": 1, "optionTitle": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?" },
-							   { "optionID": 2, "optionTitle": "Ja, rechtsherum" },
-							   { "optionID": 3, "optionTitle": "Nein. Ab durch die Mitte!" },
-							   { "optionID": 4, "optionTitle": "Jein. Wir drehen durch." }
-							   ],
-							   "references":
-								   [
-								    { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
-								    { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
-								    ]
+							   { "referenceName":"Abschlussparty und Auflösung", "referenceAddress":"https://lqfb.piratenpartei.de/lf/initiative/show/5789.html" },
+							   { "referenceName":"Bilder zur Motivation","referenceAddress":"https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content" }
+							   ]
 				 },
 				 {
 					 "questionID":3,
 					 "questionWording":"Bringen uns Schuldzuweisungen irgendwas?",
-					 "scheme":
-						 [ 
-						  {
-							  "name": "rank", /* "yesNo" "score", "pickOne" "rank" */ 
-						  }
+					 "tallyData": {
+						 "scheme":
+							 [ 
+							  {
+								  "name": "rank", /* "yesNo" "score", "pickOne" "rank" */ 
+							  }
+							  ]
+					 },
+					 "options":
+						 [
+						  { "optionID":1, "optionTitle": "Ja. Befriedigung! Ha!"},
+						  { "optionID":2, "optionTitle": "Ja. Streit und Ärger."},
+						  { "optionID":3, "optionTitle": "nö, aber wir machen's dennoch" },
+						  { "optionID":4, "optionTitle": "Huch? Das macht noch jemand?" }
 						  ],
-						  "options":
-							  [
-							   { "optionID":1, "optionTitle": "Ja. Befriedigung! Ha!"},
-							   { "optionID":2, "optionTitle": "Ja. Streit und Ärger."},
-							   { "optionID":3, "optionTitle": "nö, aber wir machen's dennoch" },
-							   { "optionID":4, "optionTitle": "Huch? Das macht noch jemand?" }
-							   ],
-						   "references":
-								   [                
-								    { "referenceName":"piff paff puff kappotschießen", "referenceAddress":"https://twitter.com/czossi/status/436217916803911680/photo/1" }
-								    ]
+						  "references":
+							  [                
+							   { "referenceName":"piff paff puff kappotschießen", "referenceAddress":"https://twitter.com/czossi/status/436217916803911680/photo/1" }
+							   ]
 				 },
 				 {
 					 "questionID":4,
 					 "questionWording":"Basisentscheid / Ständige Mitgliederversammlung\n* SÄA30: Modul 1: Basisentscheid in NRW einführen\n* SÄA30: Modul 2: Basisentscheid online anonym ermöglichen\n* SÄA30: Modul 3: Auch Programmanträge im Basisentscheid zulassen\n* SÄA XY: Ständige Mitgliederversammlung einführen",
-					 "scheme":
-						 [ 
-						  {
-							  "name": "score", 
-							  "minScore": 0,
-							  "maxScore": 3
-						  }
-						 ],
+					 "tallyData": {
+						 "scheme":
+							 [{
+								 "name": "score", 
+								 "minScore": 0,
+								 "maxScore": 3
+							 }]
+					 },
 					 "options":
+						 [
+						  { "optionID": 1, "optionTitle": "SÄA 18: SMV Option 1 - Ablehnung von verbindlicher Online-SMV", "optionDesc": "Der Landesverband NRW lehnt es grundsätzlich ab, zum jetzigen Zeitpunkt ein System einzuführen, welches unter zuhilfenahme von Online-Werkzeugen irgendeine Form von verbindlicher Abstimmung umsetzen soll.\n\nZu diesem Zweck werden aus §8 (2) der Landessatzung die Worte \"oder in einem vom Landesparteitag legitimierten Werkzeug\" gestrichen. ", "reasons": "== Glaubwürdigkeit ==\n* Beschluss/PM aus der Gründungszeit der Piratenpartei: https://wiki.piratenpartei.de/Pressemitteilung_vom_12.11.2006_zu_Wahlmaschinen\n* Wir machen uns absolut unglaubwürdig, wenn wir verbindliche Onlineabstimmungen beschliessen und durchführen.\n\n== Toolproblem ==\nEs gibt zum jetzigen Zeitpunkt kein einziges Tool, welches die elementaren Anforderungen an geheime Wahlen erfüllt (anonym/pseudonym, Nachvollzieh- und Überprüfbarkeit). Auf absehbare Zeit nicht umsetzbare Mitbestimmungswerkzeuge in die Satzung zu schreiben ist Zeitverschwendung und Wahlbetrug."},
+						  { "optionID": 2, "optionTitle": "SÄA 18: Modul 1: 2014 keine Ressourcen für SMV bereitstellen", "optionDesc": "Das Thema SMV soll 2014 (mindestens für die Amtsperiode des derzeitgen Landesvorstandes) keine Rolle mehr spielen. Es soll insbesondere keinerlei finanzielle Förderung oder Bereitstellung von IT Infrastruktur aus Landesmitteln stattfinden." },
+						  { "optionID": 3, "optionTitle": "SÄA 18: Modul 2: Entwicklung auf Bundesebene abwarten", "optionDesc": "Das Thema SMV soll auf Landesebene erst wieder aktiv behandelt werden, wenn es auf Bundesebene neue Entscheidungen oder Entwicklungen zum Thema SMV gibt (z.B. Bestätigung eines Tools, Satzungsänderungen)."  },
+						  { "optionID": 4, "optionTitle": "SÄA 19: SMV Option 2 Ständige Mitgliederversammlung nur auf Totholz einführen", "optionDesc": "Der Landesparteitag möge beschliessen, der Satzung an geeigneter Stelle einen Abschnitt \"Basisentscheid und Basisbefragung\" mit folgendem Wortlaut hinzuzufügen: (Anmerkung 1: Der Text entspricht bis auf die hier durch Streichung bzw Fettschrift kenntlich gemachten Teile dem angenommenen SÄA003 (http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2013.1/Antragsportal/SÄA003) aus Neumarkt.)\n\n\
+							  (Anmerkung 2: Die parallel dazu vorgeschlagene Entscheidsordnung weicht deutlich von X011 (http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2013.1/Antragsportal/X011) aus Neumarkt ab.) \
+							  \n\n(1) Die Mitglieder fassen in einem Basisentscheid einen Beschluss, der einem des Landesparteitags gleichsteht. Ein Beschluss zu Sachverhalten, die dem Landesparteitag vorbehalten sind oder eindeutig dem Parteiprogramm widersprechen, gilt als Basisbefragung mit lediglich empfehlenden Charakter. Urabstimmungen gemäß §6 (2) Nr.11 PartG werden in Form eines Basisentscheids durchgeführt, zu dem alle stimmberechtigten Mitglieder in Textform eingeladen werden. Die nachfolgenden Bestimmungen für Anträge bzw. Abstimmungen gelten sinngemäß auch für Personen bzw. Wahlen.\
+							  \n\n(2) Teilnahmeberechtigt sind alle persönlich identifizierten, am Tag der Teilnahme stimmberechtigten Mitglieder gemäß §4(4) der Bundessatzung, die mit ihren Mitgliedsbeiträgen nicht im Rückstand sind. Um für Quoren und Abstimmungen berücksichtigt zu werden, müssen sich die teilnahmeberechtigten Mitglieder zur Teilnahme anmelden.\
+							  \n\n(3) Über einen Antrag wird nur abgestimmt, wenn er innerhalb eines Zeitraums ein Quorum von Teilnehmern als Unterstützer erreicht oder vom Bundesparteitag eingebracht wird. Der Landesvorstand darf organisatorische Anträge einbringen. Konkurrierende Anträge zu einem Sachverhalt können rechtzeitig vor der Abstimmung eingebracht und für eine Abstimmung gebündelt werden. Eine erneute Abstimmung über den gleichen oder einen sehr ähnlichen Antrag ist erst nach Ablauf einer Frist zulässig, es sei denn die Umstände haben sich seither maßgeblich geändert. Über bereits erfüllte, unerfüllbare oder zurückgezogene Anträge wird nicht abgestimmt. Der Landesparteitag soll die bisher nicht abgestimmten Anträge behandeln.\
+							  \n\n(4) Vor einer Abstimmung werden die Anträge angemessen vorgestellt und zu deren Inhalt eine für alle Teilnehmer zugängliche Debatte gefördert. Die Teilnahme an der Debatte und Abstimmung muss für die Mitglieder zumutbar und barrierefrei sein. Anträge werden nach gleichen Maßstäben behandelt. Mitglieder bzw. Teilnehmer werden rechtzeitig über mögliche Abstimmungstermine bzw. die Abstimmungen in Textform informiert.\
+							  \n\n(5) Die Teilnehmer haben gleiches Stimmrecht, das sie selbstständig und frei innerhalb des Abstimmungszeitraums ausüben. Abstimmungen außerhalb des Parteitags erfolgen entweder pseudonymisiert oder geheim. Bei pseudonymisierter Abstimmung kann jeder Teilnehmer die unverfälschte Erfassung seiner eigenen Stimme im Ergebnis überprüfen und nachweisen. Bei personellen Sachverhalten oder auf Antrag einer Minderheit muss die Abstimmung geheim erfolgen. In einer geheimen Abstimmung sind die einzelnen Schritte für jeden Teilnehmer ohne besondere Sachkenntnisse nachvollziehbar und die Stimmabgabe erfolgt nicht elektronisch. Die Manipulation einer Abstimmung oder die Veröffentlichung von Teilergebnissen vor Abstimmungsende sind ein schwerer Verstoß gegen die Ordnung der Partei.\
+						  \n\n(6) Das Nähere regelt die Entscheidsordnung, welche durch den Landesparteitag beschlossen wird und auch per Basisentscheid geändert werden kann." },
+						  { "optionID": 5, "optionTitle": "SÄA 19: Modul 1: Änderung der Entscheidsordnung durch den Basisentscheid", "optionDesc": "Abschnitt (6) wird ersetzt durch:\n\n(6) Das Nähere regelt die Entscheidsordnung, welche durch den Landesparteitag beschlossen wird und auch per Basisentscheid geändert werden kann." },
+						  { "optionID": 6, "optionTitle": "SÄA 19: Modul 2: An die Arbeit !", "optionDesc": "Regionale und kommunale Gliederungen ausreichender Größe sind aufgefordert, spätestens nach der kommenden Kommunalwahl mit der Gründung von Urnen zu beginnen. Der Landesvorstand ist aufgefordert durch Ausschreibungen (oder sofern nötig & möglich auch durch Wahlen noch auf dem LPT), entsprechendes Personal für die Organisation und Durchführung zu finden und entsprechend zu beauftragen." },
+						  { "optionID": 7, "optionTitle": "SÄA30: Modul 1: Basisentscheid in NRW einführen", "optionDesc": "" },
+						  { "optionID": 8, "optionTitle": "SÄA30: Modul 2: Basisentscheid online anonym ermöglichen", "optionDesc": "" },
+						  { "optionID": 9, "optionTitle": "SÄA30: Modul 3: Auch Programmanträge im Basisentscheid zulassen"}
+						  ],
+						  "references":
 							  [
-							   { "optionID": 1, "optionTitle": "SÄA 18: SMV Option 1 - Ablehnung von verbindlicher Online-SMV", "optionDesc": "Der Landesverband NRW lehnt es grundsätzlich ab, zum jetzigen Zeitpunkt ein System einzuführen, welches unter zuhilfenahme von Online-Werkzeugen irgendeine Form von verbindlicher Abstimmung umsetzen soll.\n\nZu diesem Zweck werden aus §8 (2) der Landessatzung die Worte \"oder in einem vom Landesparteitag legitimierten Werkzeug\" gestrichen. ", "reasons": "== Glaubwürdigkeit ==\n* Beschluss/PM aus der Gründungszeit der Piratenpartei: https://wiki.piratenpartei.de/Pressemitteilung_vom_12.11.2006_zu_Wahlmaschinen\n* Wir machen uns absolut unglaubwürdig, wenn wir verbindliche Onlineabstimmungen beschliessen und durchführen.\n\n== Toolproblem ==\nEs gibt zum jetzigen Zeitpunkt kein einziges Tool, welches die elementaren Anforderungen an geheime Wahlen erfüllt (anonym/pseudonym, Nachvollzieh- und Überprüfbarkeit). Auf absehbare Zeit nicht umsetzbare Mitbestimmungswerkzeuge in die Satzung zu schreiben ist Zeitverschwendung und Wahlbetrug."},
-							   { "optionID": 2, "optionTitle": "SÄA 18: Modul 1: 2014 keine Ressourcen für SMV bereitstellen", "optionDesc": "Das Thema SMV soll 2014 (mindestens für die Amtsperiode des derzeitgen Landesvorstandes) keine Rolle mehr spielen. Es soll insbesondere keinerlei finanzielle Förderung oder Bereitstellung von IT Infrastruktur aus Landesmitteln stattfinden." },
-							   { "optionID": 3, "optionTitle": "SÄA 18: Modul 2: Entwicklung auf Bundesebene abwarten", "optionDesc": "Das Thema SMV soll auf Landesebene erst wieder aktiv behandelt werden, wenn es auf Bundesebene neue Entscheidungen oder Entwicklungen zum Thema SMV gibt (z.B. Bestätigung eines Tools, Satzungsänderungen)."  },
-							   { "optionID": 4, "optionTitle": "SÄA 19: SMV Option 2 Ständige Mitgliederversammlung nur auf Totholz einführen", "optionDesc": "Der Landesparteitag möge beschliessen, der Satzung an geeigneter Stelle einen Abschnitt \"Basisentscheid und Basisbefragung\" mit folgendem Wortlaut hinzuzufügen: (Anmerkung 1: Der Text entspricht bis auf die hier durch Streichung bzw Fettschrift kenntlich gemachten Teile dem angenommenen SÄA003 (http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2013.1/Antragsportal/SÄA003) aus Neumarkt.)\n\n\
-								   (Anmerkung 2: Die parallel dazu vorgeschlagene Entscheidsordnung weicht deutlich von X011 (http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2013.1/Antragsportal/X011) aus Neumarkt ab.) \
-								   \n\n(1) Die Mitglieder fassen in einem Basisentscheid einen Beschluss, der einem des Landesparteitags gleichsteht. Ein Beschluss zu Sachverhalten, die dem Landesparteitag vorbehalten sind oder eindeutig dem Parteiprogramm widersprechen, gilt als Basisbefragung mit lediglich empfehlenden Charakter. Urabstimmungen gemäß §6 (2) Nr.11 PartG werden in Form eines Basisentscheids durchgeführt, zu dem alle stimmberechtigten Mitglieder in Textform eingeladen werden. Die nachfolgenden Bestimmungen für Anträge bzw. Abstimmungen gelten sinngemäß auch für Personen bzw. Wahlen.\
-								   \n\n(2) Teilnahmeberechtigt sind alle persönlich identifizierten, am Tag der Teilnahme stimmberechtigten Mitglieder gemäß §4(4) der Bundessatzung, die mit ihren Mitgliedsbeiträgen nicht im Rückstand sind. Um für Quoren und Abstimmungen berücksichtigt zu werden, müssen sich die teilnahmeberechtigten Mitglieder zur Teilnahme anmelden.\
-								   \n\n(3) Über einen Antrag wird nur abgestimmt, wenn er innerhalb eines Zeitraums ein Quorum von Teilnehmern als Unterstützer erreicht oder vom Bundesparteitag eingebracht wird. Der Landesvorstand darf organisatorische Anträge einbringen. Konkurrierende Anträge zu einem Sachverhalt können rechtzeitig vor der Abstimmung eingebracht und für eine Abstimmung gebündelt werden. Eine erneute Abstimmung über den gleichen oder einen sehr ähnlichen Antrag ist erst nach Ablauf einer Frist zulässig, es sei denn die Umstände haben sich seither maßgeblich geändert. Über bereits erfüllte, unerfüllbare oder zurückgezogene Anträge wird nicht abgestimmt. Der Landesparteitag soll die bisher nicht abgestimmten Anträge behandeln.\
-								   \n\n(4) Vor einer Abstimmung werden die Anträge angemessen vorgestellt und zu deren Inhalt eine für alle Teilnehmer zugängliche Debatte gefördert. Die Teilnahme an der Debatte und Abstimmung muss für die Mitglieder zumutbar und barrierefrei sein. Anträge werden nach gleichen Maßstäben behandelt. Mitglieder bzw. Teilnehmer werden rechtzeitig über mögliche Abstimmungstermine bzw. die Abstimmungen in Textform informiert.\
-								   \n\n(5) Die Teilnehmer haben gleiches Stimmrecht, das sie selbstständig und frei innerhalb des Abstimmungszeitraums ausüben. Abstimmungen außerhalb des Parteitags erfolgen entweder pseudonymisiert oder geheim. Bei pseudonymisierter Abstimmung kann jeder Teilnehmer die unverfälschte Erfassung seiner eigenen Stimme im Ergebnis überprüfen und nachweisen. Bei personellen Sachverhalten oder auf Antrag einer Minderheit muss die Abstimmung geheim erfolgen. In einer geheimen Abstimmung sind die einzelnen Schritte für jeden Teilnehmer ohne besondere Sachkenntnisse nachvollziehbar und die Stimmabgabe erfolgt nicht elektronisch. Die Manipulation einer Abstimmung oder die Veröffentlichung von Teilergebnissen vor Abstimmungsende sind ein schwerer Verstoß gegen die Ordnung der Partei.\
-							   \n\n(6) Das Nähere regelt die Entscheidsordnung, welche durch den Landesparteitag beschlossen wird und auch per Basisentscheid geändert werden kann." },
-							   { "optionID": 5, "optionTitle": "SÄA 19: Modul 1: Änderung der Entscheidsordnung durch den Basisentscheid", "optionDesc": "Abschnitt (6) wird ersetzt durch:\n\n(6) Das Nähere regelt die Entscheidsordnung, welche durch den Landesparteitag beschlossen wird und auch per Basisentscheid geändert werden kann." },
-							   { "optionID": 6, "optionTitle": "SÄA 19: Modul 2: An die Arbeit !", "optionDesc": "Regionale und kommunale Gliederungen ausreichender Größe sind aufgefordert, spätestens nach der kommenden Kommunalwahl mit der Gründung von Urnen zu beginnen. Der Landesvorstand ist aufgefordert durch Ausschreibungen (oder sofern nötig & möglich auch durch Wahlen noch auf dem LPT), entsprechendes Personal für die Organisation und Durchführung zu finden und entsprechend zu beauftragen." },
-							   { "optionID": 7, "optionTitle": "SÄA30: Modul 1: Basisentscheid in NRW einführen", "optionDesc": "" },
-							   { "optionID": 8, "optionTitle": "SÄA30: Modul 2: Basisentscheid online anonym ermöglichen", "optionDesc": "" },
-							   { "optionID": 9, "optionTitle": "SÄA30: Modul 3: Auch Programmanträge im Basisentscheid zulassen"}
-							   ],
-							   "references":
-								   [
-								    { "referenceName":"Vollständiger Antrag zur SMV Option 1 - Ablehnung von verbindlicher Online-SMV mit Modulen", "referenceAddress":"https://wiki.piratenpartei.de/NRW:Landesparteitag_2014.1/Antr%C3%A4ge/S%C3%84A019" },
-								    { "referenceName":"Vollständiger Antrag zur SMV Option 2 - Totholz SMV mit Modulen", "referenceAddress":"https://wiki.piratenpartei.de/NRW:Landesparteitag_2014.1/Antr%C3%A4ge/S%C3%84A019" },
-								    { "referenceName":"Vollständiger Antrag zum Basisentscheid mit Begründung und Modulen", "referenceAddress":"https://wiki.piratenpartei.de/NRW:Landesparteitag_2014.1/Antr%C3%A4ge/S%C3%84A030" }
-								   ]
+							   { "referenceName":"Vollständiger Antrag zur SMV Option 1 - Ablehnung von verbindlicher Online-SMV mit Modulen", "referenceAddress":"https://wiki.piratenpartei.de/NRW:Landesparteitag_2014.1/Antr%C3%A4ge/S%C3%84A019" },
+							   { "referenceName":"Vollständiger Antrag zur SMV Option 2 - Totholz SMV mit Modulen", "referenceAddress":"https://wiki.piratenpartei.de/NRW:Landesparteitag_2014.1/Antr%C3%A4ge/S%C3%84A019" },
+							   { "referenceName":"Vollständiger Antrag zum Basisentscheid mit Begründung und Modulen", "referenceAddress":"https://wiki.piratenpartei.de/NRW:Landesparteitag_2014.1/Antr%C3%A4ge/S%C3%84A030" }
+							   ]
 				 }
 				 ],
 				 "references":
 					 [
 					  {"referenceName":"Piratenpartei","referenceAddress":"https://piratenpartei.de/"}
-					 ]
+					  ]
 
 	};
 
-	var mc = ConfigurableTally.getMainContent(tallyConfig);
-	Page.loadMainContent(mc);
+	var tally = new ConfigurableTally('', config);
+	var fragm = tally.getMainContentFragm(config);
+	Page.loadMainContentFragm(fragm);
 	ConfigurableTally.showQuestion(0);
 };
