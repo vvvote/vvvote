@@ -352,8 +352,8 @@ BlindedVoterPermObtainer.prototype.handleServerAnswer = function(dataString) {
 			break;
 		case 'savePermission':
 			// create the string to be saved 
-			ballotFileContent = this.savePermissionEvent(data);
-			return Object({'action':'savePermission', 'data': JSON.stringify(ballotFileContent)});
+			var ballotFileContent = this.savePermissionEvent(data);
+			return Object({'action':'savePermission', 'data': ballotFileContent});
 			break;
 		case 'error':
 			return Object({'action':'serverError', 'errorText': data.errorTxt, 'errorNo': data.errorNo});

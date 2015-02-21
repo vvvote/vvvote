@@ -88,10 +88,12 @@ BlindedVoterElection.prototype.gotWebclient = function(xml) {
  */
 BlindedVoterElection.prototype.injectPermissionIntoClientSave = function(ballot) {
 	var find = /\/\/bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpßjntt/;
-	var ballotWithClient = this.clientHtml.replace(find, 'permission=' + ballot +';');
+	var returnEnvelope = {
+			'permission': ballot, 
+			'config': this.config};
+	var ballotWithClient = this.clientHtml.replace(find, 'returnEnvelope = ' + JSON.stringify(returnEnvelope) +';');
 	// load the electionId to be used as filename
-	var p = JSON.parse(ballot); // ballot[0].transm contains the signed str which contains the electionId
-	var p2 = JSON.parse(p[0].transm.str);
+	var p2 = JSON.parse(ballot[0].transm.str);
 	var electionid = JSON.parse(p2.electionId).mainElectionId;
 
 	var bb = new Blob([ballotWithClient]); //  new Blob([ballot]); 
@@ -202,7 +204,7 @@ BlindedVoterElection.getStep2HtmlDetails = function() {
  * provide HTML code to be presented in step 3 (voting)
  *  
  */
-BlindedVoterElection.getPermissionHtml = function() {
+BlindedVoterElection.loadReturnEnvelopeHtml = function() {
 	return 'Bitte laden Sie die Datei, in der Ihr Wahlschein gespeichert ist:<br>'+
 	'<input type="file" id="loadfile" accept=".vvvote" onchange="BlindedVoterElection.onClickedLoadFile(event)"/>'; //+ varname +'.loadPermFile(event);"/>';
 };
@@ -222,9 +224,9 @@ BlindedVoterElection.onClickedLoadFile = function(event) {
 	var bv = new BlindedVoterElection('');
 	bv.loadPermFile(event);
 };
-BlindedVoterElection.onImportPermission = function (permission) {
+BlindedVoterElection.onImportPermission = function (returnEnvelope) {
 	var bv = new BlindedVoterElection('');
-	bv.importPermission(permission);
+	bv.importPermission(returnEnvelope);
 };
 
 /**
@@ -245,28 +247,38 @@ BlindedVoterElection.prototype.loadPermFile = function (evt) {
  * @param ev
  */
 BlindedVoterElection.prototype.permFileLoaded = function (ev) {
-	var permissionstr = ev.target.result; 
+	var returnEnvelopeHtml = ev.target.result; 
 	// alert(permissionstr);
-	var p = JSON.parse(permissionstr); 
-	// TODO give an error if JSON parsing failed
-	this.importPermission(p);
+	var returnEnvelopeStr = returnEnvelopeHtml.match(/^returnEnvelope =(.+);$/m);
+	if (returnEnvelopeStr == null || returnEnvelopeStr.length == 0) {alert("Error: Return envelope data not found"); return;};
+	var returnEnvelope = JSON.parse(returnEnvelopeStr[1]); 
+	if (returnEnvelope == null ) {alert("Error: Return envelope data could not be read: JSON decode failed");return;};
+	this.importPermission(returnEnvelope);
 };
 
-BlindedVoterElection.prototype.importPermission = function (permission) {
-	this.permission = permission[0]; // TODO think about several permissions in permission array
-	this.permission.transm.signed = JSON.parse(this.permission.transm.str);
-	// TODO check if permission corresponds to the election config
+BlindedVoterElection.prototype.importPermission = function (returnEnvelope) {
+	this.config = returnEnvelope.config;
+	this.permission = returnEnvelope.permission; // TODO think about several permissions in permission array
+	var mainElectionIdMismatch = false;
+	for (var q=0; q<this.permission.length; q++) {
+		this.permission[q].transm.signed = JSON.parse(this.permission[q].transm.str);
+		var splittedElectionID = JSON.parse(this.permission[q].transm.signed.electionId);
+		this.permission[q].questionID = splittedElectionID.subElectionId;
+		if (splittedElectionID.mainElectionId !== this.config.electionId) {mainElectionIdMismatch = true;}
+	}
+	if (mainElectionIdMismatch) alert('The return envelope is not consistant'); // TODO throw?
 	// TODO check if all requiered fields are present
 	// TODO check signatures from permissionservers
 	// TODO check for date if voting already/still possible
-	this.config = {};
-	this.config.electionId = this.permission.transm.signed.electionId;
+	//this.config = {};
+	//this.config.electionId = this.permission.transm.signed.electionId;
 	var me = this;
-	this.permissionOk = true;
-	page.onPermLoaded(this.permissionOk, me); // call back --> enables vote button or loads ballot
-	
+	this.permissionOk = !mainElectionIdMismatch;
+	page.onPermLoaded(this.permissionOk, me, this.config); // call back --> enables vote button or loads ballot
+
 };
 
+/* not used at the moment
 BlindedVoterElection.prototype.checkPerm = function() {
 	if (!this.permissionOk) return false;
 	var trans = {};
@@ -276,10 +288,13 @@ BlindedVoterElection.prototype.checkPerm = function() {
 	trans.sigs       = this.permission.sigs;
 	return trans;
 };
+*/
 
-BlindedVoterElection.prototype.signVote = function (vote) {
+
+BlindedVoterElection.prototype.signVote = function (vote, questionID) {
+	var q = ArrayIndexOf(this.permission, 'questionID', questinID);
 	var votestr = vote;
-	var privatekeyarray = this.permission.keypair.priv;
+	var privatekeyarray = this.permission[q].keypair.priv;
 	var hash = SHA256(vote);
 	var hashBi = str2bigInt(hash, 16);
 	var privatekey = arrayStr2key(privatekeyarray);

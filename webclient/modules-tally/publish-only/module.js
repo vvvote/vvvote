@@ -4,24 +4,32 @@
  * constructor and public-preveleged (can access private methods) methods which are instantiated each time
  * @param election Election
  */
-var PublishOnlyTally = function (election, config, onGotVotesObj, onGotVotesMethod) { // TODO store config also
+var PublishOnlyTally = function (election, config) { // TODO store config also
 	this.election = election;
 	this.config = config;
-	this.onGotVotesObj    = onGotVotesObj;
-	this.onGotVotesMethod = onGotVotesMethod;
 };
 
 /**
  * public functions
  */
-PublishOnlyTally.prototype.getMainContent = function() {
+PublishOnlyTally.prototype.getMainContentFragm = function() {
 //	var element = document.getElementById('PublishOnlyTallyHtml'); // this is in index.html in order to have a substitute for heredoc
 //	ret = element.innerHTML
 	var ret = ''; // this.election.getPermissionHtml();
 	ret = ret + '\n<p>\n'; // TODO present options from config
 	ret = ret + 'Ihre Stimme: <input type="text" name="vote" id="vote" value="">';
 	ret = ret + '\n</p>\n';
-	return ret;
+	
+	var fragm = document.createDocumentFragment();
+	var inp = document.createElement('input');
+	inp.setAttribute('type', 'submit');
+	inp.setAttribute('value', 'abstimmen!');
+	inp.setAttribute('id', 'sendvote');
+	inp.setAttribute('disabled', 'disabled');
+	inp.setAttribute('onclick', 'page.sendVote(event);');
+	fragm.appendChild(inp);
+	
+	return fragm;
 	
 };
 
@@ -64,7 +72,9 @@ PublishOnlyTally.prototype.handleServerAnswerStoreVote = function (xml) {
 };
 
 
-PublishOnlyTally.prototype.handleUserClickGetAllVotes = function () {
+PublishOnlyTally.prototype.handleUserClickGetAllVotes = function (onGotVotesObj, onGotVotesMethod) {
+	this.onGotVotesObj    = onGotVotesObj;
+	this.onGotVotesMethod = onGotVotesMethod;
 	var me = this; 
 	var data = {};
 	data.cmd = 'getAllVotes';
@@ -141,7 +151,7 @@ PublishOnlyTally.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 			f = new ErrorInServerAnswer(2004, 'Error: unexpected var type', 'details: ' + e.toString());
 			f.alert();
 		} else {
-			f = new ErrorInServerAnswer(2005, 'Error: some else error', 'details: ' + e.toString());
+			f = new ErrorInServerAnswer(2005, 'Error: some error occured', 'details: ' + e.toString());
 			f.alert();
 		} // TODO show the error
 	}

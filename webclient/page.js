@@ -39,10 +39,16 @@ Page.prototype.setStep = function(step) {
 		Page.setAddiTechInfos('');
 };
 
-Page.loadMainContent = function (content) {
+Page.loadMainContent = function (contentHtml) {
 	var element = document.getElementById("loadedmaincontent");
-	element.innerHTML = content; 
+	element.innerHTML = contentHtml; 
 };
+
+Page.loadMainContentFragm = function (contentFragm) {
+	var mc = document.getElementById('maincontent');
+	mc.parentNode.replaceChild(contentFragm, mc);
+};
+
 
 Page.setAddiTechInfos = function (content) {
 	var element = document.getElementById("additiontechinfos");
