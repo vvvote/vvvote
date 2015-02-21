@@ -15,18 +15,18 @@ GetResultPage.prototype = new Page();
 GetResultPage.prototype.showResult = function() {
 	this.setStep(2);
 	// TODO add switch (blinder)
-	var blinder = new BlindedVoterElection(this.config); // use global namespace because
+	var blinder = new BlindedVoterElection(this.config); 
 	
 	// var element = document.getElementById("loadedmaincontent");
 	var me = this;
 	switch (this.config.tally) {
 	case 'publishOnly':
-		this.tally = new PublishOnlyTally(blinder, this.config, me, me.gotVotes);
+		this.tally = new PublishOnlyTally(blinder);
 		break;
 	default: // TODO throw some error
 		break;
 	}
-	this.tally.handleUserClickGetAllVotes();
+	this.tally.handleUserClickGetAllVotes(this.config, me, me.gotVotes);
 
 };
 /*

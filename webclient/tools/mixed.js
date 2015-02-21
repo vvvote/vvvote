@@ -264,7 +264,8 @@ function shuffleArray(arrayOrig) {
 /**
  * 
  */
-function wikiSyntax2DOMFrag(wikisyntax) {
+function wikiSyntax2DOMFrag(wikisyntax_) {
+	var wikisyntax = String(wikisyntax_); // necassary in case wikisyntax_ contains only of a number 
 	// \n == \r\n --> <p>
 	// \n* --> <ul><li>
 	// \n= TEXT = --> <h1>

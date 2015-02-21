@@ -1,16 +1,17 @@
-function ConfigurableTally(election, config, onGotVotesObj, onGotVotesMethod) {
-	PublishOnlyTally.call(this, election, config, onGotVotesObj, onGotVotesMethod);
+function ConfigurableTally(blinder, config) {
+	PublishOnlyTally.call(this, blinder, config);
 }
 
 
 ConfigurableTally.prototype = new PublishOnlyTally();
 
-ConfigurableTally.getMainContent = function(tallyconfig) {
+// TODO it is not pretty to have it completely static
+ConfigurableTally.prototype.getMainContentFragm = function(tallyconfig) {
 	ConfigurableTally.tallyConfig = tallyconfig;
 	var fragm =	document.createDocumentFragment();
 	var elp = document.createElement('h1');
 	// var elptxt = document.createTextNode(tallyconfig.ballotName);
-	elp.appendChild(document.createTextNode(tallyconfig.ballotName));
+	elp.appendChild(document.createTextNode(tallyconfig.electionId));
 	elp.setAttribute('id', 'ballotName');
 	fragm.appendChild(elp);
 	//mc = mc + '<div id="divVoteQuestions">';
@@ -76,9 +77,9 @@ ConfigurableTally.getMainContent = function(tallyconfig) {
 			\n\
 	richen</u>normal		");
 
-	document.getElementById('maincontent').appendChild(fragm);
-	document.getElementById('maincontent').appendChild(fragm2);
-	return '';
+	// document.getElementById('maincontent').appendChild(fragm);
+	// document.getElementById('maincontent').appendChild(fragm2);
+	return fragm;
 };
 
 ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
@@ -90,11 +91,11 @@ ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
 		var optionFieldSet = document.createElement('fieldset');
 		var legendNode = ConfigurableTally.getOptionTextFragm(tallyconfig.questions[qNo].options[optionNo], qNo, optionNo);
 		optionFieldSet.appendChild(legendNode);
-		for (var schemetypeindex = 0; schemetypeindex < tallyconfig.questions[qNo].scheme.length; schemetypeindex++) {
+		for (var schemetypeindex = 0; schemetypeindex < tallyconfig.questions[qNo].tallyData.scheme.length; schemetypeindex++) {
 			var fieldSetNode = document.createElement('fieldset');
 			var legendNode = document.createElement('legend');
 			fieldSetNode.appendChild(legendNode);
-			var curScheme = tallyconfig.questions[qNo].scheme[schemetypeindex];
+			var curScheme = tallyconfig.questions[qNo].tallyData.scheme[schemetypeindex];
 			legendNode.setAttribute('class', curScheme.name);
 			switch (curScheme.name) {
 			case 'yesNo':
@@ -243,7 +244,7 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 
 
 ConfigurableTally.showQuestion = function(showqNo) {
-	tallyconfig = ConfigurableTally.tallyConfig;
+	var tallyconfig = ConfigurableTally.tallyConfig;
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
 		var el = document.getElementById('divVoteQuestion'+qNo);
 		if (el !== null) {
@@ -254,7 +255,7 @@ ConfigurableTally.showQuestion = function(showqNo) {
 };
 
 ConfigurableTally.showOptionDetail = function(tag, qNo, optNo) {
-	tallyconfig = ConfigurableTally.tallyConfig;
+	var tallyconfig = ConfigurableTally.tallyConfig;
 	var el = document.getElementById(tag+qNo+'O'+optNo);
 	if (el.style.display.length > 0 )	el.style.display = '';
 	else       							el.style.display = 'none';

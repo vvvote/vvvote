@@ -11,7 +11,7 @@ function VotePage() {
 	GetElectionConfig.getMainContent('Wahlunterlagen holen', 'page', 'VotePage.prototype.gotElectionConfig') + '</p>' + 
 	'<p></p>&nbsp;<p></p>' +
 	'<h3>Ich habe bereits einen Wahlschein</h3>' + 
-	BlindedVoterElection.getPermissionHtml('page.blinder');
+	BlindedVoterElection.loadReturnEnvelopeHtml('page.blinder');
 	this.title = 'An Abstimmung teilnehmen';
 	this.reset();
 	VotePage.obj = this; // set a reference to this instance so that it can be called from static methods
@@ -125,21 +125,6 @@ VotePage.prototype.onAuthFailed = function(curServer) {
 };
 
 
-/*
-function permissionLoaded(ok){
-	if (ok) {
-		tally = new PublishOnlyTally(election, election.config, document.getElementById('loadedmaincontent'));
-		var mc = tally.getMainContent();
-		mc = mc + sendVoteHtml;
-		loadMainContent(mc);
-		var element = document.getElementById('sendvote');
-		element.disabled = !ok;
-		setStep(3);
-} else {
-		alert('Wahlschein ungültig');
-	}
-}*/
-
 VotePage.prototype.onPermGenerated = function() {
 	this.setStep(3);
 	var mc = this.blinder.getPermGeneratedHtml();
@@ -149,24 +134,45 @@ VotePage.prototype.onPermGenerated = function() {
 
 
 
-VotePage.prototype.onPermLoaded = function(permok, blindingobj) {
+VotePage.prototype.onPermLoaded = function(permok, blindingobj, config) {
 	this.blinder = blindingobj;
 	if (permok) {
-		var config = {}; // TODO load this from blinder
-		config.blinding = 'blindedVoter';
-		config.auth = 'sharedPassw'; //TODO OAuth2 !!!
-		config.electionId = this.blinder.config.electionId;
+	//	var config = {}; // TODO load this from blinder
+	//	config.blinding = 'blindedVoter';
+	//	config.auth = 'sharedPassw'; //TODO OAuth2 !!!
+	//	config.electionId = this.blinder.config.electionId;
 		
 /*		this.obj.startStep2(config, false);
 		// if ballot already shown --> enable it, else: show ballot
 		if (this.displayPermFileHtmlOnPhase2) {} */
-		// TODO use the correct Tally
-		this.tally = new PublishOnlyTally(this.blinder, config, document.getElementById('loadedmaincontent'));
-		var mc = this.tally.getMainContent();
-		mc = mc + '<p><input disabled="disabled" id="sendvote" type="submit" '+
-        'value="abstimmen!" ' + 
-        'onclick="page.sendVote(event);" >';
-		Page.loadMainContent(mc);
+
+		switch (config.tally) {
+		case 'publishOnlyTally': 
+			this.tally = new PublishOnlyTally(this.blinder, config);
+			break;
+		case 'configurableTally':
+			this.tally = new ConfigurableTally(this.blinder, config);
+			break;
+		default:
+			alert('Abstimmunsmodus /' + config.tally + '/ wird vom Client nicht unetrstützt');
+		}
+/*		if (typeof this.tally.getMainContentFragm == 'undefined') {
+			var mc = this.tally.getMainContent();
+			mc = mc + '<p><input disabled="disabled" id="sendvote" type="submit" '+
+			'value="abstimmen!" ' + 
+			'onclick="page.sendVote(event);" >';
+			Page.loadMainContent(mc);
+		} else { */
+			var fragm = this.tally.getMainContentFragm(config);
+			var inp = document.createElement('input');
+			inp.setAttribute('type', 'submit');
+			inp.setAttribute('value', 'abstimmen!');
+			inp.setAttribute('id', 'sendvote');
+			inp.setAttribute('disabled', 'disabled');
+			inp.setAttribute('onclick', 'page.sendVote(event);');
+			fragm.appendChild(inp);
+			Page.loadMainContentFragm(fragm);
+//		}
 		var element = document.getElementById('sendvote');
 		element.disabled = !permok;
 		this.setStep(3);
@@ -176,33 +182,8 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj) {
 	}
 
 };
-/*
-VotePage.prototype.startPublishOnlyVote = function(config, needElection) {
-	var mc = '';
-	if (needElection) {mc = mc + BlindedVoterElection.getPermissionHtml();}
-	tally = new PublishOnlyTally(this.blinder);
-	mc = mc + tally.getMainContent();
-	mc = mc + '<p><input disabled="disabled" id="sendvote" type="submit" '+
-	          'value="abstimmen!" ' + 
-	          'onclick="sendVote(event);" >';
-    Page.loadMainContent(mc);
-    this.setStep(3);
-};
-*/
 
 VotePage.prototype.sendVote = function (event) {
 	// alert('jetzt wird die Stimme gesendet');
 	this.tally.sendVote();
 };
-
-/*
-VotePage.prototype.startStep3 = function (config, needBlinder){
-	switch (config.tally) {
-	case 'publishOnly':
-		this.startPublishOnlyVote(config, needBlinder);
-		break;
-	default:
-			// TODO throw some error
-	}
-}
-*/

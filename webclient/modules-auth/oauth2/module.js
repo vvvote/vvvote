@@ -54,7 +54,7 @@ OAuth2.showDoneButton = function(id) {
 OAuth2.getMainContent = function(conf) {
 	var serverId = conf.authConfig.serverId;
 	
-	var elelctionConfigHash = GetElectionConfig.generateConfigHash(conf);
+	var elelctionId = conf.electionId;
 	var step = 1;
 	var mc = 
 		'<ol class="substep-progress">' +
@@ -95,7 +95,7 @@ OAuth2.getMainContent = function(conf) {
 		OAuth2.random[clientId] = bigInt2str(randBigInt(200,0), 62);
 		var oauthAutorize = ClientConfig.oAuth2Config[serverId].authorizeUri + 
 		'scope=' + ClientConfig.oAuth2Config[serverId].scope +
-		'&state=' + ClientConfig.oAuth2Config[serverId].serverId + '.' + elelctionConfigHash + '.'+ OAuth2.random[clientId]+ 
+		'&state=' + ClientConfig.oAuth2Config[serverId].serverId + '.' + elelctionId + '.'+ OAuth2.random[clientId]+ 
 		'&redirect_uri=' + ClientConfig.oAuth2Config[serverId].redirectUri[permissionServerId] + 
 		'&response_type=code' +
 		'&client_id=' + clientId;
