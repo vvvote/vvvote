@@ -206,7 +206,7 @@ BlindedVoterElection.getStep2HtmlDetails = function() {
  */
 BlindedVoterElection.loadReturnEnvelopeHtml = function() {
 	return 'Bitte laden Sie die Datei, in der Ihr Wahlschein gespeichert ist:<br>'+
-	'<input type="file" id="loadfile" accept=".vvvote" onchange="BlindedVoterElection.onClickedLoadFile(event)"/>'; //+ varname +'.loadPermFile(event);"/>';
+	'<input type="file" id="loadfile" accept=".html" onchange="BlindedVoterElection.onClickedLoadFile(event)"/>'; //+ varname +'.loadPermFile(event);"/>';
 };
 
 /**
