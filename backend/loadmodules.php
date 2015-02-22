@@ -38,15 +38,19 @@ function loadElectionModules($httpRawPostData, $electionIdPlace) {
 	//	if (! isset($electionIdPlace($reqdecoded))) 	WrongRequestException::throwException(7010, 'Election id missing in client request'	, $httpRawPostData);
 	if (! is_string($electionIdPlace($reqdecoded))) WrongRequestException::throwException(7050, 'Election id must be a string'			, 'got: ' . print_r($reqdecoded['electionId'], true));
 	// load election config from database by election id
-	$elconfig = $dbElections->loadElectionConfigFromElectionId($electionIdPlace($reqdecoded));
-	if (count($elconfig) < 1)					WrongRequestException::throwException(7000, 'Election id not found', "ElectionId you sent: " . $reqdecoded['electionId']);
+	$completeElectionId = $electionIdPlace($reqdecoded);
+	$splittedElectionId = json_decode($completeElectionId);
+	if ($splittedElectionId == null) $mainElectionId = $completeElectionId; // TODO this is not a goog think trying... better generally use json encoded ElectionId
+	else                             $mainElectionId = $splittedElectionId->mainElectionId;
+	$elconfig = $dbElections->loadElectionConfigFromElectionId($mainElectionId);
+	if (count($elconfig) < 1)					WrongRequestException::throwException(7000, 'Election id not found in server database', "ElectionId you sent: " . $reqdecoded['electionId']);
 
 	if (! isset($elconfig['auth'])) {
 		WrongRequestException::throwException(7020, 'element auth not found in election config', "ElectionId you sent: " . $reqdecoded['electionId']);
 	}
 	
 	$auth = LoadModules::laodAuthModule($elconfig['auth']);
-	if (isset($elconfig['authData'])) $auth->setup($elconfig["electionId"], $elconfig['authData']);
+	if (isset($elconfig['authConfig'])) $auth->setup($elconfig["electionId"], $elconfig['authConfig']);
 	// TODO load blinder from $elconfig
 	// TODO think about: should Election be any Election or just the blinding module?
 	$el = new BlindedVoter($elconfig['electionId'],

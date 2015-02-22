@@ -291,8 +291,8 @@ BlindedVoterElection.prototype.checkPerm = function() {
 */
 
 
-BlindedVoterElection.prototype.signVote = function (vote, questionID) {
-	var q = ArrayIndexOf(this.permission, 'questionID', questinID);
+BlindedVoterElection.prototype.signVote = function (vote, questionID_) {
+	var q = ArrayIndexOf(this.permission, 'questionID', questionID_);
 	var votestr = vote;
 	var privatekeyarray = this.permission[q].keypair.priv;
 	var hash = SHA256(vote);
@@ -319,11 +319,11 @@ BlindedVoterElection.prototype.signVote = function (vote, questionID) {
 	if (verified) alert('unterschrift korrekt');
 	 */
 
-	signedvote = {};
+	var signedvote = {};
 	signedvote.vote = votestr;
 	signedvote.sig  = sig;
 	var transm = {};
-	transm.permission = this.permission.transm;
+	transm.permission = this.permission[q].transm;
 	transm.vote = signedvote;
 	return transm;
 };

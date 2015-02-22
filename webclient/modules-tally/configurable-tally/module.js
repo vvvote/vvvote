@@ -125,7 +125,7 @@ ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
 	}
 	var divSendVote = document.createElement('div');
 	divSendVote.setAttribute('class', 'sendVote');
-	buttonDOM('buttonSendQ'+qNo, 'Stimme senden', '//ConfigurableTally.sendVote('+qNo+')', divSendVote, 'sendVoteButton');
+	buttonDOM('buttonSendQ'+qNo, 'Stimme senden', 'page.sendVote('+qNo+')', divSendVote, 'sendVoteButton');
 	divQNode.appendChild(divSendVote);
 	var divQNodeContainer = document.createElement('div');
 	divQNodeContainer.setAttribute('id', 'divVoteQuestionContainer'+qNo);
@@ -392,33 +392,48 @@ ConfigurableTally.buttonStep = function(qNo, forward) {
 
 ConfigurableTally.prototype.sendVote = function(qNo) {
 	var votestr = this.getInputs(qNo);
-	this.sendVoteData(votestr);  // sendVoteData is inherited from publish-only-tally
+	var questionID = this.config.questions[qNo].questionID;
+	this.sendVoteData(votestr, questionID);  // sendVoteData is inherited from publish-only-tally
 };
 
 ConfigurableTally.prototype.getInputs = function(qNo) {
-	var vote = {"ballotID":tallyconfig.ballotID,
-			"questions": [{
-				"questionID": tallyconfig.questions[qNo].questionID,
+	var vote = {//"ballotID":tallyconfig.ballotID,
+//			"questions": [{
+//				"questionID": tallyconfig.questions[qNo].questionID,
 				"optionOrder": [],
-				"statusQuoOption": "",
-				"votes": []
-			}]};
-	for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
-		var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
-		vote.questions[0].optionOrder[optionNo] = optionID;
-		var valueYNA = -2;  // nothing selected --> -2
-		var valuePref = -1;
-		switch (tallyconfig.questions[qNo].voteSystem.type) {
-		case 'score':
-			voteOptionY = document.getElementById('optionQ'+qNo+'O'+optionNoY).checked;
-			voteOptionN = document.getElementById('optionQ'+qNo+'O'+optionNoN).checked;
-			voteOptionA = document.getElementById('optionQ'+qNo+'O'+optionNoA).checked;
-			if  (voteOptionY == true) value = 1;  // yes --> 1
-			if  (voteOptionN == true) value = 0;  // no --> 0
-			if  (voteOptionA == true) value = -1; // abstentitian --> -1
-			break;
+//				"statusQuoOption": "",
+				"options": [] //[[{"name": "score", "value": 1}, {"name": "yesNo", "value": 1}]]
+//			}]
+	};
+
+	var valueYNA = -2;  // nothing selected --> -2
+	for (var optionNo=0; optionNo<this.config.questions[qNo].options.length; optionNo++) {
+		var optionID = this.config.questions[qNo].options[optionNo].optionID;
+		vote.optionOrder[optionNo] = optionID;
+		vote.options[optionNo] = [];
+		for (var schemeIndex=0; schemeIndex<this.config.questions[qNo].tallyData.scheme.length; schemeIndex++) {
+			var value = valueYNA;
+			var curScheme = this.config.questions[qNo].tallyData.scheme[schemeIndex]; 
+			switch (curScheme.name) {
+			case 'yesNo':                             
+				var voteOptionY =     document.getElementById('optionQ'+qNo+'O'+optionNo+'Y').checked;
+				var voteOptionN =     document.getElementById('optionQ'+qNo+'O'+optionNo+'N').checked;
+				if (curScheme.abstention) { 
+					var voteOptionA = document.getElementById('optionQ'+qNo+'O'+optionNo+'A').checked;
+					if  (voteOptionA == true) value = -1; // abstentitian --> -1
+				}
+				if  (voteOptionY == true) value = 1;  // yes --> 1
+				if  (voteOptionN == true) value = 0;  // no --> 0
+				break;
+			case 'score':
+				for (var score = curScheme.minScore; score <= curScheme.maxScore; score++) {
+					var rBtn = document.getElementById('optionQ'+qNo+'O'+optionNo+'S'+score);
+					if (rBtn.checked) value = score;
+				}
+				break;
+			}
+			vote.options[optionNo][schemeIndex] = {"name": curScheme.name, "value": value};
 		}
-		vote.questions[0].votes[optionNo] = [valueYNA, valuePref];
 	}
 	return JSON.stringify(vote);
 

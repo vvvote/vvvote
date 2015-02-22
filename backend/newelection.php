@@ -72,6 +72,7 @@ if (isset ($electionconfigStr)) {
 //		$newconfig['tallyData'] = $tallym->handleNewElectionReq($electionId, $authm, $blinder, $electionconfig['tallyData']);
 		
 		// $this->subTally->handleNewElectionReq($req['subTallyData']);
+		if ( (! isset($electionconfig["questions"])) || (! is_array($electionconfig["questions"]))) WrongRequestException::throwException(2146, 'Request must contain an array of questions', print_r($electionconfig, true));
 		foreach ($electionconfig['questions'] as $i => $question) {
 			$completeElectionId = json_encode(array ('mainElectionId' => $electionId,  'subElectionId' => $question['questionID']));
 			

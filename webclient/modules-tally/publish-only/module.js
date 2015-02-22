@@ -39,9 +39,9 @@ PublishOnlyTally.prototype.sendVote = function () {
 	this.sendVoteData(vote);
 };
 
-PublishOnlyTally.prototype.sendVoteData = function (vote) {
+PublishOnlyTally.prototype.sendVoteData = function (vote, questionID_) {
 	var transm = {};
-	transm = this.election.signVote(vote);
+	transm = this.election.signVote(vote, questionID_);
 	transm.cmd = 'storeVote';
 	var transmstr = JSON.stringify(transm);
 	var me = this;

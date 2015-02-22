@@ -178,5 +178,5 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config) {
 
 VotePage.prototype.sendVote = function (event) {
 	// alert('jetzt wird die Stimme gesendet');
-	this.tally.sendVote();
+	this.tally.sendVote(event);
 };
