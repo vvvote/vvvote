@@ -276,9 +276,9 @@ class BlindedVoter extends Blinder {
 	return $ret;
 	*/
 
-	function ballot2strForSig(array $ballot, $completeElectionId) {
+	function ballot2strForSig(array $ballot) {
 		$raw = array();
-		$raw['electionId'] = $completeElectionId;
+		$raw['electionId'] = $ballot['electionId'];
 		$raw['votingno'  ] = $ballot['votingno'];
 		$raw['salt'      ] = $ballot['salt'];
 		$str = str_replace("\\/",'/', json_encode($raw)); // json_encode escapes / with \/ while JavaScript JSON.encode() does not 
@@ -357,7 +357,7 @@ class BlindedVoter extends Blinder {
 	 * @param unknown $vote
 	 * @return boolean
 	 */
-	function verifyPermission($vote, $completeElectionId) {
+	function verifyPermission($vote) {
 		if (! isset($vote['permission']['sigs']) ) {
 			WrongRequestException::throwException(400, "Error: permission does not have a signature from a permission server", "verifyPermission: complete vote: " . print_r($vote, true));
 			return false;
@@ -366,7 +366,7 @@ class BlindedVoter extends Blinder {
 			WrongRequestException::throwException(401, "Error: permission does not have the requiered number of signatures from permission servers", "verifyPermission: requiered number of sigs from permission servers: " . $this->numSigsRequiered . 'number of sigs received: ' . count($vote['sigs']));
 			return false;
 		}
-		$str = $this->ballot2strForSig($vote['permission']['signed'], $completeElectionId);
+		$str = $this->ballot2strForSig($vote['permission']['signed']);
 		return $this->crypt->verifySigs($str, $vote['permission']['sigs']);
 	}
 	

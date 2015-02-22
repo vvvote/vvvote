@@ -67,6 +67,7 @@ echo '
 echo '<script>';
 foreach ($includeJsFiles as $f) {
 	readfile($pathToClient . $f);
+	echo "\r\n";
 }
 
 // print placeholder for JSON permission file
