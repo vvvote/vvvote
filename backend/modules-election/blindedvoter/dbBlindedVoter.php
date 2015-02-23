@@ -45,8 +45,32 @@ class DbBlindedVoter extends DbBase {
 		return $this->saveElectionVoter($electionId, $voterId, 'blindedHashes', 'blindedHashes', $blindedHashesForJSON);
 	}
 	
+	/**
+	 * returns the blinded hashes of voter for electionId - if several are in the database, sort it so that the newest is in [0]
+	 */
+	
 	function loadBlindedHashes($electionId, $voterId) {
-		return $this->loadElectionVoter($electionId, $voterId, 'blindedHashes', 'blindedHashes');
+		$blindesHashes = $this->loadElectionVoter($electionId, $voterId, 'blindedHashes', array('blindedHashes', 'id'));
+		if (count($blindesHashes) <= 1) return $blindesHashes;
+		
+		// sort the result so that the newest entry is [0]
+		function cmp($a, $b)
+		{
+			if ($a['id'] == $b['id']) return 0;
+			return ($a['id'] < $b['id']) ? +1 : -1;
+		}
+		usort($blindesHashes, "cmp");
+		return   $blindesHashes;
+	}
+	
+	/**
+	 * verifies if $voter already got a permission sig from this server.
+	 * @return true if is first request for signing, false otherwise
+	 */
+	function isFirstReqForSign($electionId, $voterId) {
+		$sigs = $this->loadElectionVoter($electionId, $voterId, 'signedBallots', 'signedBallots');
+		if (count($sigs) > 0) return false;
+		else                  return true;
 	}
 	
 	function saveSignedBallots($electionId, $voterId, $signedBallotsForJSON) {

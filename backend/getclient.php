@@ -5,6 +5,13 @@ require_once 'connectioncheck.php';  // answers if &connectioncheck is part of t
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"); // this allows any cross-site scripting (needed for chrome)
 
+// necassary to force the browser not to use the cached version - changes here will not arrive the voter otherwise
+header("Pragma: no-cache");
+header("Expires: Sat, 01 Jan 2005 00:00:00 GMT");
+header("Last-Modified: ".gmdate( "D, d M Y H:i:s")."GMT");
+header("Cache-Control: no-cache, must-revalidate");
+
+
 $pathToClient = '../webclient/';
 
 $includeJsFiles = Array(
@@ -220,10 +227,10 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und
 	    	 GetElectionConfig.submitForm();
 	    	// TODO read phase from config and load votePage(generatePermssion), votePage(submitVote), getresult()
 		}
-		if ('permission' in window) {
+		if ('returnEnvelope' in window) {
 		   	 page = votePage; // TODO read phase from config and
 		     page.display();
-		     BlindedVoterElection.onImportPermission(permission);
+		     BlindedVoterElection.onImportPermission(returnEnvelope);
 		}
 	} 
 		

@@ -72,7 +72,8 @@ PublishOnlyTally.prototype.handleServerAnswerStoreVote = function (xml) {
 };
 
 
-PublishOnlyTally.prototype.handleUserClickGetAllVotes = function (onGotVotesObj, onGotVotesMethod) {
+PublishOnlyTally.prototype.handleUserClickGetAllVotes = function (config_, onGotVotesObj, onGotVotesMethod) {
+	this.config = config_;
 	this.onGotVotesObj    = onGotVotesObj;
 	this.onGotVotesMethod = onGotVotesMethod;
 	var me = this; 
