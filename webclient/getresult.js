@@ -21,6 +21,7 @@ GetResultPage.prototype.showResult = function() {
 	var me = this;
 	switch (this.config.tally) {
 	case 'publishOnly':
+	case 'configurableTally':
 		this.tally = new PublishOnlyTally(blinder);
 		break;
 	default: // TODO throw some error

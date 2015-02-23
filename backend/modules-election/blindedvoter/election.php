@@ -226,14 +226,15 @@ class BlindedVoter extends Blinder {
 
 		// load the blinded Hashes from cmd 'pickBallots'
 		$voterId = $this->auth->getVoterId($voterReq['credentials'], $voterReq['electionId']);
-		$blindedHashesFromDB = $this->db->loadBlindedHashes($this->electionId, $voterId);
-		if (count($blindedHashesFromDB) > 1) {
-			WrongRequestException::throwException(301, 'Error: more than one request for ballots sent', "All requested ballots: " . print_r($blindedHashesFromDB, true));
+		$isFirstRequestSig = $this->db->isFirstReqForSign($voterReq['electionId'], $voterId);
+		if (! ($isFirstRequestSig === true)) {
+			WrongRequestException::throwException(301, 'Error: This server already signed a return envelop for you', "voterId: " . print_r($voterId, true));
 		}
+		$blindedHashesFromDB = $this->db->loadBlindedHashes($this->electionId, $voterId);
 		if (count($blindedHashesFromDB) < 1) {
 			WrongRequestException::throwException(302, 'Error: Sign request without request for disclosing ballots', "All requested ballots: " . print_r($blindedHashesFromDB, true));
 		}
-		$blindedHashesFromDB = $blindedHashesFromDB[0];
+		$blindedHashesFromDB = $blindedHashesFromDB[0]['blindedHashes'];
 
 		// verify ballots
 		$verified = $this->verifyBallots($voterReq, $blindedHashesFromDB);

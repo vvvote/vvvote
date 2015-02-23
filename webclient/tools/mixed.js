@@ -47,20 +47,6 @@ function ArrayIndexOf(a, elementname, element) {
 	return -1;
 }
 
-/**
- * this is used becaus JSON.stringify() does not work for exceptions stemming form the Browser itself
- * @param obj
- */
-function obj2str(obj) {
-	var str = '';
-	var propValue;
-	for(var propName in obj) {
-		propValue = nyc[propName];
-		str = str + propName + ': ' + propValue +"\n" ;
-	}
-	return str;
-}
-
 
 function sendThroughProxy() {
 
@@ -156,8 +142,8 @@ function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, 
 //			var urlparts = URI.getParts(url);
 			myXmlSend_.url = myXmlSend_.proxy + url; // urlparts.pathname + urlparts.search +urlparts.hash;
 		}
-
 		xml2.open(myXmlSend_.method, myXmlSend_.url, true);
+		if (myXmlSend_.method == 'GET') xml2.setRequestHeader("If-Modified-Since", "Sat, 01 Jan 2005 00:00:00 GMT"); // if using GET the browser is generally allowed to cache the answer. But we want to make sure to get always the latest version
 		/* unfortunately this does not work because setting requestHeader Host is prohibited for security reasons
 		if (myXmlSend_.proxy && myXmlSend_.proxy.length > 0) {
 			var urlparts = URI.getParts(url);

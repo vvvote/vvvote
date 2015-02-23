@@ -121,7 +121,7 @@ class DbBase {
 	
 	
 	/**
-	 * Load $volname in table $tablename for $electionId and $voterId
+	 * Load $colname in table $tablename for $electionId and $voterId
 	 * returns false if not successfull, json decoded array otherwise
 	 * @param string $electionId
 	 * @param string $voterId
