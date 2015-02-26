@@ -18,7 +18,7 @@ if (isset($HTTP_RAW_POST_DATA)) {
 	try {
 		checkCmd($HTTP_RAW_POST_DATA, 'storeVote');
 		$el = loadElectionModules($HTTP_RAW_POST_DATA, $electionIdPlace);
-		$result = $el->tally->handleTallyReq($HTTP_RAW_POST_DATA);
+		$result = $el->tally->handleTallyReq(getData($HTTP_RAW_POST_DATA));
 	} catch (ElectionServerException $e) {
 		$result = $e->makeServerAnswer();
 	}

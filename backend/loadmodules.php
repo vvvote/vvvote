@@ -24,6 +24,7 @@ require_once 'modules-auth/user-passw-list/auth.php';
 require_once 'modules-auth/shared-passw/auth.php';
 require_once 'modules-auth/oauth/auth.php';
 require_once 'modules-tally/publishonly/tally.php';
+require_once 'modules-tally/configurable-tally/tally.php';
 
 require_once 'config/conf-allservers.php';
 require_once 'config/conf-thisserver.php';
@@ -40,7 +41,7 @@ function loadElectionModules($httpRawPostData, $electionIdPlace) {
 	// load election config from database by election id
 	$completeElectionId = $electionIdPlace($reqdecoded);
 	$splittedElectionId = json_decode($completeElectionId);
-	if ($splittedElectionId == null) $mainElectionId = $completeElectionId; // TODO this is not a goog think trying... better generally use json encoded ElectionId
+	if ($splittedElectionId == null) $mainElectionId = $completeElectionId; // TODO this is not a good thing: trying... better generally use json encoded ElectionId
 	else                             $mainElectionId = $splittedElectionId->mainElectionId;
 	$elconfig = $dbElections->loadElectionConfigFromElectionId($mainElectionId);
 	if (count($elconfig) < 1)					WrongRequestException::throwException(7000, 'Election id not found in server database', "ElectionId you sent: " . $reqdecoded['electionId']);
@@ -51,22 +52,12 @@ function loadElectionModules($httpRawPostData, $electionIdPlace) {
 	
 	$auth = LoadModules::laodAuthModule($elconfig['auth']);
 	if (isset($elconfig['authConfig'])) $auth->setup($elconfig["electionId"], $elconfig['authConfig']);
-	// TODO load blinder from $elconfig
 	// TODO think about: should Election be any Election or just the blinding module?
-	$el = new BlindedVoter($elconfig['electionId'],
-			$numVerifyBallots,
-			$numSignBallots,
-			$pServerKeys,
-			$serverkey,
-			$numAllBallots,
-			$numPSigsRequiered,
-			$dbInfos,
-			$auth);
+	$blinder = LoadModules::loadBlinder($elconfig['blinding'], $elconfig, $auth); 
+	$blinder->tally = LoadModules::loadTally($elconfig['tally'], $blinder); // TODO use a different private key for tallying server
+	$blinder->tally->setup($elconfig);
 	
-	// TODO	load tally from $elconfig
-	$el->tally = new PublishOnlyTally($dbInfos, new Crypt($pServerKeys, $serverkey), $el); // TODO use a different private key for tallying server
-	
-	return $el;
+	return $blinder;
 }
 
 class LoadModules {
@@ -82,7 +73,7 @@ class LoadModules {
 		return $ret;
 	}
 	
-	static function loadBlinder($name) {
+	static function loadBlinder($name, $elconfig, $auth) {
 	global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $serverkey, $numAllBallots, $numPSigsRequiered;
 		$el = new BlindedVoter($elconfig['electionId'],
 				$numVerifyBallots,

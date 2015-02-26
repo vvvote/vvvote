@@ -79,7 +79,7 @@ PublishOnlyTally.prototype.handleUserClickGetAllVotes = function (config_, onGot
 	var me = this; 
 	var data = {};
 	data.cmd = 'getAllVotes';
-	data.electionId = this.config.electionId;
+	data.electionId = JSON.stringify({'mainElectionId': this.config.electionId, 'subElectionId': 1});
 	var datastr = JSON.stringify(data);
 	// TODO add auth to data
 	myXmlSend(ClientConfig.getResultUrl, datastr, me, me.handleServerAnswerVerifyCountVotes);

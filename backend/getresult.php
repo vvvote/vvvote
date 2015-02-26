@@ -20,9 +20,9 @@ if (isset($HTTP_RAW_POST_DATA)) {
 		return      $a['electionId'];
 	};
 	try {
-		checkCmd($HTTP_RAW_POST_DATA, 'getResult'); // throws an error if this command is not there
+		$data = getData($HTTP_RAW_POST_DATA); // throws an error if this command is not there
 		$el = loadElectionModules($HTTP_RAW_POST_DATA, $electionIdPlace);
-		$result = $el->tally->handleTallyReq($HTTP_RAW_POST_DATA);
+		$result = $el->tally->handleTallyReq($data);
 	} catch (ElectionServerException $e) {
 		$result = $e->makeServerAnswer();
 	}
