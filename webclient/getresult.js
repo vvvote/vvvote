@@ -20,14 +20,17 @@ GetResultPage.prototype.showResult = function() {
 	// var element = document.getElementById("loadedmaincontent");
 	var me = this;
 	switch (this.config.tally) {
-	case 'publishOnly':
 	case 'configurableTally':
+		this.tally = new ConfigurableTally(blinder);
+		this.tally.handleUserClickShowWinners(this.config);
+		break;
+	case 'publishOnly':
 		this.tally = new PublishOnlyTally(blinder);
+		this.tally.handleUserClickGetAllVotes(this.config, me, me.gotVotes);
 		break;
 	default: // TODO throw some error
 		break;
 	}
-	this.tally.handleUserClickGetAllVotes(this.config, me, me.gotVotes);
 
 };
 /*

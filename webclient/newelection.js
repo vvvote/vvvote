@@ -63,13 +63,16 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 				"questionWording": "Drehen wir uns im Kreis? (zweistufig)",
 				"scheme": [{
 					"name": "yesNo",
-					"abstention": true
+					"abstention": true,
+					"quorum": "2",
+					"abstantionAsNo": false
 				},
 				{
 					"name": "score",
 					"minScore": -3,
 					"maxScore": 3
 				}],
+				"findWinner": ["yesNo",	"score", "yesNoDiff", "random"],
 				"options": [{
 					"optionID": 1,
 					"optionTitle": "Ja, linksherum.",
@@ -101,8 +104,11 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 				"questionWording": "Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
 				"scheme": [{
 					"name": "yesNo",
-					"abstention": false
+					"abstention": false,
+					"abstantionAsNo": false
 				}],
+				"findWinner": ["yesNo", "yesNoDiff", "random"],
+
 				"options": [{
 					"optionID": 1,
 					"optionTitle": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende f?r die Auswahlkn?pfe. Meine Prognose ist, dass NRW das anonyme Verfahren einf?hren wird. Was glauben Sie, stimmt das?"

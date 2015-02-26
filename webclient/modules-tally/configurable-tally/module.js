@@ -5,7 +5,6 @@ function ConfigurableTally(blinder, config) {
 
 ConfigurableTally.prototype = new PublishOnlyTally();
 
-// TODO it is not pretty to have it completely static
 ConfigurableTally.prototype.getMainContentFragm = function(tallyconfig) {
 	ConfigurableTally.tallyConfig = tallyconfig;
 	var fragm =	document.createDocumentFragment();
@@ -81,6 +80,7 @@ ConfigurableTally.prototype.getMainContentFragm = function(tallyconfig) {
 	return fragm;
 };
 
+//TODO it is not pretty to have it completely static?
 ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
 	var divQNode = document.createElement('div');
 	divQNode.setAttribute('id', 'divVoteQuestion'+qNo);
@@ -390,6 +390,18 @@ ConfigurableTally.buttonStep = function(qNo, forward) {
 	else 			{ firstStep.style.display = ''; 		secondStep.style.display = 'none'; 	}
 };
 
+
+
+
+
+
+/***********************************************************************
+ * 
+ * Send Vote
+ * 
+ ***********************************************************************/
+
+
 ConfigurableTally.prototype.sendVote = function(qNo) {
 	var votestr = this.getInputs(qNo);
 	var questionID = this.config.questions[qNo].questionID;
@@ -454,6 +466,53 @@ ConfigurableTally.prototype.getInputs = function(qNo) {
 	
 };
 
+/***********************************************************************
+ * 
+ * Get Result
+ * 
+ ***********************************************************************/
+
+ConfigurableTally.prototype.handleUserClickGetAllVotes = function (config_, onGotVotesObj, onGotVotesMethod) {
+	this.config = config_;
+	this.onGotVotesObj    = onGotVotesObj;
+	this.onGotVotesMethod = onGotVotesMethod;
+	
+	
+	PublishOnlyTally.prototype.handleUserClickGetAllVotes.call(this, config_,onGotVotesObj, onGotVotesMethod); 
+};
+
+ConfigurableTally.prototype.handleUserClickShowWinners = function (config_) {
+	this.config = config_;
+	var me = this; 
+	var data = {};
+	data.cmd = 'getWinners';
+	data.electionId = JSON.stringify({'mainElectionId': this.config.electionId});
+	var datastr = JSON.stringify(data);
+	// TODO add auth to data
+	myXmlSend(ClientConfig.getResultUrl, datastr, me, me.handleServerAnswerShowWinners);
+};
+
+
+ConfigurableTally.prototype.handleServerAnswerShowWinners = function (xml) {
+	try {
+		var answer = parseServerAnswer(xml, true);
+		if (answer.cmd != 'showWinners') throw new ErrorInServerAnswer(2043, 'Error: Expected >showWinners<', 'Got from server: ' + data.cmd);
+		var html ='';
+		for (var question in this.config.questions) {
+			var questionID = this.config.questions[question].questionID; 
+			html = html + "<p> Bei Antragrguppe " + questionID;
+			if (answer.data[questionID].length > 0)
+				 html = html + ' wurde Antrag ' + answer.data[questionID] + ' angenommen. </p>';
+			else html = html + ' hat kein Antrag die erforderliche Mehrheit erreicht. </p>';
+		}
+		Page.loadMainContent(html);
+	} catch (e) {
+		alert('irgendwas hat nicht geklappt: ' + e.toString()); 
+	}
+};
+
+
+
 
 ConfigurableTally.test = function() {
 	var config = 
@@ -476,12 +535,15 @@ ConfigurableTally.test = function() {
 						 "scheme": /*"voteSystem":*/
 							 [{
 								 "name": "yesNo",
-								 "abstention": true
+								 "abstention": true,
+    							 "quorum": "2", //1: "at least the same number of YES as of NO",		1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
+								 "abstentionAsNo": false
 							 }, {
 								 "name": "score",
 								 "minScore": -3,
 								 "maxScore": 3,
-							 }]
+							 }],
+							 "findWinner": ["yesNo", "score", "yesNoDiff", "random"]
 					 },
 					 "options":
 						 [

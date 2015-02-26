@@ -23,11 +23,18 @@ require_once 'exception.php';
  */
 
 function getCmd($httpReq) {
-	$reqdecoded = json_decode($httpReq, true);
-	if ($reqdecoded == null) 			WrongRequestException::throwException(8000, 'Data in JSON format expected', 'got: ' . $httpReq);
+	$reqdecoded = getData($httpReq);
 	if (! isset($reqdecoded['cmd']))	WrongRequestException::throwException(8010, '>cmd< is missing in request' , 'got: ' . $httpReq);
 	return $reqdecoded['cmd'];	
 }
+
+function getData($httpReq) {
+	$reqdecoded = json_decode($httpReq, true);
+	if ($reqdecoded == null) 			WrongRequestException::throwException(8000, 'Data in JSON format expected', 'got: ' . $httpReq);
+	if (! isset($reqdecoded['cmd']))	WrongRequestException::throwException(8010, '>cmd< is missing in request' , 'got: ' . $httpReq);
+	return $reqdecoded;
+}
+
 
 function checkCmd ($httpReq, $cmd) {
 	$cmd = getCmd($httpReq);

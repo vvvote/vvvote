@@ -350,7 +350,7 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 		alert("Fehler beim überprüfen der Signatur:\n" + e);
 	}
 
-	var transm = addBallothash(vote.permission.signed);
+	var transm = BlindedVoterPermObtainer.addBallothash(vote.permission.signed);
 	var sig, serverinfo, pubkey, sigOk, slist;
 	slist = ClientConfig.serverList;
 	if (vote.permission.sigs.length != slist.length) {

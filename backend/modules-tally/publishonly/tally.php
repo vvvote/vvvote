@@ -137,12 +137,7 @@ class PublishOnlyTally extends Tally {
 		return $ret;
 	}
 	
-	function handleTallyReq($req) {
-		try {
-			$voterReq = json_decode($req, true); //, $options=JSON_BIGINT_AS_STRING); // decode $req
-			if ($voterReq == null) { // json could not be decoded
-				WrongRequestException::throwException(1100, 'Tally: Error while decoding JSON request', $req);
-			}
+	function handleTallyReq($voterReq) {
 			$result = array();
 			//	print "voterReq\n";
 			//	print_r($voterReq);
@@ -155,12 +150,9 @@ class PublishOnlyTally extends Tally {
 					$result = $this->getAllVotesEvent($voterReq);
 					break;
 				default:
-					WrongRequestException::throwException(1101, 'Error unknown tally command (accepting "storeVote" and "getAllVotes" only)', $req);
+					WrongRequestException::throwException(1101, 'Error unknown tally command (accepting "storeVote" and "getAllVotes" only)', $voterReq);
 					break;
 			}
-		} catch (ElectionServerException $e) {
-			$result = $e->makeServerAnswer();
-		}
 		return $result;
 	
 	}

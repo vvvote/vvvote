@@ -51,7 +51,7 @@ BlindedVoterPermObtainer._makeBallotRaw = function(electionId, keypair) {
 	return ballot;
 };
 
-BlindedVoterPermObtainer._addBallothash = function(ballot) {
+BlindedVoterPermObtainer.addBallothash = function(ballot) {
 	var tmp = new Object();
 	tmp.electionId = ballot.electionId;
 	tmp.votingno   = ballot.votingno;
@@ -86,7 +86,7 @@ BlindedVoterPermObtainer.prototype.makeBallots = function() {
 			var ballot = new Object();
 			ballot.keypair  = RsaKeyGen(bitSize(this.config.serverList[0].key.n) >> 1, 1, str2bigInt('65537', 10, 0)); // attention: the bitsize of all permission servers must be equal
 			ballot.raw      = BlindedVoterPermObtainer._makeBallotRaw(this.questions[q].completeElectionId, ballot.keypair); 
-			ballot.transm   = BlindedVoterPermObtainer._addBallothash(ballot.raw);
+			ballot.transm   = BlindedVoterPermObtainer.addBallothash(ballot.raw);
 			ballot.ballotno = i;
 			ballot.blindingf = new Array();
 			for (var j=0; j<this.config.serverList.length; j++) {
