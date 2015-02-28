@@ -306,10 +306,18 @@ div.voteQuestion {
 }
 
 button.sendVoteButton {
-	background-color: red;
+	background-color: #FFC754; /* sand color old: red; */
 	padding: 0.5em;
 	border-radius: 2em;
 }
+
+button.sendVoteButtonDone {
+	background-color: grey;
+	color: black;
+	padding: 0.5em;
+	border-radius: 2em;
+}
+
 
 div.sendVote {
 	text-align: right;

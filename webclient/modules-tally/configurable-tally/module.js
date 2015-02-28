@@ -403,9 +403,84 @@ ConfigurableTally.buttonStep = function(qNo, forward) {
 
 
 ConfigurableTally.prototype.sendVote = function(qNo) {
-	var votestr = this.getInputs(qNo);
+	this.vote = this.getInputs(qNo);
+	this.qNo = qNo;
+	var votestr = JSON.stringify(this.vote);
 	var questionID = this.config.questions[qNo].questionID;
 	this.sendVoteData(votestr, questionID);  // sendVoteData is inherited from publish-only-tally
+};
+
+ConfigurableTally.prototype.handleServerAnswerStoreVote = function (xml) {
+	try {
+		var data = parseServerAnswer(xml, true);
+		// TODO check voting server sig
+		switch (data.cmd) {
+		case 'saveYourCountedVote':
+			alert('Der Server hat Ihre Stimme akzeptiert.');
+			this.disableQuestion(this.qNo, this.vote);
+			var el = document.getElementById('buttonSendQ'+this.qNo);
+			el.setAttribute('disabled', 'disabled');
+			el.setAttribute('class', 'sendVoteButtonDone');
+			el.childNodes[0].nodeValue = 'Stimme akzeptiert';
+			break;
+		case 'error':
+			alert('Der Server hat die Stimme nicht akzeptiert. Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
+			break;
+		default:
+			throw new ErrorInServerAnswer(2002, 'Error: Expected >saveYourCountedVote<', 'Got from server: ' + data.cmd);
+		break;
+		}
+	} catch (e) {
+		if (e instanceof MyException ) {e.alert();}
+		else {throw e;}
+	}
+};
+
+
+ConfigurableTally.prototype.disableQuestion = function(qNo, selected) {
+	//var vote = {//"ballotID":tallyconfig.ballotID,
+//			"questions": [{
+//				"questionID": tallyconfig.questions[qNo].questionID,
+				//"optionOrder": [],
+//				"statusQuoOption": "",
+				//"options": [] //[[{"name": "score", "value": 1}, {"name": "yesNo", "value": 1}]]
+//			}]
+//	};
+
+	for (var optionNo=0; optionNo<this.config.questions[qNo].options.length; optionNo++) {
+//		var optionID = this.config.questions[qNo].options[optionNo].optionID;
+		for (var schemeIndex=0; schemeIndex<this.config.questions[qNo].tallyData.scheme.length; schemeIndex++) {
+			var curScheme = this.config.questions[qNo].tallyData.scheme[schemeIndex]; 
+			var curSchemeVote = selected.options[optionNo][ArrayIndexOf(selected.options[optionNo], 'name', curScheme.name)];
+			switch (curScheme.name) {
+			case 'yesNo':
+				var votedElementId;
+				switch (curSchemeVote.value) {
+				case 1:  votedElementId = 'Y'; break;
+				case 0:  votedElementId = 'N'; break;
+				case -1: votedElementId = 'A'; break;
+				}
+				var el = document.getElementById('optionQ'+qNo+'O'+optionNo+votedElementId);
+				el.setAttribute('checked', 'checked');
+				var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'Y');
+				el.setAttribute('disabled', 'disabled');
+				var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'N');
+				el.setAttribute('disabled', 'disabled');
+				if (curScheme.abstention) { 
+					var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'A');
+					el.setAttribute('disabled', 'disabled');
+				}
+				break;
+			case 'score':
+				for (var score = curScheme.minScore; score <= curScheme.maxScore; score++) {
+					var rBtn = document.getElementById('optionQ'+qNo+'O'+optionNo+'S'+score);
+					rBtn.setAttribute('disabled', 'disabled');
+					if (curSchemeVote['value'] ==  score) rBtn.setAttribute('checked', 'checked');
+				}
+				break;
+			}
+		}
+	}
 };
 
 ConfigurableTally.prototype.getInputs = function(qNo) {
@@ -447,7 +522,7 @@ ConfigurableTally.prototype.getInputs = function(qNo) {
 			vote.options[optionNo][schemeIndex] = {"name": curScheme.name, "value": value};
 		}
 	}
-	return JSON.stringify(vote);
+	return vote;
 
 /*
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
@@ -565,7 +640,9 @@ ConfigurableTally.test = function() {
 						 "scheme": /*"voteSystem":*/
 							 [{
 								 "name": "yesNo",
-								 "abstention": true
+								 "abstention": true,
+								 "abstentionAsNo": true,
+    							 "quorum": "1+", //1: "at least the same number of YES as of NO",		1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
 							 }]
 					 },
 					 "options":
