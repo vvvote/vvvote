@@ -104,8 +104,9 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 				"questionWording": "Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
 				"scheme": [{
 					"name": "yesNo",
-					"abstention": false,
-					"abstantionAsNo": false
+					"abstention": true,
+					"abstantionAsNo": true,
+					"quorum": "1+" //1: "at least the same number of YES as of NO",		1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
 				}],
 				"findWinner": ["yesNo", "yesNoDiff", "random"],
 
