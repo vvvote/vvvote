@@ -173,7 +173,7 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 		legendNode.appendChild(divOptionDescNode);
 	}
 	return legendNode;
-/*	fieldSetNode.appendChild(legendNode);
+	/*	fieldSetNode.appendChild(legendNode);
 	pNode.appendChild(fieldSetNode);
 	divQNode.appendChild(pNode);
 	/*
@@ -238,8 +238,21 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 		mc = mc + '</div>'; // end div question
 		mc = mc + '</div>'; // end div question container
 	}
-	*/
+	 */
 };
+
+ConfigurableTally.prototype.onPermissionLoaded = function() {
+	this.collapseAllQuestions();
+	//var configHash = GetElectionConfig.generateConfigHash(this.config);
+	var tmp = localStorage.getItem('sentQNo' + returnEnvelope.lStorage.id);
+	if (typeof tmp != 'undefind') {
+		this.sentQNo = JSON.parse(tmp);
+		for (var q=0; q<this.sentQNo.length; q++) {
+			this.disableQuestion(this.sentQNo[q]);
+		}
+	}
+};
+
 
 ConfigurableTally.prototype.collapseAllQuestions = function() {
 	for (var qNo=0; qNo<this.config.questions.length; qNo++) {
@@ -418,10 +431,10 @@ ConfigurableTally.prototype.handleServerAnswerStoreVote = function (xml) {
 		case 'saveYourCountedVote':
 			alert('Der Server hat Ihre Stimme akzeptiert.');
 			this.disableQuestion(this.qNo, this.vote);
-			var el = document.getElementById('buttonSendQ'+this.qNo);
-			el.setAttribute('disabled', 'disabled');
-			el.setAttribute('class', 'sendVoteButtonDone');
-			el.childNodes[0].nodeValue = 'Stimme akzeptiert';
+			var configHash = GetElectionConfig.generateConfigHash(this.config);
+			if (!Array.isArray(this.sentQNo)) this.sentQNo = new Array();
+			this.sentQNo.push(this.qNo);
+			localStorage.setItem('sentQNo'+ returnEnvelope.lStorage.id, JSON.stringify(this.sentQNo));
 			break;
 		case 'error':
 			alert('Der Server hat die Stimme nicht akzeptiert. Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
@@ -437,45 +450,66 @@ ConfigurableTally.prototype.handleServerAnswerStoreVote = function (xml) {
 };
 
 
+/**
+ * 
+ * @param qNo
+ * @param selected - if known: the vote array of options (and scheme) to be selected, otherwise nothing will be selected 
+ */
+
 ConfigurableTally.prototype.disableQuestion = function(qNo, selected) {
 	//var vote = {//"ballotID":tallyconfig.ballotID,
-//			"questions": [{
-//				"questionID": tallyconfig.questions[qNo].questionID,
-				//"optionOrder": [],
-//				"statusQuoOption": "",
-				//"options": [] //[[{"name": "score", "value": 1}, {"name": "yesNo", "value": 1}]]
-//			}]
+//	"questions": [{
+//	"questionID": tallyconfig.questions[qNo].questionID,
+	//"optionOrder": [],
+//	"statusQuoOption": "",
+	//"options": [] //[[{"name": "score", "value": 1}, {"name": "yesNo", "value": 1}]]
+//	}]
 //	};
 
+	// Disable and change button text of "send vote Button" to "vote accepted"
+	var el = document.getElementById('buttonSendQ'+qNo);
+	el.setAttribute('disabled', 'disabled');
+	el.setAttribute('class', 'sendVoteButtonDone');
+	el.childNodes[0].nodeValue = 'Stimme akzeptiert';
+	
+	// Disable all inputs on all options belonging to the question
 	for (var optionNo=0; optionNo<this.config.questions[qNo].options.length; optionNo++) {
 //		var optionID = this.config.questions[qNo].options[optionNo].optionID;
 		for (var schemeIndex=0; schemeIndex<this.config.questions[qNo].tallyData.scheme.length; schemeIndex++) {
-			var curScheme = this.config.questions[qNo].tallyData.scheme[schemeIndex]; 
-			var curSchemeVote = selected.options[optionNo][ArrayIndexOf(selected.options[optionNo], 'name', curScheme.name)];
+			var curScheme = this.config.questions[qNo].tallyData.scheme[schemeIndex];
+			if (typeof selected != 'undefined') {
+				var curSchemeVote = selected.options[optionNo][ArrayIndexOf(selected.options[optionNo], 'name', curScheme.name)];
+			}
 			switch (curScheme.name) {
 			case 'yesNo':
-				var votedElementId;
-				switch (curSchemeVote.value) {
-				case 1:  votedElementId = 'Y'; break;
-				case 0:  votedElementId = 'N'; break;
-				case -1: votedElementId = 'A'; break;
-				}
-				var el = document.getElementById('optionQ'+qNo+'O'+optionNo+votedElementId);
-				el.setAttribute('checked', 'checked');
 				var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'Y');
 				el.setAttribute('disabled', 'disabled');
+				el.removeAttribute('checked');
 				var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'N');
 				el.setAttribute('disabled', 'disabled');
+				el.removeAttribute('checked');
 				if (curScheme.abstention) { 
 					var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'A');
 					el.setAttribute('disabled', 'disabled');
+					el.removeAttribute('checked');
+				}
+				if (typeof selected != 'undefined') {
+					var votedElementId;
+					switch (curSchemeVote.value) {
+					case 1:  votedElementId = 'Y'; break;
+					case 0:  votedElementId = 'N'; break;
+					case -1: votedElementId = 'A'; break;
+					}
+					var el = document.getElementById('optionQ'+qNo+'O'+optionNo+votedElementId);
+					el.setAttribute('checked', 'checked');
 				}
 				break;
 			case 'score':
 				for (var score = curScheme.minScore; score <= curScheme.maxScore; score++) {
 					var rBtn = document.getElementById('optionQ'+qNo+'O'+optionNo+'S'+score);
 					rBtn.setAttribute('disabled', 'disabled');
-					if (curSchemeVote['value'] ==  score) rBtn.setAttribute('checked', 'checked');
+					if ((typeof selected != 'undefined') && curSchemeVote['value'] ==  score) rBtn.setAttribute('checked', 'checked');
+					else rBtn.removeAttribute('checked');
 				}
 				break;
 			}
@@ -486,11 +520,11 @@ ConfigurableTally.prototype.disableQuestion = function(qNo, selected) {
 ConfigurableTally.prototype.getInputs = function(qNo) {
 	var vote = {//"ballotID":tallyconfig.ballotID,
 //			"questions": [{
-//				"questionID": tallyconfig.questions[qNo].questionID,
-				"optionOrder": [],
-//				"statusQuoOption": "",
-				"options": [] //[[{"name": "score", "value": 1}, {"name": "yesNo", "value": 1}]]
-//			}]
+//			"questionID": tallyconfig.questions[qNo].questionID,
+			"optionOrder": [],
+//			"statusQuoOption": "",
+			"options": [] //[[{"name": "score", "value": 1}, {"name": "yesNo", "value": 1}]]
+//	}]
 	};
 
 	var valueYNA = -2;  // nothing selected --> -2
@@ -524,7 +558,7 @@ ConfigurableTally.prototype.getInputs = function(qNo) {
 	}
 	return vote;
 
-/*
+	/*
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
 		switch (tallyconfig.questions[qNo].voteSystem.type) {
 		case 'score':
@@ -537,8 +571,8 @@ ConfigurableTally.prototype.getInputs = function(qNo) {
 		}
 
 	}
-*/	
-	
+	 */	
+
 };
 
 /***********************************************************************
@@ -551,8 +585,8 @@ ConfigurableTally.prototype.handleUserClickGetAllVotes = function (config_, onGo
 	this.config = config_;
 	this.onGotVotesObj    = onGotVotesObj;
 	this.onGotVotesMethod = onGotVotesMethod;
-	
-	
+
+
 	PublishOnlyTally.prototype.handleUserClickGetAllVotes.call(this, config_,onGotVotesObj, onGotVotesMethod); 
 };
 
@@ -577,7 +611,7 @@ ConfigurableTally.prototype.handleServerAnswerShowWinners = function (xml) {
 			var questionID = this.config.questions[question].questionID; 
 			html = html + "<p> Bei Antragrguppe " + questionID;
 			if (answer.data[questionID].length > 0)
-				 html = html + ' wurde Antrag ' + answer.data[questionID] + ' angenommen. </p>';
+				html = html + ' wurde Antrag ' + answer.data[questionID] + ' angenommen. </p>';
 			else html = html + ' hat kein Antrag die erforderliche Mehrheit erreicht. </p>';
 		}
 		Page.loadMainContent(html);
@@ -611,7 +645,7 @@ ConfigurableTally.test = function() {
 							 [{
 								 "name": "yesNo",
 								 "abstention": true,
-    							 "quorum": "2", //1: "at least the same number of YES as of NO",		1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
+								 "quorum": "2", //1: "at least the same number of YES as of NO",		1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
 								 "abstentionAsNo": false
 							 }, {
 								 "name": "score",
@@ -642,7 +676,7 @@ ConfigurableTally.test = function() {
 								 "name": "yesNo",
 								 "abstention": true,
 								 "abstentionAsNo": true,
-    							 "quorum": "1+", //1: "at least the same number of YES as of NO",		1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
+								 "quorum": "1+", //1: "at least the same number of YES as of NO",		1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
 							 }]
 					 },
 					 "options":

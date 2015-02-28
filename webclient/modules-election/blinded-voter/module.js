@@ -10,7 +10,7 @@ function savePermission(ballot) {
 /**
  * @param varname the name of the global var that holds the instance of this object. It is used for HTML code to call back.
  */
-var BlindedVoterElection = function (config_) { // TODO save and load config in permission file
+var BlindedVoterElection = function (config_) {
 	this.permission = {};
 	this.permissionOk = false;
 	this.config = config_; // TODO check if permission file electionId matches the electionId given in config
@@ -88,9 +88,11 @@ BlindedVoterElection.prototype.gotWebclient = function(xml) {
  */
 BlindedVoterElection.prototype.injectPermissionIntoClientSave = function(ballot) {
 	var find = /\/\/bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpßjntt/;
+	var lStorage = {'id': bigInt2str(randBigInt(128, 0), 16)};
 	var returnEnvelope = {
 			'permission': ballot, 
-			'config': this.config};
+			'config': this.config,
+			'lStorage': lStorage};
 	var ballotWithClient = this.clientHtml.replace(find, 'returnEnvelope = ' + JSON.stringify(returnEnvelope) +';');
 	// load the electionId to be used as filename
 	var p2 = JSON.parse(ballot[0].transm.str);
@@ -258,7 +260,7 @@ BlindedVoterElection.prototype.permFileLoaded = function (ev) {
 
 BlindedVoterElection.prototype.importPermission = function (returnEnvelope) {
 	this.config = returnEnvelope.config;
-	this.permission = returnEnvelope.permission; // TODO think about several permissions in permission array
+	this.permission = returnEnvelope.permission;
 	var mainElectionIdMismatch = false;
 	for (var q=0; q<this.permission.length; q++) {
 		this.permission[q].transm.signed = JSON.parse(this.permission[q].transm.str);

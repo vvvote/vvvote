@@ -1,6 +1,9 @@
 <?php
 
- require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
+
+
+
+require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
 
 require_once 'exception.php';
 require_once 'loadmodules.php';
