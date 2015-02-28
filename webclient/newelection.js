@@ -48,13 +48,13 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 			"auth": "sharedPassw",
 			"authData": {
 				"sharedPassw": "1",
-				"nested_groups": [2],
-				"verified": true,
-				"eligible": true,
+				"nested_groups": [],
+				"verified": false,
+				"eligible": false,
 				"RegistrationStartDate": "2014-01-27T21:20:00Z",
 				"RegistrationEndDate": "2014-10-10T21:20:00Z",
-				"serverId": "BEOBayern",
-				"listId": "1234"
+				"serverId": "BEOBayern" /*,
+				"listId": "1234" */
 			},
 			"blinder": "blindedVoter",
 			"tally": "configurableTally",

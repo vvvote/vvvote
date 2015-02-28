@@ -154,7 +154,7 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config) {
 			this.tally = new ConfigurableTally(this.blinder, config);
 			break;
 		default:
-			alert('Abstimmunsmodus /' + config.tally + '/ wird vom Client nicht unetrstützt');
+			alert('Abstimmunsmodus /' + config.tally + '/ wird vom Client nicht unterstützt');
 		}
 		var fragm = this.tally.getMainContentFragm(config);
 		var inp = document.createElement('input');
@@ -165,7 +165,7 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config) {
 		inp.setAttribute('onclick', 'page.sendVote(event);');
 		fragm.appendChild(inp);
 		Page.loadMainContentFragm(fragm);
-		this.tally.collapseAllQuestions();
+		this.tally.onPermissionLoaded(); 
 		var element = document.getElementById('sendvote');
 		element.disabled = !permok;
 		this.setStep(3);
