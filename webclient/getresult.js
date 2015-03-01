@@ -11,6 +11,12 @@ function GetResultPage() {
 
 GetResultPage.prototype = new Page();
 
+GetResultPage.prototype.display = function() {
+	Page.prototype.display.call(this);
+	if (typeof returnEnvelope != 'undefined') {
+		this.gotElectionConfig(returnEnvelope.config);
+	}
+};
 
 GetResultPage.prototype.showResult = function() {
 	this.setStep(2);

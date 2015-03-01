@@ -245,7 +245,7 @@ ConfigurableTally.prototype.onPermissionLoaded = function() {
 	this.collapseAllQuestions();
 	//var configHash = GetElectionConfig.generateConfigHash(this.config);
 	var tmp = localStorage.getItem('sentQNo' + returnEnvelope.lStorage.id);
-	if (typeof tmp != 'undefind') {
+	if (typeof tmp != null) {
 		this.sentQNo = JSON.parse(tmp);
 		for (var q=0; q<this.sentQNo.length; q++) {
 			this.disableQuestion(this.sentQNo[q]);
