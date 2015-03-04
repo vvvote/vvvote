@@ -22,7 +22,7 @@ var BlindedVoterPermObtainer = function(mainElectionId_, questions_, credentials
 	// copy the needed information from questeions[] only and by doing so create the completeElectionIds
 	for (var q=0; q<questions_.length; q++) {
 		this.questions[q] = {
-				'completeElectionId': JSON.stringify({"mainElectionId": this.mainElectionId, "subElectionId": questions_[q].questionID}),
+				'completeElectionId': unicodeToBlackslashU(JSON.stringify({"mainElectionId": this.mainElectionId, "subElectionId": questions_[q].questionID})),
 				'questionID': questions_[q].questionID
 				};
 	}

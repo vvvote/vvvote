@@ -237,7 +237,7 @@ function unicodeToBlackslashU(str) {
  * 
  */
 function shuffleArray(arrayOrig) {
-	array = arrayOrig.slice(0);
+	array = arrayOrig.slice(0); // copy the array
 	for (var i = array.length - 1; i > 0; i--) {
 		var j = Math.floor(Math.random() * (i + 1));
 		var temp = array[i];
@@ -247,9 +247,11 @@ function shuffleArray(arrayOrig) {
 	return array;
 }
 
-/**
- * 
+
+/**********************
+ * Wiki Syntax to DOM
  */
+
 function wikiSyntax2DOMFrag(wikisyntax_) {
 	var wikisyntax = String(wikisyntax_); // necassary in case wikisyntax_ contains only of a number 
 	// \n == \r\n --> <p>
