@@ -282,7 +282,7 @@ class BlindedVoter extends Blinder {
 		$raw['electionId'] = $ballot['electionId'];
 		$raw['votingno'  ] = $ballot['votingno'];
 		$raw['salt'      ] = $ballot['salt'];
-		$str = str_replace("\\/",'/', json_encode($raw)); // json_encode escapes / with \/ while JavaScript JSON.encode() does not 
+		$str = str_replace("\\/",'/', json_encode($raw)); // json_encode escapes / with \/ while JavaScript JSON.encode() does not --> remove the backslashes 
 		return $str;
 	}
 

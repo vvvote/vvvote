@@ -418,7 +418,7 @@ ConfigurableTally.buttonStep = function(qNo, forward) {
 ConfigurableTally.prototype.sendVote = function(qNo) {
 	this.vote = this.getInputs(qNo);
 	this.qNo = qNo;
-	var votestr = JSON.stringify(this.vote);
+	var votestr = unicodeToBlackslashU(JSON.stringify(this.vote));
 	var questionID = this.config.questions[qNo].questionID;
 	this.sendVoteData(votestr, questionID);  // sendVoteData is inherited from publish-only-tally
 };
@@ -595,7 +595,7 @@ ConfigurableTally.prototype.handleUserClickShowWinners = function (config_) {
 	var me = this; 
 	var data = {};
 	data.cmd = 'getWinners';
-	data.electionId = JSON.stringify({'mainElectionId': this.config.electionId});
+	data.electionId = unicodeToBlackslashU(JSON.stringify({'mainElectionId': this.config.electionId}));
 	var datastr = JSON.stringify(data);
 	// TODO add auth to data
 	myXmlSend(ClientConfig.getResultUrl, datastr, me, me.handleServerAnswerShowWinners);
