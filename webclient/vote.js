@@ -32,6 +32,11 @@ VotePage.prototype.reset = function() {
 VotePage.prototype.display = function() {
 	this.reset();
 	Page.prototype.display.call(this);
+	if (typeof returnEnvelope != 'undefined') {
+		BlindedVoterElection.onImportPermission(returnEnvelope);
+		// this.gotElectionConfig(returnEnvelope.config);
+	}
+
 };
 
 
