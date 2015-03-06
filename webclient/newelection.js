@@ -64,8 +64,9 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 				"scheme": [{
 					"name": "yesNo",
 					"abstention": true,
-					"quorum": "2",
-					"abstantionAsNo": false
+					"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
+					"abstentionAsNo": false,
+					"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
 				},
 				{
 					"name": "score",
@@ -105,8 +106,9 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 				"scheme": [{
 					"name": "yesNo",
 					"abstention": true,
-					"abstantionAsNo": true,
-					"quorum": "1+" //1: "at least the same number of YES as of NO",		1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
+					"abstentionAsNo": true,
+					"quorum": "1+",    // 0: no quorum, 1: "at least the same number of YES as of NO", 1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
+					"mode": "bestOnly" // "quorum": all options that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set to 0 no quorum is requiered)
 				}],
 				"findWinner": ["yesNo", "yesNoDiff", "random"],
 

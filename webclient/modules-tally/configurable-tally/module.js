@@ -431,7 +431,6 @@ ConfigurableTally.prototype.handleServerAnswerStoreVote = function (xml) {
 		case 'saveYourCountedVote':
 			alert('Der Server hat Ihre Stimme akzeptiert.');
 			this.disableQuestion(this.qNo, this.vote);
-			var configHash = GetElectionConfig.generateConfigHash(this.config);
 			if (!Array.isArray(this.sentQNo)) this.sentQNo = new Array();
 			this.sentQNo.push(this.qNo);
 			localStorage.setItem('sentQNo'+ returnEnvelope.lStorage.id, JSON.stringify(this.sentQNo));
@@ -471,7 +470,7 @@ ConfigurableTally.prototype.disableQuestion = function(qNo, selected) {
 	el.setAttribute('disabled', 'disabled');
 	el.setAttribute('class', 'sendVoteButtonDone');
 	el.childNodes[0].nodeValue = 'Stimme akzeptiert';
-	
+
 	// Disable all inputs on all options belonging to the question
 	for (var optionNo=0; optionNo<this.config.questions[qNo].options.length; optionNo++) {
 //		var optionID = this.config.questions[qNo].options[optionNo].optionID;
@@ -590,8 +589,10 @@ ConfigurableTally.prototype.handleUserClickGetAllVotes = function (config_, onGo
 	PublishOnlyTally.prototype.handleUserClickGetAllVotes.call(this, config_,onGotVotesObj, onGotVotesMethod); 
 };
 
-ConfigurableTally.prototype.handleUserClickShowWinners = function (config_) {
+ConfigurableTally.prototype.handleUserClickShowWinners = function (config_, onGotVotesObj, onGotVotesMethod) {
 	this.config = config_;
+	this.onGotVotesObj    = onGotVotesObj;
+	this.onGotVotesMethod = onGotVotesMethod;
 	var me = this; 
 	var data = {};
 	data.cmd = 'getWinners';
@@ -607,20 +608,141 @@ ConfigurableTally.prototype.handleServerAnswerShowWinners = function (xml) {
 		var answer = parseServerAnswer(xml, true);
 		if (answer.cmd != 'showWinners') throw new ErrorInServerAnswer(2043, 'Error: Expected >showWinners<', 'Got from server: ' + data.cmd);
 		var html ='';
+		this.winners = answer.data;
 		for (var question in this.config.questions) {
-			var questionID = this.config.questions[question].questionID; 
-			html = html + "<p> Bei Antragrguppe " + questionID;
-			if (answer.data[questionID].length > 0)
-				html = html + ' wurde Antrag ' + answer.data[questionID] + ' angenommen. </p>';
-			else html = html + ' hat kein Antrag die erforderliche Mehrheit erreicht. </p>';
+			var questionID = this.config.questions[question].questionID;
+			html = html + '<p>' + this.getWinnersHtml(questionID);
+			html = html + '<button onclick="page.tally.handleUserClickGetAllVotes(' + questionID + ')">Alle Stimmen ansehen</button></p>';
 		}
-		Page.loadMainContent(html);
+		this.onGotVotesMethod.call(this.onGotVotesObj, html);
 	} catch (e) {
 		alert('irgendwas hat nicht geklappt: ' + e.toString()); 
 	}
 };
 
+ConfigurableTally.prototype.getWinnersHtml = function (questionID) {
+	var html = "Bei Antragrguppe " + questionID;
+	if (this.winners[questionID].length > 0)
+		html = html + ' wurde Antrag ' + this.winners[questionID] + ' angenommen. ';
+	else html = html + ' hat kein Antrag die erforderliche Mehrheit erreicht. ';
+	return html;
+};
 
+ConfigurableTally.prototype.handleUserClickGetAllVotes = function(questionID) {
+	var me = this;
+	this.curQuestionID = questionID;
+	PublishOnlyTally.requestAllVotes(this.config.electionId, questionID, me, me.handleServerAnswerVerifyCountVotes);
+};
+
+ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
+	var votesOnly = new Array();
+	try {
+		var answ = parseServerAnswer(xml, true);
+		if (answ.cmd != 'verifyCountVotes') {
+			throw new ErrorInServerAnswer(2003, 'Error: Expected >verifyCountVotes<', 'Got from server: ' + answ.cmd);
+		}
+		this.votes = answ.data.allVotes;
+		// process data
+		//   show a list of all votes
+		var htmlcode = '<h3> Antragsgruppe: ' + this.curQuestionID;
+		htmlcode = htmlcode + '<p>' + this.getWinnersHtml(this.curQuestionID) + '</p>';
+		htmlcode = htmlcode + '<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
+		htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">Finde meine Stimme</button>';
+		var v;   // vote
+		var vno; // vote number
+		var disabled;
+		var curQuestion = this.config.questions[ArrayIndexOf(this.config.questions, 'questionID', this.curQuestionID)]; 
+		for (var optionIndex=0; optionIndex<curQuestion.options.length; optionIndex++ ) {
+			htmlcode = htmlcode + '<h3>Stimmen zu Antrag ' + curQuestion.options[optionIndex].optionID + '</h3>';
+			htmlcode = htmlcode + '<div class="allvotes"><table>';
+			htmlcode = htmlcode + '<thead>'; 
+			for (var schemeIndex=0; schemeIndex<curQuestion.tallyData.scheme.length; schemeIndex++ ) {
+				switch(curQuestion.tallyData.scheme[schemeIndex].name) {
+				case 'yesNo': htmlcode = htmlcode + '<th>' + 'Ja/Nein</th>'; break;
+				case 'score': htmlcode = htmlcode + '<th>' + 'Bewertung</th>'; break;
+				default: alert('error 875498z54');
+				};
+			}
+			htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</th><th>Prüfen!</th></thead>';
+			htmlcode = htmlcode + '<tbody>';
+			for (var i=0; i<this.votes.length; i++) {
+				htmlcode = htmlcode + '<tr>';
+
+				for (var schemeIndex=0; schemeIndex<curQuestion.tallyData.scheme.length; schemeIndex++ ) {
+					var curScheme = curQuestion.tallyData.scheme[schemeIndex];
+					try {vno = this.votes[i].permission.signed.votingno; } catch (e) {vno = 'Error'; disabled = 'disabled';}
+					var vt = 'fehler';
+					var value = 'invalid';
+					try {
+						var vString   = this.votes[i].vote.vote; 
+						v = JSON.parse(vString); 
+						var optionVoteIndex;
+						var optionVoteSchemeIndex;
+						optionVoteIndex = v.optionOrder.indexOf(curQuestion.options[optionIndex].optionID);
+						optionVoteSchemeIndex = ArrayIndexOf(v.options[optionVoteIndex], 'name', curScheme.name);
+						disabled = ''; 
+						value = v.options[optionVoteIndex][optionVoteSchemeIndex].value;
+						switch (curScheme.name) {
+						case 'yesNo': 
+							switch (value) {
+							case 1: vt = 'Ja'; break;
+							case 0: vt = 'Nein'; break;
+							case -1: vt = 'Enth.'; break;
+							default: vt = 'ungültig'; break;
+							}
+							break;
+						case 'score': vt = value.toString(); break; // TODO check range
+						default:      vt = 'ungültig'; break;
+						}
+					} catch (e) {
+						vt   = 'Error'; 
+						disabled = 'disabled';
+					}
+					htmlcode = htmlcode + '<td  class="vote ' + curScheme.name + ' ' + curScheme.name + value.toString() + '">';
+					htmlcode = htmlcode + vt + '</td>';
+				}
+				htmlcode = htmlcode + '<td> <span id="votingno">' + vno + '</span></td>'; 
+				htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften pr&uuml;fen!</button>' + '</td>'; 
+//				htmlcode = htmlcode + '<td>' + this.votes[i].permission.signed.salt     + '</td>'; 
+				htmlcode = htmlcode + '</tr>';
+				// TODO add to votes only if sigOk
+				votesOnly[i] = v;
+			}
+			htmlcode = htmlcode + '</tbody></table></div>';
+		}
+		// show the frequencies
+		var freqs = getFrequencies(votesOnly);
+		freqs.sort(function(a, b) {return b.freq - a.freq;});
+		var numVotes = votesOnly.length;
+		var htmlcode2 = '<div id="freq"><table>';
+		htmlcode2 = htmlcode2 + '<thead>';
+		htmlcode2 = htmlcode2 + '<th class="optionHead"  >' + 'Option'         + '</th>'; 
+		htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Stimmen' + '</th>';
+		htmlcode2 = htmlcode2 + '</thead><tfoot>';
+		htmlcode2 = htmlcode2 + '<tr><td>Gesamt</td>';
+		htmlcode2 = htmlcode2 + '<td class="numVotes">' + numVotes+ '</td>';
+		htmlcode2 = htmlcode2 + '</tfoot><tbody>';
+		for (var i=0; i<freqs.length; i++) {
+			htmlcode2 = htmlcode2 + '<tr>';
+			htmlcode2 = htmlcode2 + '<td class="option"  >' + freqs[i].option + '</td>'; 
+			htmlcode2 = htmlcode2 + '<td class="numVotes">' + freqs[i].freq   + '</td>'; 
+			htmlcode2 = htmlcode2 + '</tr>';
+		}
+		htmlcode2 = htmlcode2 + '</tbody>';
+		htmlcode2 = htmlcode2 + '</table></div>';
+		var ret = htmlcode2 + '<br> <br>\n\n' + htmlcode;
+		this.onGotVotesMethod.call(this.onGotVotesObj, ret);
+	} catch (e) {
+		if (e instanceof MyException ) {e.alert();}
+		else if (e instanceof TypeError   ) {
+			var f = new ErrorInServerAnswer(2004, 'Error: unexpected var type', 'details: ' + e.toString());
+			f.alert();
+		} else {
+			var f = new ErrorInServerAnswer(2005, 'Error: some error occured', 'details: ' + e.toString());
+			f.alert();
+		} // TODO show the error
+	};
+};
 
 
 ConfigurableTally.test = function() {

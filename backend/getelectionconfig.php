@@ -6,7 +6,7 @@
  * errorno starts at 4000
  */
 
-require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
+ require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
 
 require_once 'config/conf-allservers.php';
 require_once 'config/conf-thisserver.php';

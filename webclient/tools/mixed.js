@@ -203,8 +203,8 @@ function httpError(xml) {
  * @returns
  */
 function int2hex(num, digits) {
-	h = Number(num).toString(16);
-	ret = ("000000000000000" + h).substr(-digits);
+	var h = Number(num).toString(16);
+	var ret = ("000000000000000" + h).substr(-digits);
 	return ret;
 }
 

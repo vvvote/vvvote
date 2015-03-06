@@ -28,7 +28,7 @@ GetResultPage.prototype.showResult = function() {
 	switch (this.config.tally) {
 	case 'configurableTally':
 		this.tally = new ConfigurableTally(blinder);
-		this.tally.handleUserClickShowWinners(this.config);
+		this.tally.handleUserClickShowWinners(this.config, me, me.gotVotes);
 		break;
 	case 'publishOnly':
 		this.tally = new PublishOnlyTally(blinder);
@@ -39,6 +39,7 @@ GetResultPage.prototype.showResult = function() {
 	}
 
 };
+
 /*
 function startStep4(config){
 	switch (config.tally) {
