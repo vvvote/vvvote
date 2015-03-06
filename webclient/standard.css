@@ -155,6 +155,10 @@ div#freq tfoot {
 	font-style: italic;
 }
 
+div#freq .winnerOption {
+	font-weight: bold;
+}
+
 .allvotes {
 	color: blue;	
 }
