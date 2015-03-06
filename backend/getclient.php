@@ -228,8 +228,15 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und
 	    	// TODO read phase from config and load votePage(generatePermssion), votePage(submitVote), getresult()
 		}
 		if ('returnEnvelope' in window) {
-		   	 page = votePage; // TODO read phase from config and
+			 // do not show the "new election" menu in return envelope
+			 var el = document.getElementById('newElectionLink');
+			 el.setAttribute('style', 'display:none');
+
+			 // switch to take vote page
+	    	 page = votePage; 
 		     page.display();
+		     
+		     // load the config and show the options
 		     BlindedVoterElection.onImportPermission(returnEnvelope);
 		}
 	} 
@@ -259,7 +266,7 @@ echo <<<EOT
 		</div>
 
 		<div id="nav">
-			 <a href="javascript:page = newElectionPage; page.display(); // handleNewElection();"  >Neue Abstimmung anlegen</a> &nbsp;&nbsp;&nbsp;
+			 <a id="newElectionLink" href="javascript:page = newElectionPage; page.display(); // handleNewElection();"  >Neue Abstimmung anlegen</a> &nbsp;&nbsp;&nbsp;
 			 <a href="javascript:page = votePage;        page.display(); // startVoting(true);"    >An Abstimmung teilnehmen</a> &nbsp;&nbsp;&nbsp; 
 			 <a href="javascript:page = getResultPage;   page.display(); // startLoadingResult();" >Abstimmunsergebnis abrufen</a>
 		</div>
