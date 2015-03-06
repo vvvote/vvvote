@@ -77,12 +77,17 @@ PublishOnlyTally.prototype.handleUserClickGetAllVotes = function (config_, onGot
 	this.onGotVotesObj    = onGotVotesObj;
 	this.onGotVotesMethod = onGotVotesMethod;
 	var me = this; 
-	var data = {};
-	data.cmd = 'getAllVotes';
-	data.electionId = unicodeToBlackslashU(JSON.stringify({'mainElectionId': this.config.electionId, 'subElectionId': 1}));
-	var datastr = JSON.stringify(data);
+	unicodeToBlackslashU(JSON.stringify({'mainElectionId':  completeElectionId, 'subElectionId': 1}));
+	PublishOnlyTally.requestAllVotes(this.config.electionId, 1, me, me.handleServerAnswerVerifyCountVotes);
+};
+
+PublishOnlyTally.requestAllVotes = function(mainElectionId, subElectionId, callbackObj, callbackMethod) {
+	var req = {};
+	req.cmd = 'getAllVotes';
+	req.electionId = unicodeToBlackslashU(JSON.stringify({'mainElectionId':  mainElectionId, 'subElectionId': subElectionId}));
+	var datastr = JSON.stringify(req);
 	// TODO add auth to data
-	myXmlSend(ClientConfig.getResultUrl, datastr, me, me.handleServerAnswerVerifyCountVotes);
+	myXmlSend(ClientConfig.getResultUrl, datastr, callbackObj, callbackMethod);
 };
 
 PublishOnlyTally.prototype.findMyVote = function() {
@@ -93,11 +98,11 @@ PublishOnlyTally.prototype.findMyVote = function() {
 PublishOnlyTally.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 	var votesOnly = new Array();
 	try {
-		var data = parseServerAnswer(xml, true);
-		if (data.cmd != 'verifyCountVotes') {
-			throw new ErrorInServerAnswer(2003, 'Error: Expected >verifyCountVotes<', 'Got from server: ' + data.cmd);
+		var answ = parseServerAnswer(xml, true);
+		if (answ.cmd != 'verifyCountVotes') {
+			throw new ErrorInServerAnswer(2003, 'Error: Expected >verifyCountVotes<', 'Got from server: ' + answ.cmd);
 		}
-		this.votes = data.data.allVotes;
+		this.votes = answ.data.allVotes;
 		// process data
 		//   show a list of all votes
 		var htmlcode = '<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
