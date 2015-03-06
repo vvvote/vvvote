@@ -644,15 +644,18 @@ ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
 		this.votes = answ.data.allVotes;
 		// process data
 		//   show a list of all votes
-		var htmlcode = '<h3> Antragsgruppe: ' + this.curQuestionID;
-		htmlcode = htmlcode + '<p>' + this.getWinnersHtml(this.curQuestionID) + '</p>';
-		htmlcode = htmlcode + '<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
+		var htmlcode = '<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
 		htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">Finde meine Stimme</button>';
 		var v;   // vote
 		var vno; // vote number
 		var disabled;
 		var curQuestion = this.config.questions[ArrayIndexOf(this.config.questions, 'questionID', this.curQuestionID)]; 
+		var freq = [];
 		for (var optionIndex=0; optionIndex<curQuestion.options.length; optionIndex++ ) {
+			freq[optionIndex] = {
+					'yesNo': {'numYes': 0, 'numNo': 0, 'numAbstention': 0},
+					'score': 0
+			};
 			htmlcode = htmlcode + '<h3>Stimmen zu Antrag ' + curQuestion.options[optionIndex].optionID + '</h3>';
 			htmlcode = htmlcode + '<div class="allvotes"><table>';
 			htmlcode = htmlcode + '<thead>'; 
@@ -685,13 +688,16 @@ ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
 						switch (curScheme.name) {
 						case 'yesNo': 
 							switch (value) {
-							case 1: vt = 'Ja'; break;
-							case 0: vt = 'Nein'; break;
-							case -1: vt = 'Enth.'; break;
+							case 1: vt = 'Ja';     freq[optionIndex].yesNo.numYes++;        break;
+							case 0: vt = 'Nein';   freq[optionIndex].yesNo.numNo++;         break;
+							case -1: vt = 'Enth.'; freq[optionIndex].yesNo.numAbstention++; break; // TODO verify if abstention is in the scheme allowed
 							default: vt = 'ungültig'; break;
 							}
 							break;
-						case 'score': vt = value.toString(); break; // TODO check range
+						case 'score': 
+							vt = value.toString(); 
+							freq[optionIndex].score = freq[optionIndex].score + value; 
+							break; // TODO check range
 						default:      vt = 'ungültig'; break;
 						}
 					} catch (e) {
@@ -710,27 +716,64 @@ ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
 			}
 			htmlcode = htmlcode + '</tbody></table></div>';
 		}
+		
 		// show the frequencies
-		var freqs = getFrequencies(votesOnly);
-		freqs.sort(function(a, b) {return b.freq - a.freq;});
-		var numVotes = votesOnly.length;
+		// freq.sort(function(a, b) {return b.score - a.score;});
+		// freq.sort(function(a, b) {return b.yesNo.numYes - a.yesNo.numYes;});
 		var htmlcode2 = '<div id="freq"><table>';
 		htmlcode2 = htmlcode2 + '<thead>';
-		htmlcode2 = htmlcode2 + '<th class="optionHead"  >' + 'Option'         + '</th>'; 
-		htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Stimmen' + '</th>';
-		htmlcode2 = htmlcode2 + '</thead><tfoot>';
-		htmlcode2 = htmlcode2 + '<tr><td>Gesamt</td>';
-		htmlcode2 = htmlcode2 + '<td class="numVotes">' + numVotes+ '</td>';
-		htmlcode2 = htmlcode2 + '</tfoot><tbody>';
-		for (var i=0; i<freqs.length; i++) {
+		htmlcode2 = htmlcode2 + '<th class="optionHead"  >' + 'Option'         + '</th>';
+		for (var schemeIndex=0; schemeIndex<curQuestion.tallyData.scheme.length; schemeIndex++ ) {
+			var curScheme = curQuestion.tallyData.scheme[schemeIndex];
+			switch (curScheme.name) {
+			case 'yesNo':
+				htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Ja' + '</th>';
+				htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Nein' + '</th>';
+				if (curScheme.abstention) {
+					htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Enth.' + '</th>';
+				}
+				break;
+			case 'score': 
+				htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Summe Bewertungen' + '</th>';
+				break; 
+			default:
+				htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Not Supported Scheme' + '</th>';
+			break;
+			}
+		}
+		htmlcode2 = htmlcode2 + '</thead><tbody>';
+		for (var i=0; i<freq.length; i++) {
 			htmlcode2 = htmlcode2 + '<tr>';
-			htmlcode2 = htmlcode2 + '<td class="option"  >' + freqs[i].option + '</td>'; 
-			htmlcode2 = htmlcode2 + '<td class="numVotes">' + freqs[i].freq   + '</td>'; 
+			var winnerOption = '';
+			if (curQuestion.options[i].optionID == this.winners[curQuestion.questionID]) winnerOption = ' winnerOption'; 
+			htmlcode2 = htmlcode2 + '<td class="option' + winnerOption + '">' + 'Antrag ' + curQuestion.options[i].optionID + '</td>'; 
+			for (var schemeIndex=0; schemeIndex<curQuestion.tallyData.scheme.length; schemeIndex++ ) {
+				var curScheme = curQuestion.tallyData.scheme[schemeIndex];
+				switch (curScheme.name) {
+				case 'yesNo':
+					htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + freq[i].yesNo.numYes + '</td>';
+					htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + freq[i].yesNo.numNo  + '</td>';
+					if (curScheme.abstention) {
+						htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + freq[i].yesNo.numAbstention + '</td>';
+					}
+					break;
+				case 'score': 
+					htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + freq[i].score + '</td>';
+					break; 
+				default:
+					htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + 'Not Supported Scheme' + '</td>';
+				break;
+				}
+			}
 			htmlcode2 = htmlcode2 + '</tr>';
 		}
 		htmlcode2 = htmlcode2 + '</tbody>';
 		htmlcode2 = htmlcode2 + '</table></div>';
-		var ret = htmlcode2 + '<br> <br>\n\n' + htmlcode;
+		
+		var htmlcode0 = '<h3> Antragsgruppe: ' + this.curQuestionID + '</h3>';
+		htmlcode0 = htmlcode0 + '<p>' + this.getWinnersHtml(this.curQuestionID) + '</p>';
+
+		var ret = htmlcode0 + '<br>\n\n' + htmlcode2 + '<br> <br>\n\n' + htmlcode;
 		this.onGotVotesMethod.call(this.onGotVotesObj, ret);
 	} catch (e) {
 		if (e instanceof MyException ) {e.alert();}
