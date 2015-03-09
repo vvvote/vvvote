@@ -5,6 +5,113 @@ function ConfigurableTally(blinder, config) {
 
 ConfigurableTally.prototype = new PublishOnlyTally();
 
+
+/***********************************************
+ * 
+ * New Election Phase
+ * 
+ */
+
+ConfigurableTally.GetEnterQuestionsHtml = function() {
+	return '';
+};
+
+
+ConfigurableTally.getNewElectionData = function() {
+	ret =  
+	{		"tally": "configurableTally",
+			"questions": [{
+				"questionID": 1,
+				"questionWording": "Drehen wir uns im Kreis? (zweistufig)",
+				"scheme": [{
+					"name": "yesNo",
+					"abstention": true,
+					"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
+					"abstentionAsNo": false,
+					"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
+				},
+				{
+					"name": "score",
+					"minScore": -3,
+					"maxScore": 3
+				}],
+				"findWinner": ["yesNo",	"score", "yesNoDiff", "random"],
+				"options": [{
+					"optionID": 1,
+					"optionTitle": "Ja, linksherum.",
+					"optionDesc": "Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.\n\n Ich bin gespannt, wie die angezeigt wird als Legende f?r die Auswahlkn?pfe. Meine Prognose ist, dass NRW das anonyme Verfahren einf?hren wird. Was glauben Sie, stimmt das?"
+				},
+				{
+					"optionID": 2,
+					"optionTitle": "Ja, rechtsherum"
+				},
+				{
+					"optionID": 3,
+					"optionTitle": "Nein. Ab durch die Mitte!"
+				},
+				{
+					"optionID": 4,
+					"optionTitle": "Jein. Wir drehen durch."
+				}],
+				"references": [{
+					"referenceName": "Abschlussparty und Aufl?sung",
+					"referenceAddress": "https://lqfb.piratenpartei.de/lf/initiative/show/5789.html"
+				},
+				{
+					"referenceName": "Bilder zur Motivation",
+					"referenceAddress": "https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content"
+				}]
+			},
+			{
+				"questionID": 2,
+				"questionWording": "Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
+				"scheme": [{
+					"name": "yesNo",
+					"abstention": true,
+					"abstentionAsNo": true,
+					"quorum": "1+",    // 0: no quorum, 1: "at least the same number of YES as of NO", 1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
+					"mode": "bestOnly" // "quorum": all options that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set to 0 no quorum is requiered)
+				}],
+				"findWinner": ["yesNo", "yesNoDiff", "random"],
+
+				"options": [{
+					"optionID": 1,
+					"optionTitle": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende f?r die Auswahlkn?pfe. Meine Prognose ist, dass NRW das anonyme Verfahren einf?hren wird. Was glauben Sie, stimmt das?"
+				},
+				{
+					"optionID": 2,
+					"optionTitle": "Ja, rechtsherum"
+				},
+				{
+					"optionID": 3,
+					"optionTitle": "Nein. Ab durch die Mitte!"
+				},
+				{
+					"optionID": 4,
+					"optionTitle": "Jein. Wir drehen durch."
+				}],
+				"references": [{
+					"referenceName": "Abschlussparty und Auflösung",
+					"referenceAddress": "https://lqfb.piratenpartei.de/lf/initiative/show/5789.html"
+				},
+				{
+					"referenceName": "Bilder zur Motivation",
+					"referenceAddress": "https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content"
+				}]
+			}]
+	};
+	return ret;
+};
+
+
+/***********************************************************************
+ * 
+ * 
+ * Voting Phase
+ * 
+ * 
+ ***********************************************************************/
+
 ConfigurableTally.prototype.getMainContentFragm = function(tallyconfig) {
 	ConfigurableTally.tallyConfig = tallyconfig;
 	var fragm =	document.createDocumentFragment();

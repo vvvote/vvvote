@@ -9,34 +9,81 @@ var PublishOnlyTally = function (election, config) { // TODO store config also
 	this.config = config;
 };
 
+/***********************************
+ * 
+ * New Election Phase
+ * 
+ **********************************/
+
+PublishOnlyTally.GetEnterQuestionsHtml = function() {
+	return '<label for="question1Input">Frage, über die abgestimmt werden soll</label><br><textarea rows="10" cols="50" placeholder="Wer soll Koordinator der AG Wirtschaft werden?" id="question1Input" /></textarea><br>';
+};
+
+
+
 /**
- * public functions
+ * called from the NewElectionPage in order to get the NewElection config to be sent to the server 
  */
+PublishOnlyTally.getNewElectionData = function() {
+	var el = document.getElementById('question1Input');
+	ret =  
+	{		"tally": "publishOnly",
+			"questions": [{
+				"questionID": 1,
+				"questionWording": el.value
+			}]
+	};
+	return ret;
+};
+
+
+
+
+
+/**************************************
+ * 
+ * Voting Phase
+ * 
+ **************************************/
+
+
 PublishOnlyTally.prototype.getMainContentFragm = function() {
-//	var element = document.getElementById('PublishOnlyTallyHtml'); // this is in index.html in order to have a substitute for heredoc
-//	ret = element.innerHTML
-	var ret = ''; // this.election.getPermissionHtml();
-	ret = ret + '\n<p>\n'; // TODO present options from config
-	ret = ret + 'Ihre Stimme: <input type="text" name="vote" id="vote" value="">';
-	ret = ret + '\n</p>\n';
-	
 	var fragm = document.createDocumentFragment();
+	
+	// print question
+	var label = document.createElement('label');
+	var txtnode = document.createTextNode(this.config.questions[0].questionWording);
+	label.appendChild(txtnode);
+	label.setAttribute('for', 'voteInput');
+	fragm.appendChild(label);
+	
+	// vote input field
 	var inp = document.createElement('input');
-	inp.setAttribute('type', 'submit');
-	inp.setAttribute('value', 'abstimmen!');
-	inp.setAttribute('id', 'sendvote');
-	inp.setAttribute('disabled', 'disabled');
-	inp.setAttribute('onclick', 'page.sendVote(event);');
+	inp.setAttribute('type', 'text');
+	inp.setAttribute('id', 'voteInput');
 	fragm.appendChild(inp);
+	
+	// submitt button
+	var btn = document.createElement('input');
+	btn.setAttribute('type', 'submit');
+	btn.setAttribute('value', 'abstimmen!');
+	btn.setAttribute('id', 'sendvote');
+	btn.setAttribute('disabled', 'disabled');
+	btn.setAttribute('onclick', 'page.sendVote(event);');
+	fragm.appendChild(btn);
 	
 	return fragm;
 	
 };
 
+PublishOnlyTally.prototype.onPermissionLoaded = function() {
+	
+};
+
 PublishOnlyTally.prototype.sendVote = function () {
-	var element = document.getElementById('vote');
+	var element = document.getElementById('voteInput');
 	var vote = element.value;
-	this.sendVoteData(vote);
+	this.sendVoteData(vote, 1);
 };
 
 PublishOnlyTally.prototype.sendVoteData = function (vote, questionID_) {
@@ -72,12 +119,19 @@ PublishOnlyTally.prototype.handleServerAnswerStoreVote = function (xml) {
 };
 
 
+/********************************************
+ * 
+ * Get Result Phase
+ * 
+ * ******************************************/
+
+
+
 PublishOnlyTally.prototype.handleUserClickGetAllVotes = function (config_, onGotVotesObj, onGotVotesMethod) {
 	this.config = config_;
 	this.onGotVotesObj    = onGotVotesObj;
 	this.onGotVotesMethod = onGotVotesMethod;
 	var me = this; 
-	unicodeToBlackslashU(JSON.stringify({'mainElectionId':  completeElectionId, 'subElectionId': 1}));
 	PublishOnlyTally.requestAllVotes(this.config.electionId, 1, me, me.handleServerAnswerVerifyCountVotes);
 };
 

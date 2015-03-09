@@ -142,17 +142,8 @@ VotePage.prototype.onPermGenerated = function() {
 VotePage.prototype.onPermLoaded = function(permok, blindingobj, config) {
 	this.blinder = blindingobj;
 	if (permok) {
-	//	var config = {}; // TODO load this from blinder
-	//	config.blinding = 'blindedVoter';
-	//	config.auth = 'sharedPassw'; //TODO OAuth2 !!!
-	//	config.electionId = this.blinder.config.electionId;
-		
-/*		this.obj.startStep2(config, false);
-		// if ballot already shown --> enable it, else: show ballot
-		if (this.displayPermFileHtmlOnPhase2) {} */
-
 		switch (config.tally) {
-		case 'publishOnlyTally': 
+		case 'publishOnly': 
 			this.tally = new PublishOnlyTally(this.blinder, config);
 			break;
 		case 'configurableTally':
@@ -162,17 +153,10 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config) {
 			alert('Abstimmunsmodus /' + config.tally + '/ wird vom Client nicht unterstützt');
 		}
 		var fragm = this.tally.getMainContentFragm(config);
-		var inp = document.createElement('input');
-		inp.setAttribute('type', 'submit');
-		inp.setAttribute('value', 'abstimmen!');
-		inp.setAttribute('id', 'sendvote');
-		inp.setAttribute('disabled', 'disabled');
-		inp.setAttribute('onclick', 'page.sendVote(event);');
-		fragm.appendChild(inp);
 		Page.loadMainContentFragm(fragm);
 		this.tally.onPermissionLoaded(); 
-		var element = document.getElementById('sendvote');
-		element.disabled = !permok;
+//		var element = document.getElementById('sendvote');
+//		element.disabled = !permok;
 		this.setStep(3);
 
 	} else {
