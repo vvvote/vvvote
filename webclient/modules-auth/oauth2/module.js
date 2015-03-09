@@ -149,11 +149,11 @@ OAuth2.getNewElectionData = function () {
 	var ret = {};
 	ret.auth = 'oAuth2'; 
 	ret.authData = { 
-			"nested_groups": [2],
-			"verified": true,
-			"eligible": true,
+			"nested_groups": [],
+			"verified": false,
+			"eligible": false,
 			"RegistrationStartDate": "2014-01-27T21:20:00Z",
-			"RegistrationEndDate":   "2014-10-10T21:20:00Z"
+			"RegistrationEndDate":   "2020-10-10T21:20:00Z"
 			};
 	ret.authData.serverId = ClientConfig.oAuth2Config['BEOBayern'].serverId; // TODO read this from selected OAuthServer-config which was selected in the web formular 
 	var element = document.getElementById('listId');

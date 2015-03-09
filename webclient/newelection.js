@@ -35,119 +35,38 @@ NewElectionPage.prototype.setAuthMethod = function(method, authServerId) {
 	el.innerHTML = html;
 };
 
+NewElectionPage.prototype.setQuestions = function (which) {
+	var html = '';
+	switch(which) {
+	case 'givenTest':     this.tally = ConfigurableTally; break;
+	case 'enterQuestion': this.tally = PublishOnlyTally;  break;
+	}
+	html= this.tally.GetEnterQuestionsHtml(); 
+	var el = document.getElementById('questionInputs');
+	el.innerHTML = html;
+};
 
 NewElectionPage.prototype.handleNewElectionButton = function () {
-	var ret = 	{'auth': 'sharedAuth', 
-				'authData': {}
-	};
 	
-	ret.authData = this.authModule.getNewElectionData();
-	ret.tally = 'tallyCollection'; // TODO read this from a form
-	ret = // TODO implement this.tallyModule.getNewElectionData(); 
-	{
-			"auth": "sharedPassw",
-			"authData": {
-				"sharedPassw": "1",
-				"nested_groups": [],
-				"verified": false,
-				"eligible": false,
-				"RegistrationStartDate": "2014-01-27T21:20:00Z",
-				"RegistrationEndDate": "2014-10-10T21:20:00Z",
-				"serverId": "BEOBayern" /*,
-				"listId": "1234" */
-			},
-			"blinder": "blindedVoter",
-			"tally": "configurableTally",
-			"questions": [{
-				"questionID": 1,
-				"questionWording": "Drehen wir uns im Kreis? (zweistufig)",
-				"scheme": [{
-					"name": "yesNo",
-					"abstention": true,
-					"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
-					"abstentionAsNo": false,
-					"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
-				},
-				{
-					"name": "score",
-					"minScore": -3,
-					"maxScore": 3
-				}],
-				"findWinner": ["yesNo",	"score", "yesNoDiff", "random"],
-				"options": [{
-					"optionID": 1,
-					"optionTitle": "Ja, linksherum.",
-					"optionDesc": "Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.\n\n Ich bin gespannt, wie die angezeigt wird als Legende f?r die Auswahlkn?pfe. Meine Prognose ist, dass NRW das anonyme Verfahren einf?hren wird. Was glauben Sie, stimmt das?"
-				},
-				{
-					"optionID": 2,
-					"optionTitle": "Ja, rechtsherum"
-				},
-				{
-					"optionID": 3,
-					"optionTitle": "Nein. Ab durch die Mitte!"
-				},
-				{
-					"optionID": 4,
-					"optionTitle": "Jein. Wir drehen durch."
-				}],
-				"references": [{
-					"referenceName": "Abschlussparty und Aufl?sung",
-					"referenceAddress": "https://lqfb.piratenpartei.de/lf/initiative/show/5789.html"
-				},
-				{
-					"referenceName": "Bilder zur Motivation",
-					"referenceAddress": "https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content"
-				}]
-			},
-			{
-				"questionID": 2,
-				"questionWording": "Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
-				"scheme": [{
-					"name": "yesNo",
-					"abstention": true,
-					"abstentionAsNo": true,
-					"quorum": "1+",    // 0: no quorum, 1: "at least the same number of YES as of NO", 1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
-					"mode": "bestOnly" // "quorum": all options that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set to 0 no quorum is requiered)
-				}],
-				"findWinner": ["yesNo", "yesNoDiff", "random"],
-
-				"options": [{
-					"optionID": 1,
-					"optionTitle": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende f?r die Auswahlkn?pfe. Meine Prognose ist, dass NRW das anonyme Verfahren einf?hren wird. Was glauben Sie, stimmt das?"
-				},
-				{
-					"optionID": 2,
-					"optionTitle": "Ja, rechtsherum"
-				},
-				{
-					"optionID": 3,
-					"optionTitle": "Nein. Ab durch die Mitte!"
-				},
-				{
-					"optionID": 4,
-					"optionTitle": "Jein. Wir drehen durch."
-				}],
-				"references": [{
-					"referenceName": "Abschlussparty und Auflösung",
-					"referenceAddress": "https://lqfb.piratenpartei.de/lf/initiative/show/5789.html"
-				},
-				{
-					"referenceName": "Bilder zur Motivation",
-					"referenceAddress": "https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content"
-				}]
-			}],
-			"electionId": "lkmlkn"
-	};
+	// authConfig
+	var tmp = this.authModule.getNewElectionData();
+	ret.auth =  tmp.auth;
+	ret.authData = tmp.authData;
+	
+	// Tally Config
+	tmp = this.tally.getNewElectionData();
+	ret.tally = tmp.tally;
+	ret.questions = tmp.questions;
+	
 	var element = document.getElementById('electionId');
 	ret.electionId = element.value;
+
 	this.config = ret;
 	var data = JSON.stringify(ret);
 	var me = this;
 	this.serverno = 0;
 //	myXmlSend(ClientConfig.newElectionUrl[0], data, me, me.handleNewElectionAnswer, 'http://94.228.205.41:8080/');
 	myXmlSend(ClientConfig.newElectionUrl[0], data, me, me.handleNewElectionAnswer);
-//	myXmlSend(ClientConfig.newElectionUrl[0], data, me, me.handleNewElectionAnswer);
 };
 
 

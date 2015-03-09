@@ -103,6 +103,15 @@ Ihr Computer Ã¶ffnet den Umschlag (d.h. entschlÃ¼sselt die Wahlzettelnummer)
 	<input type="text" id="electionId"> 
     	<label for="electionId">Name der Abstimmung</label> 
  	<br>
+
+	<fieldset><legend>Abstimmen über</legend>
+	<input type="radio" id="givenTest"     name="testRadioGroup" onclick="page.setQuestions('givenTest')"    /> <label for="givenTest"    >Voreingestellte Testabstimmungen</label>
+	<input type="radio" id="enterQuestion" name="testRadioGroup" onclick="page.setQuestions('enterQuestion')"/> <label for="enterQuestion">Eine Frage zur Abstimmung eingeben</label>
+	</fieldset>
+	<div id="questionInputs">
+	<!--- in this div the inputs for different tallies will be inserted --->
+	</div>
+
 	<fieldset onload="page.setAuthMethod('sharedPassw');">
 		<legend>Autorisierungsmethode</legend>
 		<input type="radio" onclick="page.setAuthMethod('sharedPassw', null);"   name="authMethod" id="sharedPassw">
