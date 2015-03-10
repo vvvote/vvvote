@@ -614,6 +614,71 @@ function adjustMaxHeight(id) {
 
 
 
+function html2Fragm(htmlStr) {
+    var frag = document.createDocumentFragment(),
+        temp = document.createElement('div');
+    temp.innerHTML = htmlStr;
+    while (temp.firstChild) {
+        frag.appendChild(temp.firstChild);
+    }
+    return frag;
+}
+
+/**
+ * get Html for waiting animation indicator
+ */
+
+function getWorkingAnimationHtml() {
+	var ret = '<div class="uil-default-css">';
+	for (var deg=0; deg<12; deg++) {
+		ret = ret + '<div style="top:80px;left:93px;width:14px;height:40px;background:#00b2ff; translate(0,-60px);transform:rotate(' + deg * 30 + 'deg)   translate(0,-60px);border-radius:10px;position:absolute;"></div>';
+	}
+	ret = ret + '</div>';
+	return ret;
+}
+
+/*
+function getShowPopupHtml(innerHtml) {
+	var ret = '<div id="modalbg" style="visibility:hidden;"></div>'; 
+	ret = ret + '<div id="popup" style="visibility:hidden;">';
+	ret = ret + innerHtml;
+	ret = ret + '</div> </div>';
+	return ret;
+}
+*/
+
+function showPopup(fragm) {
+	var div2 = document.createElement('div');
+	div2.setAttribute('id', 'popup');
+	div2.setAttribute('class', 'modal');
+	div2.appendChild(fragm);
+	var divContainer = document.createElement('div');
+	divContainer.setAttribute('id', 'popupContainer');
+	divContainer.setAttribute('class', 'popupContainer');
+	divContainer.appendChild(div2);
+	var div = document.createElement('div');
+	div.setAttribute('id', 'modalbg');
+	div.setAttribute('class', 'modalbg');
+	div.appendChild(divContainer);
+	var fragmMain = document.createDocumentFragment();
+	fragmMain.appendChild(div);
+	
+	document.body.appendChild(fragmMain);
+/*
+	document.getElementById('modalbg').style='visibility:visible;';
+	document.getElementById('popup').style='visibility:visible;';
+	*/
+}
+
+function hidePopup() {
+	document.getElementById('modalbg').className='';
+	document.getElementById('modalbg').style="visibility:hidden;";
+	document.getElementById('popup').className='';
+	document.getElementById('popup').style="visibility:hidden;";
+}
 
 
-
+function removePopup() {
+	var el = document.getElementById('modalbg');
+	el.parentNode.removeChild(el);
+}

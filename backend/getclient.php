@@ -60,7 +60,7 @@ $includeJsFiles = Array(
 		/* Crypto-tool Ende */
 );
 
-$includeCssFiles = Array('standard.css', 'substeps.css');
+$includeCssFiles = Array('standard.css', 'substeps.css', 'working-animation.css');
 
 // print HTML-Header 
 echo '
