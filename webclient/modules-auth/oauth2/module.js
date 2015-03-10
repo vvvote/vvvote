@@ -8,7 +8,7 @@ OAuth2.prototype.getCredentials = function (electionId, permissionServerId) {
 	var username = el.value;
 	el = document.getElementById('displayname');
 	var displayname = el.value;
-	var clientId = ClientConfig.oAuth2Config[config.authConfig.serverId].clientId[permissionServerId];
+	var clientId = ClientConfig.oAuth2Config[this.serverId].clientId[permissionServerId];
 	var credentials = {
 			secret: SHA256(electionId  + clientId + username + OAuth2.random[clientId]),
 			identifier: OAuth2.random[clientId],

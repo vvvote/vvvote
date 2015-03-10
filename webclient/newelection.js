@@ -47,7 +47,7 @@ NewElectionPage.prototype.setQuestions = function (which) {
 };
 
 NewElectionPage.prototype.handleNewElectionButton = function () {
-	
+	var ret = {};
 	// authConfig
 	var tmp = this.authModule.getNewElectionData();
 	ret.auth =  tmp.auth;
