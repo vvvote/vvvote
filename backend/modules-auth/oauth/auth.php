@@ -54,11 +54,11 @@ class OAuth2 extends Auth {
 	function checkCredentials($credentials, $electionId) {
 		global $serverkey, $oauthConfig; // TODO move this to __construct?
 		// load necessary data
-		$configHash = $this->electionsDB->electionIdToConfigHash($electionId);
+		  //$configHash = $this->electionsDB->electionIdToConfigHash($electionId);
 		$oAuthServerId = $this->db->getOAuthServerIdByElectionId($electionId); // $Ids['serverId'] und $Ids['listId']
 
 		// verify transaction credentials
-		$webclientAuthFromDb = $this->db->loadAuthData($configHash, $credentials['identifier']); // TODO error handling $webclientAuthFromDb empty // TODO error handling if not set (or not string)
+		$webclientAuthFromDb = $this->db->loadAuthData($electionId, $credentials['identifier']); // TODO error handling $webclientAuthFromDb empty // TODO error handling if not set (or not string)
 		if (! isset($webclientAuthFromDb['username'])) return false; // did not log in in OAuth2 / BEO server
 		$secretFromDb = hash('sha256', $electionId . $oauthConfig[$oAuthServerId]['client_id'] . $webclientAuthFromDb['username'] . $credentials['identifier']);
 		if ($secretFromDb !== $credentials['secret'] ) return false;
@@ -98,7 +98,7 @@ class OAuth2 extends Auth {
 		} else $isInVoterList = true; // test not requiered
 
 		// is a member and entitled for voting (stimmberechtigt)
-		if (isset($eligCrit['nested_groups']) && (count($eligCrit['nested_groups'] > 0)) ) {
+		if (isset($eligCrit['nested_groups']) && (count($eligCrit['nested_groups']) > 0) ) {
 			$isInGroup = $this->oAuthConnection->isInGroup($eligCrit['nested_groups']);
 			if ($isInGroup !== true) return false;
 		} else $isInGroup = true; // test not requiered
@@ -113,9 +113,9 @@ class OAuth2 extends Auth {
 	}
 
 	function getVoterId($credentials, $electionId) {
-		$configHash = $this->electionsDB->electionIdToConfigHash($electionId);
-		$authData = $this->db->loadAuthData($configHash, $credentials['identifier']);
-		if (count($authData) == 0 || $authData === false) WrongRequestException::throwException(12000, 'Voter not found. Please login in into OAuth2 server and allow access to this server.', print_r($voterReq['credentials'], true) .  print_r($voterReq['electionId'], true));
+		// $configHash = $this->electionsDB->electionIdToConfigHash($electionId);
+		$authData = $this->db->loadAuthData($electionId, $credentials['identifier']);
+		if (count($authData) == 0 || $authData === false) WrongRequestException::throwException(12000, 'Voter not found. Please login in into OAuth2 server and allow access to this server.', print_r($credentials, true) .  print_r($electionId, true));
 		return $authData['auid'];
 	}
 
