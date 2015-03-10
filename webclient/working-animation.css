@@ -1,0 +1,105 @@
+
+
+/* mainly taken from loading.io */
+
+@keyframes uil-default-anim {
+	 0%   { opacity: 1; }
+	 100% {	opacity: 0; }
+ }
+ 
+ @-webkit-keyframes uil-default-anim {
+	 0%   { opacity: 1; }
+	 100% {	opacity: 0; }
+ }
+
+.uil-default-css {
+	height: 200px;
+	width: 200px;
+	position: relative;
+	margin: auto;
+	display: block
+};
+
+.uil-default-css > div:nth-of-type(1){
+	animation:         uil-default-anim 1s linear infinite;
+	-webkit-animation: uil-default-anim 1s linear infinite;
+	animation-delay:         -0.5s;
+	-webkit-animation-delay: -0.5s;
+}
+
+.uil-default-css > div:nth-of-type(2){
+	animation:         uil-default-anim 1s linear infinite;
+	-webkit-animation: uil-default-anim 1s linear infinite;
+    animation-delay:         -0.4166666666666667s;
+	-webkit-animation-delay: -0.4166666666666667s;
+}
+
+.uil-default-css > div:nth-of-type(3){
+	animation:         uil-default-anim 1s linear infinite;
+	-webkit-animation: uil-default-anim 1s linear infinite;
+	animation-delay:         -0.33333333333333337s;
+	-webkit-animation-delay: -0.33333333333333337s;
+}
+
+.uil-default-css > div:nth-of-type(4){
+	animation:         uil-default-anim 1s linear infinite;
+	-webkit-animation: uil-default-anim 1s linear infinite;
+	animation-delay:         -0.25s;
+	-webkit-animation-delay: -0.25s;
+}
+
+.uil-default-css > div:nth-of-type(5){
+	animation:         uil-default-anim 1s linear infinite;
+	-webkit-animation: uil-default-anim 1s linear infinite;
+	animation-delay:         -0.16666666666666669s;
+	-webkit-animation-delay: -0.16666666666666669s;
+}
+
+.uil-default-css > div:nth-of-type(6){
+	animation:         uil-default-anim 1s linear infinite;
+	-webkit-animation: uil-default-anim 1s linear infinite;
+	animation-delay:         -0.08333333333333331s;
+	-webkit-animation-delay: -0.08333333333333331s;
+}
+
+.uil-default-css > div:nth-of-type(7){
+	animation:         uil-default-anim 1s linear infinite;
+	-webkit-animation: uil-default-anim 1s linear infinite;
+	animation-delay:         0s;
+	-webkit-animation-delay: 0s;
+}
+
+.uil-default-css > div:nth-of-type(8){
+	animation:         uil-default-anim 1s linear infinite;
+	-webkit-animation: uil-default-anim 1s linear infinite;
+	animation-delay:         0.08333333333333337s;
+	-webkit-animation-delay: 0.08333333333333337s;
+}
+
+.uil-default-css > div:nth-of-type(9){
+	animation:         uil-default-anim 1s linear infinite;
+	-webkit-animation: uil-default-anim 1s linear infinite;
+	animation-delay:         0.16666666666666663s;
+	-webkit-animation-delay: 0.16666666666666663s;
+}
+
+.uil-default-css > div:nth-of-type(10){
+	animation:         uil-default-anim 1s linear infinite;
+	-webkit-animation: uil-default-anim 1s linear infinite;
+	animation-delay:         0.25s;
+	-webkit-animation-delay: 0.25s;
+}
+
+.uil-default-css > div:nth-of-type(11){
+	animation:         uil-default-anim 1s linear infinite;
+	-webkit-animation: uil-default-anim 1s linear infinite;
+	animation-delay:         0.33333333333333337s;
+	-webkit-animation-delay: 0.33333333333333337s;
+}
+
+.uil-default-css > div:nth-of-type(12){
+	animation:         uil-default-anim 1s linear infinite;
+	-webkit-animation: uil-default-anim 1s linear infinite;
+	animation-delay:         0.41666666666666663s;
+	-webkit-animation-delay: 0.41666666666666663s;
+}
