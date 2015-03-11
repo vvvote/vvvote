@@ -3,13 +3,17 @@
  * 
  */
 
-var server1url = 'http://www.webhod.ra/vvvote2/backend/';
-var server2url = 'http://127.0.0.1/vvvote2/backend/';
+/*********** Change this to your needs ******************/
+var server1url = 'http://www.webhod.ra/vvvote2/backend/'; // must have a trailing slash
+var server2url = 'http://127.0.0.1/vvvote2/backend/';     // must have a trailing slash
+/********************************************************/
+
+/********* If you do not have special needs, you can leave all settings below unchanged *****/
 
 var server1urlParts = URI.getParts(server1url);
 
-var server1name = 'PermissionServer1';
-var server2name = 'PermissionServer2';
+var server1name = 'PermissionServer1';    
+var server2name = 'PermissionServer2';    
 
 function ClientConfig() { }
 
@@ -19,7 +23,7 @@ ClientConfig.storeVoteUrl      = 'http://' + server1urlParts.host + server1urlPa
 ClientConfig.getResultUrl      = server1url + 'getresult.php'; //?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 
 
-ClientConfig.anonymizerUrl = ''; // http://anonymouse.org/cgi-bin/anon-www_de.cgi/'; // used to change the ip and to strip browser infos / with trailing slash
+ClientConfig.anonymizerUrl = 'http://anonymouse.org/cgi-bin/anon-www_de.cgi/'; // used to change the ip and to strip browser infos / with trailing slash
 ClientConfig.voteClientUrl = server1url + 'getclient.php';
 
 
@@ -51,8 +55,8 @@ ClientConfig.serverList =
 
 //configs for OAuth 2.0 Servers
 var redirectUriTMP = [];
-redirectUriTMP[ClientConfig.serverList[0].name] = 'http%3a//www.webhod.ra/vvvote2/backend/modules-auth/oauth/callback.php';
-redirectUriTMP[ClientConfig.serverList[1].name] = 'http%3a//www2.webhod.ra/vvvote2/backend/modules-auth/oauth/callback.php'; //https://84.246.124.167/backend//modules-auth/oauth/callback.php
+redirectUriTMP[ClientConfig.serverList[0].name] = server1url + 'modules-auth/oauth/callback.php';
+redirectUriTMP[ClientConfig.serverList[1].name] = server2url + 'modules-auth/oauth/callback.php'; //https://84.246.124.167/backend//modules-auth/oauth/callback.php
 
 var clientIdTMP = [];
 clientIdTMP[ClientConfig.serverList[0].name] = 'vvvote';
