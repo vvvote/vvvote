@@ -730,9 +730,24 @@ ConfigurableTally.prototype.handleServerAnswerShowWinners = function (xml) {
 ConfigurableTally.prototype.getWinnersHtml = function (questionID) {
 	var html = "Bei Antragrguppe " + questionID;
 	if (this.winners[questionID].length > 0)
-		html = html + ' wurde Antrag ' + this.winners[questionID] + ' angenommen. ';
+		html = html + ' wurde <a href="javascript: page.tally.showOptionPopUp(' + questionID + ', ' + this.winners[questionID] + ');">Antrag ' + this.winners[questionID] + '</a> angenommen. ';
 	else html = html + ' hat kein Antrag die erforderliche Mehrheit erreicht. ';
 	return html;
+};
+
+ConfigurableTally.prototype.showOptionPopUp = function (questionID, optionID) {
+	var qNo = ArrayIndexOf(this.config.questions, 'questionID', questionID);
+	var curQ = this.config.questions[qNo];
+	var optionNo = ArrayIndexOf(curQ.options, 'optionID', optionID);
+	var curOption = curQ.options[optionNo];
+	var fragm = document.createDocumentFragment(); 
+	fragm.appendChild(ConfigurableTally.getOptionTextFragm(curOption, qNo, optionNo));
+	buttonDOM('closePopup', 'Schließen', 'page.tally.removeOptionPopup()', fragm, 'closePopup');
+	showPopup(fragm);
+};
+
+ConfigurableTally.prototype.removeOptionPopup = function() {
+	removePopup();
 };
 
 ConfigurableTally.prototype.handleUserClickGetAllVotes = function(questionID) {
@@ -763,7 +778,7 @@ ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
 					'yesNo': {'numYes': 0, 'numNo': 0, 'numAbstention': 0},
 					'score': 0
 			};
-			htmlcode = htmlcode + '<h3>Stimmen zu Antrag ' + curQuestion.options[optionIndex].optionID + '</h3>';
+			htmlcode = htmlcode + '<h3>Stimmen zu <a href="javascript: page.tally.showOptionPopUp(' + curQuestion.questionID + ', ' + curQuestion.options[optionIndex].optionID + ');">Antrag ' + curQuestion.options[optionIndex].optionID + '</a></h3>';
 			htmlcode = htmlcode + '<div class="allvotes"><table>';
 			htmlcode = htmlcode + '<thead>'; 
 			for (var schemeIndex=0; schemeIndex<curQuestion.tallyData.scheme.length; schemeIndex++ ) {
@@ -853,7 +868,9 @@ ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
 			htmlcode2 = htmlcode2 + '<tr>';
 			var winnerOption = '';
 			if (curQuestion.options[i].optionID == this.winners[curQuestion.questionID]) winnerOption = ' winnerOption'; 
-			htmlcode2 = htmlcode2 + '<td class="option' + winnerOption + '">' + 'Antrag ' + curQuestion.options[i].optionID + '</td>'; 
+			htmlcode2 = htmlcode2 + '<td class="option' + winnerOption + '">' + 
+			'<a href="javascript: page.tally.showOptionPopUp(' + curQuestion.questionID + ', ' + curQuestion.options[i].optionID + ');">Antrag ' + curQuestion.options[i].optionID + '</a>' + 
+			'</td>'; 
 			for (var schemeIndex=0; schemeIndex<curQuestion.tallyData.scheme.length; schemeIndex++ ) {
 				var curScheme = curQuestion.tallyData.scheme[schemeIndex];
 				switch (curScheme.name) {
