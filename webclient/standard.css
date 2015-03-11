@@ -411,4 +411,8 @@ label.yesNoRadio {
 	position: relative;
 	top: 50%;          /* try to center the div vertically */
 	transform: translate(0%, -50%);
+	/* style it somehow */
+	border: 2px solid;
+	border-radius: 10px;
+	box-shadow: 10px 10px 5px #888;
 }
