@@ -17,7 +17,7 @@ if(count(get_included_files()) < 2) {
 require_once 'Crypt/RSA.php';
 require_once 'modules-db/dbMySql.php';
 require_once 'dbelections.php';
-require_once 'blinder.php';
+// require_once 'blinder.php';
 require_once 'modules-election/blindedvoter/election.php';
 // require_once 'modules-election/blinder-collection/election.php';
 require_once 'modules-auth/user-passw-list/auth.php';
