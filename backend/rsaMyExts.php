@@ -64,9 +64,11 @@ class rsaMyExts extends Crypt_RSA {
 	}
 	
 	static function mulMod($f1, $f2, $mod) {
-		$tmp = bcmul($f1->value, $f2->value);
-		$ret = new Math_BigInteger();
-		$ret->value = bcmod($tmp, $mod->value);
+		//$tmp = bcmul($f1->value, $f2->value);
+		$tmp = $f1->multiply($f2);
+		// $ret = new Math_BigInteger();
+		// $ret->value = bcmod($tmp, $mod->value);
+		$ret = $tmp->mod($mod);
 		return $ret;
 	}
 	

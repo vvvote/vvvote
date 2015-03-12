@@ -3639,4 +3639,34 @@ class Math_BigInteger {
         $temp = ltrim(pack('N', $length), chr(0));
         return pack('Ca*', 0x80 | strlen($temp), $temp);
     }
+
+    /***************************************
+     * added by Pfeffer March, 2015
+    ****************************************/
+
+    /**
+     * get modular
+     *
+     * calculates the remainder
+     *
+     * @param Math_BigInteger
+     * @return Math_BigInteger
+     * @see _trim()
+     * @access private
+     */
+    function mod($modul)
+    {
+    	$result = new Math_BigInteger();
+    	switch ( MATH_BIGINTEGER_MODE ) {
+    		case MATH_BIGINTEGER_MODE_GMP:
+    			$result->value = gmp_mod($this->value, $modul->value);
+    			return $result;
+    		case MATH_BIGINTEGER_MODE_BCMATH:
+    			$result->value = bcmod($this->value, $modul->value);
+    			return $result;
+    	}
+    	throw new InvalidArgumentException('Math_BigInteger only works with either GML or BCMATH extension. ');
+    	return false;
+    }
+
 }
