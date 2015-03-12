@@ -66,7 +66,7 @@ class LoadModules {
 		switch ($name) {
 			case 'publishOnly': 		$ret = new PublishOnlyTally($dbInfos, new Crypt($pServerKeys, $serverkey), $blinder); break;
 			case 'configurableTally':	$ret = new ConfigurableTally($dbInfos, new Crypt($pServerKeys, $serverkey), $blinder); break;
-			case 'tallyCollection': 	$ret = new TallyCollection();
+//			case 'tallyCollection': 	$ret = new TallyCollection();
 			default: 					WrongRequestException::throwException(7060, 'tally module not supported (supported: publishOnly, configurableTally, tallyCollection)', "auth module requested: " . $name);
 			break;
 		}

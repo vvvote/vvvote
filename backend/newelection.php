@@ -14,7 +14,7 @@ require_once 'dbelections.php';
 require_once 'modules-election/blindedvoter/election.php';
 require_once 'modules-tally/publishonly/tally.php';
 require_once 'modules-tally/configurable-tally/tally.php';
-require_once 'modules-tally/tally-collection/tally.php';
+//require_once 'modules-tally/tally-collection/tally.php';
 
 
 
