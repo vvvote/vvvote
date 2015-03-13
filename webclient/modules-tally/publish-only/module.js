@@ -68,7 +68,7 @@ PublishOnlyTally.prototype.getMainContentFragm = function() {
 	btn.setAttribute('type', 'submit');
 	btn.setAttribute('value', 'abstimmen!');
 	btn.setAttribute('id', 'sendvote');
-	btn.setAttribute('disabled', 'disabled');
+	//btn.setAttribute('disabled', 'disabled');
 	btn.setAttribute('onclick', 'page.sendVote(event);');
 	fragm.appendChild(btn);
 	
