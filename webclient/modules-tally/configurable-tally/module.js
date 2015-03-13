@@ -39,44 +39,7 @@ ConfigurableTally.getNewElectionData = function() {
 				"options": [{
 					"optionID": 1,
 					"optionTitle": "Ja, linksherum.",
-					"optionDesc": "Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.\n\n Ich bin gespannt, wie die angezeigt wird als Legende f?r die Auswahlkn?pfe. Meine Prognose ist, dass NRW das anonyme Verfahren einf?hren wird. Was glauben Sie, stimmt das?"
-				},
-				{
-					"optionID": 2,
-					"optionTitle": "Ja, rechtsherum"
-				},
-				{
-					"optionID": 3,
-					"optionTitle": "Nein. Ab durch die Mitte!"
-				},
-				{
-					"optionID": 4,
-					"optionTitle": "Jein. Wir drehen durch."
-				}],
-				"references": [{
-					"referenceName": "Abschlussparty und Aufl?sung",
-					"referenceAddress": "https://lqfb.piratenpartei.de/lf/initiative/show/5789.html"
-				},
-				{
-					"referenceName": "Bilder zur Motivation",
-					"referenceAddress": "https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content"
-				}]
-			},
-			{
-				"questionID": 2,
-				"questionWording": "Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
-				"scheme": [{
-					"name": "yesNo",
-					"abstention": true,
-					"abstentionAsNo": true,
-					"quorum": "1+",    // 0: no quorum, 1: "at least the same number of YES as of NO", 1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
-					"mode": "bestOnly" // "quorum": all options that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set to 0 no quorum is requiered)
-				}],
-				"findWinner": ["yesNo", "yesNoDiff", "random"],
-
-				"options": [{
-					"optionID": 1,
-					"optionTitle": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende f?r die Auswahlkn?pfe. Meine Prognose ist, dass NRW das anonyme Verfahren einf?hren wird. Was glauben Sie, stimmt das?"
+					"optionDesc": "Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.\n\n Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?"
 				},
 				{
 					"optionID": 2,
@@ -98,6 +61,236 @@ ConfigurableTally.getNewElectionData = function() {
 					"referenceName": "Bilder zur Motivation",
 					"referenceAddress": "https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content"
 				}]
+			},
+			{
+				"questionID": 2,
+				"questionWording": "Drehen wir uns im Kreis? (nur ja/nein/Enthaltung)",
+				"scheme": [{
+					"name": "yesNo",
+					"abstention": true,
+					"abstentionAsNo": true,
+					"quorum": "1+",    // 0: no quorum, 1: "at least the same number of YES as of NO", 1+: "more than YES than NO",		2: "at least twice as much YES than NO",		2+: "more than twice as much YES than NO""abstentionAsNo": false,
+					"mode": "bestOnly" // "quorum": all options that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set to 0 no quorum is requiered)
+				}],
+				"findWinner": ["yesNo", "yesNoDiff", "random"],
+
+				"options": [{
+					"optionID": 1,
+					"optionTitle": "Ja, linksherum. Hier mach ich zum test mal eine richtig lange Modulbeschreibung rein.<br> Ich bin gespannt, wie die angezeigt wird als Legende für die Auswahlknöpfe. Meine Prognose ist, dass NRW das anonyme Verfahren einführen wird. Was glauben Sie, stimmt das?"
+				},
+				{
+					"optionID": 2,
+					"optionTitle": "Ja, rechtsherum"
+				},
+				{
+					"optionID": 3,
+					"optionTitle": "Nein. Ab durch die Mitte!"
+				},
+				{
+					"optionID": 4,
+					"optionTitle": "Jein. Wir drehen durch."
+				}],
+				"references": [{
+					"referenceName": "Abschlussparty und Auflösung",
+					"referenceAddress": "https://lqfb.piratenpartei.de/lf/initiative/show/5789.html"
+				},
+				{
+					"referenceName": "Bilder zur Motivation",
+					"referenceAddress": "https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content"
+				}]
+			},
+			{
+				"questionID": 3,
+				"questionWording":"SÄA18: Ständige Mitgliederversammlung ablehnen" +
+				"\n* Hauptmodul: Ständige Mitgliederversammlung ablehnen" +
+				"\n* Modul 1: keine Bereitstellung für Infrastruktur für die SMV" +
+				"\n* Modul 2: Entwicklung auf Bundesebene abwarten",
+				"scheme": [{
+					"name": "yesNo",
+					"abstention": true,
+					"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
+					"abstentionAsNo": false,
+					"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
+				},
+				{
+					"name": "score",
+					"minScore": 0,
+					"maxScore": 3
+				}],
+				"findWinner": ["yesNo",	"score", "yesNoDiff", "random"],
+				"options":
+					[
+					 { "optionID": 1, 
+						 "optionTitle": "Hauptmodul: Ständige Mitgliederversammlung ablehnen", 
+						 "optionDesc": "Der Landesverband NRW lehnt es grundsätzlich ab, zum jetzigen Zeitpunkt ein System einzuführen, welches unter zuhilfenahme von Online-Werkzeugen irgendeine Form von verbindlicher Abstimmung umsetzen soll.\
+							 \n\nZu diesem Zweck werden aus §8 (2) der Landessatzung die Worte \"oder in einem vom Landesparteitag legitimierten Werkzeug\" gestrichen. ", 
+						 "reasons": "== Glaubwürdigkeit ==\
+								 \n* Beschluss/PM aus der Gründungszeit der Piratenpartei: https://wiki.piratenpartei.de/Pressemitteilung_vom_12.11.2006_zu_Wahlmaschinen\
+								 \n* Wir machen uns absolut unglaubwürdig, wenn wir verbindliche Onlineabstimmungen beschliessen und durchführen.\
+								 \n\n== Toolproblem ==\
+					 \nEs gibt zum jetzigen Zeitpunkt kein einziges Tool, welches die elementaren Anforderungen an geheime Wahlen erfüllt (anonym/pseudonym, Nachvollzieh- und Überprüfbarkeit). Auf absehbare Zeit nicht umsetzbare Mitbestimmungswerkzeuge in die Satzung zu schreiben ist Zeitverschwendung und Wahlbetrug."	},
+					 { "optionID": 2, 
+						 "optionTitle": "SÄA 18: SMV Modul 1: 2014 keine Ressourcen für SMV bereitstellen", 
+						 "optionDesc": "Das Thema SMV soll 2014 (mindestens für die Amtsperiode des derzeitgen Landesvorstandes) keine Rolle mehr spielen. Es soll insbesondere keinerlei finanzielle Förderung oder Bereitstellung von IT Infrastruktur aus Landesmitteln stattfinden." },
+					 { "optionID": 3, 
+							 "optionTitle": "SÄA 18: Modul 2: Entwicklung auf Bundesebene abwarten", 
+							 "optionDesc": "Das Thema SMV soll auf Landesebene erst wieder aktiv behandelt werden, wenn es auf Bundesebene neue Entscheidungen oder Entwicklungen zum Thema SMV gibt (z.B. Bestätigung eines Tools, Satzungsänderungen)."
+					 }],
+				"references":[
+							  { "referenceName":"Vollständiger Antrag zur SMV Option 1 - Ablehnung von verbindlicher Online-SMV mit Modulen", "referenceAddress":"https://wiki.piratenpartei.de/NRW:Landesparteitag_2014.1/Antr%C3%A4ge/S%C3%84A019" },
+							  { "referenceName":"Vollständiger Antrag zur SMV Option 2 - Totholz SMV mit Modulen", "referenceAddress":"https://wiki.piratenpartei.de/NRW:Landesparteitag_2014.1/Antr%C3%A4ge/S%C3%84A019" },
+							  { "referenceName":"Vollständiger Antrag zum Basisentscheid mit Begründung und Modulen", "referenceAddress":"https://wiki.piratenpartei.de/NRW:Landesparteitag_2014.1/Antr%C3%A4ge/S%C3%84A030" }
+							  ]
+			},
+			{
+				"questionID": 4,
+				"questionWording":"SÄA19: Ständige Mitgliederversammlung (SMV) nur auf Totholz" +
+				"\n* Totholz SMV" +
+				"\n* Modul 1: Änderung der Entscheidsordnung durch den Basisentscheid" +
+				"\n* Modul 2: An die Arbeit",
+				"scheme": [{
+					"name": "yesNo",
+					"abstention": true,
+					"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
+					"abstentionAsNo": false,
+					"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
+				},
+				{
+					"name": "score",
+					"minScore": 0,
+					"maxScore": 3
+				}],
+				"findWinner": ["yesNo",	"score", "yesNoDiff", "random"],
+				"options":
+					[
+							  { "optionID": 1, 
+								  "optionTitle": "SÄA 19: SMV Ständige Mitgliederversammlung nur auf Totholz einführen", 
+								  "optionDesc": "Der Satzung wird an geeigneter Stelle einen Abschnitt \"Basisentscheid und Basisbefragung\" mit folgendem Wortlaut hinzugefügt: (Anmerkung 1: Der Text entspricht bis auf die hier durch Streichung bzw Fettschrift kenntlich gemachten Teile dem angenommenen SÄA003 (http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2013.1/Antragsportal/SÄA003) aus Neumarkt.)\n\n\
+								  (Anmerkung 2: Die parallel dazu vorgeschlagene Entscheidsordnung weicht deutlich von X011 (http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2013.1/Antragsportal/X011) aus Neumarkt ab.) \
+								  \n\n(1) Die Mitglieder fassen in einem Basisentscheid einen Beschluss, der einem des Landesparteitags gleichsteht. Ein Beschluss zu Sachverhalten, die dem Landesparteitag vorbehalten sind oder eindeutig dem Parteiprogramm widersprechen, gilt als Basisbefragung mit lediglich empfehlenden Charakter. Urabstimmungen gemäß §6 (2) Nr.11 PartG werden in Form eines Basisentscheids durchgeführt, zu dem alle stimmberechtigten Mitglieder in Textform eingeladen werden. Die nachfolgenden Bestimmungen für Anträge bzw. Abstimmungen gelten sinngemäß auch für Personen bzw. Wahlen.\
+								  \n\n(2) Teilnahmeberechtigt sind alle persönlich identifizierten, am Tag der Teilnahme stimmberechtigten Mitglieder gemäß §4(4) der Bundessatzung, die mit ihren Mitgliedsbeiträgen nicht im Rückstand sind. Um für Quoren und Abstimmungen berücksichtigt zu werden, müssen sich die teilnahmeberechtigten Mitglieder zur Teilnahme anmelden.\
+								  \n\n(3) Über einen Antrag wird nur abgestimmt, wenn er innerhalb eines Zeitraums ein Quorum von Teilnehmern als Unterstützer erreicht oder vom Bundesparteitag eingebracht wird. Der Landesvorstand darf organisatorische Anträge einbringen. Konkurrierende Anträge zu einem Sachverhalt können rechtzeitig vor der Abstimmung eingebracht und für eine Abstimmung gebündelt werden. Eine erneute Abstimmung über den gleichen oder einen sehr ähnlichen Antrag ist erst nach Ablauf einer Frist zulässig, es sei denn die Umstände haben sich seither maßgeblich geändert. Über bereits erfüllte, unerfüllbare oder zurückgezogene Anträge wird nicht abgestimmt. Der Landesparteitag soll die bisher nicht abgestimmten Anträge behandeln.\
+								  \n\n(4) Vor einer Abstimmung werden die Anträge angemessen vorgestellt und zu deren Inhalt eine für alle Teilnehmer zugängliche Debatte gefördert. Die Teilnahme an der Debatte und Abstimmung muss für die Mitglieder zumutbar und barrierefrei sein. Anträge werden nach gleichen Maßstäben behandelt. Mitglieder bzw. Teilnehmer werden rechtzeitig über mögliche Abstimmungstermine bzw. die Abstimmungen in Textform informiert.\
+								  \n\n(5) Die Teilnehmer haben gleiches Stimmrecht, das sie selbstständig und frei innerhalb des Abstimmungszeitraums ausüben. Abstimmungen außerhalb des Parteitags erfolgen entweder pseudonymisiert oder geheim. Bei pseudonymisierter Abstimmung kann jeder Teilnehmer die unverfälschte Erfassung seiner eigenen Stimme im Ergebnis überprüfen und nachweisen. Bei personellen Sachverhalten oder auf Antrag einer Minderheit muss die Abstimmung geheim erfolgen. In einer geheimen Abstimmung sind die einzelnen Schritte für jeden Teilnehmer ohne besondere Sachkenntnisse nachvollziehbar und die Stimmabgabe erfolgt nicht elektronisch. Die Manipulation einer Abstimmung oder die Veröffentlichung von Teilergebnissen vor Abstimmungsende sind ein schwerer Verstoß gegen die Ordnung der Partei.\
+							      \n\n(6) Das Nähere regelt die Entscheidsordnung, welche durch den Landesparteitag beschlossen wird und auch per Basisentscheid geändert werden kann." },
+							  { "optionID": 2, 
+							    	  "optionTitle": "SÄA 19: Modul 1: Änderung der Entscheidsordnung durch den Basisentscheid", 
+							    	  "optionDesc": "Abschnitt (6) wird ersetzt durch:" +
+							    	  		"\n\n(6) Das Nähere regelt die Entscheidsordnung, welche durch den Landesparteitag beschlossen wird und auch per Basisentscheid geändert werden kann." },
+							  { "optionID": 3, 
+							    	  	"optionTitle": "SÄA 19: Modul 2: An die Arbeit !", 
+							    	  	"optionDesc": "Regionale und kommunale Gliederungen ausreichender Größe sind aufgefordert, spätestens nach der kommenden Kommunalwahl mit der Gründung von Urnen zu beginnen. Der Landesvorstand ist aufgefordert durch Ausschreibungen (oder sofern nötig & möglich auch durch Wahlen noch auf dem LPT), entsprechendes Personal für die Organisation und Durchführung zu finden und entsprechend zu beauftragen." },
+					],
+				"references":[]
+			}, {
+			"questionID": 5,
+			"questionWording":"SÄA30: Basisentscheid Online (BEO) einführen" +
+			"\n* Modul 1: Basisentscheid Online (BEO) einführen" +
+			"\n* Modul 2: auch anonyme, nachvollziehbare Online-Abstimmung zulassen" +
+			"\n* Modul 3: Programmänderungen im BEO mit 2/3-Mehrheit der abgegebenen Stimmen",
+			"scheme": [{
+				"name": "yesNo",
+				"abstention": true,
+				"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
+				"abstentionAsNo": false,
+				"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
+			},
+			{
+				"name": "score",
+				"minScore": 0,
+				"maxScore": 3
+			}],
+			"findWinner": ["yesNo",	"score", "yesNoDiff", "random"],
+			"options":
+				[
+							  { "optionID": 1, 
+								  "optionTitle": "SÄA 30: Modul 1: Basisentscheids auch auf Landesebene einführen",
+								  "shortDesc": "Modul 1: Einführung des auf Bundesebene bereits beschlossenen Basisentscheids auch auf Landesebene",
+								  "optionDesc":"Der Landesparteitag möge Folgendes beschließen:\
+									  \n\nModul 1\
+									  \n\nDer Paragraph 16 der Bundessatzung (Basisentscheid und Basisbefragung) wird in die Landessatzung an geeigneter Stelle sinngemäß (d.h. Bund durch Land entsprechend zu ersetzen) eingefügt und eine kleine Unklarheit beseitigt:\
+									  \n\n\"(1) Die Mitglieder fassen in einem Basisentscheid einen Beschluss, der einem Beschluss des Parteitags gleichsteht. Ein Beschluss zu Sachverhalten, die dem Parteitag vorbehalten sind oder eindeutig dem Parteiprogramm widersprechen, gilt als Basisbefragung mit lediglich empfehlenden Charakter. Urabstimmungen zur Auflösung und Verschmelzung werden in Form eines Basisentscheids durchgeführt, zu dem alle stimmberechtigten Mitglieder in Textform eingeladen werden. Die nachfolgenden Bestimmungen für Anträge bzw. Abstimmungen gelten sinngemäß auch für Personen bzw. Wahlen.\
+									  \n\n(2) Teilnahmeberechtigt sind alle persönlich identifizierten, am Tag der Teilnahme stimmberechtigten Mitglieder gemäß Abschnitt A § 4 (4) der Bundessatzung, die mit ihren Mitgliedsbeiträgen nicht im Rückstand sind. Um für Quoren und Abstimmungen berücksichtigt zu werden, müssen sich die teilnahmeberechtigten Mitglieder zur Teilnahme anmelden.\
+									  \n\n(3) Über einen Antrag wird nur abgestimmt, wenn er innerhalb eines Zeitraums ein Quorum von Teilnehmern als Unterstützer erreicht oder vom Parteitag eingebracht wird. Der Vorstand darf organisatorische Anträge einbringen. Konkurrierende Anträge zu einem Sachverhalt können rechtzeitig vor der Abstimmung eingebracht und für eine Abstimmung gebündelt werden. Eine erneute Abstimmung über den gleichen oder einen sehr ähnlichen Antrag ist erst nach Ablauf einer Frist zulässig, es sei denn die Umstände haben sich seither maßgeblich geändert. Über bereits erfüllte, unerfüllbare oder zurückgezogene Anträge wird nicht abgestimmt. Der Parteitag soll die bisher nicht abgestimmten Anträge behandeln.\
+									  \n\n(4) Vor einer Abstimmung werden die Anträge angemessen vorgestellt und zu deren Inhalt eine für alle Teilnehmer zugängliche Debatte gefördert. Die Teilnahme an der Debatte und Abstimmung muss für die Mitglieder zumutbar und barrierefrei sein. Anträge werden nach gleichen Maßstäben behandelt. Mitglieder bzw. Teilnehmer werden rechtzeitig über mögliche Abstimmungstermine bzw. die Abstimmungen in Textform informiert.\
+									  \n\n(5) Die Teilnehmer haben gleiches Stimmrecht, das sie selbstständig und frei innerhalb des Abstimmungszeitraums ausüben. Abstimmungen außerhalb des Parteitags erfolgen entweder pseudonymisiert oder geheim. Bei pseudonymisierter Abstimmung kann jeder Teilnehmer die unverfälschte Erfassung seiner eigenen Stimme im Ergebnis überprüfen und nachweisen. Bei personellen Sachverhalten oder auf Antrag einer Minderheit muss die Abstimmung geheim erfolgen. In einer geheimen Abstimmung sind die einzelnen Schritte für jeden Teilnehmer ohne besondere Sachkenntnisse nachvollziehbar und die Stimmabgabe erfolgt nicht elektronisch. Die Manipulation einer Abstimmung oder die Veröffentlichung von Teilergebnissen vor Abstimmungsende sind ein schwerer Verstoß gegen die Ordnung der Partei.\
+									  \n\n(6) Das Nähere regelt die Entscheidsordnung, welche durch den Parteitag beschlossen wird und auch per Basisentscheid geändert werden kann.\"",
+									  "reasons": "Die Partei braucht dringend ein Verfahren, mit dem Entscheidungen auch zwischen Parteitagen getroffen werden können. Der Basisentscheid wurde auf Bundesebene bereits beschlossen. Erhoffter Vorteil des Basisentscheides ist eine große Beteiligung durch einfache Teilnahme und frühzeitig bekannte Abstimmungstermine.\
+										  \n\nDurch die Nutzung der gleichen Satzungsregelungen wie beim Bundesverband ergeben sich viele Synergien (Verifizierung, Termine, gleiche Software und Plattform, rechtliche Prüfung, Administration). Der Landesverband kann sich eine auf Landesebene angepasste Entscheidsordnung für die Details geben."
+							  },
+							  { "optionID": 2, 
+								  "optionTitle": "SÄA30: Modul 2: Basisentscheid online anonym ermöglichen",
+								  "shortDesc": "Der Basisentscheid, der auf bundesebene bislang online nur pseudonym vorgesehen ist, wird erweitert um die Möglichkeit, auch anonyme und nachvollziehbare Online-Abstimmungen durchzuführen", 
+								  "optionDesc": "Modul 2 (nur abzustimmen, wenn Modul 1 angenommen wurde)\
+									  \n\nNach Absatz 5 Satz 3 wird folgender Text eingefügt:\
+									  \n\n\"Statt einer pseudonymisierten Abstimmung kann auch eine anonyme, mit Hilfe von kryptographischen Verfahren nachvollziehbare, elektronische Abstimmung durchgeführt werden. Das Verfahren darf nur eingeführt werden, wenn es mindestens genauso manipulationssicher und kryptografisch nachvollziehbar ist wie das pseudonymisierte.\"",	
+									  "reasons": "Gegenüber der Regelung auf Bundesebene, die online nur pseudonymisierte Abstimmungen vorsieht, soll hier die Möglichkeit geschaffen werden, einen Schritt weiter zu gehen, so dass auch die Administratoren der Server die Stimmen den Abstimmenden nicht zuordnen können.\
+										  \n\nDabei dürfen nur solche Verfahren eingesetzt werden, deren Nachvollziehbarkeit kryptografisch gesichert ist und die mindestens genau so manipulationssicher sind wie das vorgesehene pseudonymisierte Verfahren ist."
+							  },
+							  { "optionID": 3, 
+								  "optionTitle": "SÄA30: Modul 3: Auch Programmanträge im Basisentscheid zulassen",
+								  "optionDesc": "Paragraph 8 Absatz 2 der Satzung wird durch folgenden Text ersetzt:\
+									  \n\n\"Des weiteren können die Parteiprogramme mit einer 2/3-Mehrheit der abgegeben gültigen Stimmen eines Basisentscheids geändert werden.\"",
+									  "reasons": "Der bisherige § 8 Absatz 2 der Landessatzung führt dazu, dass Programmänderungen außerhalb von Parteitagen nur beschlossen werden können, wenn 2/3 aller Mitglieder schriftlich zustimmen (d.h. ca 4000 Ja-Stimmen). Das macht Programmentscheidungen außerhalb von Parteitagen praktisch unmöglich.\
+										  \n\nDieses Modul sieht vor, dass der Basisentscheid auch zur Änderung der Parteiprogramme, jedoch nicht der Satzung eingesetzt werden kann. Ob dies grundsätzlich mit dem Parteiengesetz vereinbar ist, ist umstritten (siehe http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2014.1/Antragsportal/SÄA004\""
+							  }],
+							  "references":[]
+			},{
+				"questionID": 6,
+				"questionWording":"SÄA31: Ständige Mitgliederversammlung (SMV) einführen" +
+				"\n* Modul 1: Antrag für eine SMV-NRW" +
+				"\n* Modul 2: auch anonyme, nachvollziehbare Online-Abstimmung zulassen" +
+				"\n* Modul 3: Programmänderungen im BEO mit 2/3-Mehrheit der abgegebenen Stimmen",
+				"scheme": [{
+					"name": "yesNo",
+					"abstention": true,
+					"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
+					"abstentionAsNo": false,
+					"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
+				},
+				{
+					"name": "score",
+					"minScore": 0,
+					"maxScore": 3
+				}],
+				"findWinner": ["yesNo",	"score", "yesNoDiff", "random"],
+				"options":
+					[
+
+				
+							  { "optionID": 1, 
+								  "optionTitle": "SÄA31: Modul 1: Antrag für eine SMV-NRW",
+								  "shortDesc": "Grundmodul (Modul 1): Einführung einer Ständigen Mitgliederversammlung (SMV) nach den Prinzipien von Liquid Democracy für Beschlüsse zu Stellungnahmen, Positionspapiere, Anfragen von Fraktionen und Programm",
+								  "optionDesc": "Modul 1\
+									  \n\n§ 6a Der Landesparteitag (Ergänzungsantrag)\
+									  \n\n(8) Der Landesparteitag tagt daneben online und nach den Prinzipien von Liquid Democracy als Ständige Mitgliederversammlung (im folgenden \"SMV\" genannt). Jeder Pirat im Landesverband Nordrhein-Westfalen hat das Recht, an der SMV teilzunehmen. Die Stimmberechtigung in der SMV richtet sich nach § 4 Absatz 4 der Bundessatzung.\
+									  \n\n(9) Die SMV kann Stellungnahmen, Positionspapiere, Anfragen von Fraktionen sowie Anträge zu Programmen verbindlich beschließen. Sie kann Anträge zur Satzung, zur Finanzordnung, zur Schiedsgerichtsordnung, zur Auflösung sowie zur Verschmelzung mit anderen Parteien (§ 9 Abs. 3 Parteiengesetz) nicht verbindlich beschließen, insoweit kann die SMV nur Empfehlungen abgeben.\
+									  \n\n(10) Der Landesparteitag beschließt die erste Geschäftsordnung der SMV, in der auch die Konstituierung der SMV geregelt ist. Nach der Konstituierung kann auch die SMV über ihre Geschäftsordnung entscheiden.\
+									  \n\n(11) Geheime Abstimmungen und Wahlen finden im Rahmen der SMV nicht statt. Alles weitere regelt die Geschäftsordnung zur SMV.\
+									  \n\n§ 6b Der Landesvorstand\
+									  \n\n(7) j) Systembetrieb SMV gemäß §6a.",
+									  "reasons": "Modul 1 ist quasi der Hauptantrag, wird dieser angelehnt entfallen Modul 2 und 3. \
+										  \n\nModul 2 und 3 sind dann konkurrierend.\
+										  \n\nEinen Entwurf zur Geschäftsordnung wird es auch noch geben. Der hat aber noch Zeit, da dass ja keine Satzungsänderung ist."
+							  },
+							  { "optionID": 2, 
+								  "optionTitle": "Modul 2: Variante mit Satzung und Inkrafttreten Vorbehalt für §6a(9)",
+								  "optionDesc": "§6a Der Landesparteitag\
+									  \n\n(9) Die SMV kann Stellungnahmen, Positionspapiere, Anfragen von Fraktionen sowie Anträge zu Programmen, zur Satzung, zur Finanzordnung, zur Schiedsgerichtsordnung, zur Auflösung sowie zur Verschmelzung mit anderen Parteien (§ 9 Abs. 3 Parteiengesetz) verbindlich beschließen. Bei Satzungs-, Finanzordnungs-, Schiedgerichtsordnungs-, Auflösungsanträgen und Anträgen zur Verschmelzung mit anderen Parteien kann der Vorstand innerhalb der ersten 7 Tage nach Abstimmungsende durch einen schriftlich begründeten Beschluss das Inkrafttreten eines Antrags auf das Ende des nächsten Landesparteitag der Piratenpartei Nordrhein-Westfalen verschieben.",
+								  "reasons": "Modul 1 ist quasi der Hauptantrag, wird dieser angelehnt entfallen Modul 2 und 3. \
+										  \n\nModul 2 und 3 sind dann konkurrierend.\
+										  \n\nEinen Entwurf zur Geschäftsordnung wird es auch noch geben. Der hat aber noch Zeit, da dass ja keine Satzungsänderung ist."
+							  },
+							  { "optionID": 3, 
+								  "optionTitle": "SÄA31: Modul 3: Antrag für eine SMV-NRW",
+								  "shortDesc": "All-Incl. Variante ohne Vorbehalt für §6a(9)",
+								  "optionDesc": "§6a Der Landesparteitag\
+									  \n\n(9) Die SMV kann Stellungnahmen, Positionspapiere, Anfragen von Fraktionen sowie Anträge zu Programmen, zur Satzung, zur Finanzordnung, zur Schiedsgerichtsordnung, zur Auflösung sowie zur Verschmelzung mit anderen Parteien (§ 9 Abs. 3 Parteiengesetz) verbindlich beschließen.",
+									  "reasons": "Modul 1 ist quasi der Hauptantrag, wird dieser angelehnt entfallen Modul 2 und 3. \
+										  \n\nModul 2 und 3 sind dann konkurrierend.\
+										  \n\nEinen Entwurf zur Geschäftsordnung wird es auch noch geben. Der hat aber noch Zeit, da dass ja keine Satzungsänderung ist."
+							  }],
+							  "references":[]
 			}]
 	};
 	return ret;
@@ -838,7 +1031,7 @@ ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
 			}
 			htmlcode = htmlcode + '</tbody></table></div>';
 		}
-		
+
 		// show the frequencies
 		// freq.sort(function(a, b) {return b.score - a.score;});
 		// freq.sort(function(a, b) {return b.yesNo.numYes - a.yesNo.numYes;});
@@ -893,7 +1086,7 @@ ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
 		}
 		htmlcode2 = htmlcode2 + '</tbody>';
 		htmlcode2 = htmlcode2 + '</table></div>';
-		
+
 		var htmlcode0 = '<h3> Antragsgruppe: ' + this.curQuestionID + '</h3>';
 		htmlcode0 = htmlcode0 + '<p>' + this.getWinnersHtml(this.curQuestionID) + '</p>';
 
