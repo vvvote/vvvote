@@ -346,6 +346,9 @@ div#divVoteQuestions {
 .tableHeader {
 	font-weight: bold;
 	font-size: 1.2em;
+	color: darkblue;
+	padding: 0.5em;
+	background-color: #DBEDF5;
 }
 
 .unevenTableRow {
@@ -423,13 +426,13 @@ label.yesNoRadio {
 }
 
 .popupContainer {
-	height: 100%; /* this is neede because chrome and opera would use otherwise 0px */
+	height: 100%; /* this is needed because chrome and opera would use otherwise 0px */
 }
 
 /* this is the window which will be modally displayed */
 .modal {
 	display: table; /* table = shrink to fit the content horizontally */
-	text-align: center;
+/*	text-align: center; */
 	pointer-events: auto;
 	background: rgba(255, 255, 255, 1);
 	z-index: 1000;  /* must be higher than in class /modalbg/ */ 
@@ -438,8 +441,9 @@ label.yesNoRadio {
 	margin-left: auto;  /* -left and -right = auto -->center the div */
 	margin-right: auto;
 	position: relative;
-	top: 50%;          /* try to center the div vertically */
-	transform: translate(0%, -50%);
+/*	vertical-align: middle; this does not work in firefox, so use a work aoround whoch also work sin the other browsers */
+	top: 50%;        /*  try to center the div vertically */
+	transform: translate(0%, -50%); */
 	/* style it somehow */
 	border: 2px solid;
 	border-radius: 10px;
