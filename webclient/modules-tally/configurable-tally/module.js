@@ -318,18 +318,23 @@ ConfigurableTally.prototype.getMainContentFragm = function(tallyconfig) {
 
 	var table = Array([tallyconfig.questions.length *2 +1]);
 	//var table = [3][3];
-	table[0] = ['Antragsgruppe', 'Antragstitel', 'Aktion'];
+	var styleClass;
+	table[0] = [{'content': 'Antragsgruppe', 'attrib': [{'name': 'class', 'value': 'tableHeader'}]}, 
+	            {'content': 'Antragstitel',  'attrib': [{'name': 'class', 'value': 'tableHeader'}]}, 
+	            {'content': 'Aktion',        'attrib': [{'name': 'class', 'value': 'tableHeader'}]}];
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
+		if (qNo % 2 == 1) styleClass = 'unevenTableRow';
+		else			  styleClass = 'evenTableRow';
 		table[qNo * 2 + 1] = Array(3);
-		table[qNo * 2 + 1][0] = {'content' : document.createTextNode(tallyconfig.questions[qNo].questionID)};
-		table[qNo * 2 + 1][1] = {'content' : wikiSyntax2DOMFrag(tallyconfig.questions[qNo].questionWording)};
+		table[qNo * 2 + 1][0] = {'content': document.createTextNode(tallyconfig.questions[qNo].questionID), 'attrib': [{'name': 'class', 'value': styleClass}, {'name':'id', 'value': 'qRow'+qNo+'C1'}]};
+		table[qNo * 2 + 1][1] = {'content': wikiSyntax2DOMFrag(tallyconfig.questions[qNo].questionWording), 'attrib': [{'name': 'class', 'value': styleClass}, {'name':'id', 'value': 'qRow'+qNo+'C2'}]};
 
 		var elp = document.createElement('button');
 		elp.setAttribute('id'	  , 'buttonShowQid'+qNo);
 		elp.setAttribute('onclick', 'ConfigurableTally.showQuestion(' +qNo+')');
 		var elp2 = document.createTextNode('Anzeigen');
 		elp.appendChild(elp2);
-		table[qNo * 2 + 1][2] = {'content' : elp};
+		table[qNo * 2 + 1][2] = {'content' : elp, 'attrib': [{'name': 'class', 'value': styleClass}, {'name':'id', 'value': 'qRow'+qNo+'C3'}]};
 
 		table[qNo * 2 + 2] = Array(1);
 		var fragm2 = document.createDocumentFragment();
@@ -338,6 +343,7 @@ ConfigurableTally.prototype.getMainContentFragm = function(tallyconfig) {
 	}
 
 	var electionsListDOM = makeTableDOM(table);
+	electionsListDOM.setAttribute('class', 'votingQuestionsTable');
 	fragm.appendChild(electionsListDOM);
 
 	var fragm2 = wikiSyntax2DOMFrag("= Ziele meiner politischen Arbeit =\n\
@@ -566,6 +572,8 @@ ConfigurableTally.prototype.collapseAllQuestions = function() {
 
 ConfigurableTally.showQuestion = function(showqNo) {
 	var tallyconfig = ConfigurableTally.tallyConfig;
+	
+	// test if clicked on "hide" --> then hide that details and return
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
 		var el = document.getElementById('divVoteQuestion'+qNo);
 		if (el !== null) {
@@ -573,23 +581,39 @@ ConfigurableTally.showQuestion = function(showqNo) {
 				hideElement(el); // clicked on an already shown question -> just hide it
 				var btn = document.getElementById('buttonShowQid'+qNo);
 				btn.childNodes[0].nodeValue = "Anzeigen";
+				var elCol1 = document.getElementById('qRow'+qNo+'C1');
+				var elCol2 = document.getElementById('qRow'+qNo+'C2');
+				var elCol3 = document.getElementById('qRow'+qNo+'C3');
+				elCol1.className = elCol1.className.replace(/\bcurRow\b/,'');
+				elCol2.className = elCol2.className.replace(/\bcurRow\b/,'');
+				elCol3.className = elCol3.className.replace(/\bcurRow\b/,'');
 				return;
 			}
 		}
 	}
+	
 	// clicked on a question which is hidden -> show that and hide all others
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
 		var el = document.getElementById('divVoteQuestion'+qNo);
+		var elCol1 = document.getElementById('qRow'+qNo+'C1');
+		var elCol2 = document.getElementById('qRow'+qNo+'C2');
+		var elCol3 = document.getElementById('qRow'+qNo+'C3');
 		if (el !== null) {
 			if (qNo == showqNo)	{
 				showElement(el); // el.style.display = 'block';
 				var btn = document.getElementById('buttonShowQid'+qNo);
 				btn.childNodes[0].nodeValue = "Verbergen";
+				elCol1.className = elCol1.className + ' curRow'; 
+				elCol2.className = elCol2.className + ' curRow'; 
+				elCol3.className = elCol3.className + ' curRow'; 
 			}
 			else {
 				hideElement(el); // el.style.display = 'none';
 				var btn = document.getElementById('buttonShowQid'+qNo);
 				btn.childNodes[0].nodeValue = "Anzeigen";
+				elCol1.className = elCol1.className.replace(/\bcurRow\b/,'');
+				elCol2.className = elCol2.className.replace(/\bcurRow\b/,'');
+				elCol3.className = elCol3.className.replace(/\bcurRow\b/,'');
 			}
 		}
 	}

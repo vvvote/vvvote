@@ -330,11 +330,40 @@ input[type="range"]::-ms-fill-lower {
 	padding-bottom: 0em;
 }
 
+/*************************************************
+*
+* ConfigurableTally: Voting Phase 
+*
+***************************************************/
 div#divVoteQuestions {
 	
 }
 
-/** one motion group = Antragsgruppe **/
+.votingQuestionsTable {
+	border: 2px solid blue;
+}
+
+.tableHeader {
+	font-weight: bold;
+	font-size: 1.2em;
+}
+
+.unevenTableRow {
+	background-color: #EDECEC;
+	padding: 0.5em;
+}
+
+.evenTableRow {
+	background-color: white;
+	padding: 0.5em;
+}
+
+.curRow {
+	background-color: #DBEDF5 !important;
+}
+
+
+/** one motion group = Antragsgruppe = question **/
 div.voteQuestion {
 	background-color: lightblue;
 	padding-left: 1em;

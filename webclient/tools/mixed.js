@@ -464,7 +464,12 @@ function makeTableDOM(table){
 	var trNode = document.createElement('tr');
 	for (var colNo=0; colNo<table[0].length; colNo++) {
 		var tdNode = document.createElement('td');
-		tdNode.appendChild(document.createTextNode(table[0][colNo]));
+		if ('attrib' in table[0][colNo]) {
+			for (var aNo=0; aNo < table[0][colNo].attrib.length; aNo++ ) {
+				tdNode.setAttribute(table[0][colNo].attrib[aNo].name, table[0][colNo].attrib[aNo].value);
+			}
+		}
+		tdNode.appendChild(document.createTextNode(table[0][colNo].content));
 		trNode.appendChild(tdNode);
 	}
 	theadNode.appendChild(trNode);
