@@ -154,13 +154,8 @@ ConfigurableTally.getNewElectionData = function() {
 					"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
 					"abstentionAsNo": false,
 					"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
-				},
-				{
-					"name": "score",
-					"minScore": 0,
-					"maxScore": 3
 				}],
-				"findWinner": ["yesNo",	"score", "yesNoDiff", "random"],
+				"findWinner": ["yesNo"],
 				"options":
 					[
 							  { "optionID": 1, 
@@ -194,13 +189,8 @@ ConfigurableTally.getNewElectionData = function() {
 				"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
 				"abstentionAsNo": false,
 				"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
-			},
-			{
-				"name": "score",
-				"minScore": 0,
-				"maxScore": 3
 			}],
-			"findWinner": ["yesNo",	"score", "yesNoDiff", "random"],
+			"findWinner": ["yesNo"],
 			"options":
 				[
 							  { "optionID": 1, 
@@ -215,7 +205,7 @@ ConfigurableTally.getNewElectionData = function() {
 									  \n\n(4) Vor einer Abstimmung werden die Anträge angemessen vorgestellt und zu deren Inhalt eine für alle Teilnehmer zugängliche Debatte gefördert. Die Teilnahme an der Debatte und Abstimmung muss für die Mitglieder zumutbar und barrierefrei sein. Anträge werden nach gleichen Maßstäben behandelt. Mitglieder bzw. Teilnehmer werden rechtzeitig über mögliche Abstimmungstermine bzw. die Abstimmungen in Textform informiert.\
 									  \n\n(5) Die Teilnehmer haben gleiches Stimmrecht, das sie selbstständig und frei innerhalb des Abstimmungszeitraums ausüben. Abstimmungen außerhalb des Parteitags erfolgen entweder pseudonymisiert oder geheim. Bei pseudonymisierter Abstimmung kann jeder Teilnehmer die unverfälschte Erfassung seiner eigenen Stimme im Ergebnis überprüfen und nachweisen. Bei personellen Sachverhalten oder auf Antrag einer Minderheit muss die Abstimmung geheim erfolgen. In einer geheimen Abstimmung sind die einzelnen Schritte für jeden Teilnehmer ohne besondere Sachkenntnisse nachvollziehbar und die Stimmabgabe erfolgt nicht elektronisch. Die Manipulation einer Abstimmung oder die Veröffentlichung von Teilergebnissen vor Abstimmungsende sind ein schwerer Verstoß gegen die Ordnung der Partei.\
 									  \n\n(6) Das Nähere regelt die Entscheidsordnung, welche durch den Parteitag beschlossen wird und auch per Basisentscheid geändert werden kann.\"",
-									  "reasons": "Die Partei braucht dringend ein Verfahren, mit dem Entscheidungen auch zwischen Parteitagen getroffen werden können. Der Basisentscheid wurde auf Bundesebene bereits beschlossen. Erhoffter Vorteil des Basisentscheides ist eine große Beteiligung durch einfache Teilnahme und frühzeitig bekannte Abstimmungstermine.\
+								  "reasons": "Die Partei braucht dringend ein Verfahren, mit dem Entscheidungen auch zwischen Parteitagen getroffen werden können. Der Basisentscheid wurde auf Bundesebene bereits beschlossen. Erhoffter Vorteil des Basisentscheides ist eine große Beteiligung durch einfache Teilnahme und frühzeitig bekannte Abstimmungstermine.\
 										  \n\nDurch die Nutzung der gleichen Satzungsregelungen wie beim Bundesverband ergeben sich viele Synergien (Verifizierung, Termine, gleiche Software und Plattform, rechtliche Prüfung, Administration). Der Landesverband kann sich eine auf Landesebene angepasste Entscheidsordnung für die Details geben."
 							  },
 							  { "optionID": 2, 
@@ -224,14 +214,14 @@ ConfigurableTally.getNewElectionData = function() {
 								  "optionDesc": "Modul 2 (nur abzustimmen, wenn Modul 1 angenommen wurde)\
 									  \n\nNach Absatz 5 Satz 3 wird folgender Text eingefügt:\
 									  \n\n\"Statt einer pseudonymisierten Abstimmung kann auch eine anonyme, mit Hilfe von kryptographischen Verfahren nachvollziehbare, elektronische Abstimmung durchgeführt werden. Das Verfahren darf nur eingeführt werden, wenn es mindestens genauso manipulationssicher und kryptografisch nachvollziehbar ist wie das pseudonymisierte.\"",	
-									  "reasons": "Gegenüber der Regelung auf Bundesebene, die online nur pseudonymisierte Abstimmungen vorsieht, soll hier die Möglichkeit geschaffen werden, einen Schritt weiter zu gehen, so dass auch die Administratoren der Server die Stimmen den Abstimmenden nicht zuordnen können.\
+								  "reasons": "Gegenüber der Regelung auf Bundesebene, die online nur pseudonymisierte Abstimmungen vorsieht, soll hier die Möglichkeit geschaffen werden, einen Schritt weiter zu gehen, so dass auch die Administratoren der Server die Stimmen den Abstimmenden nicht zuordnen können.\
 										  \n\nDabei dürfen nur solche Verfahren eingesetzt werden, deren Nachvollziehbarkeit kryptografisch gesichert ist und die mindestens genau so manipulationssicher sind wie das vorgesehene pseudonymisierte Verfahren ist."
 							  },
 							  { "optionID": 3, 
 								  "optionTitle": "SÄA30: Modul 3: Auch Programmanträge im Basisentscheid zulassen",
 								  "optionDesc": "Paragraph 8 Absatz 2 der Satzung wird durch folgenden Text ersetzt:\
 									  \n\n\"Des weiteren können die Parteiprogramme mit einer 2/3-Mehrheit der abgegeben gültigen Stimmen eines Basisentscheids geändert werden.\"",
-									  "reasons": "Der bisherige § 8 Absatz 2 der Landessatzung führt dazu, dass Programmänderungen außerhalb von Parteitagen nur beschlossen werden können, wenn 2/3 aller Mitglieder schriftlich zustimmen (d.h. ca 4000 Ja-Stimmen). Das macht Programmentscheidungen außerhalb von Parteitagen praktisch unmöglich.\
+							      "reasons": "Der bisherige § 8 Absatz 2 der Landessatzung führt dazu, dass Programmänderungen außerhalb von Parteitagen nur beschlossen werden können, wenn 2/3 aller Mitglieder schriftlich zustimmen (d.h. ca 4000 Ja-Stimmen). Das macht Programmentscheidungen außerhalb von Parteitagen praktisch unmöglich.\
 										  \n\nDieses Modul sieht vor, dass der Basisentscheid auch zur Änderung der Parteiprogramme, jedoch nicht der Satzung eingesetzt werden kann. Ob dies grundsätzlich mit dem Parteiengesetz vereinbar ist, ist umstritten (siehe http://wiki.piratenpartei.de/Antrag:Bundesparteitag_2014.1/Antragsportal/SÄA004\""
 							  }],
 							  "references":[]
@@ -247,17 +237,10 @@ ConfigurableTally.getNewElectionData = function() {
 					"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
 					"abstentionAsNo": false,
 					"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
-				},
-				{
-					"name": "score",
-					"minScore": 0,
-					"maxScore": 3
 				}],
-				"findWinner": ["yesNo",	"score", "yesNoDiff", "random"],
+				"findWinner": ["yesNo"],
 				"options":
-					[
-
-				
+						[
 							  { "optionID": 1, 
 								  "optionTitle": "SÄA31: Modul 1: Antrag für eine SMV-NRW",
 								  "shortDesc": "Grundmodul (Modul 1): Einführung einer Ständigen Mitgliederversammlung (SMV) nach den Prinzipien von Liquid Democracy für Beschlüsse zu Stellungnahmen, Positionspapiere, Anfragen von Fraktionen und Programm",
@@ -908,8 +891,6 @@ ConfigurableTally.prototype.handleUserClickGetAllVotes = function (config_, onGo
 	this.config = config_;
 	this.onGotVotesObj    = onGotVotesObj;
 	this.onGotVotesMethod = onGotVotesMethod;
-
-
 	PublishOnlyTally.prototype.handleUserClickGetAllVotes.call(this, config_,onGotVotesObj, onGotVotesMethod); 
 };
 
@@ -946,9 +927,17 @@ ConfigurableTally.prototype.handleServerAnswerShowWinners = function (xml) {
 
 ConfigurableTally.prototype.getWinnersHtml = function (questionID) {
 	var html = "Bei Antragrguppe " + questionID;
-	if (this.winners[questionID].length > 0)
-		html = html + ' wurde <a href="javascript: page.tally.showOptionPopUp(' + questionID + ', ' + this.winners[questionID] + ');">Antrag ' + this.winners[questionID] + '</a> angenommen. ';
-	else html = html + ' hat kein Antrag die erforderliche Mehrheit erreicht. ';
+	if (this.winners[questionID].length == 0) html = html + ' hat kein Antrag die erforderliche Mehrheit erreicht. ';
+	if (this.winners[questionID].length == 1) html = html + ' wurde <a href="javascript: page.tally.showOptionPopUp(' + questionID + ', ' + this.winners[questionID][0] + ');">Antrag ' + this.winners[questionID] + '</a> angenommen. ';
+	if (this.winners[questionID].length  > 1) {
+		html = html + ' wurden ';
+		for (var i=0; i<this.winners[questionID].length; i++) {
+			html = html + '<a href="javascript: page.tally.showOptionPopUp(' + questionID + ', ' + this.winners[questionID][i] + ');">Antrag ' + this.winners[questionID][i] + '</a>';
+			if (i+2 == this.winners[questionID].length) html = html + ' und ';
+			if (i+2 <  this.winners[questionID].length) html = html + ', ';
+		}
+		html = html + '	angenommen. ';
+	}
 	return html;
 };
 
@@ -1084,7 +1073,7 @@ ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
 		for (var i=0; i<freq.length; i++) {
 			htmlcode2 = htmlcode2 + '<tr>';
 			var winnerOption = '';
-			if (curQuestion.options[i].optionID == this.winners[curQuestion.questionID]) winnerOption = ' winnerOption'; 
+			if (this.winners[curQuestion.questionID].indexOf(curQuestion.options[i].optionID) >= 0) winnerOption = ' winnerOption'; 
 			htmlcode2 = htmlcode2 + '<td class="option' + winnerOption + '">' + 
 			'<a href="javascript: page.tally.showOptionPopUp(' + curQuestion.questionID + ', ' + curQuestion.options[i].optionID + ');">Antrag ' + curQuestion.options[i].optionID + '</a>' + 
 			'</td>'; 
