@@ -685,11 +685,13 @@ function hidePopup() {
 }
 
 function unhidePopup() {
-	document.getElementById('modalbg').className='modalbg';
-	document.getElementById('modalbg').style="visibility:visible;";
-	document.getElementById('popup').className='modal';
-	document.getElementById('popup').style="visibility:visible;";
-	
+	var el = document.getElementById('modalbg');
+	if (el != null) {
+		document.getElementById('modalbg').className='modalbg';
+		document.getElementById('modalbg').style="visibility:visible;";
+		document.getElementById('popup').className='modal';
+		document.getElementById('popup').style="visibility:visible;";
+	}
 }
 
 
