@@ -87,6 +87,7 @@ function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, 
 		myXmlSend_.proxy = proxy;
 		myXmlSend_.method = method;
 		myXmlSend_.log = log;
+		unhidePopup();
 	}
 	var xml2 = new XMLHttpRequest();
 	xml2.onload = function() { myXmlSend_.callbackFunction.call(myXmlSend_.callbackObject, xml2, myXmlSend_.url); };
@@ -120,6 +121,7 @@ function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, 
 		errorDiv.style.display = ""; // this causes the div to be displayed (set to "none" to hide it)
 		// setTimeout(window.scrollTo(0, 0), 1000); //wait till rendering is done
 		window.scrollTo(0, 0);
+		hidePopup();
 		// var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
 
 //		diagnosisControlDiv.innerHTML = '<button id="retry" name="retry" onclick="myXmlSend_(url, data, callbackObject, callbackFunction)">erneut versuchen</button>';
@@ -680,6 +682,14 @@ function hidePopup() {
 	document.getElementById('modalbg').style="visibility:hidden;";
 	document.getElementById('popup').className='';
 	document.getElementById('popup').style="visibility:hidden;";
+}
+
+function unhidePopup() {
+	document.getElementById('modalbg').className='modalbg';
+	document.getElementById('modalbg').style="visibility:visible;";
+	document.getElementById('popup').className='modal';
+	document.getElementById('popup').style="visibility:visible;";
+	
 }
 
 
