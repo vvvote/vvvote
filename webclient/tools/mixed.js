@@ -678,10 +678,13 @@ function showPopup(fragm) {
 }
 
 function hidePopup() {
-	document.getElementById('modalbg').className='';
-	document.getElementById('modalbg').style="visibility:hidden;";
-	document.getElementById('popup').className='';
-	document.getElementById('popup').style="visibility:hidden;";
+	var el = document.getElementById('modalbg');
+	if (el != null) {
+		document.getElementById('modalbg').className='';
+		document.getElementById('modalbg').style="visibility:hidden;";
+		document.getElementById('popup').className='';
+		document.getElementById('popup').style="visibility:hidden;";
+	}
 }
 
 function unhidePopup() {
