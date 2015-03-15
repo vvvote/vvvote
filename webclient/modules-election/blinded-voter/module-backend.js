@@ -16,6 +16,7 @@ var BlindedVoterPermObtainer = function(mainElectionId_, questions_, credentials
 		this.config.serverSeq[s] = s;
 	}
 	if(config_.shuffleServerSeq) this.config.serverSeq = shuffleArray(this.config.serverSeq);
+	this.config.serverSeq.reverse(); // if not shuffled: Ask the second server for permission first, because this is more troublesome (CORS and NoScript). If that works, the first server hopefully also works. THis is
 	this.mainElectionId = mainElectionId_;
 
 	this.questions = [];
