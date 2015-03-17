@@ -164,10 +164,10 @@ OAuth2.getNewElectionData = function () {
 OAuth2.prototype.onAuthFailed = function(curServer) {
 	var xthserver = ArrayIndexOf(ClientConfig.serverList, 'name', curServer.name);
 	var ss = 1; 
-	if (xthserver > 0) {
-		// pa = Math.min(xthserver, election.pServerSeq[xthserver]); // in case "Server 2"-auth was failing first, take the user to "server 1", because this one was not tried.
+	/* if (xthserver > 0) {
+		// var pa = Math.min(xthserver, election.pServerSeq[xthserver]); // in case "Server 2"-auth was failing first, take the user to "server 1", because this one was not tried.
 		var pa = xthserver;
-		ss = pa + 2;
-	}
+		ss = pa + 1;
+	} */
 	setSubStep(ss);
 };
