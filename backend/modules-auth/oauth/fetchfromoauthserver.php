@@ -90,22 +90,29 @@ class FetchFromOAuth2Server {
 	
 	
 	function sendConfirmMail($electionId) {
-		// TODO generate a 
-		$msgId = $this->fetch($this->curOAuth2Config['sendmail_endp']);
-		if ($msgId['code'] != 200) return false; // 404: imidiate fatal error, e.g. template missing, variable missing, key for signature missing
-		$ret = $msgId['result']['msgid'];
-		return $msgId;
+		$content = str_replace('$electionId', $electionId, $this->curOAuth2Config['mail_content']);
+		$msg = json_encode(array(
+				'identity' => $this->curOAuth2Config['mail_identity'],
+ 				'sign'     => $this->curOAuth2Config['mail_sign_it'],
+				'content'  => $content
+						));
+		$msgId = $this->post($this->curOAuth2Config['sendmail_endp'], $msg); // this could be the easiest way to implement Basic auth: this->curOAuth2Config['client_id'] . ':' . $this->curOAuth2Config['client_secret'] . '@' .
+		// print_r($msgId); // for debugging
+		//if ($msgId['code'] != 200) return false; // 404: imidiate fatal error, e.g. template missing, variable missing, key for signature missing
+		if (! isset($msgId['result']['status'])) return false;
+		if ($msgId['result']['status'] === 'sent') return true;
+		return false;
 	}
 	
 	function fetch($endpoint) {
 		return $this->client->fetch($endpoint, Array(), nsOAuth2\Client::HTTP_METHOD_GET);
 	}
 	
-	/*
-	function fetch($endpoint) {
-		return $this->client->fetch($endpoint, Array(), nsOAuth2\Client::HTTP_METHOD_POST);
+	
+	function post($endpoint, $contentArray) {
+		return $this->client->fetch($endpoint, $contentArray, nsOAuth2\Client::HTTP_METHOD_POST, array('Content-Type' => 'application/json'), nsOAuth2\Client::HTTP_FORM_CONTENT_TYPE_APPLICATION);
 	}
-	*/
+	
 	
 }
 

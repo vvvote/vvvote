@@ -226,6 +226,7 @@ BlindedVoterElection.prototype.permFileLoaded = function (ev) {
 BlindedVoterElection.prototype.importPermission = function (returnEnvelope) {
 	this.config = returnEnvelope.config;
 	this.permission = returnEnvelope.permission;
+	this.returnEnvelopeLStorageId = returnEnvelope.lStorage.id;
 	var mainElectionIdMismatch = false;
 	for (var q=0; q<this.permission.length; q++) {
 		this.permission[q].transm.signed = JSON.parse(this.permission[q].transm.str);
@@ -241,7 +242,7 @@ BlindedVoterElection.prototype.importPermission = function (returnEnvelope) {
 	//this.config.electionId = this.permission.transm.signed.electionId;
 	var me = this;
 	this.permissionOk = !mainElectionIdMismatch;
-	page.onPermLoaded(this.permissionOk, me, this.config); // call back --> enables vote button or loads ballot
+	page.onPermLoaded(this.permissionOk, me, this.config, this.returnEnvelopeLStorageId); // call back --> enables vote button or loads ballot
 
 };
 

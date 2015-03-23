@@ -248,12 +248,13 @@ class BlindedVoter extends Blinder {
 
 		$ret = array('questions' => $signedBallots);
 		$tmp = array('voterId' => $voterId, 'signedBallots' => $signedBallots);
+			// TODO think about: save all signed ballots not only the ones where this server is the last signer?
 		$this->db->saveSignedBallots($this->electionId, $voterId, $tmp);
 		if (count($ret['questions'][0]['ballots'][0]['sigs']) >= $this->crypt->getNumServers() ) {
 			$ret['cmd'] = 'savePermission';
-			// TODO think about: save all signed ballots not only the ones where this server is the last signer?
 			// up to now it is only used for tally.js to show who requested a Wahlschein
 			// maybe it should be used to avoid multi-threading problems
+			$this->auth->onPermissionSend($this->electionId, $voterId);
 		} else {
 			$ret['cmd'] = 'reqSigsNextpServer';
 		}

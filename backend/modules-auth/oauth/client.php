@@ -479,9 +479,17 @@ class Client
         if (!empty($this->curl_options)) {
             curl_setopt_array($ch, $this->curl_options);
         }
+        // curl_setopt($ch, CURLINFO_HEADER_OUT, true); // ich: for debugging
+        // curl_setopt($ch, CURLOPT_VERBOSE, 1); // ich: for debugging
+        // $fp = fopen(dirname(__FILE__) . '/log.txt', 'w'); // ich: for debugging
+        // curl_setopt($ch, CURLOPT_STDERR, $fp); // ich: for debugging
         $result = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        // if (strpos($url, 'mail') >0) {
+        //	$test = curl_getinfo($ch, CURLINFO_HEADER_OUT);  // ich debug
+        //	echo $test;
+        // }
         if ($curl_error = curl_error($ch)) {
             throw new Exception($curl_error, Exception::CURL_ERROR);
         } else {

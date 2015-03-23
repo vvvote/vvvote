@@ -68,7 +68,7 @@ var oAuth2ConfigBEOBayern = {
 		serverDesc: 	'Basisentscheid Online der Piraten (Bayerischer Testserver)',
 		authorizeUri: 	'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/?', // must end with ?
 		loginUri:		'https://beoauth.piratenpartei-bayern.de/',
-		scope: 			'member+profile+unique',
+		scope: 			'member+profile+unique+mail',
 		redirectUri: 	redirectUriTMP,
 		clientId: 		clientIdTMP
 };

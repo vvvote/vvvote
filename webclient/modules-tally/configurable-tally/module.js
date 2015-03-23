@@ -18,9 +18,9 @@ ConfigurableTally.GetEnterQuestionsHtml = function() {
 
 
 ConfigurableTally.getNewElectionData = function() {
-	ret =  
+	var ret =  
 	{		"tally": "configurableTally",
-			"questions": [{
+			"questions": [/*{
 				"questionID": 1,
 				"questionWording": "Drehen wir uns im Kreis? (zweistufig)",
 				"scheme": [{
@@ -98,13 +98,13 @@ ConfigurableTally.getNewElectionData = function() {
 					"referenceName": "Bilder zur Motivation",
 					"referenceAddress": "https://startpage.com/do/search?cat=pics&cmd=process_search&language=deutsch&query=cat+content"
 				}]
-			},
+			}, */
 			{
-				"questionID": 3,
-				"questionWording":"SÄA18: Ständige Mitgliederversammlung ablehnen" +
+				"questionID": 103,
+				"questionWording":"SÄA18: Ständige Mitgliederversammlung ablehnen" /*+
 				"\n* Hauptmodul: Ständige Mitgliederversammlung ablehnen" +
 				"\n* Modul 1: keine Bereitstellung für Infrastruktur für die SMV" +
-				"\n* Modul 2: Entwicklung auf Bundesebene abwarten",
+				"\n* Modul 2: Entwicklung auf Bundesebene abwarten" */,
 				"scheme": [{
 					"name": "yesNo",
 					"abstention": true,
@@ -143,11 +143,11 @@ ConfigurableTally.getNewElectionData = function() {
 							  ]
 			},
 			{
-				"questionID": 4,
-				"questionWording":"SÄA19: Ständige Mitgliederversammlung (SMV) nur auf Totholz" +
+				"questionID": 104,
+				"questionWording":"SÄA19: Ständige Mitgliederversammlung (SMV) nur auf Totholz" /*+
 				"\n* Totholz SMV" +
 				"\n* Modul 1: Änderung der Entscheidsordnung durch den Basisentscheid" +
-				"\n* Modul 2: An die Arbeit",
+				"\n* Modul 2: An die Arbeit" */ ,
 				"scheme": [{
 					"name": "yesNo",
 					"abstention": true,
@@ -178,11 +178,11 @@ ConfigurableTally.getNewElectionData = function() {
 					],
 				"references":[]
 			}, {
-			"questionID": 5,
-			"questionWording":"SÄA30: Basisentscheid Online (BEO) einführen" +
+			"questionID": 105,
+			"questionWording":"SÄA30: Basisentscheid Online (BEO) einführen" /* +
 			"\n* Modul 1: Basisentscheid Online (BEO) einführen" +
 			"\n* Modul 2: auch anonyme, nachvollziehbare Online-Abstimmung zulassen" +
-			"\n* Modul 3: Programmänderungen im BEO mit 2/3-Mehrheit der abgegebenen Stimmen",
+			"\n* Modul 3: Programmänderungen im BEO mit 2/3-Mehrheit der abgegebenen Stimmen" */ ,
 			"scheme": [{
 				"name": "yesNo",
 				"abstention": true,
@@ -226,11 +226,11 @@ ConfigurableTally.getNewElectionData = function() {
 							  }],
 							  "references":[]
 			},{
-				"questionID": 6,
-				"questionWording":"SÄA31: Ständige Mitgliederversammlung (SMV) einführen" +
+				"questionID": 106,
+				"questionWording":"SÄA31: Ständige Mitgliederversammlung (SMV) einführen" /*+
 				"\n* Modul 1: Antrag für eine SMV-NRW" +
 				"\n* Modul 2: auch anonyme, nachvollziehbare Online-Abstimmung zulassen" +
-				"\n* Modul 3: Programmänderungen im BEO mit 2/3-Mehrheit der abgegebenen Stimmen",
+				"\n* Modul 3: Programmänderungen im BEO mit 2/3-Mehrheit der abgegebenen Stimmen" */,
 				"scheme": [{
 					"name": "yesNo",
 					"abstention": true,
@@ -530,10 +530,11 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 	 */
 };
 
-ConfigurableTally.prototype.onPermissionLoaded = function() {
+ConfigurableTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorageId_) {
+	this.returnEnvelopeLStorageId = returnEnvelopeLStorageId_;
 	this.collapseAllQuestions();
 	//var configHash = GetElectionConfig.generateConfigHash(this.config);
-	var tmp = localStorage.getItem('sentQNo' + returnEnvelope.lStorage.id);
+	var tmp = localStorage.getItem('sentQNo' + this.returnEnvelopeLStorageId);
 	if (tmp != null) {
 		this.sentQNo = JSON.parse(tmp);
 		for (var q=0; q<this.sentQNo.length; q++) {
@@ -740,7 +741,7 @@ ConfigurableTally.prototype.handleServerAnswerStoreVote = function (xml) {
 			this.disableQuestion(this.qNo, this.vote);
 			if (!Array.isArray(this.sentQNo)) this.sentQNo = new Array();
 			this.sentQNo.push(this.qNo);
-			localStorage.setItem('sentQNo'+ returnEnvelope.lStorage.id, JSON.stringify(this.sentQNo));
+			localStorage.setItem('sentQNo'+ this.returnEnvelopeLStorageId, JSON.stringify(this.sentQNo));
 			break;
 		case 'error':
 			alert('Der Server hat die Stimme nicht akzeptiert. Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
