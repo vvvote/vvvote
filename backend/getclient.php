@@ -26,7 +26,8 @@ $includeJsFiles = Array(
 		'config/config.js',
 		'getelectionconfig.js',
 		'listoferrors.js',
-
+		'tools/ua-parser.js',
+		
 		'modules-auth/user-passw-list/module.js',
 		'modules-auth/shared-passw/module.js',
 		'modules-auth/oauth2/module.js',
@@ -217,9 +218,24 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und
 	var getResultPage   = new GetResultPage();
 	
 	var page = votePage;
+		
+	function checkBrowser() {
+		var parser = new UAParser(); 
+		var browser = parser.getBrowser();
+		if (   (browser.name.toUpperCase().indexOf('SAFARI') >= 0 && browser.major <  7) // safari 5: everything is working but saving the return envelope 
+			|| (browser.name.toUpperCase().indexOf('FIREFOX')>= 0 && browser.major < 36)		
+			|| (browser.name.toUpperCase().indexOf('CHROME') >= 0 && browser.major < 40)		
+			|| (browser.name.toUpperCase().indexOf('OPERA')  >= 0 && browser.major < 11)		
+			|| (browser.name.toUpperCase().indexOf('IE')     >= 0 && browser.major < 11)		
+		   ) {
+			showPopup(html2Fragm('Ihr Browser wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 36, Chrome ab Version 40 oder den InternetExplorer ab Version 11.'));
+		}
+	}
+		
 	
 	function onWebsiteLoad() {
 		page.display();
+		checkBrowser();
 		if (location.search.length > 1 && typeof firstload == 'undefined') {
 			firstload = false;
 	    	 page = votePage; // TODO read phase from config and

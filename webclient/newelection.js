@@ -11,7 +11,7 @@ function NewElectionPage() {
 		OauthHtml += '<label for="' + ClientConfig.oAuth2Config[curroauthconfig].serverId +'">' + ClientConfig.oAuth2Config[curroauthconfig].serverDesc + '</label></input>';
 	}
 	var testHtmlml = 
-		'<br><br><button onclick="var aniHtml = getWorkingAnimationHtml(); showPopup(html2Fragm(\'<h1>Erstelle Wahlschein</h1>\' + aniHtml));">Test</button>';
+		'<br><br><button onclick="var parser = new UAParser(); var browser = parser.getBrowser(); alert(browser.major + browser.name + browser.version);">Test</button>';
 	var test2Htmlml = 
 		'<a href="https://addons.mozilla.org/firefox/downloads/latest/325576/addon-325576-latest.xpi?src=search" data-hash="sha256:96e26869e85c9fb40202078eae55218b477957ced6cfb997b07523ec2a99ffb6">Zu FireFox hinzuf&uuml;gen</a>';
 	this.mainContent = newElectionHtmlPre + OauthHtml + newElectionHtmlPost + testHtmlml; // test2Htmlml; // newElectionHtmlPre and newElectionHtmlPost defined in index.html as heredoc replacement
@@ -90,7 +90,7 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 				// '<p>Der Link zur Wahl ist: ' + data.configUrl + '</p>';
 				this.setStep(2);
 				Page.loadMainContent(mc);
-				eleUrl = document.getElementById('electionUrl');
+				var eleUrl = document.getElementById('electionUrl');
 				eleUrl.select();
 			}
 			break;

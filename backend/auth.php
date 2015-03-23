@@ -71,6 +71,15 @@ abstract class Auth {
 		
 	}
 	
+	/**
+	 * Some authenticitaction methods provide a means to send a confirmation mail to the voter
+	 * 
+	 */
+	
+	function onPermissionSend($electionId, $voterId) {
+
+	}
+	
 }
 
 

@@ -46,13 +46,13 @@ class OAuth2 extends Auth {
 	function addCredentials()  {
 
 	}
-
+	
 	/**
 	 * check the credentials sent from the voter
 	 * @param array $credentials: ['secret'] ['identifier']
 	 */
 	function checkCredentials($credentials, $electionId) {
-		global $serverkey, $oauthConfig; // TODO move this to __construct?
+		global $oauthConfig; // TODO move this to __construct?
 		// load necessary data
 		  //$configHash = $this->electionsDB->electionIdToConfigHash($electionId);
 		$oAuthServerId = $this->db->getOAuthServerIdByElectionId($electionId); // $Ids['serverId'] und $Ids['listId']
@@ -210,5 +210,20 @@ class OAuth2 extends Auth {
 		return $isInVoterList;
 	}
 */
+	
+	function onPermissionSend($electionId, $voterId) {
+		global $oauthConfig; // TODO move this to __construct?
+		// load necessary data
+		  //$configHash = $this->electionsDB->electionIdToConfigHash($electionId);
+		$oAuthServerId = $this->db->getOAuthServerIdByElectionId($electionId); // $Ids['serverId'] und $Ids['listId']
+
+		// verify transaction credentials
+		$webclientAuthFromDb = $this->db->loadAuthDataFromVoterId($electionId, $voterId);
+		if (! isset($webclientAuthFromDb['authInfos'])) return false; // TODO throw error?
+
+		// connect to OAuth2 server
+		$this->oAuthConnection = new FetchFromOAuth2Server($oAuthServerId, $webclientAuthFromDb['authInfos']);
+		$this->oAuthConnection->sendConfirmMail($electionId);
+	}
 }
 ?>

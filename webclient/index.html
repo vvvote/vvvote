@@ -22,7 +22,7 @@
 <script src="config/config.js"></script>
 <script src="getelectionconfig.js"></script>
 <script src="listoferrors.js"></script>
-
+<script src="tools/ua-parser.js"></script>
 
 <script>
 /**
@@ -190,8 +190,22 @@ Ihr Computer Ã¶ffnet den Umschlag (d.h. entschlÃ¼sselt die Wahlzettelnummer)
 	
 	var page = votePage;
 	
+	function checkBrowser() {
+		var parser = new UAParser(); 
+		var browser = parser.getBrowser();
+		if (   (browser.name.toUpperCase().indexOf('SAFARI') >= 0 && browser.major <  7) // safari 5: everything is working but saving the return envelope 
+			|| (browser.name.toUpperCase().indexOf('FIREFOX')>= 0 && browser.major < 36)		
+			|| (browser.name.toUpperCase().indexOf('CHROME') >= 0 && browser.major < 40)		
+			|| (browser.name.toUpperCase().indexOf('OPERA')  >= 0 && browser.major < 11)		
+			|| (browser.name.toUpperCase().indexOf('IE')     >= 0 && browser.major < 11)		
+		   ) {
+			showPopup(html2Fragm('Ihr Browser wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 36, Chrome ab Version 40 oder den InternetExplorer ab Version 11.'));
+		}
+	}
+	
 	function onWebsiteLoad() {
 		page.display();
+		checkBrowser();
 		if (location.search.length > 1 && typeof firstload == 'undefined' && location.search.indexOf('confighash') >= 0) {
 			firstload = false;
 	    	 page = votePage; // TODO read phase from config and

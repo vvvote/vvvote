@@ -101,6 +101,17 @@ class DbOAuth2 extends DbBase {
 		if ($fromDB === false || count($fromDB) < 1) return Array();
 		return $fromDB[count($fromDB)-1]; // TODO sort by startTime
 	}
+	
+	function loadAuthDataFromVoterId($electionId, $voterId) {
+		$fromDB = $this->load(array(
+				'configHash' => $electionId,
+				'auid'       => $voterId
+		), 'oa_voters', array('auid', 'username', 'authInfos', 'startTime', 'firstUse'));
+		// TODO set firstUse auf 0 for false
+		if ($fromDB === false || count($fromDB) < 1) return Array();
+		return $fromDB[count($fromDB)-1]; // TODO sort by startTime
+	}
+	
 
 }
 

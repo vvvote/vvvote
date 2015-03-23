@@ -139,7 +139,7 @@ VotePage.prototype.onPermGenerated = function() {
 
 
 
-VotePage.prototype.onPermLoaded = function(permok, blindingobj, config) {
+VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEnvelopeLStorageId) {
 	this.blinder = blindingobj;
 	if (permok) {
 		switch (config.tally) {
@@ -154,7 +154,7 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config) {
 		}
 		var fragm = this.tally.getMainContentFragm(config);
 		Page.loadMainContentFragm(fragm);
-		this.tally.onPermissionLoaded(); 
+		this.tally.onPermissionLoaded(returnEnvelopeLStorageId); 
 //		var element = document.getElementById('sendvote');
 //		element.disabled = !permok;
 		this.setStep(3);
