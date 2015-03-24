@@ -28,6 +28,7 @@ NewElectionPage.prototype.setAuthMethod = function(method, authServerId) {
 	case 'userPasswList':	this.authModule = UserPasswList;   	break;
 	case 'OAuth2':		    this.authModule = OAuth2;       	break;
 	case 'sharedAuth':	    this.authModule = SharedAuth;      	break;
+	case 'externalToken':   this.authModule = ExternalTokenAuth;break;
 	default:		alert('Program error 8769867'); 			break;
 	}
 	var html = this.authModule.getNewElectionHtml(authServerId);

@@ -22,7 +22,9 @@ if (isset($HTTP_RAW_POST_DATA)) {
 if (isset($_GET) && isset($_GET['confighash']) ) {
 	$hash = $_GET['confighash'];
 	if (! isset($_GET['api'])) {
-		header('Location: ' . $webclientUrlbase . '/index.html?confighash=' . $hash, true, 301);
+		$token = '';
+		if (isset($_GET['token'])) $token = '&token=' . $_GET['token'];
+		header('Location: ' . $webclientUrlbase . '/index.html?confighash=' . $hash . $token, true, 301);
 		die();
 	}
 }
