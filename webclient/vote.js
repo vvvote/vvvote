@@ -99,7 +99,10 @@ VotePage.prototype.startStep2 = function (config) {
 		mc = mc + OAuth2.getMainContent(config);
 		this.authModule = new OAuth2(config.authConfig);
 		break;
-		
+	case 'externalToken':
+		mc = mc + ExternalTokenAuth.getMainContent(config);
+		this.authModule = new ExternalTokenAuth(); 
+		break;
 	default:
 		alert('The election requieres authorisation module >' + config.auth + "< which is not supported by this client.\nUse a compatible client.");
 	}

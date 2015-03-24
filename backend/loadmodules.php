@@ -23,6 +23,7 @@ require_once 'modules-election/blindedvoter/election.php';
 require_once 'modules-auth/user-passw-list/auth.php';
 require_once 'modules-auth/shared-passw/auth.php';
 require_once 'modules-auth/oauth/auth.php';
+require_once 'modules-auth/external-token/auth.php';
 require_once 'modules-tally/publishonly/tally.php';
 require_once 'modules-tally/configurable-tally/tally.php';
 
@@ -94,6 +95,7 @@ class LoadModules {
 			case 'sharedPassw':	$auth = new SharedPasswAuth($dbInfos); break;
 			case 'oAuth2': 		$auth = new OAuth2($dbInfos); break;
 			case 'sharedAuth':  $auth = new SharedAuth($dbInfos); break;
+			case 'externalToken': $auth = new ExternalTokenAuth($dbInfos); break;
 			default: 			WrongRequestException::throwException(7030, 'auth module not supported (supported: userPassw, sharedPassw, oAuth2, sharedAuth)', "auth module requested: " . $elconfig['auth']);
 			break;
 		}

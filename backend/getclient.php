@@ -31,6 +31,7 @@ $includeJsFiles = Array(
 		'modules-auth/user-passw-list/module.js',
 		'modules-auth/shared-passw/module.js',
 		'modules-auth/oauth2/module.js',
+		'modules-auth/external-token/module.js',
 		'modules-election/blinded-voter/module.js',
 		'modules-election/blinded-voter/module-backend.js',
 		'modules-tally/publish-only/module.js',
@@ -178,7 +179,9 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und
 		<legend>Autorisierungsmethode</legend>
 		<input type="radio" onclick="page.setAuthMethod('sharedPassw', null);"   name="authMethod" id="sharedPassw">
 			<label for="sharedPassw">Abstimmungspasswort</label>
-
+		<input type="radio" onclick="page.setAuthMethod('externalToken', null);"  name="authMethod" id="externalToken">
+			<label for="externalToken">Externe Tokenabfrage</label>
+		
  <!---   	<input type="radio" onclick="page.setAuthMethod('userPasswList', null);" name="authMethod" id="userPasswList">
 			<label for="userPasswList">Liste Benuzername und Passwort hochladen</label></input>
 --->

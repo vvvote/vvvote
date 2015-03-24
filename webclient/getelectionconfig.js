@@ -50,7 +50,7 @@ GetElectionConfig.prototype = {
 					if (!query || !query.confighash) throw new UserInputError(1000, "The given election URL is not in the expected format (missing confighash=)", this.url);
 					var tmp = ClientConfig.electionConfigUrl + '?confighash=' + query.confighash;
 					if (tmp !== this.url) this.url = tmp;
-					else new UserInputError(1020, "The election configuration could not be loaded from the privded URL", this.url);
+					else new UserInputError(1020, "The election configuration could not be loaded from the provided URL", this.url);
 					this.reqestElectionConfig();
 				} else if (e instanceof MyException) { 
 					e.alert();

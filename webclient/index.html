@@ -117,6 +117,8 @@ Ihr Computer Ã¶ffnet den Umschlag (d.h. entschlÃ¼sselt die Wahlzettelnummer)
 		<legend>Autorisierungsmethode</legend>
 		<input type="radio" onclick="page.setAuthMethod('sharedPassw', null);"   name="authMethod" id="sharedPassw">
 			<label for="sharedPassw">Abstimmungspasswort</label>
+		<input type="radio" onclick="page.setAuthMethod('externalToken', null);"  name="authMethod" id="externalToken">
+			<label for="externalToken">Externe Tokenabfrage</label>
 
  <!---   	<input type="radio" onclick="page.setAuthMethod('userPasswList', null);" name="authMethod" id="userPasswList">
 			<label for="userPasswList">Liste Benuzername und Passwort hochladen</label></input>
@@ -137,6 +139,7 @@ Ihr Computer Ã¶ffnet den Umschlag (d.h. entschlÃ¼sselt die Wahlzettelnummer)
 <script src="modules-auth/user-passw-list/module.js"></script>
 <script src="modules-auth/shared-passw/module.js"></script>
 <script src="modules-auth/oauth2/module.js"></script>
+<script src="modules-auth/external-token/module.js"></script>
 <script src="modules-election/blinded-voter/module.js"></script>
 <script src="modules-election/blinded-voter/module-backend.js"></script>
 <script src="modules-tally/publish-only/module.js"></script>
