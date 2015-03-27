@@ -44,6 +44,12 @@ if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
 			'client_secret' => 'your_client_secret',
 			'redirect_uri'  => $configUrlBase . '/modules-auth/oauth/callback.php',
 			// 	'redirect_uri'  => 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php',
+			'mail_identity' => 'voting', // this is used for the sendmail_endp and determines which sender will be used for the mail 
+			'mail_sign_it'  => true,     // wheather the mail should be signed by the id server 
+			'mail_content'	=> array(    // $electionId will be replaced by the electionId
+					'subject' => 'Wahlschein erstellt',
+					'body'    => "Hallo!\r\n\r\nSie haben für die Abstimmung >" . '$electionId' . "< einen Wahlschein erstellt.\r\nFalls dies nicht zutreffen sollte, wenden Sie sich bitte umgehend an einen Abstimmungsverantwortlichen.\r\n\r\nFreundliche Grüße\r\nDas Wahlteam\r\n"
+					),
 			
 			'authorization_endp'    => 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/',
 			'token_endp'            => 'https://beoauth.piratenpartei-bayern.de/oauth2/token/',
