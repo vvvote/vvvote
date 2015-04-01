@@ -44,9 +44,10 @@ ExternalTokenAuth.getNewElectionHtml = function () {
 ExternalTokenAuth.getNewElectionData = function (serverId) {
 	var ret = {};
 	ret.auth = 'externalToken'; 
-	ret.authData = {'checkTokenUrl': 'http://www.webhod.ra/vvvote2/test/externaltoken.html'};
-//	var element = document.getElementById('givenPassword');
+//	var element = document.getElementById('checkTokenUrl');
 //	ret.authData.sharedPassw = element.value;
+//	ret.authData = {'checkTokenUrl': 'http://www.webhod.ra/vvvote2/test/externaltoken.html'};
+	ret.authData = {'configId': 'basisentscheid_offen'};
 	return ret;
 };
 

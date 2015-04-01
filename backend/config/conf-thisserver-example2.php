@@ -45,7 +45,7 @@ $oauthBEObayern = array(
 			'mail_sign_it'  => true,     // wheather the mail should be signed by the id server 
 			'mail_content'	=> array(    // $electionId will be replaced by the electionId
 					'subject' => 'Wahlschein erstellt',
-					'body'    => "Hallo!\r\n\r\nSie haben für die Abstimmung >" . '$electionId' . "< einen Wahlschein erstellt.\r\nFalls dies nicht zutreffen sollte, wenden Sie sich bitte umgehend an einen Abstimmungsverantwortlichen.\r\n\r\nFreundliche Grüße\r\nDas Wahlteam\r\n"
+					'body'    => "Hallo!\r\n\r\nSie haben fï¿½r die Abstimmung >" . '$electionId' . "< einen Wahlschein erstellt.\r\nFalls dies nicht zutreffen sollte, wenden Sie sich bitte umgehend an einen Abstimmungsverantwortlichen.\r\n\r\nFreundliche Grï¿½ï¿½e\r\nDas Wahlteam\r\n"
 					),
 			
 			'authorization_endp'    => 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/',
@@ -57,6 +57,14 @@ $oauthBEObayern = array(
 			'sendmail_endp'			=> 'https://beoauth.piratenpartei-bayern.de/api/v1/user/mails/'
 );
 $oauthConfig = array($oauthBEObayern['serverId'] => $oauthBEObayern);
+
+$externalTokenConfig = array(
+		array(
+				'configId'         => 'basisentscheid_offen', // this is used to identify the correct config and specified in the newElection.php call
+				'checkTokenUrl'    => 'https://basisentscheid.piratenpartei-bayern.de/offen/vvvote_check_token.php', // URL which is used to check if the token is valid and the correspondig user allowed to vote
+				'verifierPassw' => 'mysecret' // password needed to authorize the check token request
+		)
+);
 
 
 ?>
