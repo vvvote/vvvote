@@ -24,7 +24,7 @@ abstract class Auth {
 	 * @param unknown $authData
 	 */
 	function setup($electionId, $authData) {
-		
+		$this->authConfig = $authData;
 	}
 	
 	/**

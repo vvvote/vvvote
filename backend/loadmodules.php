@@ -91,10 +91,10 @@ class LoadModules {
 	static function laodAuthModule($name) {
 		global $dbInfos;
 		switch ($name) {
-			case 'userPassw': 	$auth = new UserPasswAuth($dbInfos); break;
-			case 'sharedPassw':	$auth = new SharedPasswAuth($dbInfos); break;
-			case 'oAuth2': 		$auth = new OAuth2($dbInfos); break;
-			case 'sharedAuth':  $auth = new SharedAuth($dbInfos); break;
+			case 'userPassw': 	  $auth = new UserPasswAuth($dbInfos); break;
+			case 'sharedPassw':	  $auth = new SharedPasswAuth($dbInfos); break;
+			case 'oAuth2': 	      $auth = new OAuth2($dbInfos); break;
+			case 'sharedAuth':    $auth = new SharedAuth($dbInfos); break;
 			case 'externalToken': $auth = new ExternalTokenAuth($dbInfos); break;
 			default: 			WrongRequestException::throwException(7030, 'auth module not supported (supported: userPassw, sharedPassw, oAuth2, sharedAuth)', "auth module requested: " . $elconfig['auth']);
 			break;
