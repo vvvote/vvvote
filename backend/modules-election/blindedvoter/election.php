@@ -297,7 +297,8 @@ class BlindedVoter extends Blinder {
 		if ($voterReq['electionId'] != $this->electionId) 	WrongRequestException::throwException(210, 'Error: electionID is wrong', "expected electionID: $this->electionId, received electionID in ballot $i: " . $voterReq['ballots'][$i]['electionId']);
 		if ( (      ! isset($voterReq['questions'])) || (! is_array($voterReq['questions'])) ) WrongRequestException::throwException(223, "Error: questions must be set and an array", print_r($voterReq, true));
 		for ($q=0; $q<count($voterReq['questions']); $q++) {
-			if (         (!isset($voterReq["questions"][$q]['questionID'])) || (! is_int($voterReq["questions"][$q]['questionID'] )) ) WrongRequestException::throwException(227, 'Error: verifyBallots(): missing questionID or it is not of type int', $q);
+			if (         (!isset($voterReq["questions"][$q]['questionID'])) || 
+			(! ( is_int($voterReq["questions"][$q]['questionID'] ) ||  is_string($voterReq["questions"][$q]['questionID']) ) )   ) WrongRequestException::throwException(227, 'Error: verifyBallots(): missing questionID or it is not of type int', $q);
 			$qno = find_in_subarray($voterReq["questions"], 'questionID', $blindedHashesFromDB['blindedHashes']['questions'][$q]['questionID']);
 			if ($qno === false) WrongRequestException::throwException(237, 'Error: All questions must be disclosed', 'Number in question array for which no questionID was found in voterrequest: ' . $q);
 			if ( (! isset($voterReq['questions'][$q]['ballots'])) || (! is_array($voterReq['questions'][$q]['ballots'])) ) WrongRequestException::throwException(224, "/questions[].['ballots']/ must be set and of type array", print_r($voterReq, true));

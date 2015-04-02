@@ -25,30 +25,39 @@ class ConfigurableTally extends PublishOnlyTally {
 	}
 
 	function handleTallyReq($voterReq) {
-		if ($voterReq['cmd'] == 'getWinners') {
-			$winners = array();
-			foreach ($this->elConfig['questions'] as $question) {
-				$completeElectionId = makeCompleteElectionId($this->elConfig['electionId'], $question['questionID']);
-				$pseudoVoterReq = array('electionId' => $completeElectionId);
-				$allvotesTmp = parent::getAllVotesEvent($pseudoVoterReq);
+		switch ($voterReq['cmd']) { // TODO throw an error if cmd is not set
+			case 'getWinners':
+				$winners = array();
+				foreach ($this->elConfig['questions'] as $question) {
+					$completeElectionId = makeCompleteElectionId($this->elConfig['electionId'], $question['questionID']);
+					$pseudoVoterReq = array('electionId' => $completeElectionId);
+					$allvotesTmp = parent::getAllVotesEvent($pseudoVoterReq);
+					$allVotes = $allvotesTmp['data']['allVotes'];
+					$winners[$question['questionID']] = $this->GetResultMain($allVotes, $question['tallyData'], $question['options']);
+				}
+				$result = array('cmd' => 'showWinners', 'data' => $winners);
+				return $result;
+				break;
+			case 'getStatistic':
+				$allvotesTmp = parent::getAllVotesEvent($voterReq);
 				$allVotes = $allvotesTmp['data']['allVotes'];
-				$winners[$question['questionID']] = $this->GetResultMain($allVotes, $question['tallyData'], $question['options']);
-			}
-			$result = array('cmd' => 'showWinners', 'data' => $winners);
-			return $result;
+				$allOptionIDs = $this->getAllOptionIDs($allOptions);
+				$resultStat = $this->GetResultStat($allVotes, $allOptionIDs, $tallyConfig['scheme']);
+				$result = array('cmd' => 'showStatistic', 'data' => $statistic);
+				return $result;
+				break;
+			default:
+				return parent::handleTallyReq($voterReq);
+				break;
 		}
-		else return parent::handleTallyReq($voterReq);
 	}
 
 
 	function GetResultMain($allVotes, $tallyConfig, $allOptions) {
-		$allOptionIDs = array();
-		foreach ($allOptions as $i => $option) {
-			array_push($allOptionIDs, $option['optionID']);
-		}
-		$result = $allOptionIDs;
-
+		$allOptionIDs = $this->getAllOptionIDs($allOptions);
 		$resultStat = $this->GetResultStat($allVotes, $allOptionIDs, $tallyConfig['scheme']);
+		
+		$result = $allOptionIDs;
 		for ($schemeNo=0; $schemeNo<count($tallyConfig['findWinner']); $schemeNo++) {
 			$curFindWinnerName = $tallyConfig['findWinner'][$schemeNo];
 			switch ($curFindWinnerName) {
@@ -61,6 +70,14 @@ class ConfigurableTally extends PublishOnlyTally {
 			}
 		}
 		return $result;
+	}
+	
+	function getAllOptionIDs($allOptions){
+		$allOptionIDs = array();
+		foreach ($allOptions as $i => $option) {
+			array_push($allOptionIDs, $option['optionID']);
+		}
+		return $allOptionIDs; 
 	}
 
 	/**
