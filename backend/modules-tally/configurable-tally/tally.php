@@ -39,11 +39,16 @@ class ConfigurableTally extends PublishOnlyTally {
 				return $result;
 				break;
 			case 'getStatistic':
-				$allvotesTmp = parent::getAllVotesEvent($voterReq);
-				$allVotes = $allvotesTmp['data']['allVotes'];
-				$allOptionIDs = $this->getAllOptionIDs($allOptions);
-				$resultStat = $this->GetResultStat($allVotes, $allOptionIDs, $tallyConfig['scheme']);
-				$result = array('cmd' => 'showStatistic', 'data' => $statistic);
+				$resultStat = array();
+				foreach ($this->elConfig['questions'] as $question) {
+					$completeElectionId = makeCompleteElectionId($this->elConfig['electionId'], $question['questionID']);
+					$pseudoVoterReq = array('electionId' => $completeElectionId);
+					$allvotesTmp  = parent::getAllVotesEvent($pseudoVoterReq);
+					$allVotes     = $allvotesTmp['data']['allVotes'];
+					$allOptionIDs = $this->getAllOptionIDs($question['options']);
+					$resultStat[$question['questionID']] = $this->GetResultStat($allVotes, $allOptionIDs, $question['tallyData']['scheme']);
+				}
+				$result = array('cmd' => 'showStatistic', 'data' => $resultStat);
 				return $result;
 				break;
 			default:
@@ -286,18 +291,23 @@ class ConfigurableTally extends PublishOnlyTally {
 		}
 
 		// make sure that each option has "yes" and "no" set to zero if no one selected this.
+		// and also calculate the sum of scores
 		foreach ($validOptionIDs as $curOptID) {
 			foreach ($schemeConfig as $i => $curSchemeConfig) {
 				switch ($curSchemeConfig['name'])  {
 					case 'yesNo':
-						if (! isset($optionsStat[$curOptID])) $optionsStat[$curOptID] = array('yesNo' => array());
+						if (! isset($optionsStat[$curOptID]))                           $optionsStat[$curOptID] = array('yesNo' => array());
 						if (! isset($optionsStat[$curOptID]['yesNo']['numNo']))         $optionsStat[$curOptID]['yesNo']['numNo'] = 0;
 						if (! isset($optionsStat[$curOptID]['yesNo']['numYes']))        $optionsStat[$curOptID]['yesNo']['numYes'] = 0;
 						if (! isset($optionsStat[$curOptID]['yesNo']['numAbstention'])) $optionsStat[$curOptID]['yesNo']['numAbstention'] = 0;
 						break;
 					case 'score':
+						if (! isset($optionsStat[$curOptID]))                      $optionsStat[$curOptID] = array('score' => array('sum' => 0));
+						if (! isset($optionsStat[$curOptID]['score']))             $optionsStat[$curOptID]['score'] = array('sum' => 0);
+						if (! isset($optionsStat[$curOptID]['score']['sum']))      $optionsStat[$curOptID]['score']['sum'] = 0;
 						for ($score = $curSchemeConfig['minScore']; $score < $curSchemeConfig['maxScore']; $score++) {
-							if (! isset($optionsStat[$curOptID['score'][$score]])) $optionsStat[$curOptID['score'][$score]] = 0;
+							if (! isset($optionsStat[$curOptID]['score'][$score])) $optionsStat[$curOptID]['score'][$score] = 0;
+							$optionsStat[$curOptID]['score']['sum'] = $optionsStat[$curOptID]['score']['sum'] + $optionsStat[$curOptID]['score'][$score] * $score;
 						}
 						break;
 				}

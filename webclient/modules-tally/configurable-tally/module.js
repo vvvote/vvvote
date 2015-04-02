@@ -901,7 +901,7 @@ ConfigurableTally.prototype.handleUserClickShowWinners = function (config_, onGo
 	this.onGotVotesMethod = onGotVotesMethod;
 	var me = this; 
 	var data = {};
-	data.cmd = 'getWinners';
+	data.cmd = 'getWinners'; // 'getStatistic';
 	data.electionId = unicodeToBlackslashU(JSON.stringify({'mainElectionId': this.config.electionId}));
 	var datastr = JSON.stringify(data);
 	// TODO add auth to data
