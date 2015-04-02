@@ -702,3 +702,9 @@ function removePopup() {
 	var el = document.getElementById('modalbg');
 	el.parentNode.removeChild(el);
 }
+
+
+function addQuoationMarksIfString(v) {
+	if (typeof(v) === 'string') return "'" + v + "'"; 
+	else                        return v;
+}

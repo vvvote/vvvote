@@ -80,6 +80,7 @@ class ExternalTokenAuth extends Auth {
 		if ($http_code !=200 ) InternalServerError::throwException(34868, 'Error connecting to the external token verifier. Please inform the server administrator', "Got HTTP status: " . print_r($http_code, true));
 		if ($http_code === 200 && isset($resultStr)) {
 			$result = json_decode($resultStr, true);
+			if ($result == null) InternalServerError::throwException(2350, 'The answer from the external token verifier could not be parsed. Please inform the server administrator', "Got from the token verifier server: >$resultStr<");
 			if (isset($result['errorText'])) InternalServerError::throwException(34867, 'External token verifier returned an error. Please inform the server administrator', $result['errorText']);
 			if ( isset($result['allowed']) && ($result['allowed'] === true) ) return true;
 		}
