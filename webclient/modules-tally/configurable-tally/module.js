@@ -930,11 +930,11 @@ ConfigurableTally.prototype.handleServerAnswerShowWinners = function (xml) {
 ConfigurableTally.prototype.getWinnersHtml = function (questionID) {
 	var html = "Bei Antragrguppe " + questionID;
 	if (this.winners[questionID].length == 0) html = html + ' hat kein Antrag die erforderliche Mehrheit erreicht. ';
-	if (this.winners[questionID].length == 1) html = html + ' wurde <a href="javascript: page.tally.showOptionPopUp(' + addQuoationMarksIfString(questionID) + ', ' + addQuotationMarksIfString(this.winners[questionID][0]) + ');">Antrag ' + this.winners[questionID] + '</a> angenommen. ';
+	if (this.winners[questionID].length == 1) html = html + ' wurde <a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(questionID) + ', ' + addQuotationMarksIfString(this.winners[questionID][0]) + ');">Antrag ' + this.winners[questionID] + '</a> angenommen. ';
 	if (this.winners[questionID].length  > 1) {
 		html = html + ' wurden ';
 		for (var i=0; i<this.winners[questionID].length; i++) {
-			html = html + '<a href="javascript: page.tally.showOptionPopUp(' + addQuoationMarksIfString(questionID) + ', ' + addQuoationMarksIfString(this.winners[questionID][i]) + ');">Antrag ' + this.winners[questionID][i] + '</a>';
+			html = html + '<a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(questionID) + ', ' + addQuotationMarksIfString(this.winners[questionID][i]) + ');">Antrag ' + this.winners[questionID][i] + '</a>';
 			if (i+2 == this.winners[questionID].length) html = html + ' und ';
 			if (i+2 <  this.winners[questionID].length) html = html + ', ';
 		}

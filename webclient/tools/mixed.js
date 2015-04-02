@@ -704,7 +704,7 @@ function removePopup() {
 }
 
 
-function addQuoationMarksIfString(v) {
+function addQuotationMarksIfString(v) {
 	if (typeof(v) === 'string') return "'" + v + "'"; 
 	else                        return v;
 }
