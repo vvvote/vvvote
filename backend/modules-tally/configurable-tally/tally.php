@@ -39,8 +39,22 @@ class ConfigurableTally extends PublishOnlyTally {
 				return $result;
 				break;
 			case 'getStatistic':
+				
+				// get the array of questions from the requested questionId or return all questions
+				if (isset($voterReq['questionID'])) { // return the result statistics for the requested question only
+					if (is_array($voterReq['questionID'] ) ) $questionIds   = $voterReq['questionID']; // an array of questions requested
+					else                                     $questionIds[] = $voterReq['questionID']; // just a single question requested
+					foreach ($questionIds as $questionId) {
+						if (! (is_int($questionId) || is_string($questionId))) WrongRequestException::throwException(85657, 'The questionID must be an int, a string or an array of integers resp. strings', print_r($voterReq, true));
+						$key = find_in_subarray($this->elConfig['questions'], 'questionID', $questionId);
+						if ($key === false) WrongRequestException::throwException(85658, 'The questionID you requested does not exist', print_r($questionId, true));
+						$questions[] = $this->elConfig['questions'][$key];
+					}
+				}	else	$questions   = $this->elConfig['questions']; // return the result statistics for all questions
+
+				// generate statistics
 				$resultStat = array();
-				foreach ($this->elConfig['questions'] as $question) {
+				foreach ($questions as $question) {
 					$completeElectionId = makeCompleteElectionId($this->elConfig['electionId'], $question['questionID']);
 					$pseudoVoterReq = array('electionId' => $completeElectionId);
 					$allvotesTmp  = parent::getAllVotesEvent($pseudoVoterReq);
