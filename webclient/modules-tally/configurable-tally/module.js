@@ -292,7 +292,7 @@ ConfigurableTally.prototype.getMainContentFragm = function(tallyconfig) {
 	ConfigurableTally.tallyConfig = tallyconfig;
 	var fragm =	document.createDocumentFragment();
 	var elp = document.createElement('h1');
-	elp.appendChild(document.createTextNode(tallyconfig.electionId));
+	elp.appendChild(document.createTextNode(tallyconfig.electionTitle));
 	elp.setAttribute('id', 'ballotName');
 	fragm.appendChild(elp);
 	//mc = mc + '<div id="divVoteQuestions">';
