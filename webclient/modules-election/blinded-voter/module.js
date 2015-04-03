@@ -99,11 +99,11 @@ BlindedVoterElection.prototype.injectPermissionIntoClientSave = function(ballot)
 			'lStorage': lStorage};
 	var ballotWithClient = this.clientHtml.replace(find, 'returnEnvelope = ' + JSON.stringify(returnEnvelope) +';');
 	// load the electionId to be used as filename
-	var p2 = JSON.parse(ballot[0].transm.str);
-	var electionid = JSON.parse(p2.electionId).mainElectionId;
+		// var p2 = JSON.parse(ballot[0].transm.str);
+		//var electionid = JSON.parse(p2.electionId).mainElectionId;
 
 	var bb = new Blob([ballotWithClient]); //  new Blob([ballot]); 
-	saveAs(bb, "Wahlschein " + clearForFilename(electionid) + '.html');
+	saveAs(bb, "Wahlschein " + clearForFilename(this.config.electionTitle) + '.html');
 };
 
 

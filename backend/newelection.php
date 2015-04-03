@@ -53,7 +53,8 @@ if (isset ($electionconfigStr)) {
 		
 		// create public election config and secret election config
 		$newconfig['electionId'] = $electionId;
-		
+		if (isset($electionconfig['electionTitle'])) $newconfig["electionTitle"] = $electionconfig['electionTitle'];
+		else  										 $newconfig["electionTitle"] = $electionId;
 //		$authm = LoadModules::laodAuthModule($electionconfig['auth']);
 		global $dbInfos;
 		$authm = new SharedAuth($dbInfos);

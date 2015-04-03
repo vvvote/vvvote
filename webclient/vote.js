@@ -79,7 +79,7 @@ VotePage.prototype.startStep2 = function (config) {
 	'<form onsubmit="return false;">' +
 	'                       <br>' +
 	'						<h3><label for="electionId">Name der Abstimmung:</label> ' +
-	'                            <span id="electionId">' + config.electionId + '</span></h3>'+		
+	'                            <span id="electionId">' + config.electionTitle + '</span></h3>'+		
 //	'						<label for="electionId">Name der Abstimmung:</label> ' +
 //  '                            <input readonly="readonly" name="electionId" id="electionId" value="' + config.electionId + '">' + // TODO use element.settext for election (instead of escaping electionId) 
     '                            <input type="hidden" readonly="readonly" name="electionId" id="electionId" value="' + config.electionId + '">' + // TODO use element.settext for election (instead of escaping electionId) 
