@@ -121,6 +121,7 @@ ConfigurableTally.getNewElectionData = function() {
 				"options":
 					[
 					 { "optionID": 1, 
+						 "proponents": ["Alice", "Bob", "Carsten", "Dirk", "Ewald"], // optional. Names of people who made the motion
 						 "optionTitle": "Hauptmodul: Ständige Mitgliederversammlung ablehnen", 
 						 "optionDesc": "Der Landesverband NRW lehnt es grundsätzlich ab, zum jetzigen Zeitpunkt ein System einzuführen, welches unter zuhilfenahme von Online-Werkzeugen irgendeine Form von verbindlicher Abstimmung umsetzen soll.\
 							 \n\nZu diesem Zweck werden aus §8 (2) der Landessatzung die Worte \"oder in einem vom Landesparteitag legitimierten Werkzeug\" gestrichen. ", 
@@ -441,6 +442,13 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 		divOptionDescNode.setAttribute('style', 'display:none');
 		var optionDescNode = wikiSyntax2DOMFrag(curOption.optionDesc);
 		divOptionDescNode.appendChild(optionDescNode);
+		if ('proponents' in curOption) {
+			var proponentsNode = document.createElement('p');
+			proponentsNode.setAttribute('class', 'proponents');
+			proponentsNode.appendChild(document.createTextNode('Antragsteller: ' + curOption.proponents.join(', ')));
+			divOptionDescNode.appendChild(proponentsNode);
+		}
+
 		legendNode.appendChild(divOptionDescNode);
 	}
 	if ('shortDesc' in curOption) {

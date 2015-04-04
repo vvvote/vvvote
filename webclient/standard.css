@@ -282,6 +282,10 @@ input[type="range"]::-ms-fill-lower {
 	white-space: normal; /* needed for Internet Explorer to line wrap the legend */
 }
 
+.proponents {
+	font-style: italic;
+}
+
 .votingOption h1{
 	color: darkblue !important;
 	font-size: 15px;
