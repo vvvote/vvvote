@@ -62,7 +62,7 @@ GetResultPage.prototype.gotElectionConfig = function (config) {
 };
 
 GetResultPage.prototype.gotVotes = function (html) {
-	Page.loadMainContent('<h2>Name der Abstimmung: ' + this.config.electionId + '</h2>' + html);
+	Page.loadMainContent('<h2>Name der Abstimmung: ' + this.config.electionTitle + '</h2>' + html);
 };
 
 
