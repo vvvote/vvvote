@@ -182,6 +182,11 @@ div.allvotes tbody td {
 	text-align: center;
 }
 
+.myVote { /* used to highlight the user's own vote in the list of all votes */
+	padding: 0.2em;
+	border: solid orange;
+}
+
 .yesNo { /* all votes themselves which are yes, no or abstention have this class */
 	
 }
@@ -224,6 +229,11 @@ Options th {
 .voteOptions tbody {
 	padding: 12px;
 }
+
+.proponents {
+	font-style: italic;
+}
+
 
 /* this causes IE to make everything grey but is needed for chrome */
 input[type="range"].likeDisabled
@@ -280,10 +290,6 @@ input[type="range"]::-ms-fill-lower {
 	border: 2px solid #6678b1;
 	width: 95%; /* needed for Internet Explorer to line wrap the legend */
 	white-space: normal; /* needed for Internet Explorer to line wrap the legend */
-}
-
-.proponents {
-	font-style: italic;
 }
 
 .votingOption h1{

@@ -22,7 +22,7 @@ GetResultPage.prototype.showResult = function() {
 	this.setStep(2);
 	// TODO add switch (blinder)
 	var blinder = new BlindedVoterElection(this.config); 
-	
+	if (typeof returnEnvelope != 'undefined') blinder.importPermission(returnEnvelope);
 	// var element = document.getElementById("loadedmaincontent");
 	var me = this;
 	switch (this.config.tally) {
@@ -38,6 +38,10 @@ GetResultPage.prototype.showResult = function() {
 		break;
 	}
 
+};
+
+GetResultPage.prototype.onPermLoaded = function () { // called by blinder.importPermission which is needed in votePage
+	
 };
 
 /*

@@ -246,6 +246,16 @@ BlindedVoterElection.prototype.importPermission = function (returnEnvelope) {
 
 };
 
+BlindedVoterElection.prototype.getVotingNo = function(questionID_) {
+	if ( !('permission' in this)) return false;
+	var qNo = ArrayIndexOf(this.permission, 'questionID', questionID_);
+	if (qNo < 0) return false; // TODO alert the user?
+	var tmp = this.permission[qNo].transm.str;
+	var tmp2 = JSON.parse(tmp);
+	var votingno = tmp2.votingno;
+	return votingno;
+};
+
 /* not used at the moment
 BlindedVoterElection.prototype.checkPerm = function() {
 	if (!this.permissionOk) return false;

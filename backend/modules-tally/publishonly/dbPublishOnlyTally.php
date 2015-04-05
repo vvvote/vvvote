@@ -18,7 +18,7 @@ class DbPublishOnlyTally extends DbBase {
 	function __construct($dbInfos) {
 		$dbtables = 
 		array('storedCorrectVotes' /* Table name */ => array(
-				array('name' => 'electionID'        , 'digits' =>   '100', 'json' => false), /* colunm definition */
+				array('name' => 'electionId'        , 'digits' =>   '100', 'json' => false), /* colunm definition */
 				array('name' => 'votingno'          , 'digits' =>  '5000', 'json' => false),
 				array('name' => 'vote'              , 'digits' =>    '50', 'json' => false),
 				array('name' => 'storedCorrectVotes', 'digits' => '10000', 'json' => true)
