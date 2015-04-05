@@ -51,9 +51,11 @@ class ExternalTokenAuth extends Auth {
 			if ($i === false)  WrongRequestException::throwException(38573, 'externalTokenAuth: configId not found in server config', print_r($this->authConfig['configId'], true));
 			$url           = $externalTokenConfig[$i]['checkTokenUrl']; 
 			$verifierPassw = $externalTokenConfig[$i]['verifierPassw'];
+			$verifyCert    = $externalTokenConfig[$i]['verifyCertificate'];
 		} else {
 			$url           = $this->db->getCheckTokenUrl($electionId);
 			$verifierPassw = '';
+			$verifyCert    = false;
 		}
 		// $url = 'http://www.webhod.ra/vvvote2/test/externaltoken.html';
 		$postfields = 		array(
@@ -61,17 +63,20 @@ class ExternalTokenAuth extends Auth {
 				'electionId'    => $electionId,
 				'verifierPassw' => $verifierPassw
 		);
-		$path_to_certificate = realpath(dirname(__FILE__) . '/../../config/' . $this->authConfig['configId'] . '.pem');
 		$curl_options = array(
 				CURLOPT_RETURNTRANSFER => true,
-				CURLOPT_SSL_VERIFYPEER => true,
-				CURLOPT_SSL_VERIFYHOST => 2, /* check the common name and that it matches the HOST name*/
-				CURLOPT_CAINFO => $path_to_certificate,
-				CURLOPT_URL => $url,
+				CURLOPT_SSL_VERIFYPEER => false,
 				CURLOPT_POST => true,
-				CURLOPT_POSTFIELDS => json_encode($postfields) 
+				CURLOPT_POSTFIELDS => json_encode($postfields), 
+				CURLOPT_URL => $url,
 		);
 		
+		if ($verifyCert) {
+			$path_to_certificate = realpath(dirname(__FILE__) . '/../../config/' . $this->authConfig['configId'] . '.pem');
+			$curl_options[CURLOPT_SSL_VERIFYHOST] = 2; /* check the common name and that it matches the HOST name*/
+			$curl_options[CURLOPT_CAINFO]         = $path_to_certificate;
+			$curl_options[CURLOPT_SSL_VERIFYPEER] = true;
+		}
 		$ch = curl_init();
 		curl_setopt_array($ch, $curl_options);
 
