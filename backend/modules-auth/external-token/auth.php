@@ -61,10 +61,12 @@ class ExternalTokenAuth extends Auth {
 				'electionId'    => $electionId,
 				'verifierPassw' => $verifierPassw
 		);
-		
+		$path_to_certificate = realpath(dirname(__FILE__) . '/../../config/' . $this->authConfig['configId'] . '.pem');
 		$curl_options = array(
 				CURLOPT_RETURNTRANSFER => true,
-				CURLOPT_SSL_VERIFYPEER => false,
+				CURLOPT_SSL_VERIFYPEER => true,
+				CURLOPT_SSL_VERIFYHOST => 2, /* check the common name and that it matches the HOST name*/
+				CURLOPT_CAINFO => $path_to_certificate,
 				CURLOPT_URL => $url,
 				CURLOPT_POST => true,
 				CURLOPT_POSTFIELDS => json_encode($postfields) 
@@ -76,8 +78,12 @@ class ExternalTokenAuth extends Auth {
 		$resultStr = curl_exec($ch);
 		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		$content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+		if ($resultStr === false) $errorText = curl_error($ch);
+		else                      $errorText = print_r($http_code, true);
 		curl_close($ch);
-		if ($http_code !=200 ) InternalServerError::throwException(34868, 'Error connecting to the external token verifier. Please inform the server administrator', "Got HTTP status: " . print_r($http_code, true));
+		if ($http_code !=200 ) {
+			InternalServerError::throwException(34868, 'Error connecting to the external token verifier. Please inform the server administrator', "Got HTTP status / curl-error: " . $errorText);
+		}
 		if ($http_code === 200 && isset($resultStr)) {
 			$result = json_decode($resultStr, true);
 			if ($result == null) InternalServerError::throwException(2350, 'The answer from the external token verifier could not be parsed. Please inform the server administrator', "Got from the token verifier server: >$resultStr<");
