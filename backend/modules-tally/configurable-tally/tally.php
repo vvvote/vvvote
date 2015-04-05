@@ -107,7 +107,7 @@ class ConfigurableTally extends PublishOnlyTally {
 	 * @return array of optionIDs which meet the creteria for winning
 	 */
 	function GetResultYesNo($optionsStat, $scheme, $potWinner) {
-		if (count($potWinner) < 2)  return $potWinner;
+		if (count($potWinner) < 1)  return $potWinner;
 		$yesNoScheme = $scheme[find_in_subarray($scheme, 'name', 'yesNo')];
 		$winner = array();
 		foreach ($potWinner as $curOptID) {
@@ -319,7 +319,7 @@ class ConfigurableTally extends PublishOnlyTally {
 						if (! isset($optionsStat[$curOptID]))                      $optionsStat[$curOptID] = array('score' => array('sum' => 0));
 						if (! isset($optionsStat[$curOptID]['score']))             $optionsStat[$curOptID]['score'] = array('sum' => 0);
 						if (! isset($optionsStat[$curOptID]['score']['sum']))      $optionsStat[$curOptID]['score']['sum'] = 0;
-						for ($score = $curSchemeConfig['minScore']; $score < $curSchemeConfig['maxScore']; $score++) {
+						for ($score = $curSchemeConfig['minScore']; $score <= $curSchemeConfig['maxScore']; $score++) {
 							if (! isset($optionsStat[$curOptID]['score'][$score])) $optionsStat[$curOptID]['score'][$score] = 0;
 							$optionsStat[$curOptID]['score']['sum'] = $optionsStat[$curOptID]['score']['sum'] + $optionsStat[$curOptID]['score'][$score] * $score;
 						}

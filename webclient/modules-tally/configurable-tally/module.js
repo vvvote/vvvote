@@ -937,7 +937,7 @@ ConfigurableTally.prototype.handleServerAnswerShowWinners = function (xml) {
 };
 
 ConfigurableTally.prototype.getWinnersHtml = function (questionID) {
-	var html = "Bei Antragrguppe " + questionID;
+	var html = "Bei Antragsgruppe " + questionID;
 	if (this.winners[questionID].length == 0) html = html + ' hat kein Antrag die erforderliche Mehrheit erreicht. ';
 	if (this.winners[questionID].length == 1) html = html + ' wurde <a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(questionID) + ', ' + addQuotationMarksIfString(this.winners[questionID][0]) + ');">Antrag ' + this.winners[questionID] + '</a> angenommen. ';
 	if (this.winners[questionID].length  > 1) {
@@ -984,11 +984,17 @@ ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
 		// process data
 		//   show a list of all votes
 		var htmlcode = '<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
-		htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">Finde meine Stimme</button>';
+		if ( !('returnEnvelope' in window) ) {
+			htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">Finde meine Stimme - Wahlschein laden</button>';
+		}
 		var v;   // vote
 		var vno; // vote number
 		var disabled;
 		var curQuestion = this.config.questions[ArrayIndexOf(this.config.questions, 'questionID', this.curQuestionID)]; 
+		var myVno = false;
+		if ('returnEnvelope' in window) {
+			myVno = this.election.getVotingNo(curQuestion.questionID); //tmp2.votingno; // must be identical to returnEnvelope.permission.keypar.pub.n + ' ' + returnEnvelope.permission.keypar.pub.exp;
+		}
 		var freq = [];
 		for (var optionIndex=0; optionIndex<curQuestion.options.length; optionIndex++ ) {
 			freq[optionIndex] = {
@@ -1002,7 +1008,7 @@ ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
 				switch(curQuestion.tallyData.scheme[schemeIndex].name) {
 				case 'yesNo': htmlcode = htmlcode + '<th>' + 'Ja/Nein</th>'; break;
 				case 'score': htmlcode = htmlcode + '<th>' + 'Bewertung</th>'; break;
-				default: alert('error 875498z54');
+				default: alert('error 875498z54: scheme not supported');
 				};
 			}
 			htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</th><th>Prüfen!</th></thead>';
@@ -1046,7 +1052,13 @@ ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
 					htmlcode = htmlcode + '<td  class="vote ' + curScheme.name + ' ' + curScheme.name + value.toString() + '">';
 					htmlcode = htmlcode + vt + '</td>';
 				}
-				htmlcode = htmlcode + '<td> <span id="votingno">' + vno + '</span></td>'; 
+				var vnoAttrib = 'class="votingno"';
+				var vnoText = vno;
+				if (vno === myVno) {
+					vnoAttrib = 'class="votingno myVote" id="myVote' + optionIndex + '"';
+					vnoText = vno + ' - meine Stimme';
+				}
+				htmlcode = htmlcode + '<td> <div ' + vnoAttrib + '>' + vnoText + '</div></td>'; 
 				htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften pr&uuml;fen!</button>' + '</td>'; 
 //				htmlcode = htmlcode + '<td>' + this.votes[i].permission.signed.salt     + '</td>'; 
 				htmlcode = htmlcode + '</tr>';
