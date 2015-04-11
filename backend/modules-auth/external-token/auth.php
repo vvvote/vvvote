@@ -204,13 +204,14 @@ class ExternalTokenAuth extends Auth {
 	 * @see Auth::onPermissionSend()
 	 */
 	function onPermissionSend($electionId, $voterId) {
+		try {
 		$curExternalElectonConfig = $this->getExternalTokenConfig();
 		if ($curExternalElectonConfig === false) return; // if new election was created using tokenUrl, confirmation e-mail is not supported
+		$verifyCert = $curExternalElectonConfig['verifyCertificate'];
 		$fieldsToSend = array(
 				'verifierPassw' => $curExternalElectonConfig['verifierPassw'],
 				'token'			=> $voterId
 				);
-		try {
 			$result = $this->httpPost($curExternalElectonConfig['sendmail'], $fieldsToSend, $verifyCert);
 		} catch (Exception $e) {
 			// ignore the problem, because the return envelope is already sent, we cannot do anything about it
