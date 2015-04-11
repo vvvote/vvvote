@@ -78,6 +78,7 @@ class Crypt {
 		$rsa->loadKey($pubkey);
 		$hashBI = new Math_BigInteger($hash, 16);
 		$sigBI = new Math_BigInteger($sig, 16);
+		if ($sigBI->compare($rsa->zero) < 0 || $sigBI->compare($rsa->modulus) > 0) return false; // the signature has more bits than the modulus --> the signature cannot has been created by the given key and the exponentiation cannot be performed. 
 		$verify = $rsa->_rsaep($sigBI);
 		if ($hashBI->equals($verify)) {
 			return true;
@@ -179,10 +180,12 @@ class Crypt {
 		$ballot['sigs'][$newnum]['sigBy'] = $this->myPrivateKey['serverName'];
 
 		//ser Sig
+		/*
 		if ($newnum === 0)	$prevSig = $blindedHash;
 		else                $prevSig = $ballot['sigs'][$newnum -1]['serSig']; // TODO Think about: previous blindedHashes correct?
 		$tmp = new Math_BigInteger($prevSig, 16);
 		$ballot['sigs'][$newnum]['serSig']     = $this->myPrivateKey['privRsa']->_rsasp1($tmp)->toHex();
+		*/
 		return $ballot;
 	}
 	

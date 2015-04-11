@@ -11,6 +11,8 @@
 		<input type="submit" value="Test: check credentials" name="checkCredentials">
 		<br> 
 		<input type="submit" value="Delete database content" name="DeleteDatabaseContent">
+		<br> 
+		<input type="submit" value="Create key pair" name="createKeypair">
 		
 	</form>
 
@@ -18,10 +20,13 @@
 
 <?php
 // TODO remove these lines before release
-require_once 'config/conf-thisserver.php';
+require_once 'config/conf-allservers.php';
+require_once 'config/conf-thisserver2.php';
 
 require_once 'modules-auth/user-passw-list/dbAuth.php';
 require_once 'modules-election/blindedvoter/dbBlindedVoter.php';
+require_once 'Math/BigInteger.php';
+require_once 'Crypt/RSA.php';
 
 if ((isset($_GET['createTables' ])) || (isset($_POST['createTables' ]))) {
 	$dbauth = new DbAuth($dbInfos);
@@ -59,6 +64,21 @@ if ((isset($_GET['DeleteDatabaseContent' ])) || (isset($_POST['DeleteDatabaseCon
 	print "<br>\n Deleted the content of the database";
 }
 
+if ((isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))) {
+	$crypt_rsa = new Crypt_RSA();
+	$keypair = $crypt_rsa->createKey(512);
+	$crypt_rsa->loadKey($keypair['publickey']);
+	// $crypt_rsa->loadKey($serverkey['publickey']);
+	echo '<br>n: ' . $crypt_rsa->modulus->toString();
+	
+	//print_r($crypt_rsa->modulus);
+	echo '<br>k: ' . $crypt_rsa->k; 
+	// print_r($crypt_rsa->k);
+	echo '<br>exp: ' . $crypt_rsa->exponent->toString();
+	//print_r($crypt_rsa->exponent);
+	echo "<br>\r\n";	
+	print(str_replace('\/', '/', json_encode($keypair)));
+}
 // for database debugging use phpMyAdmin or the like
 
 ?>

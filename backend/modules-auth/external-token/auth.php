@@ -40,29 +40,92 @@ class ExternalTokenAuth extends Auth {
 	function addCredentials()  {
 
 	}
+	
+	/**
+	 * 
+	 * @param unknown $url
+	 * @param unknown $fieldsToJson
+	 * @param unknown $verifyCert
+	 * @return mixed|boolean
+	 */
+	function httpPost($url, $fieldsToJson, $verifyCert) {
+		global $externalTokenConfig;
+
+		$curl_options = array(
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_SSL_VERIFYPEER => false,
+				CURLOPT_POST => true,
+				CURLOPT_POSTFIELDS => json_encode($fieldsToJson),
+				CURLOPT_URL => $url,
+		);
+
+		if ($verifyCert) {
+			$path_to_certificate = realpath(dirname(__FILE__) . '/../../config/' . $this->authConfig['configId'] . '.pem');
+			$curl_options[CURLOPT_SSL_VERIFYHOST] = 2; /* 2: check the common name and that it matches the HOST name*/
+			$curl_options[CURLOPT_CAINFO]         = $path_to_certificate;
+			$curl_options[CURLOPT_SSL_VERIFYPEER] = true;
+		}
+		$ch = curl_init();
+		curl_setopt_array($ch, $curl_options);
+
+		$resultStr = curl_exec($ch);
+		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+		if ($resultStr === false) $errorText = curl_error($ch);
+		else                      $errorText = print_r($http_code, true);
+		curl_close($ch);
+		if ($http_code !=200 ) {
+			InternalServerError::throwException(34868, 'Error connecting to the external token verifier. Please inform the server administrator', "Got HTTP status / curl-error: " . $errorText);
+		}
+		if ($http_code === 200 && isset($resultStr)) {
+			$result = json_decode($resultStr, true);
+			if ($result == null) InternalServerError::throwException(2350, 'The answer from the external token verifier could not be parsed. Please inform the server administrator', "Got from the token verifier server: >$resultStr<");
+			if (isset($result['errorText'])) InternalServerError::throwException(34867, 'External token verifier returned an error. Please inform the server administrator', $result['errorText']);
+			return $result;
+		}
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param unknown $configId
+	 * @return unknown|boolean false if 'configId' is not set, array otherwise
+	 */
+	function getExternalTokenConfig()  {
+		If ( isset($this->authConfig['configId']) ) {
+			$i = find_in_subarray($externalTokenConfig, 'configId', $this->authConfig['configId']);
+			if ($i === false)  WrongRequestException::throwException(38573, 'externalTokenAuth: configId not found in server config', print_r($this->authConfig['configId'], true));
+			return $externalTokenConfig[$i];
+		} else return false;
+	}
 
 	/**
 	 * check the credentials sent from the voter
 	 */
 	function checkCredentials($credentials, $electionId) {
 		global $externalTokenConfig;
-		If ( isset($this->authConfig['configId']) ) {
-			$i = find_in_subarray($externalTokenConfig, 'configId', $this->authConfig['configId']);
-			if ($i === false)  WrongRequestException::throwException(38573, 'externalTokenAuth: configId not found in server config', print_r($this->authConfig['configId'], true));
-			$url           = $externalTokenConfig[$i]['checkTokenUrl']; 
-			$verifierPassw = $externalTokenConfig[$i]['verifierPassw'];
-			$verifyCert    = $externalTokenConfig[$i]['verifyCertificate'];
-		} else {
+		$curExternalTokenConfig = $this->getExternalTokenConfig();
+		if ($curExternalTokenConfig !== false) {
+			$url           = $curExternalTokenConfig['checkTokenUrl']; 
+			$verifierPassw = $curExternalTokenConfig['verifierPassw'];
+			$verifyCert    = $curExternalTokenConfig['verifyCertificate'];
+		} else {  // the election was created with tokenUrl instead of configId
 			$url           = $this->db->getCheckTokenUrl($electionId);
 			$verifierPassw = '';
 			$verifyCert    = false;
 		}
 		// $url = 'http://www.webhod.ra/vvvote2/test/externaltoken.html';
-		$postfields = 		array(
+		
+		$fieldsToJson = 		array(
 				'token'         => $credentials['voterId'],
 				'electionId'    => $electionId,
 				'verifierPassw' => $verifierPassw
 		);
+		
+		$result = $this->httpPost($url, $fieldsToJson, $verifyCert);
+		if ( isset($result['allowed']) && ($result['allowed'] === true) ) return true;
+		return false;
+/*		
 		$curl_options = array(
 				CURLOPT_RETURNTRANSFER => true,
 				CURLOPT_SSL_VERIFYPEER => false,
@@ -73,7 +136,7 @@ class ExternalTokenAuth extends Auth {
 		
 		if ($verifyCert) {
 			$path_to_certificate = realpath(dirname(__FILE__) . '/../../config/' . $this->authConfig['configId'] . '.pem');
-			$curl_options[CURLOPT_SSL_VERIFYHOST] = 2; /* check the common name and that it matches the HOST name*/
+			$curl_options[CURLOPT_SSL_VERIFYHOST] = 2; // check the common name and that it matches the HOST name
 			$curl_options[CURLOPT_CAINFO]         = $path_to_certificate;
 			$curl_options[CURLOPT_SSL_VERIFYPEER] = true;
 		}
@@ -97,6 +160,7 @@ class ExternalTokenAuth extends Auth {
 		}
 		return false;
 		// return $this->db->checkCredentials($electionId, $credentials['voterId'], $credentials['secret']);
+*/
 	}
 
 	/**
@@ -133,5 +197,29 @@ class ExternalTokenAuth extends Auth {
 			}
 		}
 	}
+	
+	/**
+	 * sends a confirmation email to the voter
+	 * @see Auth::onPermissionSend()
+	 */
+	function onPermissionSend($electionId, $voterId) {
+		$curExternalElectonConfig = $this->getExternalTokenConfig();
+		if ($curExternalElectonConfig === false) return; // if new election was created using tokenUrl, confirmation e-mail is not supported
+		$fieldsToSend = array(
+				'verifierPassw' => $curExternalElectonConfig['verifierPassw'],
+				'token'			=> $voterId
+				);
+		try {
+			$result = $this->httpPost($curExternalElectonConfig['sendmail'], $fieldsToSend, $verifyCert);
+		} catch (Exception $e) {
+			// ignore the problem, because the return envelope is already sent, we cannot do anything about it
+			// TODO log it
+			global $debug;
+			if ($debug) throw $e;
+			return;
+		}
+		return;		
+	}
+	
 }
 ?>
