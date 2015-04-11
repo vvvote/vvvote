@@ -326,8 +326,7 @@ class BlindedVoter extends Blinder {
 				$sigsOk = false;
 				if (isset($curVoterBallot['sigs'])) {
 					$sigsOk = $this->crypt->verifySigs($str, $curVoterBallot['sigs']);
-				} else { $sigsOk = true;
-				} // no sigs there
+				} else { $sigsOk = true;} // no sigs there
 				$tmpret[$i] = ($hashOk === true) && ($sigsOk === true);
 				if ($i == 0) {
 					$ret = ($tmpret[$i] === true);
