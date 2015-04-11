@@ -92,6 +92,7 @@ class ExternalTokenAuth extends Auth {
 	 * @return unknown|boolean false if 'configId' is not set, array otherwise
 	 */
 	function getExternalTokenConfig()  {
+		global $externalTokenConfig;
 		If ( isset($this->authConfig['configId']) ) {
 			$i = find_in_subarray($externalTokenConfig, 'configId', $this->authConfig['configId']);
 			if ($i === false)  WrongRequestException::throwException(38573, 'externalTokenAuth: configId not found in server config', print_r($this->authConfig['configId'], true));
