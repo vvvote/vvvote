@@ -67,7 +67,7 @@ abstract class Auth {
 		if (isset($this->authConfig[$starttag])) $startdate = strtotime($this->authConfig[$starttag]);
 		else                                     $startdate = strtotime('2000-01-01T00:00Z');
 		if ( ($endtag !== false) && isset($this->authConfig[$endtag])) $enddate = strtotime($this->authConfig[$endtag]);
-		else                                                           $enddate = strtotime('3000-01-01T00:00Z');
+		else                                                           $enddate = strtotime('2038-01-01T00:00Z'); // TODO use DateTime() which supports 64bit
 		
 		$now = time();
 		$ret = ($startdate <= $now) && ($enddate >= $now);
