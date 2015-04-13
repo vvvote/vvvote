@@ -241,6 +241,10 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und
 		checkBrowser();
 		if (location.search.length > 1 && typeof firstload == 'undefined' && location.search.indexOf('confighash') >= 0) {
 			firstload = false;
+			// do not show the "new election" menu if confighash is set in url
+			var el = document.getElementById('newElectionLink');
+			el.setAttribute('style', 'display:none');
+		
 			if (location.search.indexOf('showresult') >=0) page = getResultPage;
 			else                                           page = votePage; // TODO read phase from config and
 		    page.display();
