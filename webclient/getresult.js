@@ -69,7 +69,7 @@ GetResultPage.prototype.gotVotes = function (html) {
 function startLoadingResult() {
 	var mc = GetElectionConfig.getMainContent('gotElectionConfigForTally');
 	loadMainContent(mc);
-	currAction = 'getResult'; // this is used in order to determine what should happens after the config was loaded
+//	currAction = 'getResult'; // this is used in order to determine what should happens after the config was loaded
 }
 
 function getAuthModuleStatic(config) {

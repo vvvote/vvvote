@@ -24,7 +24,9 @@ if (isset($_GET) && isset($_GET['confighash']) ) {
 	if (! isset($_GET['api'])) {
 		$token = '';
 		if (isset($_GET['token'])) $token = '&token=' . $_GET['token'];
-		header('Location: ' . $webclientUrlbase . '/index.html?confighash=' . $hash . $token, true, 301);
+		$showResult = '';
+		if (isset($_GET['showresult'])) $showResult = '&showresult';
+		header('Location: ' . $webclientUrlbase . '/index.html?confighash=' . $hash . $token . $showResult, true, 301);
 		die();
 	}
 }
