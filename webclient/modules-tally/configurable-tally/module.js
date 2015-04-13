@@ -289,13 +289,13 @@ ConfigurableTally.getNewElectionData = function() {
  * 
  ***********************************************************************/
 
-ConfigurableTally.prototype.getMainContentFragm = function(tallyconfig) {
+ConfigurableTally.prototype.getMainContentFragm = function(fragm, tallyconfig) {
 	ConfigurableTally.tallyConfig = tallyconfig;
-	var fragm =	document.createDocumentFragment();
-	var elp = document.createElement('h1');
-	elp.appendChild(document.createTextNode(tallyconfig.electionTitle));
-	elp.setAttribute('id', 'ballotName');
-	fragm.appendChild(elp);
+	// var fragm =	document.createDocumentFragment();
+//	var elp = document.createElement('h1');
+//	elp.appendChild(document.createTextNode(tallyconfig.electionTitle));
+//	elp.setAttribute('id', 'ballotName');
+//	fragm.appendChild(elp);
 	//mc = mc + '<div id="divVoteQuestions">';
 	var divNode = document.createElement('div');
 	divNode.setAttribute('id', 'divVoteQuestions');
@@ -539,18 +539,35 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 };
 
 ConfigurableTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorageId_) {
-	this.returnEnvelopeLStorageId = returnEnvelopeLStorageId_;
-	this.collapseAllQuestions();
+	if (returnEnvelopeLStorageId_ != '') {
+		this.returnEnvelopeLStorageId = returnEnvelopeLStorageId_;
+		this.collapseAllQuestions();
+	}
 	//var configHash = GetElectionConfig.generateConfigHash(this.config);
+	var voteStart = page.getNextVoteTime();
+	var buttonStr = 'Fehler 238u8';
+	var disable = false;
+	if (voteStart === false) {disable = true;  buttonStr = 'Stimmabgabe nicht mehr möglich'; }
+	if (voteStart === true)  {disable = false; buttonStr = 'Stimme senden'; }
+	if (voteStart instanceof Date) {
+		disable = true;
+		buttonStr = 'Stimme senden ab ' + formatDate(voteStart) + ' möglich';
+		var me = this;
+		executeAt(voteStart, me, me.enableSendVoteButtons);
+	}
+	
 	var tmp = localStorage.getItem('sentQNo' + this.returnEnvelopeLStorageId);
-	if (tmp != null) {
-		this.sentQNo = JSON.parse(tmp);
-		for (var q=0; q<this.sentQNo.length; q++) {
-			this.disableQuestion(this.sentQNo[q]);
-		}
+	if (tmp != null) this.sentQNo = JSON.parse(tmp);
+	for (var qNo=0; qNo<this.config.questions.length; qNo++) {
+		if (tmp != null && this.sentQNo.indexOf(qNo) >=0) this.disableQuestion('Stimme akzeptiert', qNo, false);
+		else                                              this.enDisableSendButton(buttonStr, qNo, disable);
 	}
 };
 
+
+ConfigurableTally.prototype.enableSendVoteButtons = function() {
+	this.onPermissionLoaded('');
+};
 
 ConfigurableTally.prototype.collapseAllQuestions = function() {
 	for (var qNo=0; qNo<this.config.questions.length; qNo++) {
@@ -746,7 +763,7 @@ ConfigurableTally.prototype.handleServerAnswerStoreVote = function (xml) {
 		switch (data.cmd) {
 		case 'saveYourCountedVote':
 			alert('Der Server hat Ihre Stimme akzeptiert.');
-			this.disableQuestion(this.qNo, this.vote);
+			this.disableQuestion('Stimme akzeptiert', this.qNo, this.vote);
 			if (!Array.isArray(this.sentQNo)) this.sentQNo = new Array();
 			this.sentQNo.push(this.qNo);
 			localStorage.setItem('sentQNo'+ this.returnEnvelopeLStorageId, JSON.stringify(this.sentQNo));
@@ -764,14 +781,33 @@ ConfigurableTally.prototype.handleServerAnswerStoreVote = function (xml) {
 	}
 };
 
+/**
+ * Disable and change button text of "send vote Button" to "vote accepted"
+ */
+
+ConfigurableTally.prototype.enDisableSendButton = function(buttonText, qNo, disable) {
+	var el = document.getElementById('buttonSendQ'+qNo);
+	if (disable) {
+		el.setAttribute('disabled', 'disabled');
+		el.setAttribute('class', 'sendVoteButtonDone');
+	}
+	else         {
+		el.removeAttribute('disabled');
+		el.setAttribute('class', 'sendVoteButton');
+	}
+	el.childNodes[0].nodeValue = buttonText;
+};
 
 /**
  * 
  * @param qNo
- * @param selected - if known: the vote array of options (and scheme) to be selected, otherwise nothing will be selected 
+ * @param selected 	the vote array of options (and scheme) to be selected,
+ * 					true: do not disable options 
+ * 					false: all options will be unselected
+ * 					 
  */
 
-ConfigurableTally.prototype.disableQuestion = function(qNo, selected) {
+ConfigurableTally.prototype.disableQuestion = function(buttonText, qNo, selected) {
 	//var vote = {//"ballotID":tallyconfig.ballotID,
 //	"questions": [{
 //	"questionID": tallyconfig.questions[qNo].questionID,
@@ -780,53 +816,50 @@ ConfigurableTally.prototype.disableQuestion = function(qNo, selected) {
 	//"options": [] //[[{"name": "score", "value": 1}, {"name": "yesNo", "value": 1}]]
 //	}]
 //	};
-
-	// Disable and change button text of "send vote Button" to "vote accepted"
-	var el = document.getElementById('buttonSendQ'+qNo);
-	el.setAttribute('disabled', 'disabled');
-	el.setAttribute('class', 'sendVoteButtonDone');
-	el.childNodes[0].nodeValue = 'Stimme akzeptiert';
+	this.enDisableSendButton(buttonText, qNo, true);
 
 	// Disable all inputs on all options belonging to the question
-	for (var optionNo=0; optionNo<this.config.questions[qNo].options.length; optionNo++) {
-//		var optionID = this.config.questions[qNo].options[optionNo].optionID;
-		for (var schemeIndex=0; schemeIndex<this.config.questions[qNo].tallyData.scheme.length; schemeIndex++) {
-			var curScheme = this.config.questions[qNo].tallyData.scheme[schemeIndex];
-			if (typeof selected != 'undefined') {
-				var curSchemeVote = selected.options[optionNo][ArrayIndexOf(selected.options[optionNo], 'name', curScheme.name)];
-			}
-			switch (curScheme.name) {
-			case 'yesNo':
-				var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'Y');
-				el.setAttribute('disabled', 'disabled');
-				el.removeAttribute('checked');
-				var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'N');
-				el.setAttribute('disabled', 'disabled');
-				el.removeAttribute('checked');
-				if (curScheme.abstention) { 
-					var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'A');
+	if (selected !== true) { // if selected === true: do not disable options
+		for (var optionNo=0; optionNo<this.config.questions[qNo].options.length; optionNo++) {
+//			var optionID = this.config.questions[qNo].options[optionNo].optionID;
+			for (var schemeIndex=0; schemeIndex<this.config.questions[qNo].tallyData.scheme.length; schemeIndex++) {
+				var curScheme = this.config.questions[qNo].tallyData.scheme[schemeIndex];
+				if (typeof selected == 'object') {
+					var curSchemeVote = selected.options[optionNo][ArrayIndexOf(selected.options[optionNo], 'name', curScheme.name)];
+				}
+				switch (curScheme.name) {
+				case 'yesNo':
+					var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'Y');
 					el.setAttribute('disabled', 'disabled');
 					el.removeAttribute('checked');
-				}
-				if (typeof selected != 'undefined') {
-					var votedElementId;
-					switch (curSchemeVote.value) {
-					case 1:  votedElementId = 'Y'; break;
-					case 0:  votedElementId = 'N'; break;
-					case -1: votedElementId = 'A'; break;
+					var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'N');
+					el.setAttribute('disabled', 'disabled');
+					el.removeAttribute('checked');
+					if (curScheme.abstention) { 
+						var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'A');
+						el.setAttribute('disabled', 'disabled');
+						el.removeAttribute('checked');
 					}
-					var el = document.getElementById('optionQ'+qNo+'O'+optionNo+votedElementId);
-					el.setAttribute('checked', 'checked');
+					if (typeof curSchemeVote  != 'undefined') {
+						var votedElementId;
+						switch (curSchemeVote.value) {
+						case 1:  votedElementId = 'Y'; break;
+						case 0:  votedElementId = 'N'; break;
+						case -1: votedElementId = 'A'; break;
+						}
+						var el = document.getElementById('optionQ'+qNo+'O'+optionNo+votedElementId);
+						el.setAttribute('checked', 'checked');
+					}
+					break;
+				case 'score':
+					for (var score = curScheme.minScore; score <= curScheme.maxScore; score++) {
+						var rBtn = document.getElementById('optionQ'+qNo+'O'+optionNo+'S'+score);
+						rBtn.setAttribute('disabled', 'disabled');
+						if ((typeof curSchemeVote != 'undefined') && curSchemeVote['value'] ==  score) rBtn.setAttribute('checked', 'checked');
+						else rBtn.removeAttribute('checked');
+					}
+					break;
 				}
-				break;
-			case 'score':
-				for (var score = curScheme.minScore; score <= curScheme.maxScore; score++) {
-					var rBtn = document.getElementById('optionQ'+qNo+'O'+optionNo+'S'+score);
-					rBtn.setAttribute('disabled', 'disabled');
-					if ((typeof selected != 'undefined') && curSchemeVote['value'] ==  score) rBtn.setAttribute('checked', 'checked');
-					else rBtn.removeAttribute('checked');
-				}
-				break;
 			}
 		}
 	}
@@ -907,6 +940,14 @@ ConfigurableTally.prototype.handleUserClickShowWinners = function (config_, onGo
 	this.config = config_;
 	this.onGotVotesObj    = onGotVotesObj;
 	this.onGotVotesMethod = onGotVotesMethod;
+	var now = new Date();
+	var endDate = false;
+	if ('VotingEnd' in this.config.authConfig)	endDate = new Date (this.config.authConfig.VotingEnd);
+	if ( (endDate !== false) && (now < endDate) ) {
+		var html = '<p>Solange Stimmen abgegeben werden können, kann das Wahlergebnis nicht abgerufen werden.</p>';
+		onGotVotesMethod.call(onGotVotesObj, html);
+		return;
+	}
 	var me = this; 
 	var data = {};
 	data.cmd = 'getWinners';  // 'getWinners'; // 'getStatistic';
@@ -921,18 +962,30 @@ ConfigurableTally.prototype.handleUserClickShowWinners = function (config_, onGo
 ConfigurableTally.prototype.handleServerAnswerShowWinners = function (xml) {
 	try {
 		var answer = parseServerAnswer(xml, true);
-		if (answer.cmd != 'showWinners') throw new ErrorInServerAnswer(2043, 'Error: Expected >showWinners<', 'Got from server: ' + data.cmd);
 		var html ='';
-		this.winners = answer.data;
-		for (var question in this.config.questions) {
-			var questionID = this.config.questions[question].questionID;
-			html = html + '<p>' + this.getWinnersHtml(questionID);
-			if (typeof(questionID) === 'string') questionID = "'" + questionID + "'"; 
-			html = html + '<button onclick="page.tally.handleUserClickGetAllVotes(' + questionID + ')">Alle Stimmen ansehen</button></p>';
+		switch (answer.cmd) {
+		case 'showWinners':
+			this.winners = answer.data;
+			for (var question in this.config.questions) {
+				var questionID = this.config.questions[question].questionID;
+				html = html + '<p>' + this.getWinnersHtml(questionID);
+				if (typeof(questionID) === 'string') questionID = "'" + questionID + "'"; 
+				html = html + '<button onclick="page.tally.handleUserClickGetAllVotes(' + questionID + ')">Alle Stimmen ansehen</button></p>';
+			}
+			break;
+		case 'error':
+				var msg = translateServerError(answer.errorNo);
+				html = html + '<p>' + msg + '</p>';
+			break;
+		default:
+			throw new ErrorInServerAnswer(2043, 'Error: Expected >showWinners< or >error<', 'Got from server: ' + answer.cmd);
+			break;
 		}
 		this.onGotVotesMethod.call(this.onGotVotesObj, html);
 	} catch (e) {
-		alert('irgendwas hat nicht geklappt: ' + e.toString()); 
+		// TODO if (e instanceof ErrorInServerAnswer)
+		if (e instanceof MyException)	e.alert();
+		else alert('irgendwas hat nicht geklappt: ' + e.toString()); 
 	}
 };
 

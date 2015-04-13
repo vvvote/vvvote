@@ -39,10 +39,45 @@ abstract class Auth {
 	/**
 	 * check the credentials sent from the voter
 	 */
-	function checkCredentials($credentials, $electionId) {
-		
+	function checkCredentials($credentials, $electionId, $phase) {
+		return $this->checkPhase($phase); // throws itself an error if false
 	}
-	
+
+	function checkPhase($phase) {
+		switch ($phase) {
+			case 'registering':
+				$starttag = 'RegistrationStartDate';
+				$endtag   = 'RegistrationEndDate';
+				$errnoAdd = 0;
+				break;
+			case 'voting':
+				$starttag = 'VotingStart';
+				$endtag =   'VotingEnd';
+				$errnoAdd = 2;
+				break;
+			case 'getResult':
+				$starttag = 'VotingEnd';
+				$endtag = false; // after end of voting always allow getting the result
+				$errnoAdd = 4;
+				break;
+			default:
+				InternalServerError::throwException(47563523, 'checkcredentials: not supported phase', print_r($phase, true));
+				break;
+		}
+		if (isset($this->authConfig[$starttag])) $startdate = strtotime($this->authConfig[$starttag]);
+		else                                     $startdate = strtotime('2000-01-01T00:00Z');
+		if ( ($endtag !== false) && isset($this->authConfig[$endtag])) $enddate = strtotime($this->authConfig[$endtag]);
+		else                                                           $enddate = strtotime('3000-01-01T00:00Z');
+		
+		$now = time();
+		$ret = ($startdate <= $now) && ($enddate >= $now);
+		if ($ret !== true) {
+			if ($startdate > $now)	WrongRequestException::throwException(3 + $errnoAdd, "The phase /$phase/ is yet to begin", $startdate);
+			if ($enddate   < $now)	WrongRequestException::throwException(4 + $errnoAdd, "The phase /$phase/ already ended", $enddate);
+		}
+		return $ret;
+	}
+
 	/**
 	 * In OAuth 2 / BEO the voterId is not read from vvvote client but
 	 * from OAuth-Server. Shared Password and Username/Password will just
@@ -69,6 +104,45 @@ abstract class Auth {
 	 */
 	function getAuthHtml() {
 		
+	}
+	
+	function handleNewElectionReq($electionId, $req) {
+		$authconfig = array();
+		$now = time();
+		if (isset($req["RegistrationStartDate"])) {
+			$regStartDate = strtotime($req["RegistrationStartDate"]);
+			if ($regStartDate === false) WrongRequestException::throwException(12010, '/RegistrationStartDate/ is set but could not be paresed'     , "request received: \n" . print_r($req, true));
+			if (strtotime('+11 years', $now) < $regStartDate || strtotime('-11 years', $now) > $regStartDate) WrongRequestException::throwException(12011, '/RegistrationStartDate/ is more than 10 years away from now which is not supported'     , "request received: \n" . print_r($req, true)); // check if date is plausible	
+			$authconfig['RegistrationStartDate'] = date('c', $regStartDate);
+		}
+		if (isset($req["RegistrationEndDate"])) {
+			$regEndDate = strtotime($req["RegistrationEndDate"]);
+			if ($regEndDate === false) WrongRequestException::throwException(12012, '/RegistrationEndDate/ is set but could not be paresed'     , "request received: \n" . print_r($req, true));
+			if (strtotime('+11 years', $now) < $regEndDate || strtotime('-11 years', $now) > $regEndDate) WrongRequestException::throwException(12013, '/RegistrationEndDate/ is more than 10 years away from now which is not supported'     , "request received: \n" . print_r($req, true)); // check if date is plausible	
+			$authconfig['RegistrationEndDate'] = date('c', $regEndDate);
+		}
+		if (isset($req["VotingStart"])) {
+			$regEndDate = strtotime($req["VotingStart"]);
+			if ($regEndDate === false) WrongRequestException::throwException(12014, '/VotingStart/ is set but could not be paresed'     , "request received: \n" . print_r($req, true));
+			if (strtotime('+11 years', $now) < $regEndDate || strtotime('-11 years', $now) > $regEndDate) WrongRequestException::throwException(12015, '/VotingStart/ is more than 10 years away from now which is not supported'     , "request received: \n" . print_r($req, true)); // check if date is plausible	
+			$authconfig['VotingStart'] = date('c', $regEndDate);
+		}
+		if (isset($req["VotingEnd"])) {
+			$regEndDate = strtotime($req["VotingEnd"]);
+			if ($regEndDate === false) WrongRequestException::throwException(12016, '/VotingEnd/ is set but could not be paresed'     , "request received: \n" . print_r($req, true));
+			if (strtotime('+11 years', $now) < $regEndDate || strtotime('-11 years', $now) > $regEndDate) WrongRequestException::throwException(12017, '/VotingEnd/ is more than 10 years away from now which is not supported'     , "request received: \n" . print_r($req, true)); // check if date is plausible	
+			$authconfig['VotingEnd'] = date('c', $regEndDate);
+		}
+		if (isset($req["DelayUntil"])) {
+			if (! is_array($req["DelayUntil"])) WrongRequestException::throwException(12021, 'if DelayUntil is set, it must be an array', print_r($req['DelayUntil'], true));
+			foreach ($req["DelayUntil"] as $i => $datumStr) {
+				$datum = strtotime($datumStr);
+				if ($datum === false) WrongRequestException::throwException(12022, "DelayUntil date number $i could not be paresed" , "request received: \n" . print_r($req['DelayUntil'], true));
+				if (strtotime('+11 years', $now) < $datum || strtotime('-11 years', $now) > $datum) WrongRequestException::throwException(12023, "DelayUntil date number $i is more than 10 years away from now which is not supported"     , "request received: \n" . print_r($req['DelayUntil'], true)); // check if date is plausible	
+			}
+			$authconfig['DelayUntil'] = $req["DelayUntil"]; 
+		}
+		return $authconfig;
 	}
 	
 	/**

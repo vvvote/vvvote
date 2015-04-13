@@ -708,3 +708,22 @@ function addQuotationMarksIfString(v) {
 	if (typeof(v) === 'string') return "'" + v + "'"; 
 	else                        return v;
 }
+
+/**
+ * 
+ * @param time: Date object
+ * @param obj: object of the method to be called at time
+ * @param method
+ */
+function executeAt(time, obj, method) {
+	var currentTime = new Date().getTime();
+	setTimeout(function() {method.call(obj);}, time.getTime() - currentTime);
+}
+
+// TODO make it look nicer
+function formatDate(date) {
+	// var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+	if (typeof date.toLocaleDateString != undefined) { // safari does not have it
+		return date.toLocaleDateString() + ' ' + date.toLocaleTimeString().substring(0, 5);
+	} else return date.toString();
+}

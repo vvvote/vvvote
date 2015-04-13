@@ -103,7 +103,9 @@ class ExternalTokenAuth extends Auth {
 	/**
 	 * check the credentials sent from the voter
 	 */
-	function checkCredentials($credentials, $electionId) {
+	function checkCredentials($credentials, $electionId, $phase) {
+		$inDateRange = parent::checkCredentials($credentials, $electionId, $phase); //checks the phase time frame
+		if ($inDateRange !== true) return false;
 		global $externalTokenConfig;
 		$curExternalTokenConfig = $this->getExternalTokenConfig();
 		if ($curExternalTokenConfig !== false) {
@@ -184,15 +186,17 @@ class ExternalTokenAuth extends Auth {
 	 * @param unknown $req : $req['externalToken']
 	 */
 	function handleNewElectionReq($electionId, $req) {
+		$ret = parent::handleNewElectionReq($electionId, $req);
 		if (! isset($electionId))              WrongRequestException::throwException(2340, 'ElectionId not set', "request received: \n" . print_r($req, true));
 		if (gettype($electionId) != 'string' ) WrongRequestException::throwException(2345, 'ElectionId is not of type /string/', "request received: \n" . print_r($req, true));
 		if (isset($req['configId']) && gettype($req['configId']) == 'string') {
-			return Array('configId' => $req['configId']);
+			$ret['configId'] = $req['configId'];
+			return $ret;
 		} else {
 			if (isset($req['checkTokenUrl']) && gettype($req['checkTokenUrl']) == 'string')	{
 				$ok = $this->newElection($electionId, $req['checkTokenUrl']);
 				if (! $ok) InternalServerError::throwException(2710, 'Internal server error: error saving election auth information', "request received: \n" . print_r($req, true));
-				return Array();
+				return $ret;
 			} else {
 				WrongRequestException::throwException(2350, 'neither chekTokenUrl nor configId is set', "request received: \n" . print_r($req, true));
 			}

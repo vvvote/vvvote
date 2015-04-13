@@ -51,7 +51,11 @@ function startVoting(load) {
 
 VotePage.prototype.gotElectionConfig = function (config) { 
 	this.config = config; 
-	config.phase = 'generatePermissions'; // TODO take phase from config
+	// config.phase = 'generatePermissions'; // TODO take phase from config
+	this.getNextVoteTime("2015-04-13T12:41:00+02:00");
+	// TODO if we have phases that do not overlap care about these:
+	if (this.isRegPhase()) config.phase = 'generatePermissions'; 
+	else alert('Es ist nicht mehr möglich, einen Wahlschein zu erstellen');
 	switch (config.phase) {
 	case 'generatePermissions':
 		this.startStep2(config);
@@ -64,6 +68,7 @@ VotePage.prototype.gotElectionConfig = function (config) {
 VotePage.prototype.startStep2 = function (config) {
 	var mc = '';
 	var techinfo = '';
+	this.config = config;
 	switch (config.blinding) {
 	case 'blindedVoter':
 		mc = mc + BlindedVoterElection.getStep2Html();
@@ -144,6 +149,7 @@ VotePage.prototype.onPermGenerated = function() {
 
 VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEnvelopeLStorageId) {
 	this.blinder = blindingobj;
+	this.config = this.blinder.config;
 	if (permok) {
 		switch (config.tally) {
 		case 'publishOnly': 
@@ -155,7 +161,23 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEn
 		default:
 			alert('Abstimmunsmodus /' + config.tally + '/ wird vom Client nicht unterstützt');
 		}
-		var fragm = this.tally.getMainContentFragm(config);
+		var fragm = document.createDocumentFragment(); 
+
+			// print election title
+			var elp = document.createElement('h1');
+			elp.appendChild(document.createTextNode(config.electionTitle));
+			elp.setAttribute('id', 'ballotName');
+			fragm.appendChild(elp);
+			
+			// print voting period
+			var periodText = page.getVoteTimeStr();
+			var elp = document.createElement('p');
+			elp.appendChild(document.createTextNode(periodText));
+			elp.setAttribute('class', 'votingPeriod');
+			fragm.appendChild(elp);
+
+			// get from Tally
+			fragm = this.tally.getMainContentFragm(fragm, config);
 		Page.loadMainContentFragm(fragm);
 		this.tally.onPermissionLoaded(returnEnvelopeLStorageId); 
 //		var element = document.getElementById('sendvote');
@@ -172,3 +194,90 @@ VotePage.prototype.sendVote = function (event) {
 	// alert('jetzt wird die Stimme gesendet');
 	this.tally.sendVote(event);
 };
+
+VotePage.prototype.isRegPhase = function() {
+	var regStart = new Date(this.config.authConfig.RegistrationStartDate); // new Date("2015-04-11T01:22:00Z");
+	var regEnd = new Date(this.config.authConfig.RegistrationEndDate); // "2015-04-12T02:22:00Z");
+	var now = new Date(); //now
+	var regPhase = false;
+	if ( (regStart <= now) && (regEnd >= now) ) regPhase = true;
+	return regPhase;
+};
+
+VotePage.prototype.isVotePhase = function() {
+	var regStart = new Date(this.config.authConfig.VotingStart); // new Date("2015-04-11T01:22:00Z");
+	var regEnd = new Date(this.config.authConfig.VotingEnd); // "2015-04-12T02:22:00Z");
+	var now = new Date(); //now
+	var regPhase = false;
+	if ( (regStart <= now) && (regEnd >= now) ) regPhase = true;
+	return regPhase;
+};
+
+VotePage.prototype.isShowResultPhase = function() {
+	var regEnd = new Date(this.config.authConfig.VotingEnd); // "2015-04-12T02:22:00Z");
+	var now = new Date(); //now
+	var regPhase = false;
+	if (regEnd <= now) regPhase = true;
+	return regPhase;
+};
+
+/**
+ * 
+ * @param returnEnvelpeCreationDate
+ * @returns true if voting is allowed now, <br>
+ * 			a Date if voting will be allowed from that date on or <br> 
+ * 			false if voting is not possible anymore 
+ */
+VotePage.prototype.getNextVoteTime = function() {
+	//var returnEnvelpeCreationDateStr = this.blinder.returnEnvelpeCreationDate;
+	var now = new Date();
+	var endDate = new Date("3000-01-01T00:00:00+00:00"); // use 1.1.3000 as enddate if no enddate is configured
+	if ('VotingEnd' in this.config.authConfig)	endDate = new Date (this.config.authConfig.VotingEnd);
+	if (now >= endDate) return false;
+	
+	var startDate = new Date("2000-01-01T00:00:00+00:00"); // use 1.1.3000 as startdate if no enddate is configured
+	if ('VotingStart' in this.config.authConfig)	startDate = new Date (this.config.authConfig.VotingStart);
+	
+	var endRegDate = new Date("3000-01-01T00:00:00+00:00"); // use 1.1.3000 as enddate if no enddate is configured
+	if ('RegistrationEndDate' in this.config.authConfig)	endRegDate = new Date (this.config.authConfig.RegistrationEndDate);
+	
+	if (startDate > endRegDate) { // if registration phase and voting phase do not overlapp 
+		if (now <  startDate) return startDate; // and voting did not start yet, return votingStartDate
+	    if (now >= startDate)  return true;
+	}
+
+	// Voting and registering phase overlap
+	if ( ! 'DelayUntil' in this.config.authConfig) return true; // this way of delaying is not configured, so allow
+	var returnEnvelopeCreationDate = this.blinder.returnEnvelopeCreationDate;; // "2015-04-12T02:22:00Z");
+	var i = 0;
+	var curDelayUntil;
+	do {
+		curDelayUntil = new Date(this.config.authConfig.DelayUntil[i]);
+		i++;
+	} while ((curDelayUntil < returnEnvelopeCreationDate) && (i < this.config.authConfig.DelayUntil.length));
+	if (i >= this.config.authConfig.DelayUntil.length) return false; // there is no DelayUntil after the returnEnvelpeCreationDate 
+	if (curDelayUntil <= now) return true; // the delay after the returnEnvelpeCreationDate is already fulfilled 
+	return curDelayUntil;
+};
+
+// executeAt(time, obj, method);
+
+
+VotePage.prototype.getVoteTimeStr = function() {
+	var startdate = this.getNextVoteTime(this.blinder.returnEnvelopeCreationDate);
+	var enddate = false;
+	if ('VotingEnd' in this.config.authConfig) enddate = new Date (this.config.authConfig.VotingEnd); // TODO VotingEnd not set
+	var now = new Date();
+	var votingTimeStr = 'Fehler r83g83';
+	if (startdate === true) {
+		if (enddate === false) votingTimeStr = 'Ab sofort können Sie Ihre Stimme ohne zeitliche Einschränkung abgeben.';
+		if (enddate >= now) votingTimeStr = 'Ab sofort bis vor ' + formatDate(enddate) + ' Uhr können Sie Ihre Stimme abgeben.';
+	}
+	if (startdate instanceof Date) votingTimeStr = 'Von ' + formatDate(startdate) + ' Uhr bis vor ' + formatDate(enddate) + ' Uhr können Sie Ihre Stimme abgeben.';
+	if ( !(enddate === false)) {
+		if (startdate === false || enddate <= now)  votingTimeStr = 'Es gibt für Sie keine Möglichkeit mehr, Ihre Stimme abzugeben.';
+	}
+	return votingTimeStr;
+};
+
+

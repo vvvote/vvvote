@@ -217,6 +217,10 @@ input#electionUrl {
 
 /*** tally voting phase: Ranking Table ***/
 
+.votingPeriod {
+    border-bottom: 2px solid #F00;
+}
+
 Options th {
 	/* font-size: 14px; */
 	/* font-weight: normal; */
