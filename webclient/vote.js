@@ -247,7 +247,7 @@ VotePage.prototype.getNextVoteTime = function() {
 	}
 
 	// Voting and registering phase overlap
-	if ( ! 'DelayUntil' in this.config.authConfig) return true; // this way of delaying is not configured, so allow
+	if ( ! ('DelayUntil' in this.config.authConfig) ) return true; // this way of delaying is not configured, so allow
 	var returnEnvelopeCreationDate = this.blinder.returnEnvelopeCreationDate;; // "2015-04-12T02:22:00Z");
 	var i = 0;
 	var curDelayUntil;
