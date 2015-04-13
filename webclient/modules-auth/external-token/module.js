@@ -47,7 +47,14 @@ ExternalTokenAuth.getNewElectionData = function (serverId) {
 //	var element = document.getElementById('checkTokenUrl');
 //	ret.authData.sharedPassw = element.value;
 //	ret.authData = {'checkTokenUrl': 'http://www.webhod.ra/vvvote2/test/externaltoken.html'};
-	ret.authData = {'configId': 'basisentscheid_offen'};
+	ret.authData = {
+		'configId': 'basisentscheid_offen',
+        "RegistrationStartDate": "2014-01-27T21:20:00Z",  // period, in which return envelop generation is allowed
+        "RegistrationEndDate":   "2020-10-10T21:20:00Z",
+        "VotingStart": "2014-01-27T21:20:00Z",  
+        "VotingEnd" :  "2020-10-10T21:20:00Z",  
+        "DelayInterval": 24*3600 // in seconds
+	};
 	return ret;
 };
 

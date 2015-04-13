@@ -72,10 +72,13 @@ class SharedAuth extends Auth {
 		return $this->voterId;
 	}
 
-	function checkCredentials($credentials, $completeElectionId) {
+	function checkCredentials($credentials, $completeElectionId, $phase) {
 		$electionIdParts = self::splitElectionId($completeElectionId);
 		$mainElectionId = $electionIdParts['mainElectionId'];
-
+		
+		$inDateRange = parent::checkCredentials($credentials, $electionId, $phase); //checks the phase time frame
+		if ($inDateRange !== true) return false;
+		
 		/* is the result already in the cache? */
 		if (isset($this->credentials) && ($this->credentials === $credentials)
 		&& ($this->$mainElectionId ===  $mainElectionId)

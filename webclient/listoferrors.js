@@ -11,6 +11,12 @@ listOfServerErrors = {
 		"de": {
 			"1": "Sie sind nicht in der Liste der Stimmberechtigten oder die Zugangsdaten sind falsch oder Sie haben dem Server nicht erlaubt, Ihre Stimmberechtigung zu prüfen.",
 			"2": "Manipulationsversuch: Ihr Computer übermittelt einen falschen Namen der Abstimmung.",
+			"3": "Die Phase der Erstellung von Wahlscheinen hat noch nicht begonnen.",
+			"4": "Die Phase der Erstellung von Wahlscheinen ist bereits vorbei.",
+			"5": "Die Phase der Stimmabgabe hat noch nicht begonnen.",
+			"6": "Die Phase Stimmabgabe ist bereits vorbei.",
+			"7": "Das Abstimmungsergebnis kann erst abgerufen werden, wenn die Stimmabgabe beendet ist.",
+			"8": "Das Abstimmungsergebnis kann nicht mehr abgerufen werden.",
 			"301": "Der Server hat Ihnen bereits einen Wahlschein für diese Abstimmung bestätigt. Für jeden Stimmberechtigten wird maximal ein Wahlschein bestätigt (d.h. vom Server digital unterschrieben).",
 			"1102": "Bei dieser Abstimmung haben Sie bereits abgestimmt.",
 			"2120": "Der Name der Abstimmung ist bereits vergeben.",

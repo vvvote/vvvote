@@ -11,6 +11,8 @@ if(count(get_included_files()) < 2) {
 
 require_once __DIR__ . '/../rsaMyExts.php';
 
+date_default_timezone_set('Europe/Berlin');
+
 $webclientUrlbase = '../webclient'; // relativ to backend or absolute, no trailing slash
 
 $p         = new Math_BigInteger('10645752675217578369956837062782498220775273');

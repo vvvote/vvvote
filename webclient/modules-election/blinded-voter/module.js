@@ -93,10 +93,12 @@ BlindedVoterElection.prototype.gotWebclient = function(xml) {
 BlindedVoterElection.prototype.injectPermissionIntoClientSave = function(ballot) {
 	var find = /\/\/bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpßjntt/;
 	var lStorage = {'id': bigInt2str(randBigInt(128, 0), 16)};
+	this.returnEnveleopCreationDate = Date();
 	var returnEnvelope = {
 			'permission': ballot, 
 			'config': this.config,
-			'lStorage': lStorage};
+			'lStorage': lStorage,
+			'creationDate': this.returnEnveleopCreationDate.toString()};
 	var ballotWithClient = this.clientHtml.replace(find, 'returnEnvelope = ' + JSON.stringify(returnEnvelope) +';');
 	// load the electionId to be used as filename
 		// var p2 = JSON.parse(ballot[0].transm.str);
@@ -148,7 +150,7 @@ BlindedVoterElection.getStep2Html = function() {
 	var ret = 'Als Ergebnis dieses Schrittes erhalten Sie einen Wahlschein, den Sie ' + 
 	'speichern und zur Stimmabgabe sp&auml;ter wieder laden m&uuml;ssen. ' +
 	'Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
-	'weiter! Er ist anonym, d.h. es kann ohne Ihre Mithilfe nicht festgestellt werden, wem er geh&ouml;rt.'; 
+	'weiter! Die Stimmabgabe damit ist anonym, d.h. ohne Ihre Mithilfe kann nicht festgestellt werden, von wem die Stimme stammt.'; 
 	return ret;
 
 };
@@ -180,11 +182,13 @@ BlindedVoterElection.loadReturnEnvelopeHtml = function() {
  * provide HTML code to be presented after successful voting permission generated
  */
 BlindedVoterElection.prototype.getPermGeneratedHtml = function() {
+
 	return '<h2>Wahlschein erfolgreich erstellt. </h2>' +
 	'<p>Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
-	'weiter! Er ist anonym, d.h. es kann ohne Ihre Mithilfe nicht festgestellt werden, wem er geh&ouml;rt.</p>' +
+	'weiter! Die Stimmabgabe damit anonym, d.h. ohne Ihre Mithilfe kann nicht festgestellt werden, von wem die Stimme abgegeben wurde.</p>' +
 	'<p>Zum Abstimmen &ouml;ffnen Sie den Wahlschein im Internet-Browser. ' +
-	'Eine M&ouml;glichkeit dazu ist: Klicken Sie im Datei-Explorer doppelt auf die Wahlschein-Datei.</p>';
+	'Eine M&ouml;glichkeit dazu ist: Klicken Sie im Datei-Explorer doppelt auf die Wahlschein-Datei.</p>' +
+	'<p>' + votingTimeStr + '</p>';
 };
 
 BlindedVoterElection.onClickedLoadFile = function(event) {
@@ -227,6 +231,7 @@ BlindedVoterElection.prototype.importPermission = function (returnEnvelope) {
 	this.config = returnEnvelope.config;
 	this.permission = returnEnvelope.permission;
 	this.returnEnvelopeLStorageId = returnEnvelope.lStorage.id;
+	this.returnEnvelopeCreationDate = new Date(returnEnvelope.creationDate);
 	var mainElectionIdMismatch = false;
 	for (var q=0; q<this.permission.length; q++) {
 		this.permission[q].transm.signed = JSON.parse(this.permission[q].transm.str);

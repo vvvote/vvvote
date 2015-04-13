@@ -15,6 +15,8 @@ require_once __DIR__ . '/../rsaMyExts.php';
 if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
 	require_once 'conf-thisserver2.php';
 } else {
+	date_default_timezone_set('Europe/Berlin');
+	
 	$webclientUrlbase = '../webclient'; // relativ to backend or absolute, no trailing slash
 	$p         = new Math_BigInteger('10645752675217578369956837062782498220775273');
 	$q         = new Math_BigInteger('287562030630461198841452085101513512781647409');

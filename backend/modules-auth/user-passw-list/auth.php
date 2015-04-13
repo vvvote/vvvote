@@ -34,7 +34,10 @@ class UserPasswAuth extends Auth {
 	/**
 	 * check the credentials sent from the voter
 	 */
-	function checkCredentials($credentials, $electionId) {
+	function checkCredentials($credentials, $electionId, $phase) {
+		$inDateRange = parent::checkCredentials($credentials, $electionId, $phase); //checks the phase time frame
+		if ($inDateRange !== true) return false;
+		
 		return $this->db->checkCredentials($electionId, $credentials['voterId'], $credentials['secret']);
 	}
 	

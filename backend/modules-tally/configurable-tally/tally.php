@@ -38,8 +38,8 @@ class ConfigurableTally extends PublishOnlyTally {
 				$result = array('cmd' => 'showWinners', 'data' => $winners);
 				return $result;
 				break;
-			case 'getStatistic':
 				
+			case 'getStatistic':
 				// get the array of questions from the requested questionId or return all questions
 				if (isset($voterReq['questionID'])) { // return the result statistics for the requested question only
 					if (is_array($voterReq['questionID'] ) ) $questionIds   = $voterReq['questionID']; // an array of questions requested

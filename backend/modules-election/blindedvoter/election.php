@@ -51,7 +51,7 @@ class BlindedVoter extends Blinder {
 
 
 	function isInVoterList($credentials, $electionId) { 
-		return $this->auth->checkCredentials($credentials, $electionId);
+		return $this->auth->checkCredentials($credentials, $electionId, 'registering');
 	}
 
 	function isFirstVote($credentials, $electionID, $threadId) {

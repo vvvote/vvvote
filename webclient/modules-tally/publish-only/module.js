@@ -47,14 +47,9 @@ PublishOnlyTally.getNewElectionData = function() {
  **************************************/
 
 
-PublishOnlyTally.prototype.getMainContentFragm = function() {
-	var fragm = document.createDocumentFragment();
+PublishOnlyTally.prototype.getMainContentFragm = function(fragm, config) {
+	//var fragm = document.createDocumentFragment();
 	
-	// print election title
-	var elp = document.createElement('h1');
-	elp.appendChild(document.createTextNode(this.config.electionTitle));
-	elp.setAttribute('id', 'ballotName');
-	fragm.appendChild(elp);
 	
 	// print question
 	var label = document.createElement('label');

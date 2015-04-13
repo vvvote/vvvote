@@ -104,6 +104,9 @@ class PublishOnlyTally extends Tally {
 		} catch (OutOfRangeException $e) {
 			WrongRequestException::throwException(1103, 'The request ist missing >electionId< and/or >votingno<', "complete request: " . print_r($voterReq, true));
 		}
+		
+		$isVotingPhase = $this->blinder->auth->checkphase('voting'); // throws a WrongRequestException if not in voting phase
+		
 		$isfirstv = $this->isFirstVote($electionId, $votingno);
 		if (! $isfirstv) {
 			WrongRequestException::throwException(1102, 'For this election, a vote from you is already stored', "Election: $electionId, Voting number $votingno");
@@ -122,7 +125,11 @@ class PublishOnlyTally extends Tally {
 
 	function getAllVotesEvent($voterReq) {
 		// TODO check if client is allowed to see the election result (e.g. was allowed to vote / did vote himself)
-		// TODO check if voting phase has ended
+		
+		// check if voting phase has ended
+		$isGetResultPhase = $this->blinder->auth->checkPhase('getResult'); // throws an error if not in the phase
+		if ($isGetResultPhase !== true) WrongRequestException::throwException(9, 'Not in phase of getting the result', '');
+
 		// TODO check in election config database if only election admin can see all votes
 		$allvotes = $this->db->getVotes($voterReq['electionId']);
 		$result = $this->db->getResult($voterReq['electionId']);

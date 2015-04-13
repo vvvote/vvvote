@@ -51,7 +51,7 @@ class OAuth2 extends Auth {
 	 * check the credentials sent from the voter
 	 * @param array $credentials: ['secret'] ['identifier']
 	 */
-	function checkCredentials($credentials, $electionId) {
+	function checkCredentials($credentials, $electionId, $phase) {
 		global $oauthConfig; // TODO move this to __construct?
 		// load necessary data
 		  //$configHash = $this->electionsDB->electionIdToConfigHash($electionId);
@@ -62,7 +62,10 @@ class OAuth2 extends Auth {
 		if (! isset($webclientAuthFromDb['username'])) return false; // did not log in in OAuth2 / BEO server
 		$secretFromDb = hash('sha256', $electionId . $oauthConfig[$oAuthServerId]['client_id'] . $webclientAuthFromDb['username'] . $credentials['identifier']);
 		if ($secretFromDb !== $credentials['secret'] ) return false;
-
+		
+		$inDateRange = parent::checkCredentials($credentials, $electionId, $phase); //checks the phase time frame
+		if ($inDateRange !== true) return false;
+		
 		// $authInfos = $this->db->loadAuthData($configHash, $Ids['serverId'], $credentials['identifier']);
 		// connect to OAuth2 server
 		$this->oAuthConnection = new FetchFromOAuth2Server($oAuthServerId, $webclientAuthFromDb['authInfos']);
@@ -169,33 +172,22 @@ class OAuth2 extends Auth {
 	 * @return auth config data to be saved with the election config because the client need to know it for obtaining voting permission
 	 */
 	function handleNewElectionReq($electionId, $req) {
+		$authconfig = parent::handleNewElectionReq($electionId, $req);
+		
 		if ( (! isset($req["serverId"]     )) || (! is_string($req['serverId']     )) ) WrongRequestException::throwException(12001, 'Missing /listId/ in election config'       , "request received: \n" . print_r($req, true));
 		if ( (! isset($req["listId"]       )) || (! is_string($req['listId']       )) ) WrongRequestException::throwException(12001, 'Missing /listId/ in election config'       , "request received: \n" . print_r($req, true));
 		if ( (! isset($req["nested_groups"])) || (! is_array( $req['nested_groups'])) ) WrongRequestException::throwException(12002, 'Missing /nested_groups/ in election config', "request received: \n" . print_r($req, true));
 		if ( (! isset($req["verified"]     )) || (! is_bool(  $req['verified']     )) ) WrongRequestException::throwException(12003, 'Missing /verified/ in election config'     , "request received: \n" . print_r($req, true));
 		if ( (! isset($req["eligible"]     )) || (! is_bool(  $req['eligible']     )) ) WrongRequestException::throwException(12004, 'Missing /eligible/ in election config'     , "request received: \n" . print_r($req, true));
 		if ( (! isset($electionId          )) || (! is_string($electionId          )) ) WrongRequestException::throwException(12005, '/ElectionId/ not set or of wrong type', "request received: \n" . print_r($req, true));
-		$authconfig = Array(
-				'serverId'      => $req['serverId'],
-				'listId'        => $req["listId"],
-				'nested_groups' => $req["nested_groups"],
-				'verified'      => $req["verified"],
-				'eligible'      => $req["eligible"],
-		);
-		date_default_timezone_set('UTC');
-		if (isset($req["RegistrationStartDate"])) {
-			$regStartDate = strtotime($req["RegistrationStartDate"]);
-			if ($regStartDate === false) WrongRequestException::throwException(12010, '/RegistrationStartDate/ is set but could not be paresed'     , "request received: \n" . print_r($req, true));
-//		TODO check if date is plausible:	if (strtotime('+10 years', $now) > $regStartDate || strtotime('-10 years', now) < $regStartDate) WrongRequestException::throwException(12011, '/RegistrationStartDate/ is more than 10 years away from now which is not supported'     , "request received: \n" . print_r($req, true));
-			$authconfig['RegistrationStartDate'] = date('c', $regStartDate);
-		}
-		if (isset($req["RegistrationEndDate"])) {
-			$regEndDate = strtotime($req["RegistrationEndDate"]);
-			if ($regEndDate === false) WrongRequestException::throwException(12011, '/RegistrationEndDate/ is set but could not be paresed'     , "request received: \n" . print_r($req, true));
-			$authconfig['RegistrationEndDate'] = date('c', $regEndDate);
-		}
+		$authconfig['serverId']      = $req['serverId'];
+		$authconfig['listId']        = $req["listId"];
+		$authconfig['nested_groups'] = $req["nested_groups"];
+		$authconfig['verified']      = $req["verified"];
+		$authconfig['eligible']      = $req["eligible"];
+
 		// TODO don't save any data until everything is completed (no error occured in the further steps)
-		// TODO don't save any publuc config data in separate data base - just use the config
+		// TODO don't save any public config data in separate data base - just use the config
 		$ok = $this->newElection($electionId, $req['serverId'], $authconfig); // TODO think about taking serverId always from election-config
 		if (! $ok) InternalServerError::throwException(12020, 'Internal server error: error saving election auth information', "request received: \n" . print_r($req, true));
 		return $authconfig;
