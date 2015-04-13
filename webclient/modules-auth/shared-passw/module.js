@@ -47,43 +47,28 @@ SharedPasswAuth.getNewElectionHtml = function () {
  */
 SharedPasswAuth.getNewElectionData = function (serverId) {
 	var ret = {};
-	ret.auth = 'sharedPassw'; 
+	ret.auth = 'sharedPassw';
+	var startdate = new Date();
+	var enddate = startdate.getTime() + 10 * 86400 * 1000; // in milleseconds
+	var intervall = 10 * 60 * 1000; // in milleseconds
+	var DelayUntil = new Array();
+	var DelayUntilStr = new Array();
+	DelayUntil.push(startdate.getTime());
+	DelayUntilStr.push(startdate.toUTCString());
+	var cur = startdate.getTime();
+	while (cur < enddate) {
+		cur = DelayUntil[DelayUntil.length-1] + intervall;
+		DelayUntil.push(cur);
+		var tmp = new Date(cur);
+		DelayUntilStr.push(tmp.toISOString());
+	}
+	var enddatedate = new Date(enddate);
 	ret.authData = {
 			"RegistrationStartDate": "2014-01-27T21:20:00Z",  // period, in which return envelop generation is allowed
 	        "RegistrationEndDate":   "2020-10-10T21:20:00Z",
-	        "VotingStart": "2014-01-27T21:20:00Z",  
-	        "VotingEnd" :  "2020-10-10T21:20:00Z",  
-	        "DelayUntil": [
-	                          "2015-04-13T12:35:00+02:00", 
-	                          "2015-04-13T12:40:00+02:00",
-	                          "2015-04-13T12:45:00+02:00",
-	                          "2015-04-13T12:50:00+02:00",
-	                          "2015-04-13T13:00:00+02:00",
-	                          "2015-04-13T17:00:00+02:00",
-	                          "2015-04-13T17:05:00+02:00",
-	                          "2015-04-13T17:10:00+02:00",
-	                          "2015-04-13T17:15:00+02:00",
-	                          "2015-04-13T17:20:00+02:00",
-	                          "2015-04-13T17:25:00+02:00",
-	                          "2015-04-13T17:30:00+02:00",
-	                          "2015-04-13T17:35:00+02:00",
-	                          "2015-04-13T18:15:00+02:00",
-	                          "2015-04-13T18:20:00+02:00",
-	                          "2015-04-13T18:25:00+02:00",
-	                          "2015-04-13T18:30:00+02:00",
-	                          "2015-04-13T18:35:00+02:00",
-	                          "2015-04-13T18:40:00+02:00",
-	                          "2015-04-13T19:45:00+02:00",
-	                          "2015-04-13T19:50:00+02:00",
-	                          "2015-04-13T20:00:00+02:00",
-	                          "2015-04-13T20:00:00+02:00",
-	                          "2015-04-13T20:05:00+02:00",
-	                          "2015-04-13T20:10:00+02:00",
-	                          "2015-04-13T20:15:00+02:00",
-	                          "2015-04-13T20:20:00+02:00",
-	                          "2015-04-13T20:25:00+02:00",
-	                          "2015-04-13T20:30:00+02:00",
-	                          ]
+	        "VotingStart": startdate.toISOString(),  
+	        "VotingEnd" :  enddatedate.toISOString(),  
+	        "DelayUntil":   DelayUntilStr
 	};
 	var element = document.getElementById('givenPassword');
 	ret.authData.sharedPassw = element.value;
