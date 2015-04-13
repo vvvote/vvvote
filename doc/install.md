@@ -1,3 +1,13 @@
+What you need
+=============
+You need:
+* a webserver (e.g. apache)
+* a mysql server
+* php version 5.3 at least and
+** php-pdo
+** php GMD is recommended (it works without but the cryptographic calculations are about 200 times faster if you have GMD module)
+
+
 Configure the Server
 ====================
 
@@ -18,6 +28,7 @@ Configure the webclient
 =======================
 
 in directory webclient/config
+
 	copy config-example.js to config.js
 
 adjust:
@@ -44,9 +55,11 @@ Prepair the MySQL Servers
 =========================
 
 on the command line:
+
 	mysql -u root -p
 
 In the mysql shell:
+
 	CREATE database election_server1;
 	CREATE database election_server2;
 
@@ -57,10 +70,12 @@ In the mysql shell:
 	FLUSH PRIVILEGES;
 
 verify:
+
 	SELECT host, user, password FROM mysql.user;
 	show databases;
 
 delete all data:
+
 	drop database election_server2;
 	drop database election_server1;
 	
@@ -69,6 +84,7 @@ Notes
 If you are running / forcing the clients to connect via https (TLS) you should exempt backend/storevote.php from forcing to https. 
 You should do this because this enables the anonymising service to stripp off the browser's request header which is important for anonymisation.
 The apache .htaccess might then look like:
+
 	RewriteEngine On
 	RewriteCond %{REQUEST_FILENAME} !backend/storevote.php$
 	RewriteCond %{HTTPS} off
