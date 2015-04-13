@@ -239,17 +239,20 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und
 	function onWebsiteLoad() {
 		page.display();
 		checkBrowser();
-		if (location.search.length > 1 && typeof firstload == 'undefined') {
+		if (location.search.length > 1 && typeof firstload == 'undefined' && location.search.indexOf('confighash') >= 0) {
 			firstload = false;
-	    	 page = votePage; // TODO read phase from config and
-		     page.display();
-	    	 GetElectionConfig.submitForm();
+			if (location.search.indexOf('showresult') >=0) page = getResultPage;
+			else                                           page = votePage; // TODO read phase from config and
+		    page.display();
+	    	 // var me = this;
+			 // new GetElectionConfig(a.value, null, me, me.onGotElectionConfig);
+	        GetElectionConfig.submitForm();
 	    	// TODO read phase from config and load votePage(generatePermssion), votePage(submitVote), getresult()
 		}
 		if ('returnEnvelope' in window) {
 			 // do not show the "new election" menu in return envelope
 			 var el = document.getElementById('newElectionLink');
-			 el.setAttribute('style', 'display:none');
+			 el.setAttribute('style', 'display:none'); bnb
 
 			 // switch to take vote page
 	    	 page = votePage; 
