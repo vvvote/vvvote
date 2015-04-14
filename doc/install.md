@@ -1,10 +1,11 @@
 What you need
 =============
 You need:
+
 * a webserver (e.g. apache)
 * a mysql server
-* php version 5.3 at least and
- * php-pdo
+* php version 5.3 at least and (both is automatically included in most distributions):
+ * php-pdo-mysql
  * php GMD is recommended (it works without but the cryptographic calculations are about 200 times faster if you have GMD module)
 
 Download vvvote
@@ -18,15 +19,18 @@ Configure the Server
 ====================
 
 in directory backend/config:
+
 	copy conf-allservers-example.php to conf-allservers.php
 	copy conf-thisserver-example.php to conf-thisserver.php
 	copy conf-thisserver-example2.php to conf-thisserver2.php
 
 in both conf-thisserver files:
+
 * adjust $dbinfos 
 * adjust $oauthBayern 'client_id', 'client_secret', 'redirect_uri'
 
 in 'conf-allservers.php' adjust
+
 * $configUrlBase
 
 
@@ -38,6 +42,7 @@ in directory webclient/config
 	copy config-example.js to config.js
 
 adjust:
+
 * server1url
 * server2url
 
@@ -88,7 +93,7 @@ delete all data:
 Notes
 =====	
 If you are running / forcing the clients to connect via https (TLS) you should exempt backend/storevote.php from forcing to https. 
-You should do this because this enables the anonymising service to stripp off the browser's request header which is important for anonymisation.
+You should do this because this enables the anonymising service to strip off the browser's request header which is important for anonymisation.
 The apache .htaccess might then look like:
 
 	RewriteEngine On
