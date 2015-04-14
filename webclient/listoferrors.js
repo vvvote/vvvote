@@ -17,6 +17,7 @@ listOfServerErrors = {
 			"6": "Die Phase Stimmabgabe ist bereits vorbei.",
 			"7": "Das Abstimmungsergebnis kann erst abgerufen werden, wenn die Stimmabgabe beendet ist.",
 			"8": "Das Abstimmungsergebnis kann nicht mehr abgerufen werden.",
+			"9": "Aktuell ist nicht die Phase der Stimmabgabe.",
 			"301": "Der Server hat Ihnen bereits einen Wahlschein für diese Abstimmung bestätigt. Für jeden Stimmberechtigten wird maximal ein Wahlschein bestätigt (d.h. vom Server digital unterschrieben).",
 			"1102": "Bei dieser Abstimmung haben Sie bereits abgestimmt.",
 			"2120": "Der Name der Abstimmung ist bereits vergeben.",

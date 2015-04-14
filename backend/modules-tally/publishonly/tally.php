@@ -106,6 +106,7 @@ class PublishOnlyTally extends Tally {
 		}
 		
 		$isVotingPhase = $this->blinder->auth->checkphase('voting'); // throws a WrongRequestException if not in voting phase
+		if ($isVotingPhase !== true) WrongRequestException::throwException(9, 'Not in voting phase', '');
 		
 		$isfirstv = $this->isFirstVote($electionId, $votingno);
 		if (! $isfirstv) {

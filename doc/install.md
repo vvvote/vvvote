@@ -4,10 +4,16 @@ You need:
 * a webserver (e.g. apache)
 * a mysql server
 * php version 5.3 at least and
-** php-pdo
-** php GMD is recommended (it works without but the cryptographic calculations are about 200 times faster if you have GMD module)
+ * php-pdo
+ * php GMD is recommended (it works without but the cryptographic calculations are about 200 times faster if you have GMD module)
 
+Download vvvote
+===============
+in your home dir execute the following command
 
+	git clone https://github.com/pfefffer/vvvote.git
+ 
+ 
 Configure the Server
 ====================
 
