@@ -259,7 +259,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlzettelnummer) und
 		if ('returnEnvelope' in window) {
 			 // do not show the "new election" menu in return envelope
 			 var el = document.getElementById('newElectionLink');
-			 el.setAttribute('style', 'display:none'); bnb
+			 el.setAttribute('style', 'display:none');
 
 			 // switch to take vote page
 	    	 page = votePage; 
