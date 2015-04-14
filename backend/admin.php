@@ -21,15 +21,16 @@
 <?php
 // TODO remove these lines before release
 
-define('CRYPT_RSA_MODE', CRYPT_RSA_MODE_INTERNAL); // this is needed because otherwise openssl (if present) needs special configuration in openssl.cnf when creating a new key pair 
 
 require_once 'config/conf-allservers.php';
-require_once 'config/conf-thisserver2.php';
+require_once 'config/conf-thisserver.php';
+
+require_once 'Math/BigInteger.php';
+require_once 'Crypt/RSA.php';
+define('CRYPT_RSA_MODE', CRYPT_RSA_MODE_INTERNAL); // this is needed because otherwise openssl (if present) needs special configuration in openssl.cnf when creating a new key pair
 
 require_once 'modules-auth/user-passw-list/dbAuth.php';
 require_once 'modules-election/blindedvoter/dbBlindedVoter.php';
-require_once 'Math/BigInteger.php';
-require_once 'Crypt/RSA.php';
 
 if ((isset($_GET['createTables' ])) || (isset($_POST['createTables' ]))) {
 	$dbauth = new DbAuth($dbInfos);
