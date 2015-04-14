@@ -15,6 +15,7 @@ require_once 'dbelections.php';
 
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"); // this allows any cross-site scripting (needed for chrome)
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 
 if (isset($HTTP_RAW_POST_DATA)) {
 	// $hash =

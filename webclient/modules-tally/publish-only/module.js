@@ -160,7 +160,7 @@ PublishOnlyTally.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 		this.votes = answ.data.allVotes;
 		// process data
 		//   show a list of all votes
-		var htmlcode = '<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
+		var htmlcode = ''; //<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
 		htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">Finde meine Stimme</button>';
 		htmlcode = htmlcode + '<div id="allvotes"><table>';
 		htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + 'Stimme'                  + '</th>'; 
