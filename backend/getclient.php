@@ -3,13 +3,15 @@
 require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
 
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
-header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"); // this allows any cross-site scripting (needed for chrome)
+header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept'); // this allows any cross-site scripting (needed for chrome)
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 
 // necassary to force the browser not to use the cached version - changes here will not arrive the voter otherwise
 header("Pragma: no-cache");
+/*
 header("Expires: Sat, 01 Jan 2005 00:00:00 GMT");
 header("Last-Modified: ".gmdate( "D, d M Y H:i:s")."GMT");
+*/
 header("Cache-Control: no-cache, must-revalidate");
 
 
