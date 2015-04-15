@@ -2,18 +2,23 @@ What you need
 =============
 You need:
 
-* a webserver (e.g. apache)
-* a mysql server
+* 2 webservers (e.g. apache oder ngnix /lighthttp v 1.4 can cause problems: it does not support the http-header "Expect: 100-continue-header" which cURL uses. --> no problem if you are not integrating vvvote into a system which automatically creates new elections and send them to vvvote using cURL)
+* a mysql server on each server
 * php version 5.3 at least and (both is automatically included in most distributions):
  * php-pdo-mysql
  * php GMD is recommended (it works without but the cryptographic calculations are about 200 times faster if you have GMD module)
 
 Download vvvote
 ===============
-in your home dir execute the following command
+downlaod vvvvote in your home dir e.g. by executing the following command
 
 	git clone https://github.com/pfefffer/vvvote.git
  
+copy the webclient and the backend directory to your webserver dir, e.g.:
+
+	cd vvvote
+	cp -r backend /var/www/vvvote
+	cp -r webclient /var/www/vvvote
  
 Configure the Server
 ====================
@@ -27,11 +32,14 @@ in directory backend/config:
 in both conf-thisserver files:
 
 * adjust $dbinfos 
-* adjust $oauthBayern 'client_id', 'client_secret', 'redirect_uri'
+* depending on which auth mechanism you want to use
+ * adjust $oauthBayern 'client_id', 'client_secret', 'redirect_uri'
+ * adjust the externalTokenConfig
+
 
 in 'conf-allservers.php' adjust
 
-* $configUrlBase
+* $configUrlBase to point to the server's own http-backend-directory
 
 
 Configure the webclient
@@ -56,11 +64,15 @@ $yourBaseUrl/webclient/
 
 Get Up To Date
 ==============
+
+In order to get the newest version of vvvote, you can use the following commands (if your directory layout is set up the way it is used in the examples above): 
+
 	cd ~
 	cd vvvote
 	git pull
-	cp -r backend /var/www/vvvote
-	cp -r webclient /var/www/vvvote
+	cp -r backend /var/www/vvvote # use the directory your http server uses for serving the requests
+	cp -r webclient /var/www/vvvote # use the directory your http server uses for serving the requests
+
 
 Prepair the MySQL Servers
 =========================
@@ -69,14 +81,17 @@ on the command line:
 
 	mysql -u root -p
 
-In the mysql shell:
+In the mysql shell (on server 1):
 
 	CREATE database election_server1;
-	CREATE database election_server2;
-
 	CREATE USER 'vvvote1'@'localhost' IDENTIFIED BY 'new_secret1';
-	CREATE USER 'vvvote2'@'localhost' IDENTIFIED BY 'new_secret2';
 	GRANT ALL PRIVILEGES ON election_server1.* TO 'vvvote1'@'localhost';
+	FLUSH PRIVILEGES;
+
+and the same on server 2:
+
+	CREATE database election_server2;
+	CREATE USER 'vvvote2'@'localhost' IDENTIFIED BY 'new_secret2';
 	GRANT ALL PRIVILEGES ON election_server2.* TO 'vvvote2'@'localhost';
 	FLUSH PRIVILEGES;
 
@@ -85,7 +100,7 @@ verify:
 	SELECT host, user, password FROM mysql.user;
 	show databases;
 
-delete all data:
+delete all data (__do not do that!__):
 
 	drop database election_server2;
 	drop database election_server1;
