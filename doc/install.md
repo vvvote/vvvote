@@ -2,9 +2,9 @@ What you need
 =============
 You need:
 
-* 2 webservers (e.g. apache oder ngnix /lighthttp v 1.4 can cause problems: it does not support the http-header "Expect: 100-continue-header" which cURL uses. --> no problem if you are not integrating vvvote into a system which automatically creates new elections and send them to vvvote using cURL)
+* 2 webservers (e.g. apache oder ngnix / lighthttp v 1.4 can cause problems: it does not support the http-header "Expect: 100-continue-header" which cURL uses. --> no problem if you are not integrating vvvote into a system which automatically creates new elections and send them to vvvote using cURL)
 * a mysql server on each server
-* php version 5.3 at least, and the php extentions (all of the following are automatically included in most distributions, but if you want to compile yourself, you need to know):
+* php version 5.3 at least, and the following php extentions (all of them are automatically included in most distributions, but if you want to compile yourself, you need to know):
  * pdo-mysql
  * gmp or bcmath, where gmp is recommended (bcmath works but the cryptographic calculations are about 15-200 times faster if you have the gmp extention installed)
  * curl (for oAuth2 and externalTokenAuth) 
@@ -109,6 +109,8 @@ delete all data (__do not do that!__):
 	
 Notes
 =====	
+TLS / SSL
+--------
 If you are running / forcing the clients to connect via https (TLS) which is recommended, you should exempt backend/storevote.php from forcing to https. 
 You should do this because this enables the anonymizing service to strip off the browser's request header which is important for anonymization.
 The apache .htaccess might then look like:
@@ -116,4 +118,12 @@ The apache .htaccess might then look like:
 	RewriteEngine On
 	RewriteCond %{REQUEST_FILENAME} !backend/storevote.php$
 	RewriteCond %{HTTPS} off
-	RewriteRule  ^(.*)$  https://%{HTTP_HOST}/$1   [R=301,L] 
+	RewriteRule  ^(.*)$  https://%{HTTP_HOST}/$1   [R=301,L]
+
+lighthttpd
+----------
+If you are using lighthttpd version 1.4 you might expiriencing "417 - Expectation Failed" error when you try to create a new election on vvvote. This is usually caused when you use curl to send the POST request.
+The problem is that lighthttpd does not support the http-header "Expect: 100 continue" which curl makes use of.
+You can work around the problem of lighthttpd v1.4 does not support the http-header "Expect: 100 continue" by the following config line in the lighthttp-config:
+
+	server.reject-expect-100-with-417 = "disable"
