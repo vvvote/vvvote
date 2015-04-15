@@ -109,16 +109,32 @@ delete all data (__do not do that!__):
 	
 Notes
 =====	
-TLS / SSL
---------
+TLS / SSL 
+---------
 If you are running / forcing the clients to connect via https (TLS) which is recommended, you should exempt backend/storevote.php from forcing to https. 
 You should do this because this enables the anonymizing service to strip off the browser's request header which is important for anonymization.
+
+### Apache
 The apache .htaccess might then look like:
 
 	RewriteEngine On
 	RewriteCond %{REQUEST_FILENAME} !backend/storevote.php$
 	RewriteCond %{HTTPS} off
 	RewriteRule  ^(.*)$  https://%{HTTP_HOST}/$1   [R=301,L]
+
+### lighthttpd
+In the site config add the following lines:
+
+	    # Redirect to https
+        $HTTP["scheme"] != "https" {
+                $HTTP["url"] !~ "^/backend/storevote.php$" {
+                        # Moved Permanently
+                        url.redirect-code = 301
+                        url.redirect = ( "^/(.*)" => "https://vvvote.my.url/$1" )
+                }
+        }
+Replace "vvvote.my.url" by the dns-host name of our vvvote installation.
+
 
 lighthttpd
 ----------
