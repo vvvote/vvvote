@@ -4,14 +4,16 @@ You need:
 
 * 2 webservers (e.g. apache oder ngnix /lighthttp v 1.4 can cause problems: it does not support the http-header "Expect: 100-continue-header" which cURL uses. --> no problem if you are not integrating vvvote into a system which automatically creates new elections and send them to vvvote using cURL)
 * a mysql server on each server
-* php version 5.3 at least and (both is automatically included in most distributions):
- * php-pdo-mysql
- * php GMD is recommended (it works without but the cryptographic calculations are about 200 times faster if you have GMD module)
+* php version 5.3 at least, and the php extentions (all of the following are automatically included in most distributions, but if you want to compile yourself, you need to know):
+ * pdo-mysql
+ * gmp or bcmath, where gmp is recommended (bcmath works but the cryptographic calculations are about 15-200 times faster if you have the gmp extention installed)
+ * curl (for oAuth2 and externalTokenAuth) 
 
 Download vvvote
 ===============
-downlaod vvvvote in your home dir e.g. by executing the following command
+On each server, downlaod vvvvote in your home dir, e.g. by executing the following command
 
+	cd ~ # cd into your home dir
 	git clone https://github.com/pfefffer/vvvote.git
  
 copy the webclient and the backend directory to your webserver dir, e.g.:
@@ -23,7 +25,7 @@ copy the webclient and the backend directory to your webserver dir, e.g.:
 Configure the Server
 ====================
 
-in directory backend/config:
+On each server, in directory backend/config:
 
 	copy conf-allservers-example.php to conf-allservers.php
 	copy conf-thisserver-example.php to conf-thisserver.php
@@ -107,8 +109,8 @@ delete all data (__do not do that!__):
 	
 Notes
 =====	
-If you are running / forcing the clients to connect via https (TLS) you should exempt backend/storevote.php from forcing to https. 
-You should do this because this enables the anonymising service to strip off the browser's request header which is important for anonymisation.
+If you are running / forcing the clients to connect via https (TLS) which is recommended, you should exempt backend/storevote.php from forcing to https. 
+You should do this because this enables the anonymizing service to strip off the browser's request header which is important for anonymization.
 The apache .htaccess might then look like:
 
 	RewriteEngine On
