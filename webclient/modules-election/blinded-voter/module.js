@@ -347,9 +347,9 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 			// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
 			sigOk = rsaVerifySig(transm.str, sig.sig, pubkey);
 			if (sigOk) {
-				alert('Die Unterschrift von Wahlberechtigungsserver >' + sig.sigBy + '< für den Abstimmungsschlüssel ist korrekt');
+				alert('Die Unterschrift von Stimmberechtigungsserver >' + sig.sigBy + '< für den Abstimmungsschlüssel ist korrekt, d.h. der Server hat bestätigt, dass der zugehörige Wähler stimmberechtigt ist.');
 			} else {
-				alert('Die Unterschrift von Wahlberechtigungsserver >' + sig.sigBy + '< für den Abstimmungsschlüssel ist nicht korrekt');
+				alert('Die Unterschrift von Stimmberechtigungsserver >' + sig.sigBy + '< für den Abstimmungsschlüssel ist nicht korrekt. Es liegt entweder eine falsche Konfiguration oder ein Betrugsversuch vor. Bitte die Wahlverantwortlichen informieren.');
 			}
 		} catch (e) {
 			alert("Fehler beim überprüfen der Signatur:\n" + e.toString());

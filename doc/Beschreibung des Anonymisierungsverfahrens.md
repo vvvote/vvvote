@@ -1,100 +1,102 @@
-Ein Vorschlag, wie anonym gew„hlt werden kann (d.h. niemand nachvollziehen kann, wer wie abgestimmt hat) und gleichzeitig sichergestellt ist, dass nur Wahlberechtigte abstimmen k”nnen und auch nur einmal.
+Anonymisierungsverfahren von vvvote
+===================================
 
-Die L”sung des Problems arbeitet mit blinden Signaturen.
-Die blinden Signaturen erm”glichen beispielsweise folgendes Vorgehen fr eine anonyme und nachvollziehbare Wahl:
+Ziel des Verfahrens
+-------------------
+vvvote verwendet folgendes Verfahren zur anonym Abstimmung(d.h. niemand nachvollziehen kann, wer wie abgestimmt hat) und gleichzeitig sichergestellt ist, dass nur Stimmberechtigte abstimmen kÃ¶nnen und zwar jeder nur einmal.
 
-1. Der W„hler (Client) erzeugt ein RSA-Schlsselpaar.
-2. Den ”ffentlichen Teil des RSA-Schlssels verblindet der Client
-3. Den verblindeten ”ffentlichen Teil des RSA-Schlssels schickt er zusammen mit Identifizerungsmerkmalen an den Wahlberechtigungsserver
-4. An Hand der Identifizerungsmerkmale prft der Server die Wahlberechtigung (darf Grunds„tzlich w„hlen und hat noch keinen Wahlschein). 
-5. Wenn wahlberechtigt, dann unterschreibt der Server den verblindeten Teil des ”ffentlichen Schlssels.
-6. Der Wahlberechtigungsserver schickt den verblindet unterschriebenen ”ffentlichen Teil des W„hlerschlssels zurck an den Client = W„hler.
-7. Der Client entblindet die Unterschrift des Wahlberechtigungsservers.
-8. Der Client = W„hler unterschreibt mit seinem privaten Schlssel seine Stimme.
-9. Der Client schickt seine Stimme ohne Absender, zusammen mit seiner Unterschrift und dem ”ffentlichen Teil seines RSA-Schlssels und zusammen mit der entblindeten Unterschrift des Wahlberechtigungsservers unter dem ”ffentlichen Teil des Schlssels an den Z„hlserver.
-10. Nach Abschluss der Wahl werden alle Transaktionen ver”ffentlicht.
+Verfahren
+---------
+Die LÃ¶sung des Problems arbeitet mit blinden Signaturen.
+Die blinden Signaturen ermÃ¶glichen folgendes Vorgehen fÃ¼r eine anonyme und nachvollziehbare Abstimmung:
+
+1. Der WÃ¤hler (Client) erzeugt ein RSA-SchlÃ¼sselpaar.
+2. Den Ã¶ffentlichen Teil des RSA-SchlÃ¼ssels verblindet der Client
+3. Den verblindeten Ã¶ffentlichen Teil des RSA-SchlÃ¼ssels schickt er zusammen mit Identifizerungsmerkmalen an den Wahlberechtigungsserver
+4. Anhand der Identifizerungsmerkmale prÃ¼ft der Server die Stimmberechtigung (darf GrundsÃ¤tzlich wÃ¤hlen und hat noch keinen Wahlschein). 
+5. Wenn stimmberechtigt, dann unterschreibt der Server den verblindeten Teil des Ã¶ffentlichen SchlÃ¼ssels.
+6. Der Stimmberechtigungsserver schickt den verblindet unterschriebenen Ã¶ffentlichen Teil des WÃ¤hlerschlÃ¼ssels zurÃ¼ck an den Client = WÃ¤hler.
+7. Der Client entblindet die Unterschrift des Stimmberechtigungsservers.
+8. Der Client = WÃ¤hler unterschreibt mit seinem privaten SchlÃ¼ssel seine Stimme.
+9. Der Client schickt seine Stimme ohne Absender, zusammen mit seiner Unterschrift, dem Ã¶ffentlichen Teil seines RSA-SchlÃ¼ssels und mit der entblindeten Unterschrift des Stimmberechtigungsservers unter dem Ã¶ffentlichen Teil seines SchlÃ¼ssels an den ZÃ¤hlserver.
+10. Nach Abschluss der Wahl werden alle Transaktionen verÃ¶ffentlicht.
 Ergebnis: Siehe unten C.
 
-Damit die Kompromittierung des geheimen Schlssels des Wahlberechtigungsservers nicht dazu fhrt, dass der Angreifer gltige Wahlscheine ausstellen kann, werden mindestens 2 Wahlberechtigungsserver verwendet, die beide den (verblindeten) ”ffentlichen Teil des W„hlerschlssels unterschrieben haben mssen, damit der Wahlschein gltig ist.
-Da selbst eine Zusammenarbeit von allen Wahlberechtigungsservern und allen Z„hlservern die Anonymit„t nicht knacken kann, k”nnen Wahlberechtigungsserver und Z„hlserver die gleichen Server sein.
+AngriffsmÃ¶glichkeiten und entsprechende SicherungsmaÃŸnahmen
+----------------------------------------------------------------------------
+Damit die Kompromittierung des geheimen SchlÃ¼ssels des Stimmberechtigungsservers nicht dazu fÃ¼hrt, dass ein Angreifer gÃ¼ltige Wahlscheine ausstellen kann, werden mindestens 2 Stimmberechtigungsserver verwendet, die beide den (verblindeten) Ã¶ffentlichen Teil des WÃ¤hlerschlÃ¼ssels unterschrieben haben mÃ¼ssen, damit der Wahlschein gÃ¼ltig ist.
+Da selbst eine Zusammenarbeit von allen Stimmberechtigungsservern und allen ZÃ¤hlservern die AnonymitÃ¤t nicht knacken kann, kÃ¶nnen jeweils ein Stimmberechtigungsserver und ein ZÃ¤hlserver vom gleichen Administrator verwaltet werden (und auf dem gleichen System laufen).
 
-Die Anonymit„t kann nur ber einen Angriff auf den Client gebrochen werden. Das bedeutet, 1. Es sind besondere Sicherungsmaánahmen fr den Client sinnvoll. Er k”nnte beispielsweise als bootbares System verteilt werden.
-2. Erfolgreiche Angriffe treffen nur einzelne W„hler.
+Die AnonymitÃ¤t kann nur Ã¼ber einen Angriff auf den Client gebrochen werden. Das bedeutet, 1. Es sind besondere SicherungsmaÃŸnahmen fÃ¼r den Client sinnvoll. Er kÃ¶nnte beispielsweise als bootbares System verteilt werden.
+2. Erfolgreiche Angriffe treffen nur einzelne WÃ¤hler.
 
 
-
-A. Wenn eine Wahlscheinnummer blind unterschrieben wird, so dass
-derjenige Server, der die Wahlberechtigung prft, die Wahlscheinnummer
-nicht kennt. Das kann auch ber mehrere Server geschehen, so dass man
-nicht 1 Server vertrauen muss, dass er keine zus„tzlichen Wahlscheine unterschreibt. 
-
+AllgemeinverstÃ¤ndlichere Beschreibung des Verfahrens
+----------------------------------------------------
 Man kann sich das so vorstellen: 
-Der W„hler schreibt eine lange selbst gew„hlte Nummer auf ein Blattpapier
-(Wahlscheinnummer) [genauer: auf dem Client wird eine Zufallszahl bzw. ein RSA-Schlsselpaar erzeugt, wovon der ”ffentliche Schlssel als Zufallszahl verwendet wird] und legt dieses zusammen mit einem Kohleblatt in
-einen Umschlag, der verschlossen wird. Der Server prft die Wahlberechtigung und unterschreibt auáen auf dem Umschlag, wobei sich
-die Unterschrift durch das Kohlepapier auf das Blatt, auf dem die
-Wahlscheinnummer steht, durchdrckt. Der Server hat die Wahlscheinnummer
-also nicht gesehen.
-Es bietet sich an, das Verfahren so zu machen, dass man sich diese Wahlzettel vor Er”ffnung der Wahlen erzeugen und blind unterschreiben lassen muss. Es k”nnen im Vorhinein Wahlscheine fr mehrere Wahlen erzeugt werden.
 
+1. Der WÃ¤hler bereitet einen Briefumschlag vor, auf den er auÃŸen seinen Benutzername und sein Passwort schreibt.
+2. Der WÃ¤hler schreibt eine lange selbst gewÃ¤hlte Nummer auf ein Blattpapier(Wahlscheinnummer) [technisch: auf dem Client wird eine Zufallszahl bzw. ein RSA-SchlÃ¼sselpaar erzeugt, wovon der Ã¶ffentliche SchlÃ¼ssel als Zufallszahl verwendet wird] und legt es zusammen mit einem Kohleblatt in den Breifumschlag, der verschlossen wird [technisch: verschlÃ¼sselt wird]. 
+3. Der WÃ¤hler schickt diesen Brief (noch mal verschlÃ¼sselt) an den Stimmberechtigungsserver.
+4. Der Stimmberechtigungsserver prÃ¼ft die Stimmberechtigung und unterschreibt auÃŸen auf dem Umschlag. Dabei drÃ¼ckt sich die Unterschrift durch das Kohlepapier auf das Blatt, auf dem die Wahlscheinnummer steht, durch. Der Server hat die Wahlscheinnummer also nicht gesehen.
+5. Der Stimmberechtigungsserver schickt den Briefumschlag ungeÃ¶ffnet an den WÃ¤hler zurÃ¼ck.
+6. Der WÃ¤hler Ã¶ffnet den Briefumschlag (technisch: entschlÃ¼sselt die Daten). Damit hat der WÃ¤hler ein Blattpapier, auf dem eine eindeutige zufÃ¤llig Zahl steht, die er selst erzeugt hat, und die durch das Kohlepapier durchgedrÃ¼ckte Unterschrift des Stimmberechtigungsservers. Dies ist der Wahlschein.
+7. Auf den Wahlschein schreibt der WÃ¤hler seine Stimme und schickt ihn an den ZÃ¤hlserver.
+8. Der ZÃ¤hlserver prÃ¼ft
+	a) ob die Unterschrift des Stimmberechtigungsservers vorhanden ist und sie gÃ¼ltig ist und
+	b) ob mit der Wahlscheinnummer noch keine Stimme abgegeben wurde.
+Wenn beides erfÃ¼llt ist, akzeptiert der ZÃ¤hlserver die Stimme.
+9. Nach Ende der Abstimmung werden die Wahlscheinnummern zusammen mit der abgegebenen Stimme verÃ¶ffentlicht. Anders ausgedrÃ¼ckt: die ausgepackten Wahlscheine, auf die sich die Unterschrift mittels Kohlepapier durchgedrÃ¼ckt hat und der WÃ¤hler danach seine Stimme drauf geschrieben hat, werden verÃ¶ffentlicht.
 
-B. Die Unterschrift unter der Wahlscheinnummer kann hinterher von jedem
-geprft werden.
-
-C. Nach Ende der Abstimmung werden die Wahlscheinnummern zusammen mit
-der abgegebenen Stimme ver”ffentlicht. Im Vergleich: die ausgepackten
-Zettel, auf die sich die Unterschrift mittels Kohlepapier durchgedrckt
-hat und der W„hler danach seine Stimme drauf geschrieben hat, werden
-ver”ffentlicht)
-
-Ergebnis:
-a) Jeder kann berprfen, dass nur unterschriebene Wahlscheinnummern
+Ergebnis
+--------
+1. Jeder kann Ã¼berprÃ¼fen, dass nur unterschriebene Wahlscheinnummern
 abgestimmt haben
-b) Jeder kann die Stimmen selbst nachz„hlen, weil sie ver”ffentlicht sind.
+2. Jeder kann die Stimmen selbst nachzÃ¤hlen, weil sie verÃ¶ffentlicht sind.
 c) Jeder kann bei seiner eigenen Stimme sehen, ob sie korrekt empfangen
 wurde, denn jeder kennt selbst seine eigene Wahlscheinnummer.
 
-Dies ist nur eine der M”glichkeiten, online Abstimmungen so
-durchzufhren, dass fr niemanden auáer dem Abstimmenden selbst
+Dies ist nur eine der MÃ¶glichkeiten, online Abstimmungen so
+durchzufÃ¼hren, dass fÃ¼r niemanden auÃŸer dem Abstimmenden selbst
 nachvollziehbar ist, wer wie abgestimmt hat (anonyme Wahl) und dennoch
-jeder das Wahlergebnis nachz„hlen kann (nachvollziehbar).
+jeder das Wahlergebnis nachzÃ¤hlen kann (nachvollziehbar).
 
 
 Man kann sich das gesamte Verfahren so vorstellen: 
-1. bis 3.: Der W„hler schreibt eine lange selbst gew„hlte Nummer auf ein Blattpapier
+1. bis 3.: Der WÃ¤hler schreibt eine lange selbst gewÃ¤hlte Nummer auf ein Blattpapier
 (Wahlscheinnummer) und legt dieses zusammen mit einem Kohleblatt in
 einen Umschlag, der verschlossen wird. Auf den Briefumschlag schreibt er den Absender drauf. 
 
-4. Anhand des Absenders prft der Sever die Wahlberechtigung (ist grunds„tzlich 
-wahlberechtigt und hat fr diese Abstimmung noch keinen Wahlschein)
+4. Anhand des Absenders prÃ¼ft der Sever die Wahlberechtigung (ist grundsÃ¤tzlich 
+wahlberechtigt und hat fÃ¼r diese Abstimmung noch keinen Wahlschein)
 
-5. Der Server unterschreibt auáen auf dem Umschlag, wobei sich die Unterschrift 
+5. Der Server unterschreibt auÃŸen auf dem Umschlag, wobei sich die Unterschrift 
 durch das Kohlepapier auf das Blatt, auf dem die Wahlscheinnummer steht, 
-durchdrckt. Der Server hat die Wahlscheinnummer also nicht gesehen.
+durchdrÃ¼ckt. Der Server hat die Wahlscheinnummer also nicht gesehen.
  
-6. Er schickt den Umschlag mit dem Wahlschein unge”ffnet 
-an den W„hler (=Client) zurck. 
+6. Er schickt den Umschlag mit dem Wahlschein ungeÃ¶ffnet 
+an den WÃ¤hler (=Client) zurÃ¼ck. 
 
-7. Der W„hler packt den Umschlag aus (kryptografisch: entblindet ihn). 
+7. Der WÃ¤hler packt den Umschlag aus (kryptografisch: entblindet ihn). 
 Er hat damit einen Wahlschein, auf dem 
-(a) eine zuf„llige lange und daher eindeutige Nummer steht und 
+(a) eine zufÃ¤llige lange und daher eindeutige Nummer steht und 
 (b) durch das Kohlepapier die Unterschrift des Wahlberechtigungsservers drauf ist.
 
-8. Auf diesen Wahlschein schreibt der W„hler seine Stimme drauf, steckt den Wahlschein
+8. Auf diesen Wahlschein schreibt der WÃ¤hler seine Stimme drauf, steckt den Wahlschein
 in einen frischen Briefumschlag und 
 
-9. schickt ihn ohne Absender an den Z„hlserver.
+9. schickt ihn ohne Absender an den ZÃ¤hlserver.
 
 10. Nach Abschluss der Abstimmung werden alle Briefe, die die Server 
-erhalten haben, ver”ffentlicht. Damit kann jeder selbst die abgegebenen Stimmen 
-(nach-)z„hlen und auch die Unterschriften auf den Wahlzetteln prfen.    
+erhalten haben, verÃ¶ffentlicht. Damit kann jeder selbst die abgegebenen Stimmen 
+(nach-)zÃ¤hlen und auch die Unterschriften auf dem Wahlschein prÃ¼fen.    
 
 
 
-Dies ist nur eine der M”glichkeiten, online Abstimmungen so
-durchzufhren, dass fr niemanden auáer dem Abstimmenden selbst
+Dies ist nur eine der MÃ¶glichkeiten, online Abstimmungen so
+durchzufÃ¼hren, dass fÃ¼r niemanden auÃŸer dem Abstimmenden selbst
 nachvollziehbar ist, wer wie abgestimmt hat (anonyme Wahl) und dennoch
-jeder das Wahlergebnis nachz„hlen kann (nachvollziehbar). Es ist in vvvote 
+jeder das Wahlergebnis nachzÃ¤hlen kann (nachvollziehbar). Es ist in vvvote 
 in dem Modul blinded-voter umgesetzt. 
 
 siehe auch hier: https://basisentscheid.piratenpad.de/geheim1

@@ -1036,10 +1036,12 @@ ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
 		this.votes = answ.data.allVotes;
 		// process data
 		//   show a list of all votes
-		var htmlcode = '<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
-		if ( !('returnEnvelope' in window) ) {
-			htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">Finde meine Stimme - Wahlschein laden</button>';
-		}
+		var htmlcode = '';
+		// TODO think about: implement this? 
+		// var htmlcode = '<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
+		// if ( !('returnEnvelope' in window) ) {
+		//	htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">Finde meine Stimme - Wahlschein laden</button>';
+		// }
 		var v;   // vote
 		var vno; // vote number
 		var disabled;
