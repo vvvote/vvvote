@@ -2,7 +2,7 @@ What you need
 =============
 You need:
 
-* 2 webservers (e.g. apache oder ngnix / lighthttp v 1.4 can cause problems: it does not support the http-header "Expect: 100-continue-header" which cURL uses. --> no problem if you are not integrating vvvote into a system which automatically creates new elections and send them to vvvote using cURL)
+* 2 webservers (e.g. apache or ngnix / lighthttp v 1.4 can cause problems: it does not support the http-header "Expect: 100-continue-header" which cURL uses. --> no problem if you are not integrating vvvote into a system which automatically creates new elections and send them to vvvote using cURL below is also a work-around provided)
 * a mysql server on each server
 * php version 5.3 at least, and the following php extentions (all of them are automatically included in most distributions, but if you want to compile yourself, you need to know):
  * pdo-mysql
@@ -83,6 +83,8 @@ on the command line:
 
 	mysql -u root -p
 
+You will be ask for the password of the user root to the mysql database (if that is set).
+
 In the mysql shell (on server 1):
 
 	CREATE database election_server1;
@@ -104,8 +106,9 @@ verify:
 
 delete all data (__do not do that!__):
 
-	drop database election_server2;
 	drop database election_server1;
+	drop database election_server2;
+	
 	
 Notes
 =====	
