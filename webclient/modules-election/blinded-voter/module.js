@@ -182,7 +182,7 @@ BlindedVoterElection.loadReturnEnvelopeHtml = function() {
  * provide HTML code to be presented after successful voting permission generated
  */
 BlindedVoterElection.prototype.getPermGeneratedHtml = function() {
-
+	var votingTimeStr = page.getVoteTimeStr();
 	return '<h2>Wahlschein erfolgreich erstellt. </h2>' +
 	'<p>Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
 	'weiter! Die Stimmabgabe damit anonym, d.h. ohne Ihre Mithilfe kann nicht festgestellt werden, von wem die Stimme abgegeben wurde.</p>' +
