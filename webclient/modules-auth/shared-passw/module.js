@@ -49,8 +49,8 @@ SharedPasswAuth.getNewElectionData = function (serverId) {
 	var ret = {};
 	ret.auth = 'sharedPassw';
 	var startdate = new Date();
-	var enddate = startdate.getTime() + 10 * 86400 * 1000; // in milleseconds
-	var intervall = 10 * 60 * 1000; // in milleseconds
+	var enddate = startdate.getTime() + 0.1 * 86400 * 1000; // in milleseconds
+	var intervall = 5 * 60 * 1000; // in milleseconds
 	var DelayUntil = new Array();
 	var DelayUntilStr = new Array();
 	DelayUntil.push(startdate.getTime());

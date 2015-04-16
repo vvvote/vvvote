@@ -52,7 +52,7 @@ function startVoting(load) {
 VotePage.prototype.gotElectionConfig = function (config) { 
 	this.config = config; 
 	// config.phase = 'generatePermissions'; // TODO take phase from config
-	this.getNextVoteTime("2015-04-13T12:41:00+02:00");
+	// this was for debugging: this.getNextVoteTime("2015-04-13T12:41:00+02:00");
 	// TODO if we have phases that do not overlap care about these:
 	if (this.isRegPhase()) config.phase = 'generatePermissions'; 
 	else alert('Es ist nicht mehr möglich, einen Wahlschein zu erstellen');
@@ -264,7 +264,7 @@ VotePage.prototype.getNextVoteTime = function() {
 
 
 VotePage.prototype.getVoteTimeStr = function() {
-	var startdate = this.getNextVoteTime(this.blinder.returnEnvelopeCreationDate);
+	var startdate = this.getNextVoteTime();
 	var enddate = false;
 	if ('VotingEnd' in this.config.authConfig) enddate = new Date (this.config.authConfig.VotingEnd);
 	var now = new Date();

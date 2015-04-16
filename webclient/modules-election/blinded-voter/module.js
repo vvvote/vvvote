@@ -93,12 +93,12 @@ BlindedVoterElection.prototype.gotWebclient = function(xml) {
 BlindedVoterElection.prototype.injectPermissionIntoClientSave = function(ballot) {
 	var find = /\/\/bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpßjntt/;
 	var lStorage = {'id': bigInt2str(randBigInt(128, 0), 16)};
-	this.returnEnveleopCreationDate = Date();
+	this.returnEnvelopeCreationDate = new Date();
 	var returnEnvelope = {
 			'permission': ballot, 
 			'config': this.config,
 			'lStorage': lStorage,
-			'creationDate': this.returnEnveleopCreationDate.toString()};
+			'creationDate': this.returnEnvelopeCreationDate.toString()};
 	var ballotWithClient = this.clientHtml.replace(find, 'returnEnvelope = ' + JSON.stringify(returnEnvelope) +';');
 	// load the electionId to be used as filename
 		// var p2 = JSON.parse(ballot[0].transm.str);
