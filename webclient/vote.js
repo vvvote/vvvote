@@ -266,7 +266,7 @@ VotePage.prototype.getNextVoteTime = function() {
 VotePage.prototype.getVoteTimeStr = function() {
 	var startdate = this.getNextVoteTime(this.blinder.returnEnvelopeCreationDate);
 	var enddate = false;
-	if ('VotingEnd' in this.config.authConfig) enddate = new Date (this.config.authConfig.VotingEnd); // TODO VotingEnd not set
+	if ('VotingEnd' in this.config.authConfig) enddate = new Date (this.config.authConfig.VotingEnd);
 	var now = new Date();
 	var votingTimeStr = 'Fehler r83g83';
 	if (startdate === true) {
