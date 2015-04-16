@@ -196,8 +196,10 @@ VotePage.prototype.sendVote = function (event) {
 };
 
 VotePage.prototype.isRegPhase = function() {
-	var regStart = new Date(this.config.authConfig.RegistrationStartDate); // new Date("2015-04-11T01:22:00Z");
-	var regEnd = new Date(this.config.authConfig.RegistrationEndDate); // "2015-04-12T02:22:00Z");
+	var regStart = new Date("2000-01-01T00:00:00+00:00");
+	if ('RegistrationStartDate' in this.config.authConfig) regStart = new Date(this.config.authConfig.RegistrationStartDate); 
+	var regEnd = new Date("3000-01-01T00:00:00+00:00"); // use 1.1.3000 as enddate if no enddate is configured
+	if ('RegistrationEndDate' in this.config.authConfig) regEnd = new Date(this.config.authConfig.RegistrationEndDate); 
 	var now = new Date(); //now
 	var regPhase = false;
 	if ( (regStart <= now) && (regEnd >= now) ) regPhase = true;
@@ -205,8 +207,10 @@ VotePage.prototype.isRegPhase = function() {
 };
 
 VotePage.prototype.isVotePhase = function() {
-	var regStart = new Date(this.config.authConfig.VotingStart); // new Date("2015-04-11T01:22:00Z");
-	var regEnd = new Date(this.config.authConfig.VotingEnd); // "2015-04-12T02:22:00Z");
+	var regStart = new Date("2000-01-01T00:00:00+00:00");
+	if ('VotingStart' in this.config.authConfig) regStart = new Date(this.config.authConfig.VotingStart); 
+	var regEnd = new Date("3000-01-01T00:00:00+00:00"); // use 1.1.3000 as enddate if no enddate is configured
+	if ('VotingEnd' in this.config.authConfig) regEnd = new Date(this.config.authConfig.VotingEnd); 
 	var now = new Date(); //now
 	var regPhase = false;
 	if ( (regStart <= now) && (regEnd >= now) ) regPhase = true;
