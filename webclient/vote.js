@@ -255,7 +255,7 @@ VotePage.prototype.getNextVoteTime = function() {
 		curDelayUntil = new Date(this.config.authConfig.DelayUntil[i]);
 		i++;
 	} while ((curDelayUntil < returnEnvelopeCreationDate) && (i < this.config.authConfig.DelayUntil.length));
-	if (curDelayUntil >=  returnEnvelopeCreationDate) return false; // there is no DelayUntil after returnEnvelopeCreationDate --> no chance to cast the vote 
+	if (curDelayUntil <=  returnEnvelopeCreationDate) return false; // there is no DelayUntil after returnEnvelopeCreationDate --> no chance to cast the vote 
 	if (curDelayUntil <= now) return true;  // the delay after the returnEnvelpeCreationDate is already fulfilled 
 	return curDelayUntil;
 };
