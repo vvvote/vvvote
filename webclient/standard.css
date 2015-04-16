@@ -112,6 +112,12 @@ div#techinfos {
 }
 
 /*** tally result **/
+
+.votingno {
+	word-wrap: break-word;
+	word-break: break-all;
+}
+
 div#freq {
 	/**	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
 	font-size: 12px; */
