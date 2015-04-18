@@ -20,3 +20,5 @@ Further Reading
 * For a graphical (UML) description of the anonymizing protocol see https://stackedit.io/viewer#!url=https://raw.githubusercontent.com/pfefffer/vvvote/master/doc/protocol/protocol.md
 
 * For a more an explanation and discussion (for not mathematicion people) in German see https://github.com/pfefffer/vvvote/blob/master/doc/Beschreibung%20des%20Anonymisierungsverfahrens.md 
+
+* Installation instructions: https://github.com/pfefffer/vvvote/blob/master/doc/install.md
