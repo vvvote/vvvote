@@ -125,6 +125,25 @@ The apache .htaccess might then look like:
 	RewriteCond %{HTTPS} off
 	RewriteRule  ^(.*)$  https://%{HTTP_HOST}/$1   [R=301,L]
 
+### Ngnix
+(in reverse proxy mode)
+
+	server {
+    	listen 80;  
+	    server_name my.vvvote.url;
+    	
+    	location backend/storevote.php { 
+    	    proxy_set_header Host $host:$server_port;
+    	    proxy_pass  http://http_vvvote_backend;
+    		}
+    
+    location / {
+        return  301 https://my.vvvote.url$request_uri;
+    	}
+	}
+
+
+
 ### lighthttpd
 In the site config add the following lines:
 
