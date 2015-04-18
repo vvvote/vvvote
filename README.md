@@ -9,6 +9,14 @@ VVVote is a online voting system which provides the following features:
 
 The system does not provide secrecy in the meaning it cannot ensure that no one looks over the voter's shoulder when voting. And that there is a way for a voter to prove how we decided to vote.
 
-For a graphical (UML) description of the anonymizing protocol see https://stackedit.io/viewer#!url=https://raw.githubusercontent.com/pfefffer/vvvote/master/doc/protocol/protocol.md
+License
+=======
 
-For a more an explanation and discussion (for not mathematicion people) in German see https://github.com/pfefffer/vvvote/blob/master/doc/Beschreibung%20des%20Anonymisierungsverfahrens.md   
+GPLv3
+
+Further Reading
+===============
+
+* For a graphical (UML) description of the anonymizing protocol see https://stackedit.io/viewer#!url=https://raw.githubusercontent.com/pfefffer/vvvote/master/doc/protocol/protocol.md
+
+* For a more an explanation and discussion (for not mathematicion people) in German see https://github.com/pfefffer/vvvote/blob/master/doc/Beschreibung%20des%20Anonymisierungsverfahrens.md 
