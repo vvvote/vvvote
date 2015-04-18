@@ -5,7 +5,7 @@ Anonymisierungsverfahren von vvvote
 
 1. Ziel des Verfahrens
 -------------------
-vvvote verwendet folgendes Verfahren zur anonym und gleichzeitig nachvollziehbaren Abstimmung. Das bedeutet, dass
+VVVote verwendet folgendes Verfahren zur anonymen und gleichzeitig nachvollziehbaren Abstimmung. Das bedeutet, dass
 
 *  niemand nachvollziehen kann, wer wie abgestimmt hat und gleichzeitig 
 *  sichergestellt ist, dass nur Stimmberechtigte abstimmen können und zwar jeder nur einmal.
@@ -38,7 +38,7 @@ Die Lösung des Problems arbeitet mit blinden Signaturen. Die blinden Signaturen
 8. Der Client = Wähler unterschreibt mit seinem privaten Schlüssel seine Stimme.
 9. Der Client schickt seine Stimme ohne Absender, zusammen mit seiner Unterschrift, dem öffentlichen Teil seines RSA-Schlüssels und mit der entblindeten Unterschrift des Stimmberechtigungsservers unter dem öffentlichen Teil seines Schlüssels an den Zählserver.
 10. Nach Abschluss der Wahl werden alle Transaktionen veröffentlicht.
-Ergebnis: Siehe unten C.
+Ergebnis: Siehe unten "6. Ergebnis".
 
 4. Angriffsmöglichkeiten und entsprechende Sicherungsmaßnahmen
 --------------------------------------------------------------
