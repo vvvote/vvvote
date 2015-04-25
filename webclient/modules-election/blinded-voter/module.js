@@ -170,7 +170,7 @@ BlindedVoterElection.prototype.onGetPermClick = function(authmodule_, retry_)  {
 BlindedVoterElection.getStep2Html = function() {
 	var ret =
 		'<ul>' +
-			'<li>Als Ergebnis dieses Schrittes erhalten Sie einen Wahlschein in Form einer Website.</li>' +
+			'<li>Als Ergebnis dieses Schrittes erhalten Sie einen Wahlschein in Form einer Webseiten-Datei.</li>' +
 			'<li>Merken Sie sich bitte, wo Sie die Datei speichern.</li>' + 
     	'</ul>';
 	return ret;
@@ -214,7 +214,7 @@ BlindedVoterElection.prototype.getPermGeneratedHtml = function() {
 	'<button id="savedReturnEnvelope" onclick="page.blinder.onUserDidSaveReturnEnvelope();" >Ja</button>' +
 	'&emsp;<button id="didNotSaveReturnEnvelope" onclick="page.blinder.saveReturnEnvelope();" >Nein</button>' +
 	'</p><p><ul id="howToVoteId" style="display:none">' +
-	'<li>Sie haben einen Wahlschein in Form einer Webseite erhalten, den Sie auf ihrem Computer gespeichert haben.</li>' +
+	'<li>Sie haben einen Wahlschein in Form einer Webseiten-Datei erhalten, die Sie auf ihrem Computer gespeichert haben.</li>' +
 	'<li>Merken Sie sich bitte, wo Sie die Datei gespeichert haben.</li>' + 
 	'<li>Zum Abstimmen &ouml;ffnen Sie den Wahlschein im Internet-Browser. ' +
 	'Eine M&ouml;glichkeit dazu ist: Klicken Sie im Datei-Explorer doppelt auf die Wahlschein-Datei.</li>' +
