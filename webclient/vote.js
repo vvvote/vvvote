@@ -142,7 +142,7 @@ VotePage.prototype.onPermGenerated = function() {
 	this.setStep(3);
 	var mc = this.blinder.getPermGeneratedHtml();
 	Page.loadMainContent(mc);
-	
+	Page.setAddiTechInfos(BlindedVoterElection.getStep3HtmlDetails());
 };
 
 
