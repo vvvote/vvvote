@@ -106,7 +106,7 @@ OAuth2.getMainContent = function(conf) {
 		'<div id="substep' + step +'" style=' + style + '>' +
 		'						<label for="login'+step+'"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Für ' + slist[permServerNr].desc +': </label> ' +
 	//	'		  				     <a id="login" href="javascript:window.open(\'' + oauthAutorize + '\', \'_blank\');">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
-		'		  				     <a id="login'+step+'" href="' + oauthAutorize + '" target="_blank" onclick="OAuth2.showDoneButton(\'loginOauth2Txt2s'+step+'\');">' + slist[permServerNr].desc + ' autorisieren</a><br>'+
+		'		  				     <a autofocus="autofocus" id="login'+step+'" href="' + oauthAutorize + '" target="_blank" onclick="OAuth2.showDoneButton(\'loginOauth2Txt2s'+step+'\');" autofocus="autofocus">' + slist[permServerNr].desc + ' autorisieren</a><br>'+
 //		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
 		'						<label for="loginOauth2Txt2s'+step+'"> </label> ' +
 		'<span id="loginOauth2Txt2s'+step+'" style="display:none"><button onclick="setSubStep(' +(step+1) +')">Autorisierung war erfolgreich</button></span>'+
@@ -118,7 +118,7 @@ OAuth2.getMainContent = function(conf) {
 	mc = mc +
 	'<div id="substep' + step +'" style="display:none;">' +
 	'						<label for="username"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Username erneut eingeben</label> ' +
-	'						     <input name="username" id="username" value="" type="text"></td>' + 
+	'						     <input autofocus="autofocus" name="username" id="username" value="" type="text"></td>' + 
     '                       <br>' +
 	'						<label for="displayname" style="display:none">Mich &ouml;ffentlich anzeigen als</label> ' +
 	'						     <input name="displayname" id="displayname" value="" type="hidden"></td>' + 

@@ -364,7 +364,7 @@ function wikiSyntax2DOMFrag(wikisyntax_) {
 	var prevTag = '';
 	var prevNode = document.createElement('div');
 	var openTags = '';
-	for (var rowNo in rows) {
+	for (var rowNo=0; rowNo<rows.length; rowNo++) {
 		matched = false;
 		if (rows[rowNo].substring(0, '* '.length) === '* ') { // unordered list item
 			matched = true;
@@ -433,7 +433,7 @@ function wikiSyntax2DOMFrag(wikisyntax_) {
 			prevTag = "h1";
 		}
 
-		if (rows[rowNo].length == 0) { // new paragraph
+		if (rows[rowNo].length == 0 || rows[rowNo] === "\r") { // new paragraph
 			if (fragm !== prevNode)	fragm.appendChild(prevNode);
 			prevNode = document.createElement('p');
 			prevTag = 'p';

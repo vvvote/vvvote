@@ -63,7 +63,7 @@ function printTitle($headertitle, $h1) {
 
 function printTechInfos($techinfos) {
 	echo '
-				<br><button onClick="window.close();">Fenster schlie&szlig;en und zur&uuml;ck zum Hauptfenster</button>
+				<br><button autofocus="autofocus" onClick="window.close();">Fenster schlie&szlig;en und zur&uuml;ck zum Hauptfenster</button>
 			</div>
 			<div id="techinfosswitch">
 				<input type="checkbox" name="techinfocheckbox" id="techinfocheckbox" value="techinfocheckbox" onclick="onToggleTechInfosSwitch();">

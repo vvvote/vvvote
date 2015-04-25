@@ -196,8 +196,8 @@ Ihr Computer Ã¶ffnet den Umschlag (d.h. entschlÃ¼sselt die Wahlscheinnummer)
 	function checkBrowser() {
 		var parser = new UAParser(); 
 		var browser = parser.getBrowser();
-		if (   (browser.name.toUpperCase().indexOf('SAFARI') >= 0 && browser.major <  7) // safari 5: everything is working but saving the return envelope 
-			|| (browser.name.toUpperCase().indexOf('FIREFOX')>= 0 && browser.major < 36)		
+		if (  // (browser.name.toUpperCase().indexOf('SAFARI') >= 0 && browser.major <  7) || // safari 5: everything is working but saving the return envelope 
+			   (browser.name.toUpperCase().indexOf('FIREFOX')>= 0 && browser.major < 36)		
 			|| (browser.name.toUpperCase().indexOf('CHROME') >= 0 && browser.major < 40)		
 			|| (browser.name.toUpperCase().indexOf('OPERA')  >= 0 && browser.major < 11)		
 			|| (browser.name.toUpperCase().indexOf('IE')     >= 0 && browser.major < 11)		
@@ -223,17 +223,18 @@ Ihr Computer Ã¶ffnet den Umschlag (d.h. entschlÃ¼sselt die Wahlscheinnummer)
 	        GetElectionConfig.submitForm();
 	    	// TODO read phase from config and load votePage(generatePermssion), votePage(submitVote), getresult()
 		}
-		if ('returnEnvelope' in window) {
+		if ('returnEnvelope' in window) { // this is the return envelope
 			 // do not show the "new election" menu in return envelope
 			 var el = document.getElementById('newElectionLink');
 			 el.setAttribute('style', 'display:none');
 
-			 // switch to take vote page
-	    	 page = votePage; 
-		     page.display();
+			 // switch to vote page - it is the default page anyway
+	    	 //  page = votePage; 
+		     //  page.display();
 		     
 		     // load the config and show the options
-		     BlindedVoterElection.onImportPermission(returnEnvelope);
+		     // votePage.display automatically checks if returnEnvelope is set
+		    // BlindedVoterElection.onImportPermission(returnEnvelope);
 		}
 	} 
 

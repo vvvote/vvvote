@@ -1,11 +1,3 @@
-/* not used anymore
-function savePermission(ballot) {
-	// TODO check maximal loops = numServers
-	// download webclient
-	savePermission.ballot = ballot;
-	httpGet(ClientConfig.voteClientUrl, savePermission, savePermission.gotWebclient, false);
-}
-*/
 
 /**
  * @param varname the name of the global var that holds the instance of this object. It is used for HTML code to call back.
@@ -86,6 +78,21 @@ BlindedVoterElection.prototype.gotWebclient = function(xml) {
 	}
 };
 
+BlindedVoterElection.prototype.saveReturnEnvelopeAgain = function() {
+	var me = this;
+	httpGet(ClientConfig.voteClientUrl, me, me.gotWebclientPermAlreadyObteined, false);
+};
+
+BlindedVoterElection.prototype.gotWebclientPermAlreadyObteined = function(xml) {
+	if (xml.status != 200) {
+		httpError(xml);
+	} else { 
+		this.clientHtml = xml.responseText; // save the web client
+		this.injectPermissionIntoClientSave(this.permission); // obtain the voter card (permission)
+	}
+};
+
+
 /**
  * Injects the ballot permission into the web client and opens the save dialog of the web broweser
  * @param ballot JSON encoded ballot
@@ -109,10 +116,14 @@ BlindedVoterElection.prototype.injectPermissionIntoClientSave = function(ballot)
 };
 
 BlindedVoterElection.prototype.saveReturnEnvelope = function() {
-	saveAs(this.returnEnvelopeBlob, "Wahlschein " + clearForFilename(this.config.electionTitle) + '.html');
+	var filename = 'Wahlschein ' + clearForFilename(this.config.electionTitle) + '.html';
+	var htmlStr = 'Damit Sie später Ihre Stimme senden können, müssen Sie jetzt den Wahlschein als Datei auf Ihrem Gerät abspeichern.' +
+	'<p><button autofocus="autofocus" onclick="removePopup(); saveAs(page.blinder.returnEnvelopeBlob, \'' + filename +'\');">Ok</button></p>';
+	var fragm = html2Fragm(htmlStr);
+	showPopup(fragm);
 };
 
-BlindedVoterElection.prototype.onUserDidNotSaveReturnEnvelope = function()  {
+BlindedVoterElection.prototype.onUserDidSaveReturnEnvelope = function()  {
 	var el = document.getElementById('howToVoteId');
 	el.removeAttribute('style', 'display:block');
 	var el = document.getElementById('didSaveButtonsId');
@@ -199,8 +210,9 @@ BlindedVoterElection.loadReturnEnvelopeHtml = function() {
 BlindedVoterElection.prototype.getPermGeneratedHtml = function() {
 	var votingTimeStr = page.getVoteTimeStr();
 	return '<h2>Wahlschein erfolgreich erstellt. </h2>' +
-	'<p id="didSaveButtonsId"><button id="savedReturnEnvelope" onclick="page.blinder.onUserDidNotSaveReturnEnvelope();" >Ich habe den Wahlschein als Datei auf meinem Gerät <em>gespeichert</em></button>' +
-	'&emsp;<button id="didNotSaveReturnEnvelope" onclick="page.blinder.saveReturnEnvelope();" >Ich habe den Wahlschein <em>nicht als Datei gespeichert</em><br>Speichern-Dialog erneut öffnen</button>' +
+	'<p id="didSaveButtonsId">Haben Sie den Wahlschein als Datei auf Ihrem Gerät gespeichert?<br>' + 
+	'<button id="savedReturnEnvelope" onclick="page.blinder.onUserDidSaveReturnEnvelope();" >Ja</button>' +
+	'&emsp;<button id="didNotSaveReturnEnvelope" onclick="page.blinder.saveReturnEnvelope();" >Nein</button>' +
 	'</p><p><ul id="howToVoteId" style="display:none">' +
 	'<li>Sie haben einen Wahlschein in Form einer Webseite erhalten, den Sie auf ihrem Computer gespeichert haben.</li>' +
 	'<li>Merken Sie sich bitte, wo Sie die Datei gespeichert haben.</li>' + 

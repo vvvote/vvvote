@@ -463,7 +463,7 @@ label.yesNoRadio {
 	position: relative;
 /*	vertical-align: middle; this does not work in firefox, so use a work aoround whoch also work sin the other browsers */
 	top: 50%;        /*  try to center the div vertically */
-	transform: translate(0%, -50%); */
+	transform: translate(0%, -50%); 
 	/* style it somehow */
 	border: 2px solid;
 	border-radius: 10px;
