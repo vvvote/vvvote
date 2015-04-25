@@ -142,7 +142,7 @@ The apache .htaccess might then look like:
     	}
 	}
 
-
+Do not forget to replace "my.vvvote.url" with the dns name of your server in both occurances.
 
 ### lighthttpd
 In the site config add the following lines:

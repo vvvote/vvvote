@@ -104,10 +104,20 @@ BlindedVoterElection.prototype.injectPermissionIntoClientSave = function(ballot)
 		// var p2 = JSON.parse(ballot[0].transm.str);
 		//var electionid = JSON.parse(p2.electionId).mainElectionId;
 
-	var bb = new Blob([ballotWithClient]); //  new Blob([ballot]); 
-	saveAs(bb, "Wahlschein " + clearForFilename(this.config.electionTitle) + '.html');
+	this.returnEnvelopeBlob = new Blob([ballotWithClient]); //  new Blob([ballot]);
+	this.saveReturnEnvelope();
 };
 
+BlindedVoterElection.prototype.saveReturnEnvelope = function() {
+	saveAs(this.returnEnvelopeBlob, "Wahlschein " + clearForFilename(this.config.electionTitle) + '.html');
+};
+
+BlindedVoterElection.prototype.onUserDidNotSaveReturnEnvelope = function()  {
+	var el = document.getElementById('howToVoteId');
+	el.removeAttribute('style', 'display:block');
+	var el = document.getElementById('didSaveButtonsId');
+	el.setAttribute('style', 'display:none');
+};
 
 BlindedVoterElection.prototype.obtainPermission_ = function()  {
 	if (!this.retry) {
@@ -147,10 +157,11 @@ BlindedVoterElection.prototype.onGetPermClick = function(authmodule_, retry_)  {
  *  
  */
 BlindedVoterElection.getStep2Html = function() {
-	var ret = 'Als Ergebnis dieses Schrittes erhalten Sie einen Wahlschein, den Sie ' + 
-	'speichern und zur Stimmabgabe sp&auml;ter wieder laden m&uuml;ssen. ' +
-	'Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
-	'weiter! Die Stimmabgabe damit ist anonym, d.h. ohne Ihre Mithilfe kann nicht festgestellt werden, von wem die Stimme stammt.'; 
+	var ret =
+		'<ul>' +
+			'<li>Als Ergebnis dieses Schrittes erhalten Sie einen Wahlschein in Form einer Website.</li>' +
+			'<li>Merken Sie sich bitte, wo Sie die Datei speichern.</li>' + 
+    	'</ul>';
 	return ret;
 
 };
@@ -158,13 +169,17 @@ BlindedVoterElection.getStep2Html = function() {
 BlindedVoterElection.getStep2HtmlDetails = function() {
 	var ret = '<p><h2>Weitere technische Information</h2>' +
 	'Der Wahlschein ist digital von mindestens 2 Servern unterschrieben. Diese Unterschrift führt dazu, dass der Wahlschein bei der Stimmabgabe akzeptiert wird.<br> ' +
-	'Der Wahlschein enth&auml;lt eine eindeutige Wahlscheinnummer, die nur Ihr Computer kennt - sie wurde von Ihrem Computer erzeugt und verschl&uuml;sselt, bevor die Server den Wahlschein unterschrieben haben, und danach auf Ihrem Computer entschl&uml;sselt (Man spricht von &quot;Blinded Signature&quot;). Die Server kennen daher die Wahlscheinnummer nicht.<br> ' +
+	'Der Wahlschein enth&auml;lt eine eindeutige Wahlscheinnummer, die nur Ihr Computer kennt - sie wurde von Ihrem Computer erzeugt und verschl&uuml;sselt, bevor die Server den Wahlschein unterschrieben haben, und danach auf Ihrem Computer entschl&uuml;sselt (Man spricht von &quot;Blinded Signature&quot;). Die Server kennen daher die Wahlscheinnummer nicht.<br> ' +
 	'Man kann sich das so vorstellen:<br>  ' +
 	'Ihr Computer schreibt auf den Wahlschein die Wahlscheinnummer, die er sich selbst &quot;ausdenkt&quot; (Zufallszahl). Dieser Wahlschein wird zusammen mit einem Blatt Kohlepapier in einen Umschlag gelegt und an den Server geschickt. ' + 
 	'Der Server unterschreibt außen auf dem Umschlag (wenn Sie wahlberechtigt sind), so dass sich die Unterschrift durch das Kohlepapier auf Ihren Wahlschein &uuml;berträgt. Ohne den Umschlag ge&ouml;ffnet zu haben (was der Server nicht kann, weil er den daf&uuml;r notwendigen Schl&uuml;ssel nicht kennt), schickt er den Brief an Ihren Computer zur&uuml;ck. ' +
 	'Ihr Computer &ouml;ffnet den Umschlag (d.h. entschl&uuml;sselt die Wahlscheinnummer) und h&auml;lt einen vom Server unterschriebenen Wahlschein in der Hand, deren Nummer der Server nicht kennt.   ' +
 	'</p>';
 	return ret;
+};
+
+BlindedVoterElection.getStep3HtmlDetails = function() {
+	return BlindedVoterElection.getStep2HtmlDetails();
 };
 
 
@@ -184,11 +199,17 @@ BlindedVoterElection.loadReturnEnvelopeHtml = function() {
 BlindedVoterElection.prototype.getPermGeneratedHtml = function() {
 	var votingTimeStr = page.getVoteTimeStr();
 	return '<h2>Wahlschein erfolgreich erstellt. </h2>' +
-	'<p>Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
-	'weiter! Die Stimmabgabe damit anonym, d.h. ohne Ihre Mithilfe kann nicht festgestellt werden, von wem die Stimme abgegeben wurde.</p>' +
-	'<p>Zum Abstimmen &ouml;ffnen Sie den Wahlschein im Internet-Browser. ' +
-	'Eine M&ouml;glichkeit dazu ist: Klicken Sie im Datei-Explorer doppelt auf die Wahlschein-Datei.</p>' +
-	'<p>' + votingTimeStr + '</p>';
+	'<p id="didSaveButtonsId"><button id="savedReturnEnvelope" onclick="page.blinder.onUserDidNotSaveReturnEnvelope();" >Ich habe den Wahlschein als Datei auf meinem Gerät <em>gespeichert</em></button>' +
+	'&emsp;<button id="didNotSaveReturnEnvelope" onclick="page.blinder.saveReturnEnvelope();" >Ich habe den Wahlschein <em>nicht als Datei gespeichert</em><br>Speichern-Dialog erneut öffnen</button>' +
+	'</p><p><ul id="howToVoteId" style="display:none">' +
+	'<li>Sie haben einen Wahlschein in Form einer Webseite erhalten, den Sie auf ihrem Computer gespeichert haben.</li>' +
+	'<li>Merken Sie sich bitte, wo Sie die Datei gespeichert haben.</li>' + 
+	'<li>Zum Abstimmen &ouml;ffnen Sie den Wahlschein im Internet-Browser. ' +
+	'Eine M&ouml;glichkeit dazu ist: Klicken Sie im Datei-Explorer doppelt auf die Wahlschein-Datei.</li>' +
+	'<li>Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
+	'weiter! Die Stimmabgabe damit ist anonym, d.h. ohne Ihre Mithilfe kann nicht festgestellt werden, von wem die Stimme abgegeben wurde.</li>' +
+	'<li>' + votingTimeStr + '</li>' +
+	'</ul></p>';
 };
 
 BlindedVoterElection.onClickedLoadFile = function(event) {
