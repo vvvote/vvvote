@@ -150,6 +150,7 @@ VotePage.prototype.onPermGenerated = function() {
 VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEnvelopeLStorageId) {
 	this.blinder = blindingobj;
 	this.config = this.blinder.config;
+
 	if (permok) {
 		switch (config.tally) {
 		case 'publishOnly': 
@@ -187,6 +188,24 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEn
 	} else {
 		alert('Wahlschein nicht gültig'); // TODO provide a more detailed error message
 	}
+	
+	// check if working as return envelope and directly opend or saved (only needed for firefox)
+	if (typeof returnEnvelope != 'undefined') {
+		var now = new Date();
+		if (this.blinder.returnEnvelopeCreationDate.getTime() + 60000 > now.getTime() ) {// it took less than 60 seconds from creation to opening the return envelope, so it is very likely that it was not saved but directly opened
+			// check browser (only firefox offers directly opening instead of saving
+			var parser = new UAParser(); 
+			var browser = parser.getBrowser();
+			if ( browser.name.toUpperCase().indexOf('FIREFOX') >= 0) {
+				// if 'temp' or 'tmp' is in the file path, request the user to save it in a real not temporary place
+				if (location.href.toUpperCase().indexOf('TEMP') >= 0 || location.href.toUpperCase().indexOf('TMP') >= 0 ) {
+					showPopup(html2Fragm('Sie haben den Wahlschein direkt geöffnet. Sie müssen ihn aber als Datei auf Ihrem Gerät speichern. ' +
+							'<button onclick="removePopup(); page.blinder.saveReturnEnvelopeAgain();" autofocus="autofocus">Ok</button>'));
+				}
+			}		
+		}
+	}
+
 
 };
 

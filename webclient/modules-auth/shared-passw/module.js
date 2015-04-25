@@ -14,7 +14,7 @@ SharedPasswAuth.prototype.getCredentials = function (config, clientId) {
 SharedPasswAuth.getMainContent = function(conf) {
 	var mc =
 		'						<label for="voterId">Ihr Name:</label> ' +
-		'		  				     <input name="voterId" id="voterId" value=""> ' +
+		'		  				     <input name="voterId" id="voterId" value="" autofocus="autofocus"> ' +
 		'                       <br>' +
 		'						<label for="sharedPassw">Wahlpasswort</label> ' +
 		'						     <input name="sharedPassw" id="secret" value="" type="password"></td>' + 
