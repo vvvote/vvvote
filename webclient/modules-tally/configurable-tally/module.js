@@ -556,13 +556,14 @@ ConfigurableTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorage
 		executeAt(voteStart, me, me.enableSendVoteButtons);
 	}
 	
+	var tmp = null;
 	if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
-		var tmp = localStorage.getItem('sentQNo' + this.returnEnvelopeLStorageId);
+		tmp = localStorage.getItem('sentQNo' + this.returnEnvelopeLStorageId);
 		if (tmp != null) this.sentQNo = JSON.parse(tmp);
-		for (var qNo=0; qNo<this.config.questions.length; qNo++) {
-			if (tmp != null && this.sentQNo.indexOf(qNo) >=0) this.disableQuestion('Stimme akzeptiert', qNo, false);
-			else                                              this.enDisableSendButton(buttonStr, qNo, disable);
-		}
+	}
+	for (var qNo=0; qNo<this.config.questions.length; qNo++) {
+		if (tmp != null && this.sentQNo.indexOf(qNo) >=0) this.disableQuestion('Stimme akzeptiert', qNo, false);
+		else                                              this.enDisableSendButton(buttonStr, qNo, disable);
 	}
 };
 
