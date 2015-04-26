@@ -556,11 +556,13 @@ ConfigurableTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorage
 		executeAt(voteStart, me, me.enableSendVoteButtons);
 	}
 	
-	var tmp = localStorage.getItem('sentQNo' + this.returnEnvelopeLStorageId);
-	if (tmp != null) this.sentQNo = JSON.parse(tmp);
-	for (var qNo=0; qNo<this.config.questions.length; qNo++) {
-		if (tmp != null && this.sentQNo.indexOf(qNo) >=0) this.disableQuestion('Stimme akzeptiert', qNo, false);
-		else                                              this.enDisableSendButton(buttonStr, qNo, disable);
+	if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
+		var tmp = localStorage.getItem('sentQNo' + this.returnEnvelopeLStorageId);
+		if (tmp != null) this.sentQNo = JSON.parse(tmp);
+		for (var qNo=0; qNo<this.config.questions.length; qNo++) {
+			if (tmp != null && this.sentQNo.indexOf(qNo) >=0) this.disableQuestion('Stimme akzeptiert', qNo, false);
+			else                                              this.enDisableSendButton(buttonStr, qNo, disable);
+		}
 	}
 };
 
@@ -766,7 +768,9 @@ ConfigurableTally.prototype.handleServerAnswerStoreVote = function (xml) {
 			this.disableQuestion('Stimme akzeptiert', this.qNo, this.vote);
 			if (!Array.isArray(this.sentQNo)) this.sentQNo = new Array();
 			this.sentQNo.push(this.qNo);
-			localStorage.setItem('sentQNo'+ this.returnEnvelopeLStorageId, JSON.stringify(this.sentQNo));
+			if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
+				localStorage.setItem('sentQNo'+ this.returnEnvelopeLStorageId, JSON.stringify(this.sentQNo));
+			}
 			break;
 		case 'error':
 			alert('Der Server hat die Stimme nicht akzeptiert. Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
