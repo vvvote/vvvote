@@ -83,6 +83,7 @@ Note left of Server: store serverSigned [to be implemented]
 Server->Voter: serverSigned(signedVote) [to be implemented, right now only "accepted" is sent]
 Note right of Voter: save serverSigned(signedVote)
 ```
+The Data-Package which contains the vote is sent through an anonymizing service which anonymizes the senders IP-Adress and removes the browsers fingerprint. This is done, because in this way the counting server cannot use the voter's ip address or his browser's finderprint to try a matching to information about the voter's location or other information which the admin might know from elsewhere about one voter's ip adress or his browser's fingerprint. If you did not change it, anonymouse.org is used for that purpose.
 
 
 # Routine to Prepare Return Envelops in the Client 
