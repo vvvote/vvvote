@@ -316,7 +316,10 @@ ConfigurableTally.prototype.getMainContentFragm = function(fragm, tallyconfig) {
 		var elp = document.createElement('button');
 		elp.setAttribute('id'	  , 'buttonShowQid'+qNo);
 		elp.setAttribute('onclick', 'ConfigurableTally.showQuestion(' +qNo+')');
-		var elp2 = document.createTextNode('Anzeigen');
+		elp.showTextHtml = 'anzeigen &amp;<br>abstimmen';
+		elp.hideTextHtml = 'verbergen';
+		var elp2 = html2Fragm(elp.showTextHtml);
+		// var elp2 = document.createTextNode('Anzeigen & Abstimmen');
 		elp.appendChild(elp2);
 		table[qNo * 2 + 1][2] = {'content' : elp, 'attrib': [{'name': 'class', 'value': styleClass}, {'name':'id', 'value': 'qRow'+qNo+'C3'}]};
 
@@ -592,7 +595,8 @@ ConfigurableTally.showQuestion = function(showqNo) {
 			if (qNo == showqNo && isShown(el)) {
 				hideElement(el); // clicked on an already shown question -> just hide it
 				var btn = document.getElementById('buttonShowQid'+qNo);
-				btn.childNodes[0].nodeValue = "Anzeigen";
+				btn.innerHTML = btn.showTextHtml;
+				//btn.childNodes[0].nodeValue = "Anzeigen";
 				var elCol1 = document.getElementById('qRow'+qNo+'C1');
 				var elCol2 = document.getElementById('qRow'+qNo+'C2');
 				var elCol3 = document.getElementById('qRow'+qNo+'C3');
@@ -614,7 +618,9 @@ ConfigurableTally.showQuestion = function(showqNo) {
 			if (qNo == showqNo)	{
 				showElement(el); // el.style.display = 'block';
 				var btn = document.getElementById('buttonShowQid'+qNo);
-				btn.childNodes[0].nodeValue = "Verbergen";
+				btn.innerHTML = btn.hideTextHtml;
+				btn.childNodes = btn.hideTextNodes;
+				//btn.childNodes[0].nodeValue = "Verbergen";
 				elCol1.className = elCol1.className + ' curRow'; 
 				elCol2.className = elCol2.className + ' curRow'; 
 				elCol3.className = elCol3.className + ' curRow'; 
@@ -622,7 +628,8 @@ ConfigurableTally.showQuestion = function(showqNo) {
 			else {
 				hideElement(el); // el.style.display = 'none';
 				var btn = document.getElementById('buttonShowQid'+qNo);
-				btn.childNodes[0].nodeValue = "Anzeigen";
+				btn.innerHTML = btn.showTextHtml;
+				// btn.childNodes[0].nodeValue = "Anzeigen &";
 				elCol1.className = elCol1.className.replace(/\bcurRow\b/,'');
 				elCol2.className = elCol2.className.replace(/\bcurRow\b/,'');
 				elCol3.className = elCol3.className.replace(/\bcurRow\b/,'');
