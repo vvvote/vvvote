@@ -1,4 +1,36 @@
-      //<input type=button name=nnnb1 value="Pick primes p,q" 
+/*
+ * return a random of bits length
+ * It will not work properly if bits is more than the mantisse in the browser on the machine
+ * This will be called from BigInt
+ */
+function secureRandom(bits) {
+	var r;
+	if (typeof (crypto.getRandomValues) != 'undefined') {
+		var atmp;
+		switch (true) {
+		case bits <= 8:  atmp = new Uint8Array(1);  break;
+		case bits <= 16: atmp = new Uint16Array(1); break;
+		case bits <= 32: atmp = new Uint32Array(1); break;
+		case bits <= 64: atmp = new Uint32Array(2); break;
+		default: atmp = new Uint32Array(Math.ceil(bits/32)); break;
+		}
+		crypto.getRandomValues(atmp);
+		var mask = (1 << bits) - 1; // and mask to remove random bits which was not ask for
+		if (bits >= 32) mask = 0xffffffff; // necessary because the shift operator works only upto 31
+		r = atmp[0] & mask;
+		var i = 1;
+		while ( bits - i * 32 > 0 ) {
+			if (bits - i * 32 < 32)	mask = (1 << (bits - i*32) ) - 1;
+			else                    mask = 0xffffffff;
+			r = r + ( (atmp[i] & mask) * Math.pow(2, 32*i)); // the bitwise operators work on 32 bit only --> use + instead of | and power instead of left-shift
+			i++;
+		}
+	} else r = Math.floor(Math.random()*(1<<bits)); // no cryptographic random available, fall back to Math.random 
+	return r;
+}
+
+
+//<input type=button name=nnnb1 value="Pick primes p,q" 
     	  // nnnp = p
 // nnne = e
 // nnnm = plaintext message

@@ -237,25 +237,36 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlscheinnummer) und
 		var parser = new UAParser(); 
 		var browser = parser.getBrowser();
 		if (  // (browser.name.toUpperCase().indexOf('SAFARI') >= 0 && browser.major <  7) || // safari 5: everything is working but saving the return envelope 
-			(browser.name.toUpperCase().indexOf('FIREFOX')>= 0 && browser.major < 36)		
+			   (browser.name.toUpperCase().indexOf('FIREFOX')>= 0 && browser.major < 26)		
 			|| (browser.name.toUpperCase().indexOf('CHROME') >= 0 && browser.major < 40)		
 			|| (browser.name.toUpperCase().indexOf('OPERA')  >= 0 && browser.major < 11)		
 			|| (browser.name.toUpperCase().indexOf('IE')     >= 0 && browser.major < 11)		
 		   ) {
-			showPopup(html2Fragm('Ihr Browser wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 36, Chrome ab Version 40, Opera ab Version 28 oder den InternetExplorer ab Version 11.'));
+			showPopup(html2Fragm('Ihr Browser wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 26, Chrome ab Version 40 oder den InternetExplorer ab Version 11.'));
 		}
 	}
-		
-	
+
+	function checkBrowserReturnEnvelope() {
+		var parser = new UAParser(); 
+		var browser = parser.getBrowser();
+		if (   (browser.name.toUpperCase().indexOf('SAFARI') >= 0 && browser.major <  5)  // safari 5: everything is working but saving the return envelope 
+			|| (browser.name.toUpperCase().indexOf('FIREFOX')>= 0 && browser.major < 21)		
+			|| (browser.name.toUpperCase().indexOf('CHROME') >= 0 && browser.major < 40)		
+			|| (browser.name.toUpperCase().indexOf('OPERA')  >= 0 && browser.major < 11)		
+			|| (browser.name.toUpperCase().indexOf('IE')     >= 0 && browser.major < 11)		
+		   ) {
+			showPopup(html2Fragm('Ihr Browser wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 21, Chrome ab Version 40 oder den InternetExplorer ab Version 11, Safari funktioniert nur teilweise.'));
+		}
+	}
+
 	function onWebsiteLoad() {
 		page.display();
-		checkBrowser();
 		if (location.search.length > 1 && typeof firstload == 'undefined' && location.search.indexOf('confighash') >= 0) {
 			firstload = false;
 			// do not show the "new election" menu if confighash is set in url
 			var el = document.getElementById('newElectionLink');
 			el.setAttribute('style', 'display:none');
-		
+			
 			if (location.search.indexOf('showresult') >=0) page = getResultPage;
 			else                                           page = votePage; // TODO read phase from config and
 		    page.display();
@@ -264,21 +275,24 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlscheinnummer) und
 	        GetElectionConfig.submitForm();
 	    	// TODO read phase from config and load votePage(generatePermssion), votePage(submitVote), getresult()
 		}
-		if ('returnEnvelope' in window) {
+		if ('returnEnvelope' in window) { // this is the return envelope
+			 checkBrowserReturnEnvelope();
 			 // do not show the "new election" menu in return envelope
 			 var el = document.getElementById('newElectionLink');
 			 el.setAttribute('style', 'display:none');
 
-			 // switch to vote page - it is the default page anyway, do not call ist twice
+			 // switch to vote page - it is the default page anyway
 	    	 //  page = votePage; 
 		     //  page.display();
 		     
 		     // load the config and show the options
 		     // votePage.display automatically checks if returnEnvelope is set
-		     // BlindedVoterElection.onImportPermission(returnEnvelope);
-				}
+		    // BlindedVoterElection.onImportPermission(returnEnvelope);
+		} else {
+			checkBrowser();
+		}
 	} 
-		
+				
 </script>
 
 </head>

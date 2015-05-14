@@ -487,7 +487,7 @@ function randTruePrime_(ans,k) {
     copyInt_(ans,0);
     for (dd=1;dd;) {
       dd=0;
-      ans[0]= 1 | (1<<(k-1)) | Math.floor(Math.random()*(1<<k));  //random, k-bit, odd integer, with msb 1
+      ans[0]= 1 | (1<<(k-1)) | secureRandom(k); // Math.floor(Math.random()*(1<<k));  //random, k-bit, odd integer, with msb 1
       for (j=1;(j<primes.length) && ((primes[j]&pm)==primes[j]);j++) { //trial division by all primes 3...sqrt(2^k)
         if (0==(ans[0]%primes[j])) {
           dd=1;
@@ -502,7 +502,7 @@ function randTruePrime_(ans,k) {
   B=c*k*k;    //try small primes up to B (or all the primes[] array if the largest is less than B).
   if (k>2*m)  //generate this k-bit number by first recursively generating a number that has between k/2 and k-m bits
     for (r=1; k-k*r<=m; )
-      r=pows[Math.floor(Math.random()*512)];   //r=Math.pow(2,Math.random()-1);
+      r=pows[secureRandom(9)];   //r=Math.pow(2,Math.random()-1);
   else
     r=.5;
 
@@ -595,7 +595,7 @@ function randBigInt_(b,n,s) {
     b[i]=0;
   a=Math.floor((n-1)/bpe)+1; //# array elements to hold the BigInt
   for (i=0;i<a;i++) {
-    b[i]=Math.floor(Math.random()*(1<<(bpe-1)));
+    b[i]=secureRandom(bpe-1);  //Math.floor(Math.random()*(1<<(bpe-1)));
   }
   b[a-1] &= (2<<((n-1)%bpe))-1;
   if (s==1)
