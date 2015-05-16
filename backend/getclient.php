@@ -45,7 +45,7 @@ $includeJsFiles = Array(
 		'getresult.js',
 
 
-		/* Crypto-tool */
+		/* Crypto-tool 
 		'tools/jsrsasign-master/ext/jsbn.js',
 		'tools/jsrsasign-master/ext/jsbn2.js',
 		'tools/jsrsasign-master/ext/prng4.js',
@@ -297,7 +297,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlscheinnummer) und
 
 </head>
 
-<body onload="onWebsiteLoad(); onToggleTechInfosSwitch(); //startVoting(true); //test();" onClick="rng_seed_time(); // better random" onKeyPress="rng_seed_time(); // better random">
+<body onload="onWebsiteLoad(); onToggleTechInfosSwitch(); //startVoting(true); //test();" onClick="// rng_seed_time(); // better random" onKeyPress="// rng_seed_time(); // better random">
 	<div id="errorDiv" style="display:none"></div>
 	<!--  <div id="diagnosisControlDiv" style="display:none"></div>   -->
 	<div id="all">
