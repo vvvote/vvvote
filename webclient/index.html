@@ -198,8 +198,8 @@ Ihr Computer Ã¶ffnet den Umschlag (d.h. entschlÃ¼sselt die Wahlscheinnummer)
 	function checkBrowser() {
 		var parser = new UAParser(); 
 		var browser = parser.getBrowser();
-		if (  // (browser.name.toUpperCase().indexOf('SAFARI') >= 0 && browser.major <  7) || // safari 5: everything is working but saving the return envelope 
-			   (browser.name.toUpperCase().indexOf('FIREFOX')>= 0 && browser.major < 26)		
+		if (   (browser.name.toUpperCase().indexOf('SAFARI') >=0 ) // safari 5: everything is working but saving the return envelope 
+			|| (browser.name.toUpperCase().indexOf('FIREFOX')>= 0 && browser.major < 26)		
 			|| (browser.name.toUpperCase().indexOf('CHROME') >= 0 && browser.major < 40)		
 			|| (browser.name.toUpperCase().indexOf('OPERA')  >= 0 && browser.major < 11)		
 			|| (browser.name.toUpperCase().indexOf('IE')     >= 0 && browser.major < 11)		
