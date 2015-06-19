@@ -98,7 +98,7 @@ BlindedVoterElection.prototype.gotWebclientPermAlreadyObteined = function(xml) {
  * @param ballot JSON encoded ballot
  */
 BlindedVoterElection.prototype.injectPermissionIntoClientSave = function(ballot) {
-	var find = /\/\/bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpßjntt/;
+	var find = /\/\/bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpjntt/;
 	var lStorage = {'id': bigInt2str(randBigInt(128, 0), 16)};
 	this.returnEnvelopeCreationDate = new Date();
 	var returnEnvelope = {

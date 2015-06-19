@@ -84,7 +84,7 @@ foreach ($includeJsFiles as $f) {
 
 // print placeholder for JSON permission file
 echo "\n//placeholder for permission file\n";
-echo "//bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpßjntt\n";
+echo "//bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpjntt\n";
 echo '</script>';
 
 // print stylesheets
@@ -236,19 +236,28 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlscheinnummer) und
 	function checkBrowser() {
 		var parser = new UAParser(); 
 		var browser = parser.getBrowser();
-		if (  // (browser.name.toUpperCase().indexOf('SAFARI') >= 0 && browser.major <  7) || // safari 5: everything is working but saving the return envelope 
-			   (browser.name.toUpperCase().indexOf('FIREFOX')>= 0 && browser.major < 26)		
-			|| (browser.name.toUpperCase().indexOf('CHROME') >= 0 && browser.major < 40)		
-			|| (browser.name.toUpperCase().indexOf('OPERA')  >= 0 && browser.major < 11)		
-			|| (browser.name.toUpperCase().indexOf('IE')     >= 0 && browser.major < 11)		
-		   ) {
+		var browsName = browser.name.toUpperCase();
+		if (!(   (browsName.indexOf('FIREFOX')>= 0) // as creating the return envelope cannot be retried, make sure only tested browsers are used 
+			  || (browsName.indexOf('CHROME') >= 0) 
+			  || (browsName.indexOf('OPERA')  >= 0) 
+			  || (browsName.indexOf('IE')     >= 0)
+		   ) ) {
 			showPopup(html2Fragm('Ihr Browser wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 26, Chrome ab Version 40 oder den InternetExplorer ab Version 11.'));
+		} else { // check browser version
+			if (   (browsName.indexOf('SAFARI') >=0 ) // safari 5: everything is working but saving the return envelope 
+				|| (browsName.indexOf('FIREFOX')>= 0 && browser.major < 21)		
+				|| (browsName.indexOf('CHROME') >= 0 && browser.major < 40)		
+				|| (browsName.indexOf('OPERA')  >= 0 && browser.major < 11)		
+				|| (browsName.indexOf('IE')     >= 0 && browser.major < 11)		
+			   ) {
+				showPopup(html2Fragm('Ihr Browser wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 26, Chrome ab Version 40 oder den InternetExplorer ab Version 11.'));
+			}
 		}
 	}
-
+		
 	function checkBrowserReturnEnvelope() {
 		var parser = new UAParser(); 
-		var browser = parser.getBrowser();
+		var browser = parser.getBrowser(); // this check is more for convinience in order to avoid user retry and frustration
 		if (   (browser.name.toUpperCase().indexOf('SAFARI') >= 0 && browser.major <  5)  // safari 5: everything is working but saving the return envelope 
 			|| (browser.name.toUpperCase().indexOf('FIREFOX')>= 0 && browser.major < 21)		
 			|| (browser.name.toUpperCase().indexOf('CHROME') >= 0 && browser.major < 40)		
@@ -258,7 +267,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlscheinnummer) und
 			showPopup(html2Fragm('Ihr Browser wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 21, Chrome ab Version 40 oder den InternetExplorer ab Version 11, Safari funktioniert nur teilweise.'));
 		}
 	}
-
+		
 	function onWebsiteLoad() {
 		page.display();
 		if (location.search.length > 1 && typeof firstload == 'undefined' && location.search.indexOf('confighash') >= 0) {
