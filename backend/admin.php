@@ -28,7 +28,7 @@ require_once 'Math/BigInteger.php';
 require_once 'Crypt/RSA.php';
 define('CRYPT_RSA_MODE', CRYPT_RSA_MODE_INTERNAL); // this is needed because otherwise openssl (if present) needs special configuration in openssl.cnf when creating a new key pair
 require_once 'config/conf-allservers.php';
-require_once 'config/conf-thisserver.php';
+// require_once 'config/conf-thisserver.php';
 
 
 
@@ -83,7 +83,7 @@ if ((isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ])) || (is
 	
 	// save private key to file
 	$keystr = str_replace('\/', '/', json_encode($keypair));
-	file_put_contents("config/${thisServerName}.privatekey", $keystr);
+	file_put_contents("config/${thisServerName}.privatekey", $keypair['privatekey']);
 
 	// save public key to file
 	$crypt_rsa->loadKey($keypair['publickey']);
