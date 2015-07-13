@@ -77,11 +77,16 @@ echo '
 
 // print all Javascript files 
 echo '<script>';
+$output_as_javascript = true; // interpreted by getpublicserverkeys.php
 foreach ($includeJsFiles as $f) {
+	if ($f == 'config/config.js') { // insert server infos immedeately in front of config.js
+		include 'getserverinfos.php';
+	}
 	readfile($pathToClient . $f);
 	echo "\r\n";
 }
 
+		
 // print placeholder for JSON permission file
 echo "\n//placeholder for permission file\n";
 echo "//bghjur56zhbvbnhjiu7ztgfdrtzhvcftzujhgfgtgvkjskdhvfgdjfgcfkdekf9r7gdefggdfklhnpjntt\n";

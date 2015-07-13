@@ -185,8 +185,8 @@ mask=0;        //AND this with an array element to chop it down to bpe bits
 radix=mask+1;  //equals 2^bpe.  A single 1 bit to the left of the last bit of mask.
 
 //the digits for converting to different bases
-digitsStr='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_=!@#$%^&*()[]{}|;:,.<>/?`~ \\\'\"+-';
-
+digitsStr =          '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_=!@#$%^&*()[]{}|;:,.<>/?`~ \\\'\"+-';
+digitsStrBase64Url = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'; // added by pfeffer for base64Url decoding jul 2015
 //initialize the global variables
 for (bpe=0; (1<<(bpe+1)) > (1<<bpe); bpe++);  //bpe=number of bits in the mantissa on this platform
 bpe>>=1;                   //bpe=number of bits in one element of the array representing the bigInt
@@ -980,6 +980,7 @@ function int2bigInt(t,bits,minSize) {
 //Pad the array with leading zeros so that it has at least minSize elements.
 //If base=-1, then it reads in a space-separated list of array elements in decimal.
 //The array will always have at least one leading zero, unless base=-1.
+// if base=-64 base64url with ommited padding is used to decode / added by Pfeffer July 2015
 function str2bigInt(s,base,minSize) {
   var d, i, j, x, y, kk;
   var k=s.length;
@@ -1006,9 +1007,14 @@ function str2bigInt(s,base,minSize) {
     return x;
   }
 
+  var curDigitsStr = digitsStr;
+  if (base == -64) { //added by Pfeffer Jul 2015: use Base64Url decoding
+	  base = 64;
+	  curDigitsStr = digitsStrBase64Url;
+  }
   x=int2bigInt(0,base*k,0);
   for (i=0;i<k;i++) {
-    d=digitsStr.indexOf(s.substring(i,i+1),0);
+	d = curDigitsStr.indexOf(s.substring(i,i+1),0);  //changed by Pfeffer Jul 2015
     if (base<=36 && d>=36)  //convert lowercase to uppercase if base<=36
       d-=26;
     if (d>=base || d<0) {   //stop at first illegal character
@@ -1016,6 +1022,14 @@ function str2bigInt(s,base,minSize) {
     }
     multInt_(x,base);
     addInt_(x,d);
+  }
+  if (curDigitsStr == digitsStrBase64Url) { //added by Pfeffer Jul 2015: Base64Url with ommited padding decoding
+	  switch (s.length % 4) {  // see http://www.rfc-editor.org/rfc/rfc7515.txt appendix C
+	  case 0: break;
+	  case 1: throw ("Illegal base64 encoding"); break;
+	  case 2: divInt_(x, 16); break;  // remove right padded zero bits which are introduced because base64 is encoded from left to right in blocks of 3 bytes (4 base64 chars) 
+	  case 3: divInt_(x, 4); break;   // remove right padded zero bits which are introduced because base64 is encoded from left to right in blocks of 3 bytes (4 base64 chars)
+	  }
   }
 
   for (k=x.length;k>0 && !x[k-1];k--); //strip off leading zeros
@@ -1505,4 +1519,10 @@ function mont_(x,y,n,np) {
   copy_(x,sa);
 }
 
-
+/* by pfeffer
+function base64url2bigInt(base64urlstr) {
+	var base64str = base64urlstr.replace(/\+/g,'-').replace(/\//g,'_');
+	var binstr = atob(base64str);
+	var ret = str2bigInt()
+}
+*/
