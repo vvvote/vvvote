@@ -85,7 +85,25 @@ point your browser to
 $yourBaseUrl/webclient/
 
 
------------------
+Speed Optimization
+==================
+The webclient consists of several files. You can speed up page loading by putting these together:
+
+	cd backend
+	php -f getclient.php >index.html
+	cp index.html ../webclient/
+
+By copying the newly created backend/index.html to webclient/index.html the already existing index.html in webclient will be overwritten.
+
+The webclient will then consist of only one html file. This file contains the server URLs and their public keys. This means, you need to redo the above stated command if a __server URL or a public key has changed__.
+This index.html can be served from everywhere since it already contains all necessary configuration.
+
+You can publish a fingerprint of this file in order to allow your voters to verify that they __got an unchanged web client__. The command
+
+	 sha256sum index.html
+
+will give you the SHA256 checksum of the client, including the server public keys which you can publish. We recommend to do this only if you put the client into one file since only then the server's public key will be contained in the index.html.
+
 
 Get Up To Date
 ==============
