@@ -7,6 +7,8 @@ if (PHP_SAPI !== 'cli') {
 		</head>
 		<body>
 			<h1>Administrate the voting permission server</h1>
+			Use of this php file from command line only
+<!---
 			<form action="">
 				<input type="submit" value="Create Tables" name="createTables">
 				<br> 
@@ -18,17 +20,18 @@ if (PHP_SAPI !== 'cli') {
 				<br> 
 				<input type="submit" value="Create key pair" name="createKeypair">
 			</form>
+-->
 		</body>
 	';
 }
-// TODO remove these lines before release
 
 
 require_once 'Math/BigInteger.php';
 require_once 'Crypt/RSA.php';
 define('CRYPT_RSA_MODE', CRYPT_RSA_MODE_INTERNAL); // this is needed because otherwise openssl (if present) needs special configuration in openssl.cnf when creating a new key pair
+$DO_NOT_LOAD_PUB_KEYS = true; // interpreted from conf-allservers.php
 require_once 'config/conf-allservers.php';
-// require_once 'config/conf-thisserver.php';
+// require_once 'config/conf-thisserver.php'; // TODO this is required for database access but if the server's key is not generated cause an error
 
 
 
@@ -42,7 +45,7 @@ if ((isset($_GET['createTables' ])) || (isset($_POST['createTables' ]))) {
 	echo  "fertig. Database tables created";
 }
 
-
+/*
 if ((isset($_GET['importVoterList' ])) || (isset($_POST['importVoterList' ]))) {
 	$electionId = 'wahl1';
 	$voterlist = array(
@@ -70,8 +73,9 @@ if ((isset($_GET['DeleteDatabaseContent' ])) || (isset($_POST['DeleteDatabaseCon
 	$ok = $db->resetDb();
 	print "<br>\n Deleted the content of the database";
 }
+*/
 
-if ((isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ])) || (isset($argv[1]) && (strcasecmp($argv[1], 'createKeyPair') === 0)) ) {
+if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  || */ (isset($argv[1]) && (strcasecmp($argv[1], 'createKeyPair') === 0)) ) {
 	
 	if (isset($argv[1]) && (count($argv) < 3) ) { print 'usage: php -f admin.php createKeyPair <serverIdNumber>'; exit(1); } 
 	if (isset($argv[2])) {

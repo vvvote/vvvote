@@ -31,18 +31,20 @@ $numVerifyBallots = array(0 => 2, 1 => 2);
 $numPSigsRequiered = count($numSignBallots); // this number of sigs from permission servers are requiered in order for a return envelope to be accepted
 $numPServers = $numPSigsRequiered; // number of permission servers
 
-$pServerKeys = array();
-for ($i = 1; $i <= $numPServers; $i++) {
-	$pubkeystr = file_get_contents(__DIR__ . "/PermissionServer$i.publickey");
-	
-	$rsa = new rsaMyExts();
-	$rsa->loadKey($pubkeystr);
-	$pServerKey = array(
-			'name'     => "PermissionServer$i", // $pubkeyJson['kid'],
-			'modulus'  => $rsa->modulus,
-			'exponent' => $rsa->exponent,
-	);
-	$pServerKeys[] = $pServerKey;
+if (! isset($DO_NOT_LOAD_PUB_KEYS)) { // this will be set during key generation
+	$pServerKeys = array();
+	for ($i = 1; $i <= $numPServers; $i++) {
+		$pubkeystr = file_get_contents(__DIR__ . "/PermissionServer$i.publickey");
+
+		$rsa = new rsaMyExts();
+		$rsa->loadKey($pubkeystr);
+		$pServerKey = array(
+				'name'     => "PermissionServer$i", // $pubkeyJson['kid'],
+				'modulus'  => $rsa->modulus,
+				'exponent' => $rsa->exponent,
+		);
+		$pServerKeys[] = $pServerKey;
+	}
 }
 
 $base = 16;

@@ -21,7 +21,7 @@ $dbInfos = array(
 		'prefix'  => 'el1_'  // this will be prepended to all table names - you can just leave it the way it is
 );
 
-/**
+/*
  * Beyond this point in this file, you only need to make changes if you want to configure OAuth2 or externalToken-Auth
  ************************************************************/
 
