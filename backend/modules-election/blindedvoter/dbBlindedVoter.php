@@ -81,6 +81,11 @@ class DbBlindedVoter extends DbBase {
 		return $this->load(array('electionID' => $electionId), 'signedBallots', 'signedBallots');
 	}
 	
+	function loadAllVoterIds($electionId) {
+		$ret = $this->load(array('electionId' => $electionId), 'signedBallots', 'voterId');
+		return $ret;		
+	}
+	
 }
 
 ?>

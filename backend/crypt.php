@@ -167,7 +167,7 @@ class Crypt {
 		$unblindedSignedHash        = $this->myPrivateKey['privRsa']->rsaUnblind($signedblindedHash, $unblindf);
 		$verifyHash                 = $this->myPrivateKey['pubRsa']->_rsasp1($unblindedSignedHash);
 		$hashOk = $hashByMeBigInt->equals($verifyHash);
-		if ($hashOk !== true ) WrongRequestException::throwException(1002, "Error: blinded hash verification failed", "expected hash: $hashByMe, got unblinded hash: $verifyHash, blinded Hash $blindedHash, unblinding factor $unblindf");
+		if ($hashOk !== true ) WrongRequestException::throwException(1002, "Error: blinded hash verification failed. Most probable reason: the webclient used a key different from the server's key.", "expected hash: $hashByMe, got unblinded hash: $verifyHash, blinded Hash $blindedHash, unblinding factor $unblindf");
 		return $hashOk;
 	}
 	

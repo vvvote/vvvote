@@ -3665,7 +3665,7 @@ class Math_BigInteger {
     			$result->value = bcmod($this->value, $modul->value);
     			return $result;
     	}
-    	throw new InvalidArgumentException('Math_BigInteger only works with either GMP or BCMATH extension. ');
+    	throw new InvalidArgumentException('Math_BigInteger mod only works with either GMP or BCMATH extension. ');
     	return false;
     }
 

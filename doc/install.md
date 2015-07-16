@@ -25,11 +25,11 @@ copy the webclient and the backend directory to your webserver dir, e.g.:
 Configure the Server
 ====================
 
-On each server, in directory backend/config:
+On each server, in directory backend/config, copy the example configs, eg:
 
-	copy conf-allservers-example.php to conf-allservers.php
-	copy conf-thisserver-example.php to conf-thisserver.php
-	copy conf-thisserver-example2.php to conf-thisserver2.php
+	cp conf-allservers-example.php conf-allservers.php
+	cp conf-thisserver-example.php conf-thisserver.php
+	cp conf-thisserver-example2.php conf-thisserver2.php
 
 in both conf-thisserver files:
 
@@ -41,20 +41,43 @@ in both conf-thisserver files:
 
 in 'conf-allservers.php' adjust
 
-* $configUrlBase to point to the server's own http-backend-directory
+* $pServerUrlBases to point to the first and second server's http-backend-directories (in this order!)
+
+## Generate and Distribute Server Keys
+Each server uses its own key. Therefore we need to generate a key on each server and distribute thier public part to the other server.
+
+### Generate Server Keys
+On server 1 cd into the backend-dir and start the key generation (it can take a minute or two):
+
+	php -f admin.php createKeypair 1
+
+On server 2 also cd into the backend-dir and also start the key generation by
+
+	php -f admin.php createKeypair 2
+
+### Distribute Server Keys
+On server 1:
+
+This generates two files:
+
+	backend/config/PermissionServer1.privatekey
+	backend/config/PermissionServer1.publickey
+Copy (somehow) the "backend/config/PermissionServer1.publickey" to server 2 into the same directory.
+
+On Server 2:
+
+Copy (somehow) the "backend/config/PermissionServer2.publickey" to server 1 into the same directory.
+
 
 
 Configure the webclient
 =======================
 
-in directory webclient/config
+in directory webclient/config, copy the example config to config.js, e.g. by
 
-	copy config-example.js to config.js
+	cp config-example.js config.js
 
-adjust:
-
-* server1url
-* server2url
+If do not have special needs, nothings needs to be changed in this config.
 
 Thats It!
 =========
@@ -62,7 +85,25 @@ point your browser to
 $yourBaseUrl/webclient/
 
 
------------------
+Speed Optimization
+==================
+The webclient consists of several files. You can speed up page loading by putting these together:
+
+	cd backend
+	php -f getclient.php >index.html
+	cp index.html ../webclient/
+
+By copying the newly created backend/index.html to webclient/index.html the already existing index.html in webclient will be overwritten.
+
+The webclient will then consist of only one html file. This file contains the server URLs and their public keys. This means, you need to redo the above stated command if a __server URL or a public key has changed__.
+This index.html can be served from everywhere since it already contains all necessary configuration.
+
+You can publish a fingerprint of this file in order to allow your voters to verify that they __got an unchanged web client__. The command
+
+	 sha256sum index.html
+
+will give you the SHA256 checksum of the client, including the server public keys which you can publish. We recommend to do this only if you put the client into one file since only then the server's public key will be contained in the index.html.
+
 
 Get Up To Date
 ==============

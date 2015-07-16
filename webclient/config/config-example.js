@@ -1,23 +1,38 @@
 /**
  * config
+ * Normally there is no need to change anything here, except: If you are using OAuth2: the config for the authorization verification process.
+ * 
+ * The server URLs and keys are automatically included by calling backend/getserverinfos.php?js (result in serverinfos)
+ * OR are included in the complete .html file which has the backend/getserverinfos.php integrated
  * 
  */
 
-/*********** Change this to your needs ******************/
-var server1url = 'http://www.webhod.ra/vvvote2/backend/'; // must have a trailing slash
-var server2url = 'http://127.0.0.1/vvvote2/backend/';     // must have a trailing slash
-/********************************************************/
-
-/********* If you do not have special needs, you can leave all settings below unchanged *****/
-
-var server1urlParts = URI.getParts(server1url);
-
-var server1name = 'PermissionServer1';    
-var server2name = 'PermissionServer2';    
-
 function ClientConfig() { }
 
-ClientConfig.newElectionUrl    = new Array(	server1url +'newelection.php', server2url +'newelection.php');
+ClientConfig.serverList     = new Array();
+ClientConfig.newElectionUrl = new Array();
+for (var i=0; i<serverinfos.pServerUrlBases.length; i++) {
+	if (serverinfos.keys[i].kty !== 'RSA') alert('Error in server infos: only RSA is a supported by this client');
+	ClientConfig.serverList[i] = {
+			'name':    serverinfos.keys[i].kid,
+			'desc':    (i === 0 ? 'Abstimmserver' : 'Kontrollserver ' + i),
+			'url' :    serverinfos.pServerUrlBases[i] + '/getpermission.php', // 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
+			'baseUrl': serverinfos.pServerUrlBases[i],
+			'key': {
+				'exp':      str2bigInt(serverinfos.keys[i].e, -64), // str2bigInt('65537', 10),  
+				//'exppriv':  str2bigInt('1210848652924603682067059225216507591721623093360649636835216974832908320027478419932929', 10), //TODO remove this bvefore release, only needed for debugging
+				'n':        str2bigInt(serverinfos.keys[i].n, -64), //str2bigInt('3061314256875231521936149233971694238047219365778838596523218800777964389804878111717657', 10),
+				'serverId': serverinfos.keys[i].kid
+			},
+		};
+	ClientConfig.newElectionUrl[i] = serverinfos.pServerUrlBases[i] + '/newelection.php';
+}
+
+server1url = ClientConfig.serverList[0].baseUrl + '/';
+var server1urlParts = URI.getParts(server1url);
+server2url = ClientConfig.serverList[1].baseUrl + '/';
+
+//ClientConfig.newElectionUrl    = new Array(	server1url +'newelection.php', server2url +'newelection.php');
 ClientConfig.electionConfigUrl = server1url + 'getelectionconfig.php';
 ClientConfig.storeVoteUrl      = 'http://' + server1urlParts.hostname +'/' + server1urlParts.pathname + 'storevote.php'; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
 ClientConfig.getResultUrl      = server1url + 'getresult.php'; //?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
@@ -25,31 +40,6 @@ ClientConfig.getResultUrl      = server1url + 'getresult.php'; //?XDEBUG_SESSION
 
 ClientConfig.anonymizerUrl = 'http://anonymouse.org/cgi-bin/anon-www_de.cgi/'; // used to change the ip and to strip browser infos / with trailing slash
 ClientConfig.voteClientUrl = server1url + 'getclient.php';
-
-
-ClientConfig.serverList = 
-	[{
-		'name': server1name,
-		'desc': 'Abstimmserver',
-		'url' :  server1url + 'getpermission.php', // 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
-		'key': {
-			'exp':      str2bigInt('65537', 10),  
-			'exppriv':  str2bigInt('1210848652924603682067059225216507591721623093360649636835216974832908320027478419932929', 10), //TODO remove this bvefore release, only needed for debugging
-			'n':        str2bigInt('3061314256875231521936149233971694238047219365778838596523218800777964389804878111717657', 10),
-			'serverId': server1name
-		},
-	},
-	{
-		'name': server2name,
-		'desc': 'Kontrollserver',
-		'url' :  server2url + 'getpermission.php', // 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
-		'key': {
-			'exp':      str2bigInt('65537', 10),  
-			'exppriv':  str2bigInt('1210848652924603682067059225216507591721623093360649636835216974832908320027478419932929', 10), //TODO remove this bvefore release, only needed for debugging
-			'n':        str2bigInt('3061314256875231521936149233971694238047219365778838596523218800777964389804878111717657', 10),
-			'serverId': server2name
-		},
-	}];
 
 
 

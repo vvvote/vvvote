@@ -157,7 +157,7 @@ function RsablindingFactorsGen(bits, n){
 	var factors = new Object();
 	// only workes correctly if 
 	// the biggest common devisor of rand and modulus equals 1.  
-
+	var r;
     while (true) {
         r = randBigInt(bits, 0);
         if (!equalsInt(mod(n, r), 1)) break;

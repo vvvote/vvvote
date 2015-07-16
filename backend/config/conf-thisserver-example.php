@@ -9,36 +9,36 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
+/*********************************************************
+*  Change the settings to match your database account
+*/
+$dbInfos = array(
+		'dbtype'  => 'mysql',
+		'dbhost'  => 'localhost',
+		'dbuser'  => 'root',
+		'dbpassw' => 'bernAl821',
+		'dbname'  => 'election_server1',
+		'prefix'  => 'el1_'  // this will be prepended to all table names - you can just leave it the way it is
+);
+
+/*
+ * Beyond this point in this file, you only need to make changes if you want to configure OAuth2 or externalToken-Auth
+ ************************************************************/
 
 require_once __DIR__ . '/../rsaMyExts.php';
 
-if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
+$serverNo = 1;
+if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== parse_url($pServerUrlBases[$serverNo -1],  PHP_URL_HOST)) {
 	require_once 'conf-thisserver2.php';
 } else {
-	date_default_timezone_set('Europe/Berlin');
+	date_default_timezone_set('Europe/Berlin'); // this is only used to avoid a warning message from PHP -> you do not need to adjust it. All dates are in UTC or use explicit time zone offset.
 	
 	$webclientUrlbase = '../webclient'; // relativ to backend or absolute, no trailing slash
-	$p         = new Math_BigInteger('10645752675217578369956837062782498220775273');
-	$q         = new Math_BigInteger('287562030630461198841452085101513512781647409');
-	$exppriv   = new Math_BigInteger('1210848652924603682067059225216507591721623093360649636835216974832908320027478419932929', 10);
-	$exppubl   = new Math_BigInteger('65537', 10);
-	$n         = new Math_BigInteger('3061314256875231521936149233971694238047219365778838596523218800777964389804878111717657', 10);
-
-	$rsa       = new rsaMyExts();
-	$serverkey = $rsa->rsaGetHelpingNumbers($p, $q, $exppriv, $exppubl, $n);
-	$serverkey['serverName'] = 'PermissionServer1';
+	
 	$debug     = false;
 
 	// define('DB_PREFIX', 'server1_');
 
-	$dbInfos = array(
-			'dbtype'  => 'mysql',
-			'dbhost'  => 'localhost',
-			'dbuser'  => 'root',
-			'dbpassw' => 'bernAl821',
-			'dbname'  => 'election_server1', 
-			'prefix'  => 'el1_'  // this will be prepended to all table names - you can just leave it the way it is
-	);
 	// OAuth 2.0 config
 	$oauthBEObayern = array(
 			'serverId'      => 'BEOBayern',
@@ -50,7 +50,7 @@ if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
 			'mail_sign_it'  => true,     // wheather the mail should be signed by the id server 
 			'mail_content'	=> array(    // $electionId will be replaced by the electionId
 					'subject' => 'Wahlschein erstellt',
-					'body'    => "Hallo!\r\n\r\nSie haben f�r die Abstimmung >" . '$electionId' . "< einen Wahlschein erstellt.\r\nFalls dies nicht zutreffen sollte, wenden Sie sich bitte umgehend an einen Abstimmungsverantwortlichen.\r\n\r\nFreundliche Gr��e\r\nDas Wahlteam\r\n"
+					'body'    => "Hallo!\r\n\r\nSie haben für die Abstimmung >" . '$electionId' . "< einen Wahlschein erstellt.\r\nFalls dies nicht zutreffen sollte, wenden Sie sich bitte umgehend an einen Abstimmungsverantwortlichen.\r\n\r\nFreundliche Grüße\r\nDas Wahlteam\r\n"
 					),
 			
 			'authorization_endp'    => 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/',
@@ -71,11 +71,31 @@ if ($_SERVER['HTTP_HOST'] != 'www.webhod.ra') {
 			array(
 					'configId'         => 'basisentscheid_offen', // this is used to identify the correct config and specified in the newElection.php call
 					'checkTokenUrl'    => 'https://basisentscheid.piratenpartei-bayern.de/offen/vvvote_check_token.php', // URL which is used to check if the token is valid and the correspondig user allowed to vote
-					'verifierPassw' => 'mysecret', // password needed to authorize the check token request
+					'verifierPassw'    => 'mysecret', // password needed to authorize the check token request
 					'verifyCertificate' => true,
 					'sendmail'          => 'https://basisentscheid.piratenpartei-bayern.de/offen/vvvote_send_confirmation.php'
 			)
 	);
+	
+	// load private key
+	$serverkey = Array();
+	$serverkey['serverName'] = 'PermissionServer' .$serverNo;
+	
+	$privateKeyStr = file_get_contents(__DIR__ . "/PermissionServer${serverNo}.privatekey");
+	$serverkey['privatekey'] = $privateKeyStr;
+	
+	// extract public key from private key
+	$rsa       = new rsaMyExts();
+	$rsa->loadKey($serverkey['privatekey']);
+	$rsapub    = new rsaMyExts();
+	$serverkey['publickey'] = $rsapub->_convertPublicKey($rsa->modulus, $rsa->publicExponent);
+	
+	// tests if .publickey matches to the public key in this .privatekey file
+	$rsa       = new rsaMyExts();
+	$rsa->loadKey($serverkey['publickey']);
+	$i = find_in_subarray($pServerKeys, 'name', $serverkey['serverName']);
+	$test = $rsa->modulus->compare($pServerKeys[$i]['modulus']);
+	if ($test !== 0) throw ('internal server configuration error: .publickey does not match the .privatekey for ' . $serverkey['serverName']);
 	
 	
 }
