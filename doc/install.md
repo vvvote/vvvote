@@ -73,9 +73,9 @@ Copy (somehow) the "backend/config/PermissionServer2.publickey" to server 1 into
 Configure the webclient
 =======================
 
-in directory webclient/config
+in directory webclient/config, copy the example config to config.js, e.g. by
 
-	copy config-example.js to config.js
+	cp config-example.js config.js
 
 If do not have special needs, nothings needs to be changed in this config.
 
