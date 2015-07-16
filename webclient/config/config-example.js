@@ -30,6 +30,7 @@ for (var i=0; i<serverinfos.pServerUrlBases.length; i++) {
 
 server1url = ClientConfig.serverList[0].baseUrl + '/';
 var server1urlParts = URI.getParts(server1url);
+server2url = ClientConfig.serverList[1].baseUrl + '/';
 
 //ClientConfig.newElectionUrl    = new Array(	server1url +'newelection.php', server2url +'newelection.php');
 ClientConfig.electionConfigUrl = server1url + 'getelectionconfig.php';
