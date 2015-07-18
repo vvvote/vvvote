@@ -132,6 +132,14 @@ PublishOnlyTally.prototype.handleUserClickGetAllVotes = function (config_, onGot
 	this.config = config_;
 	this.onGotVotesObj    = onGotVotesObj;
 	this.onGotVotesMethod = onGotVotesMethod;
+	var now = new Date();  // TODO this code is dublicated in ConfigurableTally.prototype.handleUserClickShowWinner
+	var endDate = false;
+	if ('VotingEnd' in this.config.authConfig)	endDate = new Date (this.config.authConfig.VotingEnd);
+	if ( (endDate !== false) && (now < endDate) ) {
+		var html = '<p>Solange Stimmen abgegeben werden können, kann das Wahlergebnis nicht abgerufen werden.</p>';
+		onGotVotesMethod.call(onGotVotesObj, html);
+		return;
+	}
 	var me = this; 
 	PublishOnlyTally.requestAllVotes(this.config.electionId, 1, me, me.handleServerAnswerVerifyCountVotes);
 };
