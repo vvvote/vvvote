@@ -151,71 +151,81 @@ PublishOnlyTally.prototype.findMyVote = function() {
 };
 
 PublishOnlyTally.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
-	var votesOnly = new Array();
 	try {
 		var answ = parseServerAnswer(xml, true);
-		if (answ.cmd != 'verifyCountVotes') {
+		switch (answ.cmd) {
+		case 'error':
+			alert('Der Server gibt das Abstimmungsergebnis nicht bekannt. Er meldet:\n' + translateServerError(answ.errorNo, answ.errorTxt));
+			break;
+		case 'verifyCountVotes': 
+			this.processVerifyCountVotes(answ);
+			break;
+		default:
 			throw new ErrorInServerAnswer(2003, 'Error: Expected >verifyCountVotes<', 'Got from server: ' + answ.cmd);
+			break;
 		}
-		this.votes = answ.data.allVotes;
-		// process data
-		//   show a list of all votes
-		var htmlcode = ''; //<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
-		htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">Finde meine Stimme</button>';
-		htmlcode = htmlcode + '<div id="allvotes"><table>';
-		htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + 'Stimme'                  + '</th>'; 
-		htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</span></th></thead>';
-		htmlcode = htmlcode + '<tbody>';
-		var v;   // vote
-		var vno; // vote number
-		var disabled;
-		for (var i=0; i<this.votes.length; i++) {
-			htmlcode = htmlcode + '<tr>';
-			try {v   = this.votes[i].vote.vote;    disabled = '';} catch (e) {v   = 'Error'; disabled = 'disabled';}
-			try {vno = this.votes[i].permission.signed.votingno; } catch (e) {vno = 'Error'; disabled = 'disabled';}
-			htmlcode = htmlcode + '<td> <span id="vote">' + v + '</span></td>'; 
-			htmlcode = htmlcode + '<td> <span id="votingno">' + vno + '</span></td>'; 
-			// TODO substitude election for this.varname
-			htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften pr&uuml;fen!</button>' + '</td>'; 
-//			htmlcode = htmlcode + '<td>' + this.votes[i].permission.signed.salt     + '</td>'; 
-			htmlcode = htmlcode + '</tr>';
-			// TODO add to votes only if sigOk
-			votesOnly[i] = v;
-		}
-		htmlcode = htmlcode + '</tbody></table></div>';
-		
-		// show the frequencies
-		var freqs = getFrequencies(votesOnly);
-		freqs.sort(function(a, b) {return b.freq - a.freq;});
-		var numVotes = votesOnly.length;
-		var htmlcode2 = '<div id="freq"><table>';
-		htmlcode2 = htmlcode2 + '<thead>';
-		htmlcode2 = htmlcode2 + '<th class="optionHead"  >' + 'Option'         + '</th>'; 
-		htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Stimmen' + '</th>';
-		htmlcode2 = htmlcode2 + '</thead><tfoot>';
-		htmlcode2 = htmlcode2 + '<tr><td>Gesamt</td>';
-		htmlcode2 = htmlcode2 + '<td class="numVotes">' + numVotes+ '</td>';
-		htmlcode2 = htmlcode2 + '</tfoot><tbody>';
-		for (var i=0; i<freqs.length; i++) {
-			htmlcode2 = htmlcode2 + '<tr>';
-			htmlcode2 = htmlcode2 + '<td class="option"  >' + freqs[i].option + '</td>'; 
-			htmlcode2 = htmlcode2 + '<td class="numVotes">' + freqs[i].freq   + '</td>'; 
-			htmlcode2 = htmlcode2 + '</tr>';
-		}
-		htmlcode2 = htmlcode2 + '</tbody>';
-		htmlcode2 = htmlcode2 + '</table></div>';
-		var ret = htmlcode2 + '<br> <br>\n\n' + htmlcode;
-		this.onGotVotesMethod.call(this.onGotVotesObj, ret);
 	} catch (e) {
 		if (e instanceof MyException ) {e.alert();}
 		else if (e instanceof TypeError   ) {
-			f = new ErrorInServerAnswer(2004, 'Error: unexpected var type', 'details: ' + e.toString());
+			var f = new ErrorInServerAnswer(2004, 'Error: unexpected var type', 'details: ' + e.toString());
 			f.alert();
 		} else {
-			f = new ErrorInServerAnswer(2005, 'Error: some error occured', 'details: ' + e.toString());
+			var f = new ErrorInServerAnswer(2005, 'Error: some error occured', 'details: ' + e.toString());
 			f.alert();
-		} // TODO show the error
+		}
 	}
+};
+
+PublishOnlyTally.prototype.processVerifyCountVotes = function (answ) {
+	this.votes = answ.data.allVotes;
+	// process data
+	//   show a list of all votes
+	var htmlcode = ''; //<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
+	htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">Finde meine Stimme</button>';
+	htmlcode = htmlcode + '<div id="allvotes"><table>';
+	htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + 'Stimme'                  + '</th>'; 
+	htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</span></th></thead>';
+	htmlcode = htmlcode + '<tbody>';
+	var v;   // vote
+	var vno; // vote number
+	var disabled;
+	for (var i=0; i<this.votes.length; i++) {
+		htmlcode = htmlcode + '<tr>';
+		try {v   = this.votes[i].vote.vote;    disabled = '';} catch (e) {v   = 'Error'; disabled = 'disabled';}
+		try {vno = this.votes[i].permission.signed.votingno; } catch (e) {vno = 'Error'; disabled = 'disabled';}
+		htmlcode = htmlcode + '<td> <span id="vote">' + v + '</span></td>'; 
+		htmlcode = htmlcode + '<td> <span id="votingno">' + vno + '</span></td>'; 
+		// TODO substitude election for this.varname
+		htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften pr&uuml;fen!</button>' + '</td>'; 
+//		htmlcode = htmlcode + '<td>' + this.votes[i].permission.signed.salt     + '</td>'; 
+		htmlcode = htmlcode + '</tr>';
+		// TODO add to votes only if sigOk
+		votesOnly[i] = v;
+	}
+	htmlcode = htmlcode + '</tbody></table></div>';
+	
+	// show the frequencies
+	var freqs = getFrequencies(votesOnly);
+	freqs.sort(function(a, b) {return b.freq - a.freq;});
+	var numVotes = votesOnly.length;
+	var htmlcode2 = '<div id="freq"><table>';
+	htmlcode2 = htmlcode2 + '<thead>';
+	htmlcode2 = htmlcode2 + '<th class="optionHead"  >' + 'Option'         + '</th>'; 
+	htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Stimmen' + '</th>';
+	htmlcode2 = htmlcode2 + '</thead><tfoot>';
+	htmlcode2 = htmlcode2 + '<tr><td>Gesamt</td>';
+	htmlcode2 = htmlcode2 + '<td class="numVotes">' + numVotes+ '</td>';
+	htmlcode2 = htmlcode2 + '</tfoot><tbody>';
+	for (var i=0; i<freqs.length; i++) {
+		htmlcode2 = htmlcode2 + '<tr>';
+		htmlcode2 = htmlcode2 + '<td class="option"  >' + freqs[i].option + '</td>'; 
+		htmlcode2 = htmlcode2 + '<td class="numVotes">' + freqs[i].freq   + '</td>'; 
+		htmlcode2 = htmlcode2 + '</tr>';
+	}
+	htmlcode2 = htmlcode2 + '</tbody>';
+	htmlcode2 = htmlcode2 + '</table></div>';
+	var ret = htmlcode2 + '<br> <br>\n\n' + htmlcode;
+	this.onGotVotesMethod.call(this.onGotVotesObj, ret);
 };
 
 PublishOnlyTally.prototype.handleUserClickVerifySig = function (no) {
