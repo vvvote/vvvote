@@ -185,6 +185,7 @@ PublishOnlyTally.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 };
 
 PublishOnlyTally.prototype.processVerifyCountVotes = function (answ) {
+	var votesOnly = new Array();
 	this.votes = answ.data.allVotes;
 	// process data
 	//   show a list of all votes
@@ -201,8 +202,8 @@ PublishOnlyTally.prototype.processVerifyCountVotes = function (answ) {
 		htmlcode = htmlcode + '<tr>';
 		try {v   = this.votes[i].vote.vote;    disabled = '';} catch (e) {v   = 'Error'; disabled = 'disabled';}
 		try {vno = this.votes[i].permission.signed.votingno; } catch (e) {vno = 'Error'; disabled = 'disabled';}
-		htmlcode = htmlcode + '<td> <span id="vote">' + v + '</span></td>'; 
-		htmlcode = htmlcode + '<td> <span id="votingno">' + vno + '</span></td>'; 
+		htmlcode = htmlcode + '<td class="vote">' + v + '</td>'; 
+		htmlcode = htmlcode + '<td> <div class="votingno">' + vno + '</div></td>'; 
 		// TODO substitude election for this.varname
 		htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften pr&uuml;fen!</button>' + '</td>'; 
 //		htmlcode = htmlcode + '<td>' + this.votes[i].permission.signed.salt     + '</td>'; 
