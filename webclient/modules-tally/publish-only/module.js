@@ -195,6 +195,10 @@ PublishOnlyTally.prototype.processVerifyCountVotes = function (answ) {
 	htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + 'Stimme'                  + '</th>'; 
 	htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</span></th></thead>';
 	htmlcode = htmlcode + '<tbody>';
+	var myVno = false; // my voting number
+	if ('returnEnvelope' in window) {
+		myVno = this.election.getVotingNo(curQuestion.questionID); //tmp2.votingno; // must be identical to returnEnvelope.permission.keypar.pub.n + ' ' + returnEnvelope.permission.keypar.pub.exp;
+	}
 	var v;   // vote
 	var vno; // vote number
 	var disabled;
@@ -202,8 +206,14 @@ PublishOnlyTally.prototype.processVerifyCountVotes = function (answ) {
 		htmlcode = htmlcode + '<tr>';
 		try {v   = this.votes[i].vote.vote;    disabled = '';} catch (e) {v   = 'Error'; disabled = 'disabled';}
 		try {vno = this.votes[i].permission.signed.votingno; } catch (e) {vno = 'Error'; disabled = 'disabled';}
-		htmlcode = htmlcode + '<td class="vote">' + v + '</td>'; 
-		htmlcode = htmlcode + '<td> <div class="votingno">' + vno + '</div></td>'; 
+		htmlcode = htmlcode + '<td class="vote">' + v + '</td>';
+		var vnoAttrib = 'class="votingno"';
+		var vnoText = vno;
+		if (vno === myVno) {
+			vnoAttrib = 'class="votingno myVote" id="myVote' + optionIndex + '"';
+			vnoText = vno + ' - meine Stimme';
+		}
+		htmlcode = htmlcode + '<td> <div ' + vnoAttrib + '>' + vnoText + '</div></td>'; 
 		// TODO substitude election for this.varname
 		htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften pr&uuml;fen!</button>' + '</td>'; 
 //		htmlcode = htmlcode + '<td>' + this.votes[i].permission.signed.salt     + '</td>'; 

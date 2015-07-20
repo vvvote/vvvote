@@ -21,7 +21,6 @@ require_once __DIR__ . '/../rsaMyExts.php';
  */
 $pServerUrlBases = array('http://www.webhod.ra/vvvote2/backend', 'http://127.0.0.1/vvvote2/backend'); // without trailing slash
 
-$configUrlBase = $pServerUrlBases[0]; 
 
 // number of ballots the servers have to sign 0: first signing server, 1: second signing server...
 // last server always must be set to 1.

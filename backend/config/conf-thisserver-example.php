@@ -40,6 +40,7 @@ if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== parse_url($pServer
 	// define('DB_PREFIX', 'server1_');
 
 	// OAuth 2.0 config
+	$configUrlBase = $pServerUrlBases[$serverNo -1];
 	$oauthBEObayern = array(
 			'serverId'      => 'BEOBayern',
 			'client_id'     => 'vvvote',
@@ -81,9 +82,11 @@ if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== parse_url($pServer
 	$serverkey = Array();
 	$serverkey['serverName'] = 'PermissionServer' .$serverNo;
 	
-	$privateKeyStr = file_get_contents(__DIR__ . "/PermissionServer${serverNo}.privatekey");
+	$privateKeyStrWraped = file_get_contents(__DIR__ . "/PermissionServer${serverNo}.privatekey.pem.php");
+	// extract the key from that file (when created with admin.php there are php markers around it in order to make apache execute it instead of delivering it) 
+	$privateKeyStr =  preg_replace('/.*(-----BEGIN RSA PRIVATE KEY-----(.*)-----END RSA PRIVATE KEY-----).*/mDs', '$1', $privateKeyStrWraped);
 	$serverkey['privatekey'] = $privateKeyStr;
-	
+		
 	// extract public key from private key
 	$rsa       = new rsaMyExts();
 	$rsa->loadKey($serverkey['privatekey']);

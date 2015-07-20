@@ -105,7 +105,7 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 	//print_r($crypt_rsa->exponent);
 	echo "<br>\r\n";	
 	$pubkeystr = str_replace('\/', '/', json_encode($pubkey));
-	file_put_contents("config/${thisServerName}.publickey", $keypair['publickey']); //$pubkeystr
+	file_put_contents("config/${thisServerName}.publickey.pem.php", "<?php\r\n/* \r\n" . $keypair['publickey'] . "\r\b?>"); //$pubkeystr
 }
 // for database debugging use phpMyAdmin or the like
 

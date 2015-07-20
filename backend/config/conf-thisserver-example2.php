@@ -32,11 +32,14 @@ date_default_timezone_set('Europe/Berlin');
 $webclientUrlbase = '../webclient'; // relativ to backend or absolute, no trailing slash
 
 $serverNo = 2;
+
 // load private key
 $serverkey = Array();
 $serverkey['serverName'] = 'PermissionServer' .$serverNo;
 
-$privateKeyStr = file_get_contents(__DIR__ . "/PermissionServer${serverNo}.privatekey");
+$privateKeyStrWraped = file_get_contents(__DIR__ . "/PermissionServer${serverNo}.privatekey.pem.php");
+  // extract the key from that file (when created with admin.php there are php markers around it in order to make apache execute it instead of delivering it)
+$privateKeyStr =  preg_replace('/.*(-----BEGIN RSA PRIVATE KEY-----(.*)-----END RSA PRIVATE KEY-----).*/mDs', '$1', $privateKeyStrWraped);
 $serverkey['privatekey'] = $privateKeyStr;
 
 // extract public key from private key
@@ -56,12 +59,13 @@ if ($test !== 0) throw ('internal server configuration error: .publickey does no
 $debug     = true;
 
 // OAuth 2.0 config
+$configUrlBase = $pServerUrlBases[$serverNo -1];
 $oauthBEObayern = array(
 		'serverId'      => 'BEOBayern',
 		'client_id'     => 'vvvote2',
 		'client_secret' => 'your_client_secret',
-		'redirect_uri'  => 'http://www2.webhod.ra/vvvote2/backend/modules-auth/oauth/callback.php',
-		// 	'redirect_uri'  => 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php',
+		'redirect_uri'  => $configUrlBase . '/modules-auth/oauth/callback.php',
+				// 	'redirect_uri'  => 'https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php',
 			'mail_identity' => 'voting', // this is used for the sendmail_endp and determines which sender will be used for the mail 
 			'mail_sign_it'  => true,     // wheather the mail should be signed by the id server 
 			'mail_content'	=> array(    // $electionId will be replaced by the electionId
