@@ -5,7 +5,8 @@
  */
 function secureRandom(bits) {
 	var r;
-	if (typeof (crypto.getRandomValues) != 'undefined') {
+	var cryptoObj = window.crypto || window.msCrypto; // for IE 11
+	if (typeof (cryptoObj) != 'undefined' && typeof (cryptoObj.getRandomValues) != 'undefined') {
 		var atmp;
 		switch (true) {
 		case bits <= 8:  atmp = new Uint8Array(1);  break;
@@ -14,7 +15,7 @@ function secureRandom(bits) {
 		case bits <= 64: atmp = new Uint32Array(2); break;
 		default: atmp = new Uint32Array(Math.ceil(bits/32)); break;
 		}
-		crypto.getRandomValues(atmp);
+		cryptoObj.getRandomValues(atmp);
 		var mask = (1 << bits) - 1; // and mask to remove random bits which was not ask for
 		if (bits >= 32) mask = 0xffffffff; // necessary because the shift operator works only upto 31
 		r = atmp[0] & mask;
