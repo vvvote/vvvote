@@ -10,24 +10,27 @@ div#all { /* base definition for all content */
 	width: 60em;
 	background-color: white;
 	margin: 0 auto; /* center all divs */
+	border-radius: 0.5em;
 }
 
 div#ci {
 	background-color: orange;
 	color: #0B0B61;
-	text-align: center;
-	font-size: 18px;
+	text-align: left;
+	font-size: 1em;
 	min-height: 150px;
-	padding: 0.4em;
+	padding: 2em;
+	border-top-right-radius: inherit;
+	border-top-left-radius: inherit;
 }
 
 div#logoimg {
-	float: left;
+	float: right;
 }
 
 div#ci h1 {
-	font-size: 24px;
-	color: #0B0B61;
+	font-size: 3em;
+	color: black;
 }
 
 /*** curr **/
