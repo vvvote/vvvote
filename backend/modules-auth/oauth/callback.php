@@ -63,16 +63,7 @@ function printTitle($headertitle, $h1) {
 
 function printTechInfos($techinfos) {
 	echo '
-			<script>
-				window.addEventListener(\'message\', function(ev) {
-							ev.source.postMessage({ message: \'deliverResult\', result: true },	\'*\');
-							window.blur();
-							window.close();
-							setTimeout(ev.source.focus, 10);
-						}, false);
-				
-			</script>
-				<br><button autofocus="autofocus" onClick="window.close();">Fenster schlie&szlig;en und zur&uuml;ck zum Hauptfenster</button>
+			<br><button autofocus="autofocus" onClick="window.close();">Fenster schlie&szlig;en und zur&uuml;ck zum Hauptfenster</button>
 			</div>
 			<div id="techinfosswitch">
 				<input type="checkbox" name="techinfocheckbox" id="techinfocheckbox" value="techinfocheckbox" onclick="onToggleTechInfosSwitch();">
@@ -177,7 +168,18 @@ if (!isset($_GET['code'])) {
 		//print '<br>isInVoterlist from fetch: ' . ($fetcher->isInVoterList('d94b915b-db13-4264-890c-0780692e4998') ? 'true' : 'false');
 
 		$techinfos =
-				'<h2>Technische Informationen</h2>' . 
+				'
+				<script>
+				window.addEventListener(\'message\', function(ev) {
+							ev.source.postMessage({ message: \'deliverResult\', result: true },	\'*\');
+							window.blur();
+							window.close();
+							setTimeout(ev.source.focus, 10);
+						}, false);
+				
+				</script>
+				
+				<h2>Technische Informationen</h2>' . 
 					'<br> '.
 					'<ul>' .
 					'	<li>Ihr Login war erfolgreich und der Abstimmserver &gt;' . $serverkey['serverName'] . '&lt; ist nun berechtigt, ' .
