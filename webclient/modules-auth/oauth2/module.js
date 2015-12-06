@@ -113,11 +113,11 @@ OAuth2.getMainContent = function(conf) {
 		var clientId = ClientConfig.oAuth2Config[conf.authConfig.serverId].clientId[permissionServerId];
 		OAuth2.random[clientId] = bigInt2str(randBigInt(200,0), 62);
 		var oauthAutorize = ClientConfig.oAuth2Config[serverId].authorizeUri + 
-		'scope=' + ClientConfig.oAuth2Config[serverId].scope +
-		'&state=' + ClientConfig.oAuth2Config[serverId].serverId + '.' + encodeURI(elelctionId) + '.' + OAuth2.random[clientId] + 
-		'&redirect_uri=' + ClientConfig.oAuth2Config[serverId].redirectUri[permissionServerId] + 
+		'scope=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].scope) +
+		'&state=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].serverId + '.' + elelctionId + '.' + OAuth2.random[clientId]) + 
+		'&redirect_uri=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].redirectUri[permissionServerId]) + 
 		'&response_type=code' +
-		'&client_id=' + clientId;
+		'&client_id=' + encodeURIComponent(clientId);
 		var permServerNr =  ArrayIndexOf(slist, 'name', permissionServerId);
 		var style = '"display:none;"';
 		if (step == 1) style = '""';
