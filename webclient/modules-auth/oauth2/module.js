@@ -46,6 +46,24 @@ function setSubStep(ss) {
 	}
 }
 
+
+OAuth2.waitForOAuthServer = function(oauthAutorize, step) {
+    var w = window.open(oauthAutorize, "_blank"); //"menubar=no,status=no,height=" + height + ",width=" + width + ",left=" + left + ",top=" + top);
+    OAuth2.timer = setInterval(function () {
+    		w.postMessage(true, '*'); // send a message to the new window so that it will get a reference to this window
+      }, 1000);
+    OAuth2.subStep = step;
+    OAuth2.showDoneButton('loginOauth2Txt2s' + step);
+};
+
+
+OAuth2.loggedIn = function(ev) {
+	clearInterval(OAuth2.timer);
+	setSubStep(OAuth2.subStep +1);
+};
+
+window.addEventListener("message", OAuth2.loggedIn, false);
+
 OAuth2.showDoneButton = function(id) {
 	var el = document.getElementById(id);
 	el.style.display = '';
@@ -58,6 +76,7 @@ OAuth2.getMainContent = function(conf) {
 	var step = 1;
 	var mc = 
 		'<ol class="substep-progress">' +
+		'<span class="stepshead">Schritte: </span>' +
 /*		'<li class="active-step" id="ss1">' +
         '	<span class="step-name"><span class="substeps">A:</span> Einloggen</span>' +
         '</li>' +
@@ -95,7 +114,7 @@ OAuth2.getMainContent = function(conf) {
 		OAuth2.random[clientId] = bigInt2str(randBigInt(200,0), 62);
 		var oauthAutorize = ClientConfig.oAuth2Config[serverId].authorizeUri + 
 		'scope=' + ClientConfig.oAuth2Config[serverId].scope +
-		'&state=' + ClientConfig.oAuth2Config[serverId].serverId + '.' + elelctionId + '.' + OAuth2.random[clientId] + 
+		'&state=' + ClientConfig.oAuth2Config[serverId].serverId + '.' + encodeURI(elelctionId) + '.' + OAuth2.random[clientId] + 
 		'&redirect_uri=' + ClientConfig.oAuth2Config[serverId].redirectUri[permissionServerId] + 
 		'&response_type=code' +
 		'&client_id=' + clientId;
@@ -106,7 +125,8 @@ OAuth2.getMainContent = function(conf) {
 		'<div id="substep' + step +'" style=' + style + '>' +
 		'						<label for="login'+step+'"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Für ' + slist[permServerNr].desc +': </label> ' +
 	//	'		  				     <a id="login" href="javascript:window.open(\'' + oauthAutorize + '\', \'_blank\');">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
-		'		  				     <a autofocus="autofocus" id="login'+step+'" href="' + oauthAutorize + '" target="_blank" onclick="OAuth2.showDoneButton(\'loginOauth2Txt2s'+step+'\');" autofocus="autofocus">' + slist[permServerNr].desc + ' autorisieren</a><br>'+
+		'		  				     <a autofocus="autofocus" id="login'+step+'" href="#" onclick="OAuth2.waitForOAuthServer(\''+oauthAutorize+'\', ' +step+');">' + slist[permServerNr].desc + ' autorisieren</a><br>'+
+//		'		  				     <a autofocus="autofocus" id="login'+step+'" href="' + oauthAutorize + '" target="_blank" onclick="OAuth2.showDoneButton(\'loginOauth2Txt2s'+step+'\');">' + slist[permServerNr].desc + ' autorisieren</a><br>'+
 //		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
 		'						<label for="loginOauth2Txt2s'+step+'"> </label> ' +
 		'<span id="loginOauth2Txt2s'+step+'" style="display:none"><button onclick="setSubStep(' +(step+1) +')">Autorisierung war erfolgreich</button></span>'+
@@ -114,7 +134,7 @@ OAuth2.getMainContent = function(conf) {
 		'</div>';
 		step++;
 	}
-	
+		
 	mc = mc +
 	'<div id="substep' + step +'" style="display:none;">' +
 	'						<label for="username"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Username erneut eingeben</label> ' +

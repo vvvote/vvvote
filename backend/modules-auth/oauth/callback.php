@@ -63,6 +63,15 @@ function printTitle($headertitle, $h1) {
 
 function printTechInfos($techinfos) {
 	echo '
+			<script>
+				window.addEventListener(\'message\', function(ev) {
+							ev.source.postMessage({ message: \'deliverResult\', result: true },	\'*\');
+							window.blur();
+							window.close();
+							setTimeout(ev.source.focus, 10);
+						}, false);
+				
+			</script>
 				<br><button autofocus="autofocus" onClick="window.close();">Fenster schlie&szlig;en und zur&uuml;ck zum Hauptfenster</button>
 			</div>
 			<div id="techinfosswitch">

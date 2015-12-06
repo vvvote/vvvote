@@ -17,7 +17,12 @@
 .substep-progress .step-name {
 	display: table-cell;
 	text-align: center;
-	width: 18.2em;
+	width: 17em;
+}
+
+.stepshead {
+	font-weight: bold;
+	vertical-align: 0.3em;
 }
 
 .substep-progress .step-name:after {
