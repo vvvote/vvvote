@@ -75,7 +75,7 @@ $oauthBEObayern = array(
 			
 			'authorization_endp'    => 'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/',
 			'token_endp'            => 'https://beoauth.piratenpartei-bayern.de/oauth2/token/',
-			'get_profile_endp'      => 'https://beoauth.piratenpartei-bayern.de/api/v1/user/profile/',
+			'get_profile_endp'      => 'https://beoauth.piratenpartei-bayern.de/api/v1/user/profile/', /* not needed at the moment */
 			'is_in_voter_list_endp' => 'https://beoauth.piratenpartei-bayern.de/api/v1/user/listmember/',
 			'get_membership_endp'   => 'https://beoauth.piratenpartei-bayern.de/api/v1/user/membership/',
 			'get_auid_endp'			=> 'https://beoauth.piratenpartei-bayern.de/api/v1/user/auid/',

@@ -141,14 +141,14 @@ if (!isset($_GET['code'])) {
 		$fetcher = new FetchFromOAuth2Server($serverId, $tokeninfos);
 		$auid        = $fetcher->fetchAuid(); // TODO error handling 404 --> $auid = empty
 		if ($auid        === false) print "Fehler: auid konnte nicht geholt werden";
-		$userProfile = $fetcher->fetchUserProilfe(); // TODO error handling 404 --> $userProfile = empty
-		if ($userProfile === false) print "Fehler: auid konnte nicht geholt werden";
-		$username  = $userProfile['username'];
+//		$userProfile = $fetcher->fetchUserProilfe(); // TODO error handling 404 --> $userProfile = empty
+//		if ($userProfile === false) print "Fehler: UserProfile konnte nicht geholt werden";
+//		$username  = $userProfile['username'];
 		
 		
 		global $dbInfos;
 		$oAuthDb = new DbOAuth2($dbInfos);
-		$oAuthDb->saveAuthData($electionhash, $serverId, $tmpsecret, $auid, $username, $tokeninfos, $now->format(DateTime::ATOM));
+		$oAuthDb->saveAuthData($electionhash, $serverId, $tmpsecret, $auid, '' /* $username */, $tokeninfos, $now->format(DateTime::ATOM));
 		
 /*		if (isset($userProfile['public_id'])) $public_id = $userProfile['public_id'];
 		else                                  $public_id = '';

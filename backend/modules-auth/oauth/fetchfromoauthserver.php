@@ -25,7 +25,7 @@ class FetchFromOAuth2Server {
 		$this->client->setAccessToken($authInfos);
 		// $this->params = array('redirect_uri' => $curOAuth2Config['redirect_uri']); // $params = array('code' => $_GET['code'], 'redirect_uri' => $curOAuth2Config['redirect_uri']);
 	}
-
+/** not needed anymore
 	function fetchUsername() {
 		$userprofile = $this->fetchUserProfile();
 		if ($userprofile === false) return false;
@@ -37,7 +37,7 @@ class FetchFromOAuth2Server {
 		if ($userprofile['code'] != 200) return false;
 		return $userprofile['result'];
 	}
-	
+*/	
 	
 	function fetchAuid() {
 		$auid = $this->fetch($this->curOAuth2Config['get_auid_endp']);
