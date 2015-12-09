@@ -4,13 +4,10 @@ var OAuth2 = function(authConfig) {
 };
 
 OAuth2.prototype.getCredentials = function (electionId, permissionServerId) {
-	var el = document.getElementById('username');
-	var username = el.value;
 	el = document.getElementById('displayname');
 	var displayname = el.value;
 	var clientId = ClientConfig.oAuth2Config[this.serverId].clientId[permissionServerId];
 	var credentials = {
-			secret: SHA256(electionId  + clientId + username + OAuth2.random[clientId]),
 			identifier: OAuth2.random[clientId],
 			displayname: displayname
 	};
@@ -114,7 +111,7 @@ OAuth2.getMainContent = function(conf) {
 		OAuth2.random[clientId] = bigInt2str(randBigInt(200,0), 62);
 		var oauthAutorize = ClientConfig.oAuth2Config[serverId].authorizeUri + 
 		'scope=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].scope) +
-		'&state=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].serverId + '.' + elelctionId + '.' + OAuth2.random[clientId]) + 
+		'&state=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].serverId + '.' + elelctionId + '.' + SHA256(OAuth2.random[clientId])) + 
 		'&redirect_uri=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].redirectUri[permissionServerId]) + 
 		'&response_type=code' +
 		'&client_id=' + encodeURIComponent(clientId);
@@ -137,12 +134,8 @@ OAuth2.getMainContent = function(conf) {
 		
 	mc = mc +
 	'<div id="substep' + step +'" style="display:none;">' +
-	'						<label for="username"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Username erneut eingeben</label> ' +
-	'						     <input autofocus="autofocus" name="username" id="username" value="" type="text"></td>' + 
-    '                       <br>' +
 	'						<label for="displayname" style="display:none">Mich &ouml;ffentlich anzeigen als</label> ' +
 	'						     <input name="displayname" id="displayname" value="" type="hidden"></td>' + 
-    '                       <br>'+
 	'</div>';
 	return mc;
 }; 

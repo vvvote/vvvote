@@ -58,10 +58,9 @@ class OAuth2 extends Auth {
 		$oAuthServerId = $this->db->getOAuthServerIdByElectionId($electionId); // $Ids['serverId'] und $Ids['listId']
 
 		// verify transaction credentials
-		$webclientAuthFromDb = $this->db->loadAuthData($electionId, $credentials['identifier']); // TODO error handling $webclientAuthFromDb empty // TODO error handling if not set (or not string)
-		if (! isset($webclientAuthFromDb['username'])) return false; // did not log in in OAuth2 / BEO server
-		$secretFromDb = hash('sha256', $electionId . $oauthConfig[$oAuthServerId]['client_id'] . $webclientAuthFromDb['username'] . $credentials['identifier']);
-		if ($secretFromDb !== $credentials['secret'] ) return false;
+		$webclientAuthFromDb = $this->db->loadAuthData($electionId, hash('sha256', $credentials['identifier'])); // TODO error handling $webclientAuthFromDb empty // TODO error handling if not set (or not string)
+		if (count($webclientAuthFromDb) < 1) return false; // $credentials['identifier'] not found / wrong 
+		if (! isset($webclientAuthFromDb['auid'])) return false; // did not log in in OAuth2 / BEO server
 		
 		$inDateRange = parent::checkCredentials($credentials, $electionId, $phase); //checks the phase time frame
 		if ($inDateRange !== true) return false;
@@ -117,7 +116,7 @@ class OAuth2 extends Auth {
 
 	function getVoterId($credentials, $electionId) {
 		// $configHash = $this->electionsDB->electionIdToConfigHash($electionId);
-		$authData = $this->db->loadAuthData($electionId, $credentials['identifier']);
+		$authData = $this->db->loadAuthData($electionId, hash('sha256', $credentials['identifier']));
 		if (count($authData) == 0 || $authData === false) WrongRequestException::throwException(12000, 'Voter not found. Please login in into OAuth2 server and allow access to this server.', print_r($credentials, true) .  print_r($electionId, true));
 		return $authData['auid'];
 	}

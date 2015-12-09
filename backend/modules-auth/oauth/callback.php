@@ -120,9 +120,9 @@ if (!isset($_GET['code'])) {
 						<li>Anonsten schlie&szlig;en Sie dieses Fenster und loggen sich erneut beim Basisentscheid-Server ein.</li>
 					</ul>';
 			
-			$techinfos = 
+			$techinfos = // for debuggin, you can use: '>' . $curOAuth2Config['client_secret'] . '<' .
 			'<br>client_id: >' . 	$curOAuth2Config['client_id'] . '<' .
-			'<br>client_secret: >' .$curOAuth2Config['client_secret'] . '<' . 
+			'<br>client_secret: ' . 'secret' .  
 			'<br>code: >' . 		$_GET['code'] . '<' .
 			'<br>redirect_uri: >' . $curOAuth2Config['redirect_uri'] . '<' .
 			'<br>token_endp: >' . 	$curOAuth2Config['token_endp'] . '<' .
