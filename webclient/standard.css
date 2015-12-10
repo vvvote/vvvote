@@ -3,7 +3,7 @@
 body {
 	background-color: grey; /* color outside the content */
 	padding: 0.4em;
-	font-family: serif;
+	font-family: Sans-Serif;
 }
 
 div#all { /* base definition for all content */
@@ -73,7 +73,7 @@ div#steps h1 {
 
 /*** Navigation bar ***/
 div#nav {
-	background-color: #0B0B61;
+	background-color: rgb(247, 245, 231); /* #0B0B61; */
 	text-align: center;
 	color: white;
 	display: block;
@@ -82,13 +82,14 @@ div#nav {
 
 div#nav a {
 	text-align: center;
-	color: white;
+	color: black;
 	padding: 0.4em;
 	font-family: sans-serif;
 }
 
 div#nav a:hover {
 	background: black;
+	color: white;
 }
 
 /*** Log ***/
