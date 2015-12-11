@@ -61,10 +61,64 @@ div#auth label {
 div#steps {
 	margin: 1em;
 	float: right;
-	width: 20em;
-	border: 2px solid #0B0B61;
+	width: 30em;
+	border: 2px none #0B0B61;
 	padding: 0.4em;
 }
+
+ul#stepslist {
+	list-style-position: outside;
+}
+
+ul#stepslist span {
+    position: relative;
+    left: 0em;
+    top: -1em;
+}
+
+ul#stepslist span:before {
+/*	content: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="40" height = "40"><circle cx ="20" cy ="20" r ="20" style="fill:orange" /></svg>');
+    display: table-cell; */
+}
+
+/*
+	display: inline-flex;;
+
+    background-color: grey;
+    border-radius: 3em;
+    border-bottom-width: 1em;
+    border: 1em solid white;
+    width: 3em;
+    text-align: center;
+    vertical-align: middle;
+
+*/
+ul#stepslist li {
+	list-style-image: url("data:image/svg+xml;charset=utf8,%3Csvg%20version%3D%221.1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%20%3D%20%2240%22%3E%3Ccircle%20cx%20%3D%2220%22%20cy%20%3D%2220%22%20r%20%3D%2220%22%20style%3D%22fill%3Aorange%22%20%2F%3E%3C%2Fsvg%3E");
+	border-radius: 1em;
+	border: 0.5em solid rgb(255, 255, 255);
+	background-color: lightgray;
+	padding: 1em;
+	height: 2em;
+	width: 20em;
+}
+
+ul#stepslist li.done {
+	list-style-image: url("data:image/svg+xml;charset=utf8,%3Csvg%20version%3D%221.1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%20%3D%20%2240%22%3E%3Ccircle%20cx%20%3D%2220%22%20cy%20%3D%2220%22%20r%20%3D%2220%22%20style%3D%22fill%3Agreen%22%20%2F%3E%3C%2Fsvg%3E");
+	/*
+	content: "✓";
+	backgorund-color: green;
+	*/
+}
+
+ul#stepslist li.todo {
+	list-style-image: url("data:image/svg+xml;charset=utf8,%3Csvg%20version%3D%221.1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%20%3D%20%2240%22%3E%3Ccircle%20cx%20%3D%2220%22%20cy%20%3D%2220%22%20r%20%3D%2220%22%20style%3D%22fill%3Alightgrey%22%20%2F%3E%3C%2Fsvg%3E");
+	/*
+	content: "✓";
+	backgorund-color: green;
+	*/
+}
+
 
 div#steps h1 {
 	font-size: 1.2em;

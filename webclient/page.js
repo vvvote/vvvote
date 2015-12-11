@@ -16,7 +16,7 @@ Page.prototype.display = function() {
 Page.prototype.showSteps = function() {
 	var html = '';
 	for (var i=1; i<this.steps.length; i++) { // "<" because length starts measuring at index 0
-		html = html + '<li><span id="step' + i +'" class="curr">' + this.steps[i] + '</span></li>';
+		html = html + '<li id="stepli' + i +'"><span id="step' + i +'" class="curr">' + this.steps[i] + '</span></li>';
 	}
 	var element = document.getElementById('stepslist');
 	element.innerHTML = html;
@@ -31,9 +31,12 @@ Page.prototype.setStep = function(step) {
 		var element;
 		for (var i=1; i<this.steps.length; i++) {
 			element = document.getElementById('step' + i); // + step-1);
-			if (i == step) {element.setAttribute('class', 'curr');}
-			else           {element.removeAttribute('class');}
-		}
+			elementli = document.getElementById('stepli' + i); // + step-1);
+			if (i < step)  { element.setAttribute('class', 'done'); elementli.setAttribute('class', 'done'); }
+			if (i == step) { element.setAttribute('class', 'curr'); elementli.setAttribute('class', 'curr'); }
+			if (i > step)  { element.setAttribute('class', 'todo'); elementli.setAttribute('class', 'todo'); }
+			}
+		
 		element = document.getElementById('steptitle');
 		element.textContent = this.steps[step];
 		Page.setAddiTechInfos('');
