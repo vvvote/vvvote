@@ -172,6 +172,7 @@ BlindedVoterElection.getStep2Html = function() {
 		'<ul>' +
 			'<li>Als Ergebnis dieses Schrittes erhalten Sie einen Wahlschein in Form einer Webseiten-Datei.</li>' +
 			'<li>Merken Sie sich bitte, wo Sie die Datei speichern.</li>' + 
+			'<li>Der Wahlschein wird benötigt, um die Stimme abzugeben und kann nicht ersetzt werden. Daher wird empfohlen, den Wahlschein bis zum Ende der Abstimmung zu sichern.</li>' + 
     	'</ul>';
 	return ret;
 
@@ -216,6 +217,7 @@ BlindedVoterElection.prototype.getPermGeneratedHtml = function() {
 	'</p><p><ul id="howToVoteId" style="display:none">' +
 	'<li>Sie haben einen Wahlschein in Form einer Webseiten-Datei erhalten, die Sie auf ihrem Computer gespeichert haben.</li>' +
 	'<li>Merken Sie sich bitte, wo Sie die Datei gespeichert haben.</li>' + 
+	'<li>Der Wahlschein wird benötigt, um die Stimme abzugeben und kann nicht ersetzt werden. Daher wird empfohlen, den Wahlschein bis zum Ende der Abstimmung zu sichern.</li>' +
 	'<li>Zum Abstimmen &ouml;ffnen Sie den Wahlschein im Internet-Browser. ' +
 	'Eine M&ouml;glichkeit dazu ist: Klicken Sie im Datei-Explorer doppelt auf die Wahlschein-Datei.</li>' +
 	'<li>Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht ' + 
