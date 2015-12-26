@@ -19,7 +19,7 @@ class DbElections extends DbBase {
 		$dbtables =
 		array('elections' /* Table name */ => array(
 				array('name' => 'electionId', 'digits' => '100'  , 'json' => false), /* colunm definition */
-				array('name' => 'config'    , 'digits' => '50000', 'json' => true),
+				array('name' => 'config'    , 'digits' => 'LONGTEXT', 'json' => true),
 				array('name' => 'hash'      , 'digits' => '257'  , 'json' => false)
 		));
 		parent::__construct($dbInfos, $dbtables, true);

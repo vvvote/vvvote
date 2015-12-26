@@ -1734,7 +1734,7 @@ class Crypt_RSA {
      * @param optional Integer $nonzero
      * @return String
      */
-    function _random($bytes, $nonzero = false)
+    static function _random($bytes, $nonzero = false)
     {
         $temp = '';
         for ($i = 0; $i < $bytes; $i++) {

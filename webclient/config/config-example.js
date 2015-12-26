@@ -28,6 +28,8 @@ for (var i=0; i<serverinfos.pServerUrlBases.length; i++) {
 	ClientConfig.newElectionUrl[i] = serverinfos.pServerUrlBases[i] + '/newelection.php';
 }
 
+ClientConfig.tkeys = serverinfos.tkeys;
+
 server1url = ClientConfig.serverList[0].baseUrl + '/';
 var server1urlParts = URI.getParts(server1url);
 server2url = ClientConfig.serverList[1].baseUrl + '/';

@@ -15,6 +15,8 @@
 /**
  * return 404 if called directly
  */
+
+
 if(count(get_included_files()) < 2) {
 	header('HTTP/1.0 404 Not Found');
 	echo "<h1>404 Not Found</h1>";
@@ -24,6 +26,9 @@ if(count(get_included_files()) < 2) {
 
 
 require_once 'exception.php';
+require_once 'Crypt/AES.php';
+require_once 'tools.php'; /* base64url encoder */
+require_once 'rsaMyExts.php';
 
 class Crypt {
 
@@ -195,7 +200,7 @@ class Crypt {
 	 * @param number $basis provide this parameter if the $plaintext is not hex encoded
 	 * @return string (bigInt to Bytes)
 	 */
-	function decrypt ($plaintext, $basis = 16) {
+	function decrypt($plaintext, $basis = 16) {
 		$ptBigInt = new Math_BigInteger($plaintext, $basis);
 		$dec = $this->myPrivateKey['privRsa']->_rsasp1($ptBigInt);
 		$ret = $dec->toBytes();
@@ -205,6 +210,88 @@ class Crypt {
 	function getNumServers() {
 		return count($this->serverKeys);
 	}
+
+	/*******************************************************
+	 * symmetric encryption
+	* /
+	*/
+
+	/**
+	 * 
+	 * @param string $json {'iv': 'xxx', 'wrappedKey': 'XX', 'encrypted': }
+	 * @return Ambigous <boolean, string, unknown>
+	 * @throws if something was wrong
+	 */
+	function decryptRsaAes($json) {
+		$message = json_decode($json, true);
+		if ( ($message == null) || (! isset($message['iv'])) || (! isset($message['wrappedKey'])) || (! isset($message['encrypted'])) ) WrongRequestException::throwException(874367,'crypt: >wrappedKey<, >iv<, >encrypted< must be set', print_r($json)); 	
+		if ( (! is_string($message['iv'])) || (! is_string($message['wrappedKey'])) || (! is_string($message['encrypted'])) ) WrongRequestException::throwException(874367,'crypt: wrappedKey, iv, encrypted must be strings', print_r($json));
+		
+		$aeskey = $this->unwrapKey($message['wrappedKey']);
+		// echo base64url_encode($aeskey);
+		$plaintext = self::decryptAes($message['encrypted'], $aeskey, $message['iv']);
+		if ($plaintext === false) throw new WrongRequestException(754452, 'decryptRsaAes: decryption failed');
+		return $plaintext;
+	}
+	
+	
+	
+	static function decryptAes($encryptedB64, $key, $ivB64) {
+		$cipher = new Crypt_AES(CRYPT_AES_MODE_CBC); // could use CRYPT_AES_MODE_CBC
+		// keys are null-padded to the closest valid size
+		// longer than the longest key and it's truncated
+		$cipher->setKeyLength(256);
+		$cipher->setKey($key);
+		$iv = base64url_decode($ivB64, true);
+		if ($iv === false) WrongRequestException::throwException(645277, 'decryptAes: iv must be bease64url encoded', $ivB64);
+		$encrypted = base64url_decode($encryptedB64, true);
+		if ($encrypted === false) WrongRequestException::throwException(645277, 'decryptAes: >encrypted< must be bease64url encoded', $encryptedB64);
+		$cipher->setIV($iv); // defaults to all-NULLs if not explicitely defined
+
+		$decrypted = $cipher->decrypt($encrypted);
+		return $decrypted;
+	}
+
+	static function encryptAes($plaintext, $key, $ivB64 = null) {
+		$cipher = new Crypt_AES(CRYPT_AES_MODE_CBC); // could use CRYPT_AES_MODE_CBC
+		// keys are null-padded to the closest valid size
+		// longer than the longest key and it's truncated
+		$cipher->setKeyLength(256);
+		$cipher->setKey($key);
+		if ($ivB64 === null) 	$iv = Crypt_RSA::_random(32);
+		else 					$iv = base64url_decode($ivB64);
+		$cipher->setIV($iv); // defaults to all-NULLs if not explicitely defined
+	
+		$encrypted = $cipher->encrypt($plaintext);
+		//		echo base64url_encode($encrypted) . "\r\n";
+		//		echo $cipher->decrypt($encrypted);
+		return array('encrypted' => base64url_encode($encrypted), 'iv' => base64url_encode($iv));
+	}
+	
+	
+	function unwrapKey($wrappedKeyB64Url) {
+		$this->myPrivateKey['privRsa']->setHash('sha256');
+		$this->myPrivateKey['privRsa']->setMGFHash('sha256');
+		//$cipher->setKeyLength(256);
+		$wrappedKey = base64url_decode($wrappedKeyB64Url, true);
+		if ($wrappedKey === false) WrongRequestException::throwException(645277, 'decryptAes: iv must be bease64url encoded', $ivB64);
+		
+		$aeskey = $this->myPrivateKey['privRsa']->decrypt($wrappedKey);
+//		$aeskeyB64 = base64url_encode($aeskey);
+//		echo 'aes-key: ' . $aeskeyB64;
+		return $aeskey;
+	}
 }
+
+/*
+Crypt::testAes('');
+require_once __DIR__ . '/config/conf-allservers.php';
+require_once 'config/conf-thisserver.php';
+global $pServerKeys, $pserverkey;
+$cipher = new Crypt($pServerKeys, $pserverkey);
+$aeskey = $cipher->unwrapKey('XVwsNssTIC4Uhv0ijOB9q4mEUxeGedsWhptPQdqAZY+VM5KQg/XM8W+BD6wVT+d58y6p7spwj5UnehGUgUtRtjgTWpP4KbbZ9tfaQBvqTkes/kkBDbI4Zbks8HrT8cGzDwUNaXqPZ7d3sRbKtAGjMaQYvm57UZgKfB03zo+Cc3vaeXkIFvZQi08uzfvrJS3tT2hj4S6ivqWicISzs0jf2Xqza2+DQKnPLpBWvAvpL+y4OiVqF0rDsrmwk+GG2LWMj+nkTBGLxzjLGz7XZesXjIU5o4YjrkcF5QBfKgFNryT7ibbBuEyZhWMfcyhR0BVZD9PTWOCt/DP5zW9Fx2Nvow');
+$aeskeyB64 = base64url_encode($aeskey);
+echo "\r\nunwrapping was correct: " . ($aeskeyB64 === 'FJM9D66p2HnL5nPCM8Q6tpSYztIUfy6dGF4DqFta5_w');
+*/
 
 ?>

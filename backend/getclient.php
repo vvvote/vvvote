@@ -37,6 +37,8 @@ $includeJsFiles = Array(
 		'modules-auth/external-token/module.js',
 		'modules-election/blinded-voter/module.js',
 		'modules-election/blinded-voter/module-backend.js',
+		'tools/textencoder.js',
+		'modules-tally/publish-only/transportencryption.js',
 		'modules-tally/publish-only/module.js',
 		'modules-tally/configurable-tally/module.js',
 		'page.js',

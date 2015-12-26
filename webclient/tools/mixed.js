@@ -728,3 +728,10 @@ function formatDate(date) {
 		return date.toLocaleDateString() + ' ' + date.toLocaleTimeString().replace(regex, '').substring(0, 5);
 	} else return date.toString();
 }
+
+function arrayBuf2Base64Url(ab) {
+	var encUI8A = new Uint8Array(ab);
+	var base64 = btoa(String.fromCharCode.apply(null, encUI8A));
+	var base64Url = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+	return base64Url;
+}

@@ -15,10 +15,23 @@ for ($i = 0; $i < $numPServers; $i++) {
 			'e' => base64url_encode($pServerKeys[$i]['exponent']->toBytes()),
 			'kid' => $pServerKeys[$i]['name']
 			);
-	$keys[] = $key; 
+	$pkeys[] = $key; 
 }
 
-$serverinfos = array('keys' => $keys, 'pServerUrlBases' => $pServerUrlBases);
+for ($i = 0; $i < $numTServers; $i++) {
+	$key = array(
+			'kty' => 'RSA',
+			'n' => base64url_encode($tServerKeys[$i]['modulus']->toBytes()),
+			// 'modHex'=> $pServerKeys[$i]['modulus']->toHex(),
+			'e' => base64url_encode($tServerKeys[$i]['exponent']->toBytes()),
+			'kid' => $tServerKeys[$i]['name']
+	);
+	$tkeys[] = $key;
+}
+
+
+
+$serverinfos = array('pkeys' => $pkeys, 'pServerUrlBases' => $pServerUrlBases, 'tkeys' => $tkeys);
 $serverinfosStr = str_replace('\/', '/', json_encode($serverinfos));
 
 global $output_as_javascript;

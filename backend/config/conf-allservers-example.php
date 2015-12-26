@@ -29,21 +29,28 @@ $numSignBallots   = array(0 => 3, 1 => 1);
 $numVerifyBallots = array(0 => 2, 1 => 2);
 $numPSigsRequiered = count($numSignBallots); // this number of sigs from permission servers are requiered in order for a return envelope to be accepted
 $numPServers = $numPSigsRequiered; // number of permission servers
+$numTServers = 1;
 
 if (! isset($DO_NOT_LOAD_PUB_KEYS)) { // this will be set during key generation
-	$pServerKeys = array();
-	for ($i = 1; $i <= $numPServers; $i++) {
-		$pubkeystr = file_get_contents(__DIR__ . "/PermissionServer$i.publickey");
+	function loadkeys($filenameprefix, $num) {
+		$serverKeys = array();
+		for ($i = 1; $i <= $num; $i++) {
+			$pubkeystr = file_get_contents(__DIR__ . "/$filenameprefix$i.publickey");
 
-		$rsa = new rsaMyExts();
-		$rsa->loadKey($pubkeystr);
-		$pServerKey = array(
-				'name'     => "PermissionServer$i", // $pubkeyJson['kid'],
-				'modulus'  => $rsa->modulus,
-				'exponent' => $rsa->exponent,
-		);
-		$pServerKeys[] = $pServerKey;
+			$rsa = new rsaMyExts();
+			$rsa->loadKey($pubkeystr);
+			$pServerKey = array(
+					'name'     => $filenameprefix . $i, // $pubkeyJson['kid'],
+					'modulus'  => $rsa->modulus,
+					'exponent' => $rsa->exponent,
+			);
+			$serverKeys[] = $pServerKey;
+		}
+		return $serverKeys;
 	}
+
+	$pServerKeys = loadkeys('PermissionServer', $numPServers);
+	$tServerKeys = loadkeys('TallyServer', $numTServers);
 }
 
 $base = 16;

@@ -93,8 +93,18 @@ PublishOnlyTally.prototype.sendVoteData = function (vote, questionID_) {
 	transm.cmd = 'storeVote';
 	var transmstr = JSON.stringify(transm);
 	var me = this;
-	myXmlSend(ClientConfig.storeVoteUrl, transmstr, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
+	var te = new TransportEncryption();
+	te.encrypt(transmstr, me, me.encryptedCallback, ClientConfig.tkeys[0]);
+//	myXmlSend(ClientConfig.storeVoteUrl, transmstr, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
 };
+
+PublishOnlyTally.prototype.encryptedCallback = function(encrypted) {
+	console.log(encrypted);
+	var me = this;
+	myXmlSend(ClientConfig.storeVoteUrl, encrypted, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
+};
+
+PublishOnlyTally.test = function () {alert('mmm');}; 
 
 
 PublishOnlyTally.prototype.handleServerAnswerStoreVote = function (xml) {

@@ -19,22 +19,12 @@ class DbBlindedVoter extends DbBase {
 		array('blindedHashes' /* Table name */ => array(
 				array('name' => 'electionID'   , 'digits' =>   '100', 'json' => false), /* colunm definition */
 				array('name' => 'voterId'      , 'digits' =>   '100', 'json' => false),
-				array('name' => 'blindedHashes', 'digits' => '10000', 'json' => true)
-				),
-		      'pickedBallots' /* Table name */ => array(
-				array('name' => 'electionID'   , 'digits' =>   '100', 'json' => false), /* colunm definition */
-				array('name' => 'voterId'      , 'digits' =>   '100', 'json' => false),
-				array('name' => 'pickedBallots', 'digits' => '10000', 'json' => true)
+				array('name' => 'blindedHashes', 'digits' =>   'MEDIUMTEXT', 'json' => true)
 				),
 			  'signedBallots' /* Table name */ => array(
 				array('name' => 'electionID'   , 'digits' =>   '100', 'json' => false), /* colunm definition */
 				array('name' => 'voterId'      , 'digits' =>   '100', 'json' => false),
-				array('name' => 'signedBallots', 'digits' => '10000', 'json' => true)
-				),
-			  'VotingNos' /* Table name */ => array(
-				array('name' => 'electionID'   , 'digits' =>   '100', 'json' => false), /* colunm definition */
-				array('name' => 'voterId'      , 'digits' =>   '100', 'json' => false),
-				array('name' => 'VotingNos'    , 'digits' =>  '5000', 'json' => true)
+				array('name' => 'signedBallots', 'digits' => 'MEDIUMTEXT', 'json' => true)
 				)
 		);
 		

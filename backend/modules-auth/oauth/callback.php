@@ -182,7 +182,7 @@ if (!isset($_GET['code'])) {
 				<h2>Technische Informationen</h2>' . 
 					'<br> '.
 					'<ul>' .
-					'	<li>Ihr Login war erfolgreich und der Abstimmserver &gt;' . $serverkey['serverName'] . '&lt; ist nun berechtigt, ' .
+					'	<li>Ihr Login war erfolgreich und der Abstimmserver &gt;' . $pserverkey['serverName'] . '&lt; ist nun berechtigt, ' .
 							'Ihre Wahlberechtigung abzufragen.</li>' .
 					'	<li>Ihre Wahlberechtigung wurde noch nicht gepr&uuml;ft. Sie wird erst gepr&uumlft, wenn Sie im ursp&uuml;nglichen Fenster auf &quot;Wahlschein erzeugen&quot; klicken.</li>' .
 					'</ul>' .

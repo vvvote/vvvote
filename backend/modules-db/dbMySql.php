@@ -100,8 +100,12 @@ class DbMySql { // TODO dbBase
 			$tablename = $this->prefix . $tname;
 				
 			foreach ($tabledef as $col) {
-//				if (strlen($colstr) > 0) $colstr = $colstr . ', \n'; 
-				$colstr = $colstr . $col['name'] . " varchar(${col['digits']}), ";
+//				if (strlen($colstr) > 0) $colstr = $colstr . ', \n';
+				switch ($col['digits']) {
+					case 'MEDIUMTEXT':  $colstr = $colstr . $col['name'] . " MEDIUMTEXT, ";                 break;
+					case 'LONGTEXT':    $colstr = $colstr . $col['name'] . " LONGTEXT, ";                   break;
+					default:			$colstr = $colstr . $col['name'] . " varchar(${col['digits']}), ";	break;
+				}
 			}
 			$sql = "CREATE TABLE IF NOT EXISTS $tablename (
 			$colstr

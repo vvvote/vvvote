@@ -76,36 +76,47 @@ if ((isset($_GET['DeleteDatabaseContent' ])) || (isset($_POST['DeleteDatabaseCon
 */
 
 if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  || */ (isset($argv[1]) && (strcasecmp($argv[1], 'createKeyPair') === 0)) ) {
-	
-	if (isset($argv[1]) && (count($argv) < 3) ) { print 'usage: php -f admin.php createKeyPair <serverIdNumber>'; exit(1); } 
+
+	if (isset($argv[1]) && (count($argv) < 4) ) {
+		print 'usage: php -f admin.php createKeyPair <p|t> <serverIdNumber>' . "\np: for permission server\nt: for tallying server"; exit(1);
+	}
 	if (isset($argv[2])) {
-		if (is_numeric($argv[2])) 	$thisServerName = 'PermissionServer' . $argv[2];
-		else         		  		$thisServerName = $argv[2]; 
+		switch ($argv[2]) {
+			case 'p': case 'P': $type = 'PermissionServer'; $bitlength =  512; break; // only 512 because blinding in JavaScript will take more than 5 minutes for 2048
+			case 't': case 'T': $type = 'TallyServer';      $bitlength = 2048; break;
+			default:
+				print "Error: Argument 2 must be either 'p' or 't'";
+				exit(1);
+		}
+	}
+	if (isset($argv[3])) {
+		if (is_numeric($argv[3])) 	$thisServerName = $type . $argv[3];
+		else         		  		$thisServerName = $argv[3];
 	}
 	$crypt_rsa = new Crypt_RSA();
-	$keypair = $crypt_rsa->createKey(512);
-	
+	$keypair = $crypt_rsa->createKey($bitlength);
+
 	// save private key to file
 	$keystr = str_replace('\/', '/', json_encode($keypair));
-	file_put_contents("config/${thisServerName}.privatekey", $keypair['privatekey']);
+	file_put_contents("config/${thisServerName}.privatekey.pem.php", "<?php\r\n/* \r\n" . $keypair['privatekey'] . "\r\n*/\r\n?>");
 
 	// save public key to file
 	$crypt_rsa->loadKey($keypair['publickey']);
 	$pubkey = array( // fields defined by JSON Web Key http://openid.net/specs/draft-jones-json-web-key-03.html
-					'alg'   => 'RSA', // only RSA is supported by vvvote 
-					'mod'   => base64url_encode($crypt_rsa->modulus->toBytes()), 
-					'exp'   => base64url_encode($crypt_rsa->exponent->toBytes()) 
-					);
-					// 'kid' 	=> $thisServerName);
+			'alg'   => 'RSA', // only RSA is supported by vvvote
+			'mod'   => base64url_encode($crypt_rsa->modulus->toBytes()),
+			'exp'   => base64url_encode($crypt_rsa->exponent->toBytes())
+	);
+	// 'kid' 	=> $thisServerName);
 	//print_r($crypt_rsa->modulus);
 	echo '<br>n: ' . base64url_encode($crypt_rsa->modulus->toBytes());
-	echo '<br>k: ' . $crypt_rsa->k; 
+	echo '<br>k: ' . $crypt_rsa->k;
 	// print_r($crypt_rsa->k);
 	echo '<br>exp: ' . base64url_encode($crypt_rsa->exponent->toBytes());
 	//print_r($crypt_rsa->exponent);
-	echo "<br>\r\n";	
+	echo "<br>\r\n";
 	$pubkeystr = str_replace('\/', '/', json_encode($pubkey));
-	file_put_contents("config/${thisServerName}.publickey.pem.php", "<?php\r\n/* \r\n" . $keypair['publickey'] . "\r\b?>"); //$pubkeystr
+	file_put_contents("config/${thisServerName}.publickey", $keypair['publickey']); //$pubkeystr
 }
 // for database debugging use phpMyAdmin or the like
 

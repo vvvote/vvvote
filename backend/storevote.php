@@ -8,7 +8,9 @@ require_once 'connectioncheck.php';  // answers if &connectioncheck is part of t
 require_once 'exception.php';
 require_once 'loadmodules.php';
 require_once 'getcmd.php';
-
+require_once 'crypt.php';
+require_once 'config/conf-allservers.php';
+require_once 'config/conf-thisserver.php';
 
 if (isset($HTTP_RAW_POST_DATA)) {
 	$electionIdPlace = function ($a) {
@@ -17,9 +19,12 @@ if (isset($HTTP_RAW_POST_DATA)) {
 	};
 
 	try {
-		checkCmd($HTTP_RAW_POST_DATA, 'storeVote');
-		$el = loadElectionModules($HTTP_RAW_POST_DATA, $electionIdPlace);
-		$result = $el->tally->handleTallyReq(getData($HTTP_RAW_POST_DATA));
+		global $tserverkey;
+		$crypt = new Crypt(array(), $tserverkey);
+		$reqdata = $crypt->decryptRsaAes($HTTP_RAW_POST_DATA);
+		checkCmd($reqdata, 'storeVote');
+		$el = loadElectionModules($reqdata, $electionIdPlace);
+		$result = $el->tally->handleTallyReq(getData($reqdata));
 	} catch (ElectionServerException $e) {
 		$result = $e->makeServerAnswer();
 	}

@@ -47,26 +47,34 @@ in 'conf-allservers.php' adjust
 Each server uses its own key. Therefore we need to generate a key on each server and distribute thier public part to the other server.
 
 ### Generate Server Keys
+Server 1 will act as permission server and as tallying server. We are using different keys for each role. That is why on server 1 we will create two kes. 
 On server 1 cd into the backend-dir and start the key generation (it can take a minute or two):
 
-	php -f admin.php createKeypair 1
+	php -f admin.php createKeypair p 1
+	php -f admin.php createKeypair t 1
 
-On server 2 also cd into the backend-dir and also start the key generation by
+The first line creates the key pair for the permission server, the second line creates the key pair for the role as tallying server.
 
-	php -f admin.php createKeypair 2
+Server 2 acts as permission server only. That is why we do not need to create a key pair for the tallying server role.
+On server 2 also cd into the backend-dir and also start the key generation for the permission server by
+
+	php -f admin.php createKeypair p 2
+
 
 ### Distribute Server Keys
 On server 1:
 
-This generates two files:
+This generates four files:
 
-	backend/config/PermissionServer1.privatekey
+	backend/config/PermissionServer1.privatekey.pem.php
 	backend/config/PermissionServer1.publickey
-Copy (somehow) the "backend/config/PermissionServer1.publickey" to server 2 into the same directory.
+	backend/config/TallyServer1.privatekey.pem.php
+	backend/config/TallyServer1.publickey
+Copy (somehow) the "backend/config/PermissionServer1.publickey" and backend/config/TallyServer1.publickey to server 2 into the same directory. These key files are public - you can email them unencrypted.
 
 On Server 2:
 
-Copy (somehow) the "backend/config/PermissionServer2.publickey" to server 1 into the same directory.
+Copy (somehow) the "backend/config/PermissionServer2.publickey" to server 1 into the same directory. This key file is public - you can email it unencrypted.
 
 
 
@@ -115,6 +123,9 @@ In order to get the newest version of vvvote, you can use the following commands
 	git pull
 	cp -r backend /var/www/vvvote # use the directory your http server uses for serving the requests
 	cp -r webclient /var/www/vvvote # use the directory your http server uses for serving the requests
+	cd /var/www/vvvote/backend # use the directory your http server uses for serving the requests
+	php -f getclient.php >index.html
+	cp index.html ../webclient/
 
 
 Prepair the MySQL Servers

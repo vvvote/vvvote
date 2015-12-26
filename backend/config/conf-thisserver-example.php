@@ -79,27 +79,33 @@ if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== parse_url($pServer
 	);
 	
 	// load private key
-	$serverkey = Array();
-	$serverkey['serverName'] = 'PermissionServer' .$serverNo;
-	
-	$privateKeyStrWraped = file_get_contents(__DIR__ . "/PermissionServer${serverNo}.privatekey.pem.php");
-	// extract the key from that file (when created with admin.php there are php markers around it in order to make apache execute it instead of delivering it) 
-	$privateKeyStr =  preg_replace('/.*(-----BEGIN RSA PRIVATE KEY-----(.*)-----END RSA PRIVATE KEY-----).*/mDs', '$1', $privateKeyStrWraped);
-	$serverkey['privatekey'] = $privateKeyStr;
+	function loadprivatekey($typePrefix, $serverNo, array $publickeys) {
+
+		$serverkey = Array();
+		$serverkey['serverName'] = $typePrefix . $serverNo;
+
+		$privateKeyStrWraped = file_get_contents(__DIR__ . "/$typePrefix${serverNo}.privatekey.pem.php");
+		// extract the key from that file (when created with admin.php there are php markers around it in order to make apache execute it instead of delivering it)
+		$privateKeyStr =  preg_replace('/.*(-----BEGIN RSA PRIVATE KEY-----(.*)-----END RSA PRIVATE KEY-----).*/mDs', '$1', $privateKeyStrWraped);
+		$serverkey['privatekey'] = $privateKeyStr;
+
+		// extract public key from private key
+		$rsa       = new rsaMyExts();
+		$rsa->loadKey($serverkey['privatekey']);
+		$rsapub    = new rsaMyExts();
+		$serverkey['publickey'] = $rsapub->_convertPublicKey($rsa->modulus, $rsa->publicExponent);
+
+		// tests if .publickey matches to the public key in this .privatekey file
+		$rsa       = new rsaMyExts();
+		$rsa->loadKey($serverkey['publickey']);
+		$i = find_in_subarray($publickeys, 'name', $serverkey['serverName']);
+		$test = $rsa->modulus->compare($publickeys[$i]['modulus']);
+		if ($test !== 0) throw ('internal server configuration error: .publickey does not match the .privatekey for ' . $serverkey['serverName']);
+		return $serverkey;
+	}
+	$pserverkey = loadprivatekey('PermissionServer', $serverNo, $pServerKeys);
+	$tserverkey = loadprivatekey('TallyServer',      $serverNo, $tServerKeys); // TODO use separate numeration for tally and permission servers
 		
-	// extract public key from private key
-	$rsa       = new rsaMyExts();
-	$rsa->loadKey($serverkey['privatekey']);
-	$rsapub    = new rsaMyExts();
-	$serverkey['publickey'] = $rsapub->_convertPublicKey($rsa->modulus, $rsa->publicExponent);
-	
-	// tests if .publickey matches to the public key in this .privatekey file
-	$rsa       = new rsaMyExts();
-	$rsa->loadKey($serverkey['publickey']);
-	$i = find_in_subarray($pServerKeys, 'name', $serverkey['serverName']);
-	$test = $rsa->modulus->compare($pServerKeys[$i]['modulus']);
-	if ($test !== 0) throw ('internal server configuration error: .publickey does not match the .privatekey for ' . $serverkey['serverName']);
-	
 	
 }
 

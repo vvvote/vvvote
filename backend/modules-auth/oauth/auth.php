@@ -121,9 +121,9 @@ class OAuth2 extends Auth {
 		return $authData['auid'];
 	}
 
-/* not needed at the moment (dirctly implemented in chechCredentials) may be this could be usefull later 
+/* not needed at the moment (dirctly implemented in checkCredentials) may be this could be usefull later 
 	function setupOAuthConnection($credentials, $electionId) {
-		global $serverkey, $dbInfos, $oauthConfig;
+		global $pserverkey, $dbInfos, $oauthConfig;
 		if (isset($this->$oAuthConnection)) return true;
 		// lod necessary data
 		$electionsDB = new DbElections($dbInfos);

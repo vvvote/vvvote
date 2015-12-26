@@ -33,7 +33,7 @@ require_once 'config/conf-thisserver.php';
 
 function loadElectionModules($httpRawPostData, $electionIdPlace) {
 	// getpermission: $reqdecoded['electionId']
-	global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $serverkey, $numAllBallots, $numPSigsRequiered;
+	global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $numAllBallots, $numPSigsRequiered;
 	$dbElections = new DbElections($dbInfos);
 	$reqdecoded = json_decode($httpRawPostData, true);
 	if ($reqdecoded == null) 						WrongRequestException::throwException(7040, 'Data in JSON format expected'         	, 'got: ' . $HTTP_RAW_POST_DATA);
@@ -63,10 +63,10 @@ function loadElectionModules($httpRawPostData, $electionIdPlace) {
 
 class LoadModules {
 	static function loadTally($name, $blinder) {
-		global $dbInfos, $pServerKeys, $serverkey;
+		global $dbInfos, $pServerKeys, $pserverkey;
 		switch ($name) {
-			case 'publishOnly': 		$ret = new PublishOnlyTally($dbInfos, new Crypt($pServerKeys, $serverkey), $blinder); break;
-			case 'configurableTally':	$ret = new ConfigurableTally($dbInfos, new Crypt($pServerKeys, $serverkey), $blinder); break;
+			case 'publishOnly': 		$ret = new PublishOnlyTally($dbInfos, new Crypt($pServerKeys, $pserverkey), $blinder); break;
+			case 'configurableTally':	$ret = new ConfigurableTally($dbInfos, new Crypt($pServerKeys, $pserverkey), $blinder); break;
 //			case 'tallyCollection': 	$ret = new TallyCollection();
 			default: 					WrongRequestException::throwException(7060, 'tally module not supported (supported: publishOnly, configurableTally, tallyCollection)', "auth module requested: " . $name);
 			break;
@@ -75,12 +75,12 @@ class LoadModules {
 	}
 	
 	static function loadBlinder($name, $elconfig, $auth) {
-	global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $serverkey, $numAllBallots, $numPSigsRequiered;
+	global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $pserverkey, $numAllBallots, $numPSigsRequiered;
 		$el = new BlindedVoter($elconfig['electionId'],
 				$numVerifyBallots,
 				$numSignBallots,
 				$pServerKeys,
-				$serverkey,
+				$pserverkey,
 				$numAllBallots,
 				$numPSigsRequiered,
 				$dbInfos,

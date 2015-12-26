@@ -6,6 +6,46 @@
 *  Original code by Angel Marin, Paul Johnston.
 *
 **/
+
+function str2binb (str) {
+	var chrsz   = 8;
+	var bin = Array();
+	var mask = (1 << chrsz) - 1;
+	for(var i = 0; i < str.length * chrsz; i += chrsz) {
+		bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (24 - i%32);
+	}
+	return bin;
+}
+
+function Utf8Encode(string) {
+	string = string.replace(/\r\n/g,"\n");
+	var utftext = "";
+
+	for (var n = 0; n < string.length; n++) {
+
+		var c = string.charCodeAt(n);
+
+		if (c < 128) {
+			utftext += String.fromCharCode(c);
+		}
+		else if((c > 127) && (c < 2048)) {
+			utftext += String.fromCharCode((c >> 6) | 192);
+			utftext += String.fromCharCode((c & 63) | 128);
+		}
+		else {
+			utftext += String.fromCharCode((c >> 12) | 224);
+			utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+			utftext += String.fromCharCode((c & 63) | 128);
+		}
+
+	}
+
+	return utftext;
+}
+
+function str2ArrayInt32(s) {
+	return str2binb(Utf8Encode(s));
+} 
  
 function SHA256(s){
  
@@ -76,41 +116,6 @@ function SHA256(s){
 		return HASH;
 	}
  
-	function str2binb (str) {
-		var bin = Array();
-		var mask = (1 << chrsz) - 1;
-		for(var i = 0; i < str.length * chrsz; i += chrsz) {
-			bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (24 - i%32);
-		}
-		return bin;
-	}
- 
-	function Utf8Encode(string) {
-		string = string.replace(/\r\n/g,"\n");
-		var utftext = "";
- 
-		for (var n = 0; n < string.length; n++) {
- 
-			var c = string.charCodeAt(n);
- 
-			if (c < 128) {
-				utftext += String.fromCharCode(c);
-			}
-			else if((c > 127) && (c < 2048)) {
-				utftext += String.fromCharCode((c >> 6) | 192);
-				utftext += String.fromCharCode((c & 63) | 128);
-			}
-			else {
-				utftext += String.fromCharCode((c >> 12) | 224);
-				utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-				utftext += String.fromCharCode((c & 63) | 128);
-			}
- 
-		}
- 
-		return utftext;
-	}
- 
 	function binb2hex (binarray) {
 		var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
 		var str = "";
@@ -124,3 +129,4 @@ function SHA256(s){
 	s = Utf8Encode(s);
 	return binb2hex(core_sha256(str2binb(s), s.length * chrsz));
 }
+
