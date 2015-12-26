@@ -12,7 +12,7 @@ function ClientConfig() { }
 ClientConfig.serverList     = new Array();
 ClientConfig.newElectionUrl = new Array();
 for (var i=0; i<serverinfos.pServerUrlBases.length; i++) {
-	if (serverinfos.keys[i].kty !== 'RSA') alert('Error in server infos: only RSA is a supported by this client');
+	if (serverinfos.pkeys[i].kty !== 'RSA') alert('Error in server infos: only RSA is a supported by this client');
 	ClientConfig.serverList[i] = {
 			'name':    serverinfos.keys[i].kid,
 			'desc':    (i === 0 ? 'Abstimmserver' : 'Kontrollserver ' + i),
