@@ -93,8 +93,8 @@ PublishOnlyTally.prototype.sendVoteData = function (vote, questionID_) {
 	transm.cmd = 'storeVote';
 	var transmstr = JSON.stringify(transm);
 	var me = this;
-	var te = new TransportEncryption();
-	te.encrypt(transmstr, me, me.encryptedCallback, ClientConfig.tkeys[0]);
+	this.te = new TransportEncryption();
+	this.te.encrypt(transmstr, me, me.encryptedCallback, ClientConfig.tkeys[0]);
 //	myXmlSend(ClientConfig.storeVoteUrl, transmstr, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
 };
 
@@ -110,23 +110,36 @@ PublishOnlyTally.test = function () {alert('mmm');};
 PublishOnlyTally.prototype.handleServerAnswerStoreVote = function (xml) {
 	try {
 		var data = parseServerAnswer(xml, true);
-		// TODO check voting server sig
-		switch (data.cmd) {
-		case 'saveYourCountedVote':
-			Page.loadMainContent('Vielen Dank f&uuml;r Ihre Stimme!');
-			alert('Stimme wurde vom Server akzeptiert!');
-			break;
-		case 'error':
+		if (typeof(data.cmd) === 'string' && data.cmd === 'error') {
+			// an encryption error occoured on server side, that is why it sends an unencrypted error message
 			alert('Der Server hat die Stimme nicht akzeptiert. Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
-			break;
-		default:
-			throw new ErrorInServerAnswer(2002, 'Error: Expected >saveYourCountedVote<', 'Got from server: ' + data.cmd);
-		break;
-		}
+		} else {
+			var me = this;
+			this.te.decrypt(data, true).then(function (data) {
+				// TODO check voting server sig
+				switch (data.cmd) {
+				case 'saveYourCountedVote': me.handleServerAnswerStoreVoteSuccess(data);
+				break;
+				case 'error':
+					alert('Der Server hat die Stimme nicht akzeptiert. Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
+					break;
+				default:
+					throw new ErrorInServerAnswer(2002, 'Error: Expected >saveYourCountedVote<', 'Got from server: ' + data.cmd);
+				break;
+				}
+			}).catch(function(e) {
+				alert('decryption of server answer failed: ' + e);
+			});
+		};
 	} catch (e) {
 		if (e instanceof MyException ) {e.alert();}
 		else {throw e;}
 	}
+};
+
+PublishOnlyTally.prototype.handleServerAnswerStoreVoteSuccess = function (data) {
+	Page.loadMainContent('Vielen Dank f&uuml;r Ihre Stimme!');
+	alert('Stimme wurde vom Server akzeptiert!');
 };
 
 

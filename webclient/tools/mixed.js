@@ -735,3 +735,23 @@ function arrayBuf2Base64Url(ab) {
 	var base64Url = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 	return base64Url;
 }
+
+function base64Url2ArrayBuf(str) {
+	// convert base64url to normal base64
+	var base64 = str.replace(/\-/g, '+').replace(/_/g, '/');
+	var neededLength = base64.length + (4 - (base64.length % 4)) % 4;
+	while (base64.length < neededLength) {
+		base64 = base64 + '=';
+	}
+	// deocde base64 using native API
+	var decodedStr = atob(base64);
+	
+	// convert string to ArrayBuffer byte by byte
+	var ab = new ArrayBuffer(decodedStr.length);
+	var abv = new Uint8Array(ab);
+	for (var i = 0; i<decodedStr.length; i++) {
+		abv[i] = decodedStr.charCodeAt(i);
+	}
+	return abv;
+}
+

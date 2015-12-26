@@ -766,30 +766,13 @@ ConfigurableTally.prototype.sendVote = function(qNo) {
 	this.sendVoteData(votestr, questionID);  // sendVoteData is inherited from publish-only-tally
 };
 
-ConfigurableTally.prototype.handleServerAnswerStoreVote = function (xml) {
-	try {
-		var data = parseServerAnswer(xml, true);
-		// TODO check voting server sig
-		switch (data.cmd) {
-		case 'saveYourCountedVote':
-			alert('Der Server hat Ihre Stimme akzeptiert.');
-			this.disableQuestion('Stimme akzeptiert', this.qNo, this.vote);
-			if (!Array.isArray(this.sentQNo)) this.sentQNo = new Array();
-			this.sentQNo.push(this.qNo);
-			if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
-				localStorage.setItem('sentQNo'+ this.returnEnvelopeLStorageId, JSON.stringify(this.sentQNo));
-			}
-			break;
-		case 'error':
-			alert('Der Server hat die Stimme nicht akzeptiert. Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
-			break;
-		default:
-			throw new ErrorInServerAnswer(2002, 'Error: Expected >saveYourCountedVote<', 'Got from server: ' + data.cmd);
-		break;
-		}
-	} catch (e) {
-		if (e instanceof MyException ) {e.alert();}
-		else {throw e;}
+ConfigurableTally.prototype.handleServerAnswerStoreVoteSuccess = function (data) { // called from handleServerAnswerStoreVote which is inherited from publish-only
+	alert('Der Server hat Ihre Stimme akzeptiert.');
+	this.disableQuestion('Stimme akzeptiert', this.qNo, this.vote);
+	if (!Array.isArray(this.sentQNo)) this.sentQNo = new Array();
+	this.sentQNo.push(this.qNo);
+	if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
+		localStorage.setItem('sentQNo'+ this.returnEnvelopeLStorageId, JSON.stringify(this.sentQNo));
 	}
 };
 

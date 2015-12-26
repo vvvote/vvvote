@@ -22,11 +22,22 @@ if (isset($HTTP_RAW_POST_DATA)) {
 		global $tserverkey;
 		$crypt = new Crypt(array(), $tserverkey);
 		$reqdata = $crypt->decryptRsaAes($HTTP_RAW_POST_DATA);
-		checkCmd($reqdata, 'storeVote');
-		$el = loadElectionModules($reqdata, $electionIdPlace);
-		$result = $el->tally->handleTallyReq(getData($reqdata));
+		try {
+			checkCmd($reqdata, 'storeVote');
+			$el = loadElectionModules($reqdata, $electionIdPlace);
+			$resultplain = $el->tally->handleTallyReq(getData($reqdata));
+		} catch (ElectionServerException $e) {
+			$resultplain = $e->makeServerAnswer();
+		}
+		$result = $crypt->encryptAes(json_encode($resultplain));
 	} catch (ElectionServerException $e) {
 		$result = $e->makeServerAnswer();
+	} catch (Exception $e) {
+		try { 
+			InternalServerError::throwException(98437, 'Internal server error', $e->getMessage());
+		} catch (InternalServerError $e) {
+			$result = $e->makeServerAnswer();
+		}
 	}
 	print "----vvvote----\n" . json_encode($result) . "\n----vvvote----\n";
 }

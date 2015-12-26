@@ -225,12 +225,14 @@ class Crypt {
 	function decryptRsaAes($json) {
 		$message = json_decode($json, true);
 		if ( ($message == null) || (! isset($message['iv'])) || (! isset($message['wrappedKey'])) || (! isset($message['encrypted'])) ) WrongRequestException::throwException(874367,'crypt: >wrappedKey<, >iv<, >encrypted< must be set', print_r($json)); 	
-		if ( (! is_string($message['iv'])) || (! is_string($message['wrappedKey'])) || (! is_string($message['encrypted'])) ) WrongRequestException::throwException(874367,'crypt: wrappedKey, iv, encrypted must be strings', print_r($json));
+		if ( (! is_string($message['iv'])) || (! is_string($message['wrappedKey'])) || (! is_string($message['encrypted'])) ) WrongRequestException::throwException(874368,'crypt: wrappedKey, iv, encrypted must be strings', print_r($json));
 		
 		$aeskey = $this->unwrapKey($message['wrappedKey']);
 		// echo base64url_encode($aeskey);
 		$plaintext = self::decryptAes($message['encrypted'], $aeskey, $message['iv']);
-		if ($plaintext === false) throw new WrongRequestException(754452, 'decryptRsaAes: decryption failed');
+		if ($plaintext === false) WrongRequestException::throwException(754452, 'decryptRsaAes: decryption failed','');
+		$this->aeskey = $aeskey;
+		$this->iv = substr(base64url_decode($message['encrypted']), -16); // save the last 128 bits as iv for next encryption
 		return $plaintext;
 	}
 	
@@ -243,22 +245,29 @@ class Crypt {
 		$cipher->setKeyLength(256);
 		$cipher->setKey($key);
 		$iv = base64url_decode($ivB64, true);
-		if ($iv === false) WrongRequestException::throwException(645277, 'decryptAes: iv must be bease64url encoded', $ivB64);
+		if ($iv === false)      WrongRequestException::throwException(645277, 'decryptAes: iv must be bease64url encoded', $ivB64);
+		if (strlen($iv) !== 16) WrongRequestException::throwException(645278, 'decryptAes: iv must have a length of 16 bytes (128 bits)', $ivB64);
 		$encrypted = base64url_decode($encryptedB64, true);
-		if ($encrypted === false) WrongRequestException::throwException(645277, 'decryptAes: >encrypted< must be bease64url encoded', $encryptedB64);
+		if ($encrypted === false) WrongRequestException::throwException(645279, 'decryptAes: >encrypted< must be bease64url encoded', $encryptedB64);
 		$cipher->setIV($iv); // defaults to all-NULLs if not explicitely defined
 
 		$decrypted = $cipher->decrypt($encrypted);
 		return $decrypted;
 	}
 
-	static function encryptAes($plaintext, $key, $ivB64 = null) {
+	function encryptAes($plaintext, $key = null, $ivB64 = null) {
 		$cipher = new Crypt_AES(CRYPT_AES_MODE_CBC); // could use CRYPT_AES_MODE_CBC
 		// keys are null-padded to the closest valid size
 		// longer than the longest key and it's truncated
 		$cipher->setKeyLength(256);
+		if ($key === null && isset($this->aeskey)) $key = $this->aeskey;
+		if ($key === null) ElectionServerException::throwException(645280, 'encryptAes: aes key not set', '');
 		$cipher->setKey($key);
-		if ($ivB64 === null) 	$iv = Crypt_RSA::_random(32);
+		
+		if ($ivB64 === null) 	{
+			if (isset($this->iv)) $iv = $this->iv;
+			else                  $iv = Crypt_RSA::_random(32);
+		}
 		else 					$iv = base64url_decode($ivB64);
 		$cipher->setIV($iv); // defaults to all-NULLs if not explicitely defined
 	
