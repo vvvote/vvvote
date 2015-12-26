@@ -29,6 +29,7 @@ Page.prototype.showSteps = function() {
  */
 Page.prototype.setStep = function(step) {
 		var element;
+		var elementli;
 		for (var i=1; i<this.steps.length; i++) {
 			element = document.getElementById('step' + i); // + step-1);
 			elementli = document.getElementById('stepli' + i); // + step-1);

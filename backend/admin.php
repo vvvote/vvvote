@@ -28,10 +28,6 @@ if (PHP_SAPI !== 'cli') {
 
 require_once 'Math/BigInteger.php';
 require_once 'Crypt/RSA.php';
-define('CRYPT_RSA_MODE', CRYPT_RSA_MODE_INTERNAL); // this is needed because otherwise openssl (if present) needs special configuration in openssl.cnf when creating a new key pair
-$DO_NOT_LOAD_PUB_KEYS = true; // interpreted from conf-allservers.php
-require_once 'config/conf-allservers.php';
-// require_once 'config/conf-thisserver.php'; // TODO this is required for database access but if the server's key is not generated cause an error
 
 
 
@@ -67,16 +63,24 @@ if ((isset($_GET['checkCredentials' ])) || (isset($_POST['checkCredentials' ])))
   	print_r($ok);
 }
 
+*/
 
-if ((isset($_GET['DeleteDatabaseContent' ])) || (isset($_POST['DeleteDatabaseContent' ]))) {
+if ( /* (isset($_GET['DeleteDatabaseContent' ])) || ( isset($_POST['DeleteDatabaseContent' ])) || */ (PHP_SAPI === 'cli' && isset($argv[1]) &&  $argv[1] === 'DeleteDatabaseContent')) {
+	require_once 'config/conf-allservers.php';
+	require_once 'config/conf-thisserver.php'; // TODO this is required for database access but if the server's key is not generated cause an error
+	require_once 'dbelections.php';
 	$db = new DbBlindedVoter($dbInfos);
+	$ok = $db->resetDb();
+	$db = new DbElections($dbInfos);
 	$ok = $db->resetDb();
 	print "<br>\n Deleted the content of the database";
 }
-*/
 
 if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  || */ (isset($argv[1]) && (strcasecmp($argv[1], 'createKeyPair') === 0)) ) {
-
+	define('CRYPT_RSA_MODE', CRYPT_RSA_MODE_INTERNAL); // this is needed because otherwise openssl (if present) needs special configuration in openssl.cnf when creating a new key pair
+	$DO_NOT_LOAD_PUB_KEYS = true; // interpreted from conf-allservers.php
+	require_once 'config/conf-allservers.php';
+	
 	if (isset($argv[1]) && (count($argv) < 4) ) {
 		print 'usage: php -f admin.php createKeyPair <p|t> <serverIdNumber>' . "\np: for permission server\nt: for tallying server"; exit(1);
 	}
