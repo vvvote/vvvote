@@ -14,15 +14,15 @@ ClientConfig.newElectionUrl = new Array();
 for (var i=0; i<serverinfos.pServerUrlBases.length; i++) {
 	if (serverinfos.pkeys[i].kty !== 'RSA') alert('Error in server infos: only RSA is a supported by this client');
 	ClientConfig.serverList[i] = {
-			'name':    serverinfos.keys[i].kid,
+			'name':    serverinfos.pkeys[i].kid,
 			'desc':    (i === 0 ? 'Abstimmserver' : 'Kontrollserver ' + i),
 			'url' :    serverinfos.pServerUrlBases[i] + '/getpermission.php', // 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 			'baseUrl': serverinfos.pServerUrlBases[i],
 			'key': {
-				'exp':      str2bigInt(serverinfos.keys[i].e, -64), // str2bigInt('65537', 10),  
+				'exp':      str2bigInt(serverinfos.pkeys[i].e, -64), // str2bigInt('65537', 10),  
 				//'exppriv':  str2bigInt('1210848652924603682067059225216507591721623093360649636835216974832908320027478419932929', 10), //TODO remove this bvefore release, only needed for debugging
-				'n':        str2bigInt(serverinfos.keys[i].n, -64), //str2bigInt('3061314256875231521936149233971694238047219365778838596523218800777964389804878111717657', 10),
-				'serverId': serverinfos.keys[i].kid
+				'n':        str2bigInt(serverinfos.pkeys[i].n, -64), //str2bigInt('3061314256875231521936149233971694238047219365778838596523218800777964389804878111717657', 10),
+				'serverId': serverinfos.pkeys[i].kid
 			},
 		};
 	ClientConfig.newElectionUrl[i] = serverinfos.pServerUrlBases[i] + '/newelection.php';
