@@ -217,7 +217,10 @@ function int2hex(num, digits) {
 function unicodeToBlackslashU(str) {
 	var ret = '';
 	for (var i = 0; i < str.length; ++i) {
-		var unicode = str.charCodeAt(i);
+		var unicode = str.charCodeAt(i); // this returns UTF-16, so that codepoints higher than 65535 are encoded using UTF-16 surrogates. 
+		                                 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/charCodeAt
+										 // --> This does not work according to the standard
+										 // BUT: php json_encode is doing the same, using CESU-8 encoding, we do the same here
 		if ( (unicode < 128) ) { // && (unicode != 60)  && (unicode != 62) spitze Klammern werden von PHP 5.3 auch mit \u kodiert
 			ret = ret + str.charAt(i);
 		} else {

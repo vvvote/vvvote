@@ -22,7 +22,9 @@ $includeJsFiles = Array(
 		'tools/rsa.js',
 		'tools/sha256.js',
 		'tools/filehandling.js',
-
+		'tools/textencoder.js',
+		'tools/jed.js',
+		
 		'exception.js',
 		'tools/mixed.js',
 		'tools/url.js',
@@ -37,7 +39,6 @@ $includeJsFiles = Array(
 		'modules-auth/external-token/module.js',
 		'modules-election/blinded-voter/module.js',
 		'modules-election/blinded-voter/module-backend.js',
-		'tools/textencoder.js',
 		'modules-tally/publish-only/transportencryption.js',
 		'modules-tally/publish-only/module.js',
 		'modules-tally/configurable-tally/module.js',
@@ -249,20 +250,22 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlscheinnummer) und
 			  || (browsName.indexOf('CHROME') >= 0) // chrome in android actually works, but the saved returnEnvelope is very hard to open whereas this is no problem in firefox for android 
 			  || (browsName.indexOf('OPERA')  >= 0) 
 			  || (browsName.indexOf('IE')     >= 0)
+			  || (browsName.indexOf('EDGE')   >= 0)
 		   ) ) {
-			showPopup(html2Fragm('Ihr Browser ' + browsName + ' ' + browser.major + ' wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 21, Chrome ab Version 38 (nicht auf Android) oder den InternetExplorer ab Version 11.'));
+			showPopup(html2Fragm('Ihr Browser ' + browsName + ' ' + browser.major + ' wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 34, Chrome ab Version 38 (nicht auf Android) oder Edge.'));
 		} else { // check browser version
-			if (   (browsName.indexOf('SAFARI') >=0 ) // safari 5: everything is working but saving the return envelope 
-				|| (browsName.indexOf('FIREFOX')>= 0 && browser.major < 21)		
+			if (   (browsName.indexOf('SAFARI') >=0 ) // safari 5: everything is working but (a) saving the return envelope and (b) webCrypto is supported from 8 (according to https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto) 
+				|| (browsName.indexOf('FIREFOX')>= 0 && browser.major < 34) // 21 is enough for all but webcrypto API which is supported from 34 onwards		
 				|| (browsName.indexOf('CHROME') >= 0 && (browser.major < 38 || os.indexOf('ANDROID') >= 0)) // chrome in android actually works, but the saved returnEnvelope is very hard to open whereas this is no problem in firefox for android		
-				|| (browsName.indexOf('OPERA')  >= 0 && browser.major < 11)		
-				|| (browsName.indexOf('IE')     >= 0 && browser.major < 11)		
+				|| (browsName.indexOf('OPERA')  >= 0 && browser.major < 34) // 11 was enough wothout WebCrypto, in 34 the webCrypto is working		
+				|| (browsName.indexOf('IE')     >= 0 && browser.major < 12)	// in IE 11 everything is working but webcrypto API. 	
+				|| (browsName.indexOf('EDGE')   >= 0 && browser.major < 1)	 	
 			   ) {
 				showPopup(html2Fragm('Ihr Browser ' + browsName + ' ' + browser.major + ' wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 21, Chrome ab Version 38 (nicht auf Android) oder den InternetExplorer ab Version 11.'));
 			}
 		}
 	}
-
+		
 	function checkBrowserReturnEnvelope() {
 		var parser = new UAParser(); 
 		var browser = parser.getBrowser(); // this check is more for convinience in order to avoid user retry and frustration
