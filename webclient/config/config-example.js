@@ -15,7 +15,11 @@ for (var i=0; i<serverinfos.pServerUrlBases.length; i++) {
 	if (serverinfos.pkeys[i].kty !== 'RSA') alert('Error in server infos: only RSA is a supported by this client');
 	ClientConfig.serverList[i] = {
 			'name':    serverinfos.pkeys[i].kid,
-			'desc':    (i === 0 ? 'Abstimmserver' : 'Kontrollserver ' + i),
+			'i': i,
+			'getDesc':    function () {
+				if (this.i === 0) return i18n.gettext('Voting server');
+				return i18n.sprintf(i18n.ngettext('Checking server', 'Checking server %d', serverinfos.pServerUrlBases.length -1), this.i);	
+			},
 			'url' :    serverinfos.pServerUrlBases[i] + '/getpermission.php', // 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 			'baseUrl': serverinfos.pServerUrlBases[i],
 			'key': {

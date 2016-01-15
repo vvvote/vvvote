@@ -9,12 +9,12 @@ function GetElectionConfig(url, serverkeys, gotConfigObject, gotConfigMethod) {
 	this.onGotConfigMethod = gotConfigMethod;
 	try { // check the election-URL
 		if ( this.url.indexOf('http://') !== 0 && this.url.indexOf('https://') !== 0 ) {
-			throw new UserInputError(1000, "Bitte geben Sie einen gültigen Wahl-Link ein. Gültige Wahl-Links beginnen mit 'http://' oder 'https://'", url);
+			throw new UserInputError(1000, i18n.gettext('Please enter a valid voting link. Valid voting links start with "http://" oder "https://".'), url);
 		}
 		var query = URI.parseURL(url); // tools/url/
 		if (!query || !query.confighash) {
 			if (query.electionUrl)	this.url = query.electionUrl; // if the webclient URL is given, it contains the link in electionUrl=
-			else throw new UserInputError(1000, "The given election URL is not in the expected format (missing ? or confighash= resp. electionUrl=)", url);
+			else throw new UserInputError(1001, i18n.gettext("The given election URL is not in the expected format (missing '?' or 'confighash=' resp. 'electionUrl=')"), url);
 		}
 //		var sigsok = verifySigs(query); // TODO implement this
 		this.reqestElectionConfig();
@@ -39,18 +39,18 @@ GetElectionConfig.prototype = {
 				if (config.cmd == 'error') throw new ServerReturnedAnError(1010, config.errorNo, config.errorTxt);
 				// verify if the deliverd config matches the requested hash
 				var query = URI.parseURL(this.url); 
-				if (!query || !query.confighash) throw new UserInputError(1000, "The given election URL is not in the expected format (missing confighash=)", this.url);
-				if ( !(GetElectionConfig.generateConfigHash(config) === query.confighash)) throw new ErrorInServerAnswer(1080, "The election config obtained from the server does not match the checksum. The server is trying to cheat you. Aborted.", this.url); 
+				if (!query || !query.confighash) throw new UserInputError(1000, i18n.gettext("The given voting URL is not in the expected format (missing 'confighash=')."), this.url);
+				if ( !(GetElectionConfig.generateConfigHash(config) === query.confighash)) throw new ErrorInServerAnswer(1080, i18n.gettext("The voting configuration obtained from the server does not match the checksum. The server is trying to cheat you. Aborted."), this.url); 
 				// TODO verify config sigs
 				this.onGotConfigMethod.call(this.onGotConfigObject, config);
 			} catch (e) {
 				if ((e instanceof ErrorInServerAnswer) && (e.errNo == 2001)) { // could not JSON decode
 					// try to extract the confighash from the URL and try to get the electionconfig from a known server
 					var query = URI.parseURL(this.url); 
-					if (!query || !query.confighash) throw new UserInputError(1000, "The given election URL is not in the expected format (missing confighash=)", this.url);
+					if (!query || !query.confighash) throw new UserInputError(1001, i18n.gettext("The given voting URL is not in the expected format (missing 'confighash=')."), this.url);
 					var tmp = ClientConfig.electionConfigUrl + '?confighash=' + query.confighash;
 					if (tmp !== this.url) this.url = tmp;
-					else new UserInputError(1020, "The election configuration could not be loaded from the provided URL", this.url);
+					else new UserInputError(1020, i18n.gettext("The voting configuration could not be loaded from the provided URL"), this.url);
 					this.reqestElectionConfig();
 				} else if (e instanceof MyException) { 
 					e.alert();
@@ -72,7 +72,7 @@ GetElectionConfig.getMainContent = function(buttontext, gotConfigObject, gotConf
 	var maincontent = 
 		'<div id="divElectionUrl">'+
 		'	<form id="formGetelectionConfig">'+
-		'		Wahl-Link: '+
+		i18n.gettext('Voting link: ') +
 		'			<input style="width:100%" name="electionUrl" id="electionUrlId" autocomplete="off" type="text" value="' + url +'">'+
 		'		<input type="button" name="getelectionconfig" id="buttonElectionUrlId" value="' + buttontext + '"'+ 
 		'			onclick="'+

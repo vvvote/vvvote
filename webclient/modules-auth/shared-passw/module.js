@@ -13,10 +13,10 @@ SharedPasswAuth.prototype.getCredentials = function (config, clientId) {
 
 SharedPasswAuth.getMainContent = function(conf) {
 	var mc =
-		'						<label for="voterId">Ihr Name:</label> ' +
+		'						<label for="voterId">' + i18n.gettext('Your name:') +'</label> ' +
 		'		  				     <input name="voterId" id="voterId" value="" autofocus="autofocus"> ' +
 		'                       <br>' +
-		'						<label for="sharedPassw">Wahlpasswort</label> ' +
+		'						<label for="sharedPassw">' + i18n.gettext('Voting password:') +'</label> ' +
 		'						     <input name="sharedPassw" id="secret" value="" type="password"></td>' + 
 		'                       <br>';
 	return mc;
@@ -24,7 +24,7 @@ SharedPasswAuth.getMainContent = function(conf) {
 
 
 SharedPasswAuth.getConfigObtainedHtml = function () {
-	var ret = 'Teilen Sie den Wahlberechtigten außerdem das Wahlpasswort mit.';
+	var ret = i18n.gettext('Additionally, tell the eligible voters the voting password.');
 	return ret;
 };
 
@@ -34,10 +34,10 @@ SharedPasswAuth.getConfigObtainedHtml = function () {
  * @returns {String}
  */
 SharedPasswAuth.getNewElectionHtml = function () {
-	var ret = 
-		'Die W&auml;hler geben ihren Namen ein und k&ouml;nnen nur dann abstimmen, wenn sie das hier festgelegte Abstimmungspasswort kennen. Es kann also jeder abstimmen, der das Abstimmungspasswort kennt.<br>' +
+	var ret =
+		i18n.gettext('The voters enter thier name and can only cast their vote if they know the password given here. Everyone who knows the password can cast his vote.<br>') +
 		'<input type="text" id="givenPassword">' + 
-		'<label for="givenPassword">Abstimmungspasswort</label>';
+		'<label for="givenPassword">' + i18n.gettext('Voting password') + '</label>';
 	return ret;
 };
 

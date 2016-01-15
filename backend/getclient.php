@@ -23,7 +23,6 @@ $includeJsFiles = Array(
 		'tools/sha256.js',
 		'tools/filehandling.js',
 		'tools/textencoder.js',
-		'tools/jed.js',
 		
 		'exception.js',
 		'tools/mixed.js',
@@ -32,6 +31,12 @@ $includeJsFiles = Array(
 		'getelectionconfig.js',
 		'listoferrors.js',
 		'tools/ua-parser.js',
+
+		'tools/jed.js',
+		'i18n/vvvote_de.js',
+		'i18n/vvvote_en_US.js',
+		'i18n/vvvote_fr.js',
+		'tools/i18n.js',
 		
 		'modules-auth/user-passw-list/module.js',
 		'modules-auth/shared-passw/module.js',
@@ -45,7 +50,7 @@ $includeJsFiles = Array(
 		'page.js',
 		'newelection.js',
 		'vote.js',
-		'getresult.js',
+		'getresult.js'
 
 
 		/* Crypto-tool 
@@ -107,125 +112,19 @@ echo '</style>';
 // print the main content take from index.html - logo125x149.svg is included somewhere in the middle of the following text 
 echo <<<EOT
 <script>
+
 /**
  * shows/hides the additional technical info div
  */
-		function onToggleTechInfosSwitch() {
-			var el=document.getElementById('techinfocheckbox');
-			var el2=document.getElementById('techinfos');
-			if (el.checked) {
-				el2.style.display='';
-			} else {
-				el2.style.display='none';
-			}
+	function onToggleTechInfosSwitch() {
+		var el=document.getElementById('techinfocheckbox');
+		var el2=document.getElementById('techinfos');
+		if (el.checked) {
+			el2.style.display='';
+		} else {
+			el2.style.display='none';
 		}
-</script>
-
-<!-- the following "<script>" is used as heredoc replacement -->
-<script  id="authUserPasswHtml" type="mumpiz">
-<div id="auth">
-	<form name="permission" method="post" onsubmit="return false;">
-		<div align="center">
-			<br>
-			<table>
-				<tr>
-					<td>
-						<table>
-							<tr>
-								<td>&nbsp;</td>
-								<td align=right><font color=black> <b>ElectionId:</b>
-								</font></td>
-								<td><input name=electionId value=""></td>
-								<td>&nbsp;</td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td align=right><font color=black> <b>VoterId:</b>
-								</font></td>
-								<td><div id="divvoterid">
-										<input name="voterId" id="voterId" value="">
-									</div></td>
-								<td>&nbsp;</td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td align=right><b>Secret:</b></td>
-								<td><input name="secret" id="secret" value="" type="password"></td>
-								<td>&nbsp;</td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td>&nbsp;</td>
-								<td><input type="submit" name=reqPermiss
-									value="Request ballot" onclick="onGetPermClick();"></td>
-								<td>&nbsp;</td>
-						</table>
-					</td>
-				</tr>
-			</table>
-		</div>
-	</form>
-<p><h2>Weitere technische Information</h2><br>
-Der Wahlschein ist digital von mindestens 2 Servern unterschrieben. Diese Unterschrift führt dazu, dass der Wahlschein bei der Stimmabgabe akzeptiert wird.<br>
-Der Wahlschein enthält eine eindeutige Wahlscheinnummer, die nur Ihr Computer kennt - sie wurde von Ihrem Computer erzeugt und verschlüsselt, bevor die Server den Wahlschein unterschrieben haben, und danach auf Ihrem Computer entschlüsselt (Man spricht von &quot;Blinded Signature&quot;). Die Server kennen daher die Wahlscheinnummer nicht.<br>
-Man kann sich das so vorstellen:<br> 
-Ihr Computer schreibt auf den Wahlschein die Wahlscheinnummer, die er sich selbst &quot;ausdenkt&quot; (Zufallszahl). Dieser Wahlschein wird zusammen mit einem Blatt Kohlepapier in einen Umschlag gelegt und an den Server geschickt. 
-Der Server unterschreibt außen auf dem Umschlag (wenn Sie wahlberechtigt sind), so dass sich die Unterschrift durch das Kohlepapier auf Ihren Wahlschein überträgt. Ohne den Umschlag geöffnet zu haben (was der Server nicht kann, weil er den dafür notwendigen Schlüssel nicht kennt), schickt er den Brief an Ihren Computer zurück.
-Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlscheinnummer) und hält einen vom Server unterschriebenen Wahlschein in der Hand, deren Nummer der Server nicht kennt.  
-</p>
-</div>
-</script>
-
-
-<!-- the following "<script>" is used as heredoc replacement -->
-<script  id="newElectionHtmlPre" type="mumpiz">
-	
-	Hier k&ouml;nnen Sie eine neue Abstimmung starten.     
-    Zum Anlegen einer neuen Abstimmung legen Sie den Namen der Abstimmung und die Authorisierungsmethode fest. 
-	<br><br>
-	<input type="text" id="electionId"> 
-    	<label for="electionId">Name der Abstimmung</label> 
- 	<br>
-	<fieldset><legend>Abstimmen über</legend>
-		<input type="radio" id="givenTest"     name="testRadioGroup" onclick="page.setQuestions('givenTest')"    /> <label for="givenTest"    >Voreingestellte Testabstimmungen</label>
-		<input type="radio" id="enterQuestion" name="testRadioGroup" onclick="page.setQuestions('enterQuestion')"/> <label for="enterQuestion">Eine Frage zur Abstimmung eingeben</label>
-	</fieldset>
-	<div id="questionInputs">
-	<!--- in this div the inputs for different tallies will be inserted --->
-	</div>
-		
-	<fieldset onload="page.setAuthMethod('sharedPassw');">
-		<legend>Autorisierungsmethode</legend>
-		<input type="radio" onclick="page.setAuthMethod('sharedPassw', null);"   name="authMethod" id="sharedPassw">
-			<label for="sharedPassw">Abstimmungspasswort</label>
-		<input type="radio" onclick="page.setAuthMethod('externalToken', null);"  name="authMethod" id="externalToken">
-			<label for="externalToken">Externe Tokenabfrage</label>
-		
- <!---   	<input type="radio" onclick="page.setAuthMethod('userPasswList', null);" name="authMethod" id="userPasswList">
-			<label for="userPasswList">Liste Benuzername und Passwort hochladen</label></input>
---->
-</script>
-		
-<!-- the following "<script>" is used as heredoc replacement -->
-<script  id="newElectionHtmlPost" type="mumpiz">
-    </fieldset>
-	<br>
-	<div id="authInputs">
-	<!--- in this div the different inputs needed for the different auth methods are displayed --->
-	</div>
-	<br>
-	<input type="button" onclick="page.handleNewElectionButton();" value="Neue Abstimmung anlegen">		
-</script>
-
-<script type="text/javascript">
-	// var maincontent = '<object type="text/html" width="800" height="700" data="modules-auth/user-passw-list/module.html"></object>'; 
-	// var maincontent = '<object type="text/html" width="800" height="700" data="getelectionconfig.html"></object>';
-	
-	var element = document.getElementById('newElectionHtmlPre'); // heredoc replacement
-	newElectionHtmlPre = element.innerHTML;
-	var element = document.getElementById('newElectionHtmlPost'); // heredoc replacement
-	newElectionHtmlPost = element.innerHTML;
-
+	}
 	
 	function userlog(log) {
 	  var element = document.getElementById('logtextarea'); 
@@ -240,7 +139,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlscheinnummer) und
 	var getResultPage   = new GetResultPage();
 	
 	var page = votePage;
-		
+	
 	function checkBrowser() {
 		var parser = new UAParser(); 
 		var browser = parser.getBrowser();
@@ -265,7 +164,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlscheinnummer) und
 			}
 		}
 	}
-		
+
 	function checkBrowserReturnEnvelope() {
 		var parser = new UAParser(); 
 		var browser = parser.getBrowser(); // this check is more for convinience in order to avoid user retry and frustration
@@ -278,8 +177,13 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlscheinnummer) und
 			showPopup(html2Fragm('Ihr Browser ' + browsName + ' ' + browser.major + ' wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 21, Chrome ab Version 38 (nicht auf Android) oder den InternetExplorer ab Version 11.'));
 		}
 	}
-		
+
 	function onWebsiteLoad() {
+		
+		var langs = document.getElementById('locale_select').children;
+		var i = ArrayIndexOf(langs, 'value', localizationName);
+		langs[i].selected = true;
+		
 		page.display();
 		if (location.search.length > 1 && typeof firstload == 'undefined' && location.search.indexOf('confighash') >= 0) {
 			firstload = false;
@@ -312,7 +216,7 @@ Ihr Computer öffnet den Umschlag (d.h. entschlüsselt die Wahlscheinnummer) und
 			checkBrowser();
 		}
 	} 
-				
+
 </script>
 
 </head>
@@ -332,19 +236,25 @@ readfile($pathToClient . 'logo125x149.svg');
 
 
 echo <<<EOT
-		</div>
+				</div>
 			<h1>VVVote</h1>
-			Online Wahl: Anonyme und nachvollziehbare Abstimmungen (in Entwicklung)
+			<p id="ciSubHead"></p>
 		</div>
 
 		<div id="nav">
 			 <a id="newElectionLink" href="javascript:page = newElectionPage; page.display(); // handleNewElection();"  >Neue Abstimmung anlegen</a> &nbsp;&nbsp;&nbsp;
-			 <a href="javascript:page = votePage;        page.display(); // startVoting(true);"    >An Abstimmung teilnehmen</a> &nbsp;&nbsp;&nbsp; 
-			 <a href="javascript:page = getResultPage;   page.display(); // startLoadingResult();" >Abstimmunsergebnis abrufen</a>
+			 <a id="takepartLink"    href="javascript:page = votePage;        page.display(); // startVoting(true);"    >An Abstimmung teilnehmen</a> &nbsp;&nbsp;&nbsp; 
+			 <a id="fetchresult"     href="javascript:page = getResultPage;   page.display(); // startLoadingResult();" >Abstimmungsergebnis abrufen</a>
+			 <select id="locale_select" onChange="changeLanguage(this.value)">
+    			<option selected="selected" value="de">Deutsch</option>
+    			<option value="en_US">English</option>
+    			<option value="fr">Français</option>
+  			</select>
+			 
 		</div>
 
 		<div id="steps">
-			<h1>Vorgehensweise</h1>
+			<h1 id="idstepstitle">Vorgehensweise</h1>
 			<ul id="stepslist">
 				<li><span id="step1" class="curr">Schritt 1: Wahlunterlagen holen</span></li>
 				<li><span id="step2">Schritt 2: Autorisierung</span></li>
@@ -359,13 +269,13 @@ echo <<<EOT
 			<!-- this div is replaced by the html of the according auth-module -->
 			<div id="loadedmaincontent">
 			<script type="text/javascript">
-				document.write('');
+				// document.write('');
 			</script>
 			</div>
 		</div>
 		<div id="techinfosswitch">
 		<input type="checkbox" name="techinfocheckbox" id="techinfocheckbox" value="techinfocheckbox" onclick="onToggleTechInfosSwitch();">
-		<label for="techinfocheckbox">Technische Informationen/Erkl&auml;rungen anzeigen</label></div>
+		<label for="techinfocheckbox" id="idtechinfocheckbox"> </label></div>
 		<div id="techinfos" style="display:none;">
 		<div id="additiontechinfos"></div>
 		<div id="log">

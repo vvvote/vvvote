@@ -162,7 +162,7 @@ BlindedVoterPermObtainer.prototype.addCredentials = function(req) {
 
 BlindedVoterPermObtainer.prototype.reqSigsNextpServerEvent = function(data) {
 	var sigsOk = this.verifySaveElectionPermiss(data);
-	if (!sigsOk) throw new ErrorInServerAnswer(9238983, 'Verification of server signature failed. Aborted.', '');
+	if (!sigsOk) throw new ErrorInServerAnswer(9238983, i18n.gettext('Verification of server signature failed. Aborted.'), '');
 	this.xthServer++;
 	return this.makePermissionReqs();
 };
@@ -188,7 +188,7 @@ function makePermissionReqsResume(election) {
  */
 BlindedVoterPermObtainer.prototype.savePermissionEvent = function(data) {
 	var sigsOk = this.verifySaveElectionPermiss(data);
-	if (!sigsOk) throw new ErrorInServerAnswer(9238983, 'Verification of server signature failed. Aborted.', '');
+	if (!sigsOk) throw new ErrorInServerAnswer(9238983, i18n.gettext('Verification of server signature failed. Aborted.'), '');
 	var ret = new Array();
 	for (var q=0; q<this.questions.length; q++) {
 		// find the ballot who got the sigs from all permission servers and save that one
@@ -272,9 +272,9 @@ BlindedVoterPermObtainer.prototype.verifySaveElectionPermiss = function(answ) {
 			var curTransm = curBallot.transm;
 			var questionID = this.questions[q].questionID;
 			var qnoAnsw = ArrayIndexOf(answ.questions, 'questionID', questionID);
-			if (qnoAnsw < 0) throw new ErrorInServerAnswer(875636, 'A questionID is mussing in the server answer', questionID);
+			if (qnoAnsw < 0) throw new ErrorInServerAnswer(875636, i18n.gettext('The following questionID is missing in the server answer: '), questionID);
 			var curAnswBallot = answ.questions[qnoAnsw].ballots[i];
-			if (this.config.serverList[prevServer].name !== curAnswBallot.sigs.slice(-1)[0].sigBy) throw new ErrorInServerAnswer(576793, 'sig is not from the server we sent the data to in order to let the server sign', 'expected: /' + this.config.serverList[prevServer].name + '/ received: /' + curAnswBallot.sigs.slice(-1)[0].sigBy +'/');
+			if (this.config.serverList[prevServer].name !== curAnswBallot.sigs.slice(-1)[0].sigBy) throw new ErrorInServerAnswer(576793, i18n.gettext('A Signature does not belong to the server we sent the data to in order to let the server sign it.'), i18n.sprintf(i18n.gettext('Expected: >%s<, received: >%s<'), this.config.serverList[prevServer].name, curAnswBallot.sigs.slice(-1)[0].sigBy));
 			// TODO think about: this only checks the newest sigs
 			var blindedSig = str2bigInt(curAnswBallot.sigs.slice(-1)[0].sig, 16);
 			var signatur = rsaUnblind(blindedSig, curBallot.blindingf[prevServer], serverKey);  // unblind
@@ -348,7 +348,7 @@ BlindedVoterPermObtainer.prototype.handleServerAnswer = function(dataString) {
 			if (this.xthServer < (this.config.serverList.length -1)) {
 				ret = this.reqSigsNextpServerEvent(data);
 			} else {
-				return Object({'action':'clientError', 'errorText': "I already got enough sigs but server said: 'more sigs needed': \n" + dataString});
+				return Object({'action':'clientError', 'errorText': i18n.sprintf(i18n.gettext("I already got enough sigs but server said: 'more sigs needed': \n%s"), dataString)});
 			}
 			break;
 		case 'savePermission':
@@ -359,7 +359,7 @@ BlindedVoterPermObtainer.prototype.handleServerAnswer = function(dataString) {
 		case 'error':
 			return Object({'action':'serverError', 'errorText': data.errorTxt, 'errorNo': data.errorNo});
 		default:
-			return Object({'action':'clientError', 'errorText': "unknown server cmd: " + data.cmd});
+			return Object({'action':'clientError', 'errorText': i18n.sprintf(i18n.gettext("unknown server cmd: %s"), data.cmd)});
 		break;
 		}
 		this.addCredentials(ret);
@@ -371,9 +371,9 @@ BlindedVoterPermObtainer.prototype.handleServerAnswer = function(dataString) {
 			return Object({'action':'clientError', 'errorText': m});
 		}
 		if (e instanceof Error) { 
-			return Object({'action':'clientError', 'errorText': "an unknown system error occured: " + e.toString()});
+			return Object({'action':'clientError', 'errorText': i18n.sprintf(i18.gettext("An unknown system error occured: %s"), e.toString())});
 		} else
-			return Object({'action':'clientError', 'errorText': "an exception occured: " + e.toString()});
+			return Object({'action':'clientError', 'errorText': i18n.sprintf(i18.gettext("an exception occured: %s"), e.toString())});
 	}
 };
 

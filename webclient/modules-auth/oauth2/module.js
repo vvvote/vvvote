@@ -73,18 +73,18 @@ OAuth2.getMainContent = function(conf) {
 	var step = 1;
 	var mc = 
 		'<ol class="substep-progress">' +
-		'<span class="stepshead">Schritte: </span>' +
+		'<span class="stepshead">' + i18n.gettext('Steps: ') + '</span>' +
 /*		'<li class="active-step" id="ss1">' +
         '	<span class="step-name"><span class="substeps">A:</span> Einloggen</span>' +
         '</li>' +
 */      '<li class="active-step"   id="ss1">' +
-        '	<span class="step-name"><span class="substeps">A:</span> Abstimmserver autorisieren</span>'+
+        '	<span class="step-name"><span class="substeps">A:</span> ' + i18n.gettext('Authorize voting server') + '</span>'+
         '</li>'+
         '<li class="todo-step"   id="ss2">'+
-        '<span class="step-name"><span class="substeps">B:</span> Kontrollserver autorisieren</span>'+
+        '<span class="step-name"><span class="substeps">B:</span> ' + i18n.gettext('Authorize checking server') + '</span>'+
         '</li>'+
         '<li class="todo-step"   id="ss3">'+
-        '	<span class="step-name"><span class="substeps">C:</span> Wahlschein erstellen</span>'+
+        '	<span class="step-name"><span class="substeps">C:</span> '+ i18n.gettext('Create voting certificate') + '</span>'+
         '</li>'+
         '</ol>'+
         '<br><br>' +
@@ -120,13 +120,13 @@ OAuth2.getMainContent = function(conf) {
 		if (step == 1) style = '""';
 		mc = mc + 
 		'<div id="substep' + step +'" style=' + style + '>' +
-		'						<label for="login'+step+'"><span class="substeps">Schritt ' + String.fromCharCode('A'.charCodeAt(0) + step -1) +':</span> Für ' + slist[permServerNr].desc +': </label> ' +
+		'						<label for="login'+step+'"><span class="substeps">' + i18n.sprintf(i18n.gettext('Step %s: '), String.fromCharCode('A'.charCodeAt(0) + step -1)) + '</span>' + i18n.sptrintf(i18n.gettext('For %s'), slist[permServerNr].getDesc()) +': </label> ' +
 	//	'		  				     <a id="login" href="javascript:window.open(\'' + oauthAutorize + '\', \'_blank\');">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
-		'		  				     <a autofocus="autofocus" id="login'+step+'" href="#" onclick="OAuth2.waitForOAuthServer(\''+oauthAutorize+'\', ' +step+');">' + slist[permServerNr].desc + ' autorisieren</a><br>'+
+		'		  				     <a autofocus="autofocus" id="login'+step+'" href="#" onclick="OAuth2.waitForOAuthServer(\''+oauthAutorize+'\', ' +step+');">' + i18n.sptrintf(i18n.gettext('Authorize %s'), slist[permServerNr].getDesc()) + '</a><br>'+
 //		'		  				     <a autofocus="autofocus" id="login'+step+'" href="' + oauthAutorize + '" target="_blank" onclick="OAuth2.showDoneButton(\'loginOauth2Txt2s'+step+'\');">' + slist[permServerNr].desc + ' autorisieren</a><br>'+
 //		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
 		'						<label for="loginOauth2Txt2s'+step+'"> </label> ' +
-		'<span id="loginOauth2Txt2s'+step+'" style="display:none"><button onclick="setSubStep(' +(step+1) +')">Autorisierung war erfolgreich</button></span>'+
+		'<span id="loginOauth2Txt2s'+step+'" style="display:none"><button onclick="setSubStep(' +(step+1) +')">' + i18n.gettext('Authorization succeeded') + '</button></span>'+
 		'<br>' +
 		'</div>';
 		step++;
@@ -134,7 +134,7 @@ OAuth2.getMainContent = function(conf) {
 		
 	mc = mc +
 	'<div id="substep' + step +'" style="display:none;">' +
-	'						<label for="displayname" style="display:none">Mich &ouml;ffentlich anzeigen als</label> ' +
+	'						<label for="displayname" style="display:none">' + i18n.gettext('Name me publicly as ') + '</label> ' +
 	'						     <input name="displayname" id="displayname" value="" type="hidden"></td>' + 
 	'</div>';
 	return mc;
@@ -147,10 +147,10 @@ OAuth2.getConfigObtainedHtml = function () {
 
 OAuth2.getNewElectionHtml = function (serverId) {
 	// TODO put this in config 
-	var ret = 
-		'F&uuml;r den Basisentscheid Online (BEO) wird f&uuml;r jeden Abstimmungstermin auf dem BEO-Server eine Liste der Stimmberechtigten angelegt. Geben Sie hier die ID dieser Liste ein.<br>' +
+	var ret =
+		i18n.gettext('Using the Basisentscheid Online (BEO), a list of eligible voters is created on the BEO server for each voting date. Enter the ID of this list.<br>') +
 		'<input name="listId" id="listId" value="" type="text">' +
-		'<label for="listId">ID der Liste, die die Abstimmungsberechtigten enth&auml;lt</label> ';
+		'<label for="listId">' + i18n.gettext('ID of the list of eligible voters') + '</label> ';
 	return ret;
 };
 

@@ -1,11 +1,11 @@
 function GetResultPage() {
 	Page.call(this);
 	this.steps = new Array();
-	this.steps[1] = 'Schritt 1: Abstimmungslink eingeben'; 
-	this.steps[2] = 'Schritt 2: Ergebnis anzeigen';
-	this.mainContent = '<p>Geben Sie den Link zu der Abstimmung ein, dessen Ergebnis Sie sehen wollen <br>' +
-	                   GetElectionConfig.getMainContent('Abstimmungsergebnis holen', 'page', 'page.gotElectionConfig');
-	this.title = 'Abstimmungsergebnis holen';
+	this.steps[1] = i18n.gettext('Step 1: Enter voting link'); 
+	this.steps[2] = i18n.gettext('Step 2: Show the result');
+	this.mainContent = i18n.gettext('<p>Enter the link of the voting for which you want to see the results<br></p>') +
+	                   GetElectionConfig.getMainContent(i18n.gettext('Get voting results'), 'page', 'page.gotElectionConfig');
+	this.title = i18n.gettext('Get Voting Results');
 	this.tally = null;
 }
 
@@ -62,7 +62,7 @@ GetResultPage.prototype.gotElectionConfig = function (config) {
 };
 
 GetResultPage.prototype.gotVotes = function (html) {
-	Page.loadMainContent('<h2>Name der Abstimmung: ' + this.config.electionTitle + '</h2>' + html);
+	Page.loadMainContent('<h2>' + i18n.gettext('Name of the voting: ') + this.config.electionTitle + '</h2>' + html);
 };
 
 
@@ -80,7 +80,7 @@ function getAuthModuleStatic(config) {
 	case 'oAuth2':        a = OAuth2;            break;
 	case 'externalToken': a = ExternalTokenAuth; break;
 	default:
-		alert('The election requieres authorisation module >' + config.auth + "< which is not supported by this client.\nUse a compatible client.");
+		alert(i18n.sprintf(i18n.gettext("The voting requieres authorisation module >%s< which is not supported by this client.\nUse a compatible client."), config.auth));
 	}
 	return a;
 }

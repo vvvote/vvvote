@@ -1,21 +1,11 @@
 function VotePage() {
 	Page.call(this);
 	this.steps = new Array();
-	this.steps[1] = 'Schritt 1: Wahlunterlagen holen'; 
-	this.steps[2] = 'Schritt 2: Autorisierung';
-	this.steps[3] = 'Schritt 3: Abstimmen';
-	this.mainContent = '<h3>Wahlunterlagen holen</h3>'+
-	'<p><ul><li>Ich habe noch keinen Wahlschein</li>' +
-	'<li>f&uuml;r die Wahl wird kein Wahlschein ben&ouml;tigt</li>' +
-	'<li>Ich wei&szlig; nicht, ob f&uuml;r die Wahl ein Wahlschein ben&ouml;tigt wird</li></ul>' +
-	GetElectionConfig.getMainContent('Wahlunterlagen holen', 'page', 'VotePage.prototype.gotElectionConfig') + '</p>' + 
-	'<p></p>&nbsp;<p></p>' +
-	'<h3>Ich habe bereits einen Wahlschein</h3>' + 
-	BlindedVoterElection.loadReturnEnvelopeHtml('page.blinder');
-	this.title = 'An Abstimmung teilnehmen';
 	this.reset();
 	VotePage.obj = this; // set a reference to this instance so that it can be called from static methods
+	this.setLanguage();
 }
+
 
 
 VotePage.prototype = new Page();
@@ -27,6 +17,23 @@ VotePage.prototype.reset = function() {
 	this.authModule = {};
 	this.displayPermFileHtmlOnPhase2 = false;
 	this.authFailed = false;
+};
+
+VotePage.prototype.setLanguage = function() {
+	this.steps[1] = i18n.gettext('Step 1: Enter voting link'); 
+	this.steps[2] = i18n.gettext('Step 2: Authorize');
+	this.steps[3] = i18n.gettext('Step 3: Vote');
+	this.mainContent = '<h3>' + i18n.gettext('Enter Voting Link') + '</h3>' +
+	i18n.gettext(
+	'<p><ul><li>I yet do not have a voting certificate</li>' +
+	'<li>For this voting no voting certificate is needed</li>' +
+	'<li>I do not know wheather a voting vertificate is needed</li></ul>') +
+	GetElectionConfig.getMainContent(i18n.gettext('Fetch voting properties'), 'page', 'VotePage.prototype.gotElectionConfig') + '</p>' + 
+	'<p></p>&nbsp;<p></p>' +
+	'<h3>' + i18n.gettext('I already have a voting certificate') + '</h3>' + 
+	BlindedVoterElection.loadReturnEnvelopeHtml('page.blinder');
+	this.title = i18n.gettext('Take part in voting');
+	Page.prototype.setLanguage.call(this); // this updates the steps
 };
 
 VotePage.prototype.display = function() {
@@ -55,7 +62,7 @@ VotePage.prototype.gotElectionConfig = function (config) {
 	// this was for debugging: this.getNextVoteTime("2015-04-13T12:41:00+02:00");
 	// TODO if we have phases that do not overlap care about these:
 	if (this.isRegPhase()) config.phase = 'generatePermissions'; 
-	else alert('Es ist nicht mehr möglich, einen Wahlschein zu erstellen');
+	else alert(i18n.gettext('It is not possible anymore to create a voting certificate')); 
 	switch (config.phase) {
 	case 'generatePermissions':
 		this.startStep2(config);
@@ -76,14 +83,14 @@ VotePage.prototype.startStep2 = function (config) {
 		this.blinder = new BlindedVoterElection(config);
 		break;
 	default:
-		alert('The election requieres election module >' + config.blinding + "< which is not supported by this client.\nUse a compatible client.");
+		alert(i18n.sprintf(i18n.gettext('The voting requires election module >%s< which is not supported by this client.\nUse a compatible client.'), config.blinding));
 	break;			
 	}
 	
 	mc = mc + '<div id="auth">' +
 	'<form onsubmit="return false;">' +
 	'                       <br>' +
-	'						<h3><label for="electionId">Name der Abstimmung:</label> ' +
+	'						<h3><label for="electionId">' + i18n.gettext('Name of voting:') + '</label> ' +
 	'                            <span id="electionId">' + config.electionTitle + '</span></h3>'+		
 //	'						<label for="electionId">Name der Abstimmung:</label> ' +
 //  '                            <input readonly="readonly" name="electionId" id="electionId" value="' + config.electionId + '">' + // TODO use element.settext for election (instead of escaping electionId) 
@@ -109,7 +116,7 @@ VotePage.prototype.startStep2 = function (config) {
 		this.authModule = new ExternalTokenAuth(); 
 		break;
 	default:
-		alert('The election requieres authorisation module >' + config.auth + "< which is not supported by this client.\nUse a compatible client.");
+		alert(i18n.sprintf(i18n.gettext('The voting requires authorisation module >%s< which is not supported by this client.\nUse a compatible client.'), config.auth));
 	}
 	var showGenerateButton = '""';
 	if (this.authModule.hasSubSteps) showGenerateButton = '"display:none;"';
@@ -117,7 +124,7 @@ VotePage.prototype.startStep2 = function (config) {
 	'<div id="substepL" style=' +showGenerateButton + '>' +
 	'						<label for="reqPermiss"></label> ' +
 	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
-	'							  value="Wahlschein erzeugen und speichern" onclick="page.onGetPermClick();">' +
+	'							  value=" ' + i18n.gettext('Generate voting certificate and save it') + '" onclick="page.onGetPermClick();">' +
     '                       <br>' +
     '</div>' +
     '</form>' +
@@ -160,7 +167,7 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEn
 			this.tally = new ConfigurableTally(this.blinder, config);
 			break;
 		default:
-			alert('Abstimmunsmodus /' + config.tally + '/ wird vom Client nicht unterstützt');
+			alert(i18n.sprintf(i18n.gettext('Voting mode >%s< is not supported by this client'), config.tally));
 		}
 		var fragm = document.createDocumentFragment(); 
 
@@ -186,7 +193,7 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEn
 		this.setStep(3);
 
 	} else {
-		alert('Wahlschein nicht gültig'); // TODO provide a more detailed error message
+		alert(i18n.gettext('The voting certificate is not valid')); // TODO provide a more detailed error message
 	}
 	
 	// check if working as return envelope and directly opend or saved (only needed for firefox)
@@ -199,13 +206,12 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEn
 			if ( browser.name.toUpperCase().indexOf('FIREFOX') >= 0) {
 				// if 'temp' or 'tmp' is in the file path, request the user to save it in a real not temporary place
 				if (location.href.toUpperCase().indexOf('TEMP') >= 0 || location.href.toUpperCase().indexOf('TMP') >= 0 ) {
-					showPopup(html2Fragm('Sie haben den Wahlschein direkt geöffnet. Sie müssen ihn aber als Datei auf Ihrem Gerät speichern. ' +
-							'<button onclick="removePopup(); page.blinder.saveReturnEnvelopeAgain();" autofocus="autofocus">Ok</button>'));
-				}
-			}		
-		}
-	}
-
+					showPopup(html2Fragm(i18n.gettext('You directly opened the voting certificate, but you have to save it as file on your device.') +
+							' <button onclick="removePopup(); page.blinder.saveReturnEnvelopeAgain();" autofocus="autofocus">Ok</button>'));
+				};
+			};		
+		};
+	};
 
 };
 
@@ -291,14 +297,14 @@ VotePage.prototype.getVoteTimeStr = function() {
 	var enddate = false;
 	if ('VotingEnd' in this.config.authConfig) enddate = new Date (this.config.authConfig.VotingEnd);
 	var now = new Date();
-	var votingTimeStr = 'Fehler r83g83';
+	var votingTimeStr = i18n.gettext('Error r83g83');
 	if (startdate === true) {
-		if (enddate === false) votingTimeStr = 'Ab sofort können Sie Ihre Stimme ohne zeitliche Einschränkung abgeben.';
-		if (enddate >= now) votingTimeStr = 'Ab sofort bis vor ' + formatDate(enddate) + ' Uhr können Sie Ihre Stimme abgeben.';
+		if (enddate === false) votingTimeStr = i18n.gettext('You can cast your vote from now on and without any time limit.');
+		if (enddate >= now) votingTimeStr = i18n.sprintf(i18n.gettext('You can cast your vote from now on until before %s.'), formatDate(enddate) );
 	}
-	if (startdate instanceof Date) votingTimeStr = 'Von ' + formatDate(startdate) + ' Uhr bis vor ' + formatDate(enddate) + ' Uhr können Sie Ihre Stimme abgeben.';
+	if (startdate instanceof Date) votingTimeStr = i18n.sprintf(i18n.gettext('You can cast your vote from %s until before %s.'), formatDate(startdate), formatDate(enddate));
 	if ( !(enddate === false)) {
-		if (startdate === false || enddate <= now)  votingTimeStr = 'Es gibt für Sie keine Möglichkeit mehr, Ihre Stimme abzugeben.';
+		if (startdate === false || enddate <= now)  votingTimeStr = i18n.gettext('It is not possible anymore to cast your vote.');
 	}
 	return votingTimeStr;
 };

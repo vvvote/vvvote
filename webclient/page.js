@@ -2,9 +2,30 @@ function Page() {
 	this.steps= new Array();
 	this.mainContent = '';
 	this.title = '';
+	this.setLanguage();
+	// document.getElementById('locale_select').onChange="page.setLanguage(this.value)";
 }
 
+
+Page.prototype.setLanguage = function() {
+	this.menu = new Array();
+	if (typeof (i18n) == 'undefined') i18n = new Jed({});
+	this.ciSubHead = i18n.gettext('Online Voting: anonymous ballots and traceable');
+	this.menu[1] = i18n.gettext('Open a new voting');
+	this.menu[2] = i18n.gettext('Take part in a voting');
+	this.menu[3] = i18n.gettext('Fetch result');
+	this.stepstitle = i18n.gettext('Procedure');
+	this.techinfocheckboxlabel = i18n.gettext('Show explanations and technical information');
+};
+
+
 Page.prototype.display = function() {
+	document.getElementById('ciSubHead').textContent = this.ciSubHead;
+	document.getElementById('newElectionLink').textContent = this.menu[1];
+	document.getElementById('takepartLink').textContent    = this.menu[2];
+	document.getElementById('fetchresult').textContent     = this.menu[3];
+	document.getElementById('idtechinfocheckbox').textContent = this.techinfocheckboxlabel;
+	document.getElementById('idstepstitle').textContent = this.stepstitle;
 	this.showSteps();
 	Page.loadMainContent(this.mainContent);
 	this.setStep(1);
@@ -16,7 +37,7 @@ Page.prototype.display = function() {
 Page.prototype.showSteps = function() {
 	var html = '';
 	for (var i=1; i<this.steps.length; i++) { // "<" because length starts measuring at index 0
-		html = html + '<li id="stepli' + i +'"><span id="step' + i +'" class="curr">' + this.steps[i] + '</span></li>';
+		html = html + '<li id="stepli' + i +'"><span id="step' + i +'">' + this.steps[i] + '</span></li>';
 	}
 	var element = document.getElementById('stepslist');
 	element.innerHTML = html;

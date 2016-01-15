@@ -3,19 +3,60 @@
 
 function NewElectionPage() {
 	Page.call(this);
-	this.steps[1] = 'Schritt 1: Abstimmungseinstellungen festlegen'; 
-	this.steps[2] = 'Schritt 2: Abstimmungslink speichern';
+	this.steps[1] = i18n.gettext('Step 1: Set voting preferences'); 
+	this.steps[2] = i18n.gettext('Step 2: Save voting link');
 	var OauthHtml = '';
 	for ( var curroauthconfig in ClientConfig.oAuth2Config) {
 		OauthHtml  = '<input type="radio" onclick="page.setAuthMethod(\'OAuth2\',\'' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '\');"     name="authMethod" id="' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '">';
 		OauthHtml += '<label for="' + ClientConfig.oAuth2Config[curroauthconfig].serverId +'">' + ClientConfig.oAuth2Config[curroauthconfig].serverDesc + '</label></input>';
 	}
+
+  
+var newElectionHtmlPre = i18n.gettext(
+	'Here you can create a new voting. ' + 
+	'In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. ' +
+	'<br><br>') + 
+	'<input type="text" id="electionId">' + 
+    '	<label for="electionId">' +  i18n.gettext('Name of voting') + '</label>' + 
+ 	'<br>' +
+
+	'<fieldset><legend>' +  i18n.gettext('Vote on') + '</legend>' +
+	'<input type="radio" id="givenTest"     name="testRadioGroup" onclick="page.setQuestions(\'givenTest\')"    /> <label for="givenTest"    >' + i18n.gettext('predefined test voting items') + '</label>' +
+	'<input type="radio" id="enterQuestion" name="testRadioGroup" onclick="page.setQuestions(\'enterQuestion\')"/> <label for="enterQuestion">' + i18n.gettext('Enter a question to vote on') + '</label>' +
+	'</fieldset>' +
+	'<div id="questionInputs">' +
+	'<!--- in this div the inputs for different tallies will be inserted --->' +
+	'</div>' +
+
+	'<fieldset onload="page.setAuthMethod(\'sharedPassw\');">' +
+	'	<legend>' + i18n.gettext('Autorization method') + '</legend>' +
+	'	<input type="radio" onclick="page.setAuthMethod(\'sharedPassw\', null);"   name="authMethod" id="sharedPassw">' +
+	'		<label for="sharedPassw">' + i18n.gettext('Voting password') + '</label>' +
+	'	<input type="radio" onclick="page.setAuthMethod(\'externalToken\', null);"  name="authMethod" id="externalToken">' +
+	'		<label for="externalToken">' + i18n.gettext('External token verification') + '</label>' +
+
+ 	'<!---   	<input type="radio" onclick="page.setAuthMethod(\'userPasswList\', null);" name="authMethod" id="userPasswList">' +
+	'		<label for="userPasswList">' + i18n.gettext('Upload a list of usernames and passwords') + '</label></input>' +
+	'--->';
+
+ 
+
+  var newElectionHtmlPost = 
+	    '</fieldset>' +
+		'<br>' +
+		'<div id="authInputs">' +
+		'<!--- in this div the different inputs needed for the different auth methods are displayed --->' +
+		'</div>' +
+		'<br>' +
+		'<input type="button" onclick="page.handleNewElectionButton();" value="' + i18n.gettext('Create new voting') + '">';		
+	
+	
 	var testHtmlml = 
 		'<br><br><button onclick="var r = secureRandom(16); var parser = new UAParser(); var browser = parser.getBrowser(); alert(browser.major + browser.name + browser.version +\'r: \' + r.toString(16)); PublishOnlyTally.test();">Test</button>';
 	var test2Htmlml = 
 		'<a href="https://addons.mozilla.org/firefox/downloads/latest/325576/addon-325576-latest.xpi?src=search" data-hash="sha256:96e26869e85c9fb40202078eae55218b477957ced6cfb997b07523ec2a99ffb6">Zu FireFox hinzuf&uuml;gen</a>';
 	this.mainContent = newElectionHtmlPre + OauthHtml + newElectionHtmlPost + testHtmlml; // test2Htmlml; // newElectionHtmlPre and newElectionHtmlPost defined in index.html as heredoc replacement
-	this.title = 'Neue Abstimmung anlegen';
+	this.title = i18n.gettext('Open a new voting');
 	this.serverno = 0;
 	this.authModule = Object();
 };
@@ -84,11 +125,11 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 			} else {
 				var a = getAuthModuleStatic(this.config);
 				var ahtml = a.getConfigObtainedHtml();
-				var mc = '<p>Speichern Sie den Link und geben Sie ihn an alle Wahlberechtigten weiter. ' +
+				var mc = '<p>' + i18n.gettext('Save the link and distribute it to all eligable people. ') +
 				ahtml +	
-				'</p>' +
-				'<p>Der Link zur Wahl ist: <input type="text" id="electionUrl" readonly="readonly" width="100%" value="' + data.configUrl + '"></p>';
-				// '<p>Der Link zur Wahl ist: ' + data.configUrl + '</p>';
+				'</p><br><p>' +
+				'<label for="electionUrl">' + i18n.gettext('This is the voting link: ') + '</label>' + 
+				'<input type="text" id="electionUrl" readonly="readonly" width="100%" value="' + data.configUrl + '"></p>';
 				this.setStep(2);
 				Page.loadMainContent(mc);
 				var eleUrl = document.getElementById('electionUrl');
@@ -97,7 +138,7 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 			break;
 		case 'error': // TODO in case the errors is reported not from the first server: handle it somehow: (remove election from all previous servers?)
 			var msg = translateServerError(data.errorNo, data.errorTxt);
-			alert("Server meldet Fehler: \n" + msg);
+			alert(i18n.gettext("Server reports error: \n") + msg);
 			break;
 		default:
 			break;

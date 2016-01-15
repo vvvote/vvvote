@@ -758,3 +758,11 @@ function base64Url2ArrayBuf(str) {
 	return abv;
 }
 
+/**
+ * return the first element of an array (use this function if you do not know what is the first key) 
+ * @param p array
+ * @returns the first element of the array
+ */
+function first(p){
+	for(var i in p) return p[i];
+	}

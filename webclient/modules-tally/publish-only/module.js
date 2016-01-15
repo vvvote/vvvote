@@ -16,7 +16,7 @@ var PublishOnlyTally = function (election, config) { // TODO store config also
  **********************************/
 
 PublishOnlyTally.GetEnterQuestionsHtml = function() {
-	return '<label for="question1Input">Frage, über die abgestimmt werden soll</label><br><textarea rows="10" cols="50" placeholder="Wer soll Koordinator der AG Wirtschaft werden?" id="question1Input" /></textarea><br>';
+	return '<label for="question1Input">' + i18n.gettext('Question to be voted on') + '</label><br><textarea rows="10" cols="50" placeholder="Wer soll Koordinator der AG Wirtschaft werden?" id="question1Input" /></textarea><br>';
 };
 
 
@@ -112,7 +112,7 @@ PublishOnlyTally.prototype.handleServerAnswerStoreVote = function (xml) {
 		var data = parseServerAnswer(xml, true);
 		if (typeof(data.cmd) === 'string' && data.cmd === 'error') {
 			// an encryption error occoured on server side, that is why it sends an unencrypted error message
-			alert('Der Server hat die Stimme nicht akzeptiert. Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
+			alert(i18n.sprintf(i18n.gettext('The server did not accept the vote. It says:\n%s'), translateServerError(data.errorNo, data.errorTxt)));
 		} else {
 			var me = this;
 			this.te.decrypt(data, true).then(function (data) {
@@ -121,14 +121,14 @@ PublishOnlyTally.prototype.handleServerAnswerStoreVote = function (xml) {
 				case 'saveYourCountedVote': me.handleServerAnswerStoreVoteSuccess(data);
 				break;
 				case 'error':
-					alert('Der Server hat die Stimme nicht akzeptiert. Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
+					alert(i18n.sprintf(i18n.gettext('The server did not accept the vote. It says:\n%s'), translateServerError(data.errorNo, data.errorTxt)));
 					break;
 				default:
-					throw new ErrorInServerAnswer(2002, 'Error: Expected >saveYourCountedVote<', 'Got from server: ' + data.cmd);
+					throw new ErrorInServerAnswer(2002, i18n.gettext('Error: Expected >saveYourCountedVote<'), i18n.sprintf(i18n.gettext('Got from server: %s'),data.cmd));
 				break;
 				}
 			}).catch(function(e) {
-				alert('decryption of server answer failed: ' + e);
+				alert(i18n.sprintf(i18n.gettext('decryption of server answer failed: %s'), e.toString()));
 			});
 		};
 	} catch (e) {
@@ -138,8 +138,8 @@ PublishOnlyTally.prototype.handleServerAnswerStoreVote = function (xml) {
 };
 
 PublishOnlyTally.prototype.handleServerAnswerStoreVoteSuccess = function (data) {
-	Page.loadMainContent('Vielen Dank f&uuml;r Ihre Stimme!');
-	alert('Stimme wurde vom Server akzeptiert!');
+	Page.loadMainContent(i18n.gettext('Thank you for voting!'));
+	alert(i18n.gettext('Server accepted the vote!'));
 };
 
 
@@ -159,7 +159,7 @@ PublishOnlyTally.prototype.handleUserClickGetAllVotes = function (config_, onGot
 	var endDate = false;
 	if ('VotingEnd' in this.config.authConfig)	endDate = new Date (this.config.authConfig.VotingEnd);
 	if ( (endDate !== false) && (now < endDate) ) {
-		var html = '<p>Solange Stimmen abgegeben werden können, kann das Wahlergebnis nicht abgerufen werden.</p>';
+		var html = i18n.gettext('<p>As long as it is possible to cast votes, it is not possible to get the voting result.</p>');
 		onGotVotesMethod.call(onGotVotesObj, html);
 		return;
 	}
@@ -186,22 +186,22 @@ PublishOnlyTally.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 		var answ = parseServerAnswer(xml, true);
 		switch (answ.cmd) {
 		case 'error':
-			alert('Der Server gibt das Abstimmungsergebnis nicht bekannt. Er meldet:\n' + translateServerError(answ.errorNo, answ.errorTxt));
+			alert(i18n.sprintf(i18n.gettext('The server does not reveal the result. It answers:\n %s'), translateServerError(answ.errorNo, answ.errorTxt)));
 			break;
 		case 'verifyCountVotes': 
 			this.processVerifyCountVotes(answ);
 			break;
 		default:
-			throw new ErrorInServerAnswer(2003, 'Error: Expected >verifyCountVotes<', 'Got from server: ' + answ.cmd);
+			throw new ErrorInServerAnswer(2003, i18n.gettext('Error: Expected >verifyCountVotes<'), i18n.sprintf(i18n.gettext('Got from server: %s'), answ.cmd));
 			break;
 		}
 	} catch (e) {
 		if (e instanceof MyException ) {e.alert();}
 		else if (e instanceof TypeError   ) {
-			var f = new ErrorInServerAnswer(2004, 'Error: unexpected var type', 'details: ' + e.toString());
+			var f = new ErrorInServerAnswer(2004, i18n.gettext('Error: unexpected var type'), i18n.sprintf(i18n.gettext('details: %s'), e.toString()));
 			f.alert();
 		} else {
-			var f = new ErrorInServerAnswer(2005, 'Error: some error occured', 'details: ' + e.toString());
+			var f = new ErrorInServerAnswer(2005, i18n.gettext('Error: some error occured'), i18n.sprintf(i18n.gettext('details: %s'), e.toString()));
 			f.alert();
 		}
 	}
@@ -213,10 +213,11 @@ PublishOnlyTally.prototype.processVerifyCountVotes = function (answ) {
 	// process data
 	//   show a list of all votes
 	var htmlcode = ''; //<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
-	htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">Finde meine Stimme</button>';
+	htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">' + i18n.gettext('Find my vote') + '</button>';
 	htmlcode = htmlcode + '<div id="allvotes"><table>';
-	htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + 'Stimme'                  + '</th>'; 
-	htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</span></th></thead>';
+	/* in the list of votes */
+	htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + i18n.pgettext('List_of_Votes','Vote') + '</th>'; 
+	htmlcode = htmlcode + '<th>' + i18n.gettext('Voting number') + '</span></th></thead>';
 	htmlcode = htmlcode + '<tbody>';
 	var myVno = false; // my voting number
 	if ('returnEnvelope' in window) {
@@ -234,11 +235,11 @@ PublishOnlyTally.prototype.processVerifyCountVotes = function (answ) {
 		var vnoText = vno;
 		if (vno === myVno) {
 			vnoAttrib = 'class="votingno myVote" id="myVote' + optionIndex + '"';
-			vnoText = vno + ' - meine Stimme';
+			vnoText = vno + i18n.gettext(' - my vote');
 		}
 		htmlcode = htmlcode + '<td> <div ' + vnoAttrib + '>' + vnoText + '</div></td>'; 
 		// TODO substitude election for this.varname
-		htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften pr&uuml;fen!</button>' + '</td>'; 
+		htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >' + i18n.gettext('Verify signatures!') + '</button>' + '</td>'; 
 //		htmlcode = htmlcode + '<td>' + this.votes[i].permission.signed.salt     + '</td>'; 
 		htmlcode = htmlcode + '</tr>';
 		// TODO add to votes only if sigOk
@@ -253,9 +254,9 @@ PublishOnlyTally.prototype.processVerifyCountVotes = function (answ) {
 	var htmlcode2 = '<div id="freq"><table>';
 	htmlcode2 = htmlcode2 + '<thead>';
 	htmlcode2 = htmlcode2 + '<th class="optionHead"  >' + 'Option'         + '</th>'; 
-	htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Stimmen' + '</th>';
+	htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext('Number of Votes') + '</th>';
 	htmlcode2 = htmlcode2 + '</thead><tfoot>';
-	htmlcode2 = htmlcode2 + '<tr><td>Gesamt</td>';
+	htmlcode2 = htmlcode2 + '<tr><td>' + i18n.gettext('Total') + '</td>';
 	htmlcode2 = htmlcode2 + '<td class="numVotes">' + numVotes+ '</td>';
 	htmlcode2 = htmlcode2 + '</tfoot><tbody>';
 	for (var i=0; i<freqs.length; i++) {

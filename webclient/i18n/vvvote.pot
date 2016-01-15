@@ -1,0 +1,712 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2016-01-15 01:08+0100\n"
+"PO-Revision-Date: 2016-01-01 12:42+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: tests\n"
+
+#: config/config-example.js:20 config/config.js:21
+msgid "Voting server"
+msgstr ""
+
+#: config/config-example.js:21 config/config.js:22
+#, javascript-format
+msgid "Checking server"
+msgid_plural "Checking server %d"
+msgstr[0] ""
+msgstr[1] ""
+
+#: getelectionconfig.js:12
+msgid ""
+"Please enter a valid voting link. Valid voting links start with \"http://\" "
+"oder \"https://\"."
+msgstr ""
+
+#: getelectionconfig.js:17
+msgid ""
+"The given election URL is not in the expected format (missing '?' or "
+"'confighash=' resp. 'electionUrl=')"
+msgstr ""
+
+#: getelectionconfig.js:42 getelectionconfig.js:50
+msgid ""
+"The given voting URL is not in the expected format (missing 'confighash=')."
+msgstr ""
+
+#: getelectionconfig.js:43
+msgid ""
+"The voting configuration obtained from the server does not match the "
+"checksum. The server is trying to cheat you. Aborted."
+msgstr ""
+
+#: getelectionconfig.js:53
+msgid "The voting configuration could not be loaded from the provided URL"
+msgstr ""
+
+#: getelectionconfig.js:75
+msgid "Voting link: "
+msgstr ""
+
+#: getresult.js:4 vote.js:23
+msgid "Step 1: Enter voting link"
+msgstr ""
+
+#: getresult.js:5
+msgid "Step 2: Show the result"
+msgstr ""
+
+#: getresult.js:6
+msgid ""
+"<p>Enter the link of the voting for which you want to see the results<br></"
+"p>"
+msgstr ""
+
+#: getresult.js:7
+msgid "Get voting results"
+msgstr ""
+
+#: getresult.js:8
+msgid "Get Voting Results"
+msgstr ""
+
+#: getresult.js:65
+msgid "Name of the voting: "
+msgstr ""
+
+#: getresult.js:83
+#, javascript-format
+msgid ""
+"The voting requieres authorisation module >%s< which is not supported by "
+"this client.\n"
+"Use a compatible client."
+msgstr ""
+
+#: listoferrors.js:41
+msgid ""
+"Check of credentials failed. You are not in the list of allowed voters for "
+"this election or secret not accepted."
+msgstr ""
+
+#: listoferrors.js:42
+msgid "Cheating: Your computer sent a wrong name of voting."
+msgstr ""
+
+#: listoferrors.js:43
+msgid "The phase of creating voting certificates is yet to begin."
+msgstr ""
+
+#: listoferrors.js:44
+msgid "The phase of creating voting certificates has already ended."
+msgstr ""
+
+#: listoferrors.js:45
+msgid "The phase of casting votes is yet to begin."
+msgstr ""
+
+#: listoferrors.js:46
+msgid "The phase of casting votes has already ended."
+msgstr ""
+
+#: listoferrors.js:47
+msgid ""
+"You can fetch the result of the voting only after the phase of casting "
+"votes has ended."
+msgstr ""
+
+#: listoferrors.js:48
+msgid "You cannot fetch the voting result anymore."
+msgstr ""
+
+#: listoferrors.js:49
+msgid "Now is not the phase of casting votes."
+msgstr ""
+
+#: listoferrors.js:50
+msgid ""
+"The server already confirmed a voting certificate for this voting for you. "
+"For every eligible voter, only one voting certificate will be confirmed "
+"(that means digitally signed by the server)."
+msgstr ""
+
+#: listoferrors.js:51
+msgid "You already have cast a vote for this voting."
+msgstr ""
+
+#: listoferrors.js:52
+msgid "The name of the voting is already in use."
+msgstr ""
+
+#: listoferrors.js:53
+msgid ""
+"The voting does not exist on the server. Most likely the voting link is "
+"wrong. Please correct it and try again."
+msgstr ""
+
+#: listoferrors.js:54
+msgid ""
+"A voting with the requested name does not exist on the server. Use the "
+"voting link directly."
+msgstr ""
+
+#: listoferrors.js:55
+msgid ""
+"Voting not found on this server. Verify you entered the correct voting url."
+msgstr ""
+
+#: listoferrors.js:56
+msgid ""
+"A voting with the transmitted name does not exists on this server. Call the "
+"election URL directly."
+msgstr ""
+
+#: listoferrors.js:57
+msgid ""
+"You did not allow this server to check your eligibility at the "
+"Basisentscheid server. Please allow this server to checkt your eligibility "
+"at the Basisentscheid server and try again."
+msgstr ""
+
+#: main.js:2 page.js:13
+msgid "Online Voting: anonymous ballots and traceable"
+msgstr ""
+
+#: main.js:3 newelection.js:59 page.js:14
+msgid "Open a new voting"
+msgstr ""
+
+#: main.js:4 page.js:15
+msgid "Take part in a voting"
+msgstr ""
+
+#: main.js:5 page.js:16
+msgid "Fetch result"
+msgstr ""
+
+#: main.js:6 page.js:17
+msgid "Procedure"
+msgstr ""
+
+#: main.js:7 page.js:18
+msgid "Show explanations and technical information"
+msgstr ""
+
+#: modules-auth/external-token/module.js:35
+msgid ""
+"The voters will be identified by a token and the eligibility will be "
+"verified by this token.<br>"
+msgstr ""
+
+#: modules-auth/oauth2/module.js:76
+msgid "Steps: "
+msgstr ""
+
+#: modules-auth/oauth2/module.js:81
+msgid "Authorize voting server"
+msgstr ""
+
+#: modules-auth/oauth2/module.js:84
+msgid "Authorize checking server"
+msgstr ""
+
+#: modules-auth/oauth2/module.js:87
+msgid "Create voting certificate"
+msgstr ""
+
+#: modules-auth/oauth2/module.js:123
+#, javascript-format
+msgid "Step %s: "
+msgstr ""
+
+#: modules-auth/oauth2/module.js:123
+#, javascript-format
+msgid "For %s"
+msgstr ""
+
+#: modules-auth/oauth2/module.js:125
+#, javascript-format
+msgid "Authorize %s"
+msgstr ""
+
+#: modules-auth/oauth2/module.js:129
+msgid "Authorization succeeded"
+msgstr ""
+
+#: modules-auth/oauth2/module.js:137
+msgid "Name me publicly as "
+msgstr ""
+
+#: modules-auth/oauth2/module.js:151
+msgid ""
+"Using the Basisentscheid Online (BEO), a list of eligible voters is created "
+"on the BEO server for each voting date. Enter the ID of this list.<br>"
+msgstr ""
+
+#: modules-auth/oauth2/module.js:153
+msgid "ID of the list of eligible voters"
+msgstr ""
+
+#: modules-auth/shared-passw/module.js:16
+msgid "Your name:"
+msgstr ""
+
+#: modules-auth/shared-passw/module.js:19
+msgid "Voting password:"
+msgstr ""
+
+#: modules-auth/shared-passw/module.js:27
+msgid "Additionally, tell the eligible voters the voting password."
+msgstr ""
+
+#: modules-auth/shared-passw/module.js:38
+msgid ""
+"The voters enter thier name and can only cast their vote if they know the "
+"password given here. Everyone who knows the password can cast his vote.<br>"
+msgstr ""
+
+#: modules-auth/shared-passw/module.js:40 newelection.js:34
+msgid "Voting password"
+msgstr ""
+
+#: modules-election/blinded-voter/module-backend.js:165
+#: modules-election/blinded-voter/module-backend.js:191
+msgid "Verification of server signature failed. Aborted."
+msgstr ""
+
+#: modules-election/blinded-voter/module-backend.js:275
+msgid "The following questionID is missing in the server answer: "
+msgstr ""
+
+#: modules-election/blinded-voter/module-backend.js:277
+msgid ""
+"A Signature does not belong to the server we sent the data to in order to "
+"let the server sign it."
+msgstr ""
+
+#: modules-election/blinded-voter/module-backend.js:277
+#, javascript-format
+msgid "Expected: >%s<, received: >%s<"
+msgstr ""
+
+#: modules-election/blinded-voter/module-backend.js:351
+#, javascript-format
+msgid ""
+"I already got enough sigs but server said: 'more sigs needed': \n"
+"%s"
+msgstr ""
+
+#: modules-election/blinded-voter/module-backend.js:362
+#, javascript-format
+msgid "unknown server cmd: %s"
+msgstr ""
+
+#: modules-election/blinded-voter/module-backend.js:374
+#, javascript-format
+msgid "An unknown system error occured: %s"
+msgstr ""
+
+#: modules-election/blinded-voter/module-backend.js:376
+#, javascript-format
+msgid "an exception occured: %s"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:37
+#, javascript-format
+msgid ""
+"%s has rejected your request (error no  %d):\n"
+" %s"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:119
+#, javascript-format
+msgid "Voting certificate %s"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:120
+msgid ""
+"In order to be able to cast your vote, you have to save your voting "
+"certificate on your device now"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:156
+msgid "Creating voting certificate"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:172
+msgid ""
+"<ul><li>You will get voting certificae in the form of a webpage file as "
+"result of this step.</li><li>Please remember where you saved it.</"
+"li><li>The voting certificate is neccesary in order to cast the vote. There "
+"is no way getting a replacement for it. Thus, save it securely till the end "
+"of the voting.</li></ul>"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:183
+msgid ""
+"<p><h2>Technical information</h2>The voting certificate is digitally signed "
+"by at least two servers. This signatures makes the certificate valid for "
+"voting. <br> The voting certificate contains an unique certificate number "
+"which is only known by your device - it was generated by your device and "
+"encrypted before it was sent and signed by the servers. Your device "
+"decrypts thes certificate number together with the server's signatures "
+"(This procedure is called &quot;Blinded Signature&quot;). Thus, the servers "
+"do not know the certificate number. <br> You can imagine it as follows:"
+"<br>  Your device generates a long random number (a unique number) and "
+"writes it on a sheet of paper. Your device lays a sheet of carbon-paper on "
+"this sheet, puts them together in an envelope, seals it and sends it to the "
+"servers. The servers sign on the outside of the envelope, in case you are "
+"entitled to vote. By doing so, the signature is transferred to the sheet "
+"containing the certificate number because of the carbon-paper. The servers "
+"do not open the envelope (which they cannot do, because they do not know "
+"the needed key), and send the envelope back to your device. Your device "
+"opens (decrypts) the envelope. In result, your device has a sheet of paper "
+"containing a unique certificate number and the signatures of the servers, "
+"but the servers do not know this number.The unique number together with the "
+"server's signatures and the ballot is called >voting certificate<.</p>"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:206
+msgid "Please load the voter certification file"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:216
+#, javascript-format
+msgid ""
+"<h2>Voting certificate generated.</h2><p id=\"didSaveButtonsId\">Did you "
+"save the voting certificate on your devide?<br><button id="
+"\"savedReturnEnvelope\" onclick=\"page.blinder."
+"onUserDidSaveReturnEnvelope();\" >Yes</button>&emsp;<button id="
+"\"didNotSaveReturnEnvelope\" onclick=\"page.blinder.saveReturnEnvelope();\" "
+">No</button></p><p><ul id=\"howToVoteId\" style=\"display:none\"><li>You "
+"got a voting certificate in the form of a webpage file which you saved on "
+"your device.</li><li>Please remember the place where you saved it.</"
+"li><li>The voting certificate is needed in order to cast the vote. There is "
+"no way obaining a new one. Thus, save it securly till the end of the voting."
+"</li><li>In order to cast a vote, open the voting certificate in a web "
+"browser. You can do this by double clicking it in the file explorer.</"
+"li><li>Everyone who has the voting certificate can use it to cast the vote "
+"- thus do not pass it on</li><li>Casting the vote using the voting "
+"certificate is anonymous. That means, as long as you do not help, nobody "
+"can find out who sent the vote.</li><li>%s</li></ul></p>"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:262
+msgid "Error: voting certificate data not found"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:264
+msgid "Error: voting certificate data could not be read: JSON decode failed"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:280
+msgid "The voter certificate is not consistent"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:366
+msgid ""
+"The signature on the vote is correct. This means that the vote is unchanged."
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:368
+msgid ""
+"The signature on the vote is not correct. This means that the vote is "
+"changed or the key does not match."
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:378
+#, javascript-format
+msgid ""
+"Error verifying a signature:\n"
+"The number of signatures on the voting certificate is not correct. \n"
+"Required number: %d, number in this voting certificate: %d: "
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:388
+#, javascript-format
+msgid ""
+"The signature by the permission server >%s< for the voting key is correct. "
+"This means, the server has confirmed that the according voter is entitled "
+"to vote."
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:390
+#, javascript-format
+msgid ""
+"The signature by permission server >%s< for the voting key is not correct. "
+"Either the configuration is wrong or there is a fraud. Please inform the "
+"persons responsible for the voting"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:393
+#, javascript-format
+msgid ""
+"Error verifying the signature:\n"
+"%s"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:443
+#, javascript-format
+msgid ""
+"For voter >%s< the server >%s< returns a different order of signatures than "
+"server >%s<."
+msgstr ""
+
+#: modules-tally/publish-only/module.js:19
+msgid "Question to be voted on"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:115
+#: modules-tally/publish-only/module.js:124
+#, javascript-format
+msgid ""
+"The server did not accept the vote. It says:\n"
+"%s"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:127
+msgid "Error: Expected >saveYourCountedVote<"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:127
+#: modules-tally/publish-only/module.js:195
+#, javascript-format
+msgid "Got from server: %s"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:131
+#, javascript-format
+msgid "decryption of server answer failed: %s"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:141
+msgid "Thank you for voting!"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:142
+msgid "Server accepted the vote!"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:162
+msgid ""
+"<p>As long as it is possible to cast votes, it is not possible to get the "
+"voting result.</p>"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:189
+#, javascript-format
+msgid ""
+"The server does not reveal the result. It answers:\n"
+" %s"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:195
+msgid "Error: Expected >verifyCountVotes<"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:201
+msgid "Error: unexpected var type"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:201
+#: modules-tally/publish-only/module.js:204
+#, javascript-format
+msgid "details: %s"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:204
+msgid "Error: some error occured"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:216
+msgid "Find my vote"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:219
+msgctxt "List_of_Votes"
+msgid "Vote"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:220
+msgid "Voting number"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:238
+msgid " - my vote"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:242
+msgid "Verify signatures!"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:257
+msgid "Number of Votes"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:259
+msgid "Total"
+msgstr ""
+
+#: newelection.js:6
+msgid "Step 1: Set voting preferences"
+msgstr ""
+
+#: newelection.js:7
+msgid "Step 2: Save voting link"
+msgstr ""
+
+#: newelection.js:16
+msgid ""
+"Here you can create a new voting. In order to do so, fill in the name of "
+"the voting and set the preferences for the authorization mechanism. <br><br>"
+msgstr ""
+
+#: newelection.js:20
+msgid "Name of voting"
+msgstr ""
+
+#: newelection.js:23
+msgid "Vote on"
+msgstr ""
+
+#: newelection.js:24
+msgid "predefined test voting items"
+msgstr ""
+
+#: newelection.js:25
+msgid "Enter a question to vote on"
+msgstr ""
+
+#: newelection.js:32
+msgid "Autorization method"
+msgstr ""
+
+#: newelection.js:36
+msgid "External token verification"
+msgstr ""
+
+#: newelection.js:39
+msgid "Upload a list of usernames and passwords"
+msgstr ""
+
+#: newelection.js:51
+msgid "Create new voting"
+msgstr ""
+
+#: newelection.js:128
+msgid "Save the link and distribute it to all eligable people. "
+msgstr ""
+
+#: newelection.js:131
+msgid "This is the voting link: "
+msgstr ""
+
+#: newelection.js:141
+msgid "Server reports error: \n"
+msgstr ""
+
+#: vote.js:24
+msgid "Step 2: Authorize"
+msgstr ""
+
+#: vote.js:25
+msgid "Step 3: Vote"
+msgstr ""
+
+#: vote.js:26
+msgid "Enter Voting Link"
+msgstr ""
+
+#: vote.js:28
+msgid ""
+"<p><ul><li>I yet do not have a voting certificate</li><li>For this voting "
+"no voting certificate is needed</li><li>I do not know wheather a voting "
+"vertificate is needed</li></ul>"
+msgstr ""
+
+#: vote.js:31
+msgid "Fetch voting properties"
+msgstr ""
+
+#: vote.js:33
+msgid "I already have a voting certificate"
+msgstr ""
+
+#: vote.js:35
+msgid "Take part in voting"
+msgstr ""
+
+#: vote.js:65
+msgid "It is not possible anymore to create a voting certificate"
+msgstr ""
+
+#: vote.js:86
+#, javascript-format
+msgid ""
+"The voting requires election module >%s< which is not supported by this "
+"client.\n"
+"Use a compatible client."
+msgstr ""
+
+#: vote.js:93
+msgid "Name of voting:"
+msgstr ""
+
+#: vote.js:119
+#, javascript-format
+msgid ""
+"The voting requires authorisation module >%s< which is not supported by "
+"this client.\n"
+"Use a compatible client."
+msgstr ""
+
+#: vote.js:127
+msgid "Generate voting certificate and save it"
+msgstr ""
+
+#: vote.js:170
+#, javascript-format
+msgid "Voting mode >%s< is not supported by this client"
+msgstr ""
+
+#: vote.js:196
+msgid "The voting certificate is not valid"
+msgstr ""
+
+#: vote.js:209
+msgid ""
+"You directly opened the voting certificate, but you have to save it as file "
+"on your device."
+msgstr ""
+
+#: vote.js:300
+msgid "Error r83g83"
+msgstr ""
+
+#: vote.js:302
+msgid "You can cast your vote from now on and without any time limit."
+msgstr ""
+
+#: vote.js:303
+#, javascript-format
+msgid "You can cast your vote from now on until before %s."
+msgstr ""
+
+#: vote.js:305
+#, javascript-format
+msgid "You can cast your vote from %s until before %s."
+msgstr ""
+
+#: vote.js:307
+msgid "It is not possible anymore to cast your vote."
+msgstr ""

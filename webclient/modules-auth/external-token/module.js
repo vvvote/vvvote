@@ -32,8 +32,7 @@ ExternalTokenAuth.getConfigObtainedHtml = function () {
  * @returns {String}
  */
 ExternalTokenAuth.getNewElectionHtml = function () {
-	var ret = 
-		'Die W&auml;hler werden über ein Token identifiziert und die Wahlberechtigung gepr&uuml;ft.<br>';
+	var ret = i18n.gettext('The voters will be identified by a token and the eligibility will be verified by this token.<br>');
 	return ret;
 };
 
