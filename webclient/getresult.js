@@ -1,15 +1,20 @@
 function GetResultPage() {
 	Page.call(this);
 	this.steps = new Array();
+	this.tally = null;
+	this.setLanguage();
+}
+
+GetResultPage.prototype = new Page();
+
+GetResultPage.prototype.setLanguage = function() {
 	this.steps[1] = i18n.gettext('Step 1: Enter voting link'); 
 	this.steps[2] = i18n.gettext('Step 2: Show the result');
 	this.mainContent = i18n.gettext('<p>Enter the link of the voting for which you want to see the results<br></p>') +
 	                   GetElectionConfig.getMainContent(i18n.gettext('Get voting results'), 'page', 'page.gotElectionConfig');
 	this.title = i18n.gettext('Get Voting Results');
-	this.tally = null;
-}
-
-GetResultPage.prototype = new Page();
+	Page.prototype.setLanguage.call(this); // this updates the steps
+};
 
 GetResultPage.prototype.display = function() {
 	Page.prototype.display.call(this);

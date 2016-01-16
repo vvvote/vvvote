@@ -43,7 +43,6 @@ VotePage.prototype.display = function() {
 		BlindedVoterElection.onImportPermission(returnEnvelope);
 		// this.gotElectionConfig(returnEnvelope.config);
 	}
-
 };
 
 
@@ -83,7 +82,7 @@ VotePage.prototype.startStep2 = function (config) {
 		this.blinder = new BlindedVoterElection(config);
 		break;
 	default:
-		alert(i18n.sprintf(i18n.gettext('The voting requires election module >%s< which is not supported by this client.\nUse a compatible client.'), config.blinding));
+		alert(i18n.sprintf(i18n.gettext('The voting requires blinding module >%s< which is not supported by this client.\nUse a compatible client.'), config.blinding));
 	break;			
 	}
 	

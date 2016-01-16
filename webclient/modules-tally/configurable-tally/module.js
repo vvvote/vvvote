@@ -303,9 +303,9 @@ ConfigurableTally.prototype.getMainContentFragm = function(fragm, tallyconfig) {
 	var table = Array([tallyconfig.questions.length *2 +1]);
 	//var table = [3][3];
 	var styleClass;
-	table[0] = [{'content': 'Antragsgruppe', 'attrib': [{'name': 'class', 'value': 'tableHeader'}]}, 
-	            {'content': 'Antragstitel',  'attrib': [{'name': 'class', 'value': 'tableHeader'}]}, 
-	            {'content': 'Aktion',        'attrib': [{'name': 'class', 'value': 'tableHeader'}]}];
+	table[0] = [{'content': i18n.gettext('Motion group'), 'attrib': [{'name': 'class', 'value': 'tableHeader'}]}, 
+	            {'content': i18n.gettext('Motion title'), 'attrib': [{'name': 'class', 'value': 'tableHeader'}]}, 
+	            {'content': i18n.gettext('Action'),       'attrib': [{'name': 'class', 'value': 'tableHeader'}]}];
 	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
 		if (qNo % 2 == 1) styleClass = 'unevenTableRow';
 		else			  styleClass = 'evenTableRow';
@@ -316,8 +316,8 @@ ConfigurableTally.prototype.getMainContentFragm = function(fragm, tallyconfig) {
 		var elp = document.createElement('button');
 		elp.setAttribute('id'	  , 'buttonShowQid'+qNo);
 		elp.setAttribute('onclick', 'ConfigurableTally.showQuestion(' +qNo+')');
-		elp.showTextHtml = 'anzeigen &amp;<br>abstimmen';
-		elp.hideTextHtml = 'verbergen';
+		elp.showTextHtml = i18n.gettext('Show &amp; <br>vote'); 
+		elp.hideTextHtml = i18n.gettext('Hide');
 		var elp2 = html2Fragm(elp.showTextHtml);
 		// var elp2 = document.createTextNode('Anzeigen & Abstimmen');
 		elp.appendChild(elp2);
@@ -391,25 +391,25 @@ ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
 			legendNode.setAttribute('class', curScheme.name);
 			switch (curScheme.name) {
 			case 'yesNo':
-				legendNode.appendChild(document.createTextNode('Zustimmung'));
-				radioBtnDOM('optionQ'+qNo+'O'+optionNo+'Y', 'optionQ'+qNo+'O'+optionNo+"YesNo", 'Ja'        , '1', fieldSetNode, 'yesNoRadio');
-				var noBtn = radioBtnDOM('optionQ'+qNo+'O'+optionNo+'N', 'optionQ'+qNo+'O'+optionNo+"YesNo", 'Nein'      , '0', fieldSetNode, 'yesNoRadio');
+				legendNode.appendChild(document.createTextNode(i18n.pgettext('voting','Acceptance')));
+				radioBtnDOM('optionQ'+qNo+'O'+optionNo+'Y', 'optionQ'+qNo+'O'+optionNo+"YesNo", i18n.pgettext('voting', 'Yes')        , '1', fieldSetNode, 'yesNoRadio');
+				var noBtn = radioBtnDOM('optionQ'+qNo+'O'+optionNo+'N', 'optionQ'+qNo+'O'+optionNo+"YesNo", i18n.pgettext('voting','No')      , '0', fieldSetNode, 'yesNoRadio');
 				if (curScheme.abstention) {
-					var rBtn = radioBtnDOM('optionQ'+qNo+'O'+optionNo+'A', 'optionQ'+qNo+'O'+optionNo+"YesNo", 'Enthaltung', '-1', fieldSetNode, 'yesNoRadio');
+					var rBtn = radioBtnDOM('optionQ'+qNo+'O'+optionNo+'A', 'optionQ'+qNo+'O'+optionNo+"YesNo", i18n.pgettext('voting','Abstentation'), '-1', fieldSetNode, 'yesNoRadio');
 					rBtn.setAttribute('checked', 'checked');
 				} else {
 					noBtn.setAttribute('checked', 'checked');
 				}
 				break;
 			case 'score':
-				legendNode.appendChild(document.createTextNode('Bewertungspunkte'));
+				legendNode.appendChild(document.createTextNode(i18n.pgettext('voting','Scores')));
 				for (var score = curScheme.minScore; score <= curScheme.maxScore; score++) {
 					var rBtn = radioBtnDOM('optionQ'+qNo+'O'+optionNo+'S'+score, 'optionQ'+qNo+'O'+optionNo+'Score', score.toString(), score.toString(), fieldSetNode, 'scoreRadio');
 					if (score == curScheme.minScore) rBtn.setAttribute('checked', 'checked');
 				}
 				break;
 			default: 
-				alert('Client unterstützt das Abstimmschema >' + curScheme.name + '< nicht');
+				alert(i18n.sprintf(i18n.gettext('Client does not support voting scheme >%s<'), curScheme.name));
 			}
 			optionFieldSet.setAttribute('class', 'optionFieldSet');
 			optionFieldSet.appendChild(fieldSetNode);
@@ -439,7 +439,7 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 		legendNode.appendChild(pTitleNode);
 	}
 	if ('optionDesc' in curOption) {
-		buttonDOM('buttonQTid'+qNo, 'Antragstext', 'ConfigurableTally.showOptionDetail("divVoteQuestionDescQ", ' +qNo+', '+optionNo+')', legendNode);
+		buttonDOM('buttonQTid'+qNo, i18n.gettext('Motion text'), 'ConfigurableTally.showOptionDetail("divVoteQuestionDescQ", ' +qNo+', '+optionNo+')', legendNode);
 		var divOptionDescNode = document.createElement('div');
 		divOptionDescNode.setAttribute('id', 'divVoteQuestionDescQ' + qNo + 'O' + optionNo);
 		divOptionDescNode.setAttribute('style', 'display:none');
@@ -448,14 +448,14 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 		if ('proponents' in curOption) {
 			var proponentsNode = document.createElement('p');
 			proponentsNode.setAttribute('class', 'proponents');
-			proponentsNode.appendChild(document.createTextNode('Antragsteller: ' + curOption.proponents.join(', ')));
+			proponentsNode.appendChild(document.createTextNode(i18n.sprintf(i18n.ngettext('Initiator: %s', 'Initiators: %s', curOption.proponents.length), curOption.proponents.join(', '))));
 			divOptionDescNode.appendChild(proponentsNode);
 		}
 
 		legendNode.appendChild(divOptionDescNode);
 	}
 	if ('shortDesc' in curOption) {
-		buttonDOM('buttonQSDid'+qNo, 'Zusammenfassung', 'ConfigurableTally.showOptionDetail("QuestionShortDescQ", ' +qNo+', '+optionNo+')', legendNode);
+		buttonDOM('buttonQSDid'+qNo, i18n.ngettext('Summary'), 'ConfigurableTally.showOptionDetail("QuestionShortDescQ", ' +qNo+', '+optionNo+')', legendNode);
 		var divOptionDescNode = document.createElement('div');
 		divOptionDescNode.setAttribute('id', 'QuestionShortDescQ' + qNo + 'O' + optionNo);
 		divOptionDescNode.setAttribute('style', 'display:none');
@@ -464,7 +464,7 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 		legendNode.appendChild(divOptionDescNode);
 	}
 	if ('reasons' in curOption) {
-		buttonDOM('buttonQRid'+qNo, 'Begründung', 'ConfigurableTally.showOptionDetail("QuestionReasonQ", ' +qNo+', '+optionNo+')', legendNode);
+		buttonDOM('buttonQRid'+qNo, i18n.ngettext('Reasoning'), 'ConfigurableTally.showOptionDetail("QuestionReasonQ", ' +qNo+', '+optionNo+')', legendNode);
 		var divOptionDescNode = document.createElement('div');
 		var optionDescNode = wikiSyntax2DOMFrag(curOption.reasons);
 		divOptionDescNode.setAttribute('id', 'QuestionReasonQ' + qNo + 'O' + optionNo);
@@ -548,13 +548,13 @@ ConfigurableTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorage
 	}
 	//var configHash = GetElectionConfig.generateConfigHash(this.config);
 	var voteStart = page.getNextVoteTime();
-	var buttonStr = 'Fehler 238u8';
+	var buttonStr = i18n.gettext('Error 238u8');
 	var disable = false;
-	if (voteStart === false) {disable = true;  buttonStr = 'Stimmabgabe nicht mehr möglich'; }
-	if (voteStart === true)  {disable = false; buttonStr = 'Stimme senden'; }
+	if (voteStart === false) {disable = true;  buttonStr = i18n.gettext('Vote casting is closed'); }
+	if (voteStart === true)  {disable = false; buttonStr = 'Cast vote'; }
 	if (voteStart instanceof Date) {
 		disable = true;
-		buttonStr = 'Stimme senden ab ' + formatDate(voteStart) + ' möglich';
+		buttonStr = i18n.sprintf(i18n.gettext('Vote casting starts at %s'), formatDate(voteStart));
 		var me = this;
 		executeAt(voteStart, me, me.enableSendVoteButtons);
 	}
@@ -565,7 +565,7 @@ ConfigurableTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorage
 		if (tmp != null) this.sentQNo = JSON.parse(tmp);
 	}
 	for (var qNo=0; qNo<this.config.questions.length; qNo++) {
-		if (tmp != null && this.sentQNo.indexOf(qNo) >=0) this.disableQuestion('Stimme akzeptiert', qNo, false);
+		if (tmp != null && this.sentQNo.indexOf(qNo) >=0) this.disableQuestion(i18n.gettext('Vote accepted'), qNo, false);
 		else                                              this.enDisableSendButton(buttonStr, qNo, disable);
 	}
 };
@@ -767,8 +767,8 @@ ConfigurableTally.prototype.sendVote = function(qNo) {
 };
 
 ConfigurableTally.prototype.handleServerAnswerStoreVoteSuccess = function (data) { // called from handleServerAnswerStoreVote which is inherited from publish-only
-	alert('Der Server hat Ihre Stimme akzeptiert.');
-	this.disableQuestion('Stimme akzeptiert', this.qNo, this.vote);
+	alert(i18n.gettext('The server accepted your vote.'));
+	this.disableQuestion(i18n.gettext('Vote accepted'), this.qNo, this.vote);
 	if (!Array.isArray(this.sentQNo)) this.sentQNo = new Array();
 	this.sentQNo.push(this.qNo);
 	if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
@@ -939,7 +939,7 @@ ConfigurableTally.prototype.handleUserClickShowWinners = function (config_, onGo
 	var endDate = false;
 	if ('VotingEnd' in this.config.authConfig)	endDate = new Date (this.config.authConfig.VotingEnd);
 	if ( (endDate !== false) && (now < endDate) ) {
-		var html = '<p>Solange Stimmen abgegeben werden können, kann das Wahlergebnis nicht abgerufen werden.</p>';
+		var html = i18n.gettext('<p>You cannot fetch the result as long as vote casting is possible.</p>');
 		onGotVotesMethod.call(onGotVotesObj, html);
 		return;
 	}
@@ -965,7 +965,7 @@ ConfigurableTally.prototype.handleServerAnswerShowWinners = function (xml) {
 				var questionID = this.config.questions[question].questionID;
 				html = html + '<p>' + this.getWinnersHtml(questionID);
 				if (typeof(questionID) === 'string') questionID = "'" + questionID + "'"; 
-				html = html + '<button onclick="page.tally.handleUserClickGetAllVotes(' + questionID + ')">Alle Stimmen ansehen</button></p>';
+				html = html + '<button onclick="page.tally.handleUserClickGetAllVotes(' + questionID + ')">' + i18n.gettext('Show all votes') + '</button></p>';
 			}
 			break;
 		case 'error':
@@ -973,29 +973,32 @@ ConfigurableTally.prototype.handleServerAnswerShowWinners = function (xml) {
 				html = html + '<p>' + msg + '</p>';
 			break;
 		default:
-			throw new ErrorInServerAnswer(2043, 'Error: Expected >showWinners< or >error<', 'Got from server: ' + answer.cmd);
+			throw new ErrorInServerAnswer(2043, i18n.gettext('Error: Expected >showWinners< or >error<'), i18n.sprintf(i18n.gettext('Got from server: %s'), answer.cmd));
 			break;
 		}
 		this.onGotVotesMethod.call(this.onGotVotesObj, html);
 	} catch (e) {
 		// TODO if (e instanceof ErrorInServerAnswer)
 		if (e instanceof MyException)	e.alert();
-		else alert('irgendwas hat nicht geklappt: ' + e.toString()); 
+		else alert(i18n.sprintf(i18n.gettext('Something did not work: %s'), e.toString())); 
 	}
 };
 
 ConfigurableTally.prototype.getWinnersHtml = function (questionID) {
-	var html = "Bei Antragsgruppe " + questionID;
-	if (this.winners[questionID].length == 0) html = html + ' hat kein Antrag die erforderliche Mehrheit erreicht. ';
-	if (this.winners[questionID].length == 1) html = html + ' wurde <a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(questionID) + ', ' + addQuotationMarksIfString(this.winners[questionID][0]) + ');">Antrag ' + this.winners[questionID] + '</a> angenommen. ';
-	if (this.winners[questionID].length  > 1) {
-		html = html + ' wurden ';
+	var html = '';
+	if (this.winners[questionID].length == 0) html = html + i18n.sprintf(i18n.gettext('In motion group %s, no motion got the requiered number of votes. '), questionID);
+//	if (this.winners[questionID].length == 1) html = html + i18n.sprintf(i18n.gettext('In motion group %s, %s won. '), questionID,
+//			'<a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(questionID) + ', ' + addQuotationMarksIfString(this.winners[questionID][0]) + ');">' + 
+//			i18n.sprintf(i18n.gettext('Motion %s'), this.winners[questionID]) + '</a>');
+	if (this.winners[questionID].length  > 0) {
+		var motionshtml = '';
 		for (var i=0; i<this.winners[questionID].length; i++) {
-			html = html + '<a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(questionID) + ', ' + addQuotationMarksIfString(this.winners[questionID][i]) + ');">Antrag ' + this.winners[questionID][i] + '</a>';
-			if (i+2 == this.winners[questionID].length) html = html + ' und ';
-			if (i+2 <  this.winners[questionID].length) html = html + ', ';
+			motionshtml = motionshtml + '<a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(questionID) + ', ' + addQuotationMarksIfString(this.winners[questionID][i]) + ');">' +
+			i18n.sprintf(i18n.gettext('Motion %s'), this.winners[questionID]) + '</a>';
+			if (i+2 == this.winners[questionID].length) motionshtml = motionshtml + i18n.gettext(' and ');
+			if ((this.winners[questionID].length > 1) && (i+2 <  this.winners[questionID].length)) motionshtml = motionshtml + ', ';
 		}
-		html = html + '	angenommen. ';
+		html = i18n.sprintf(i18n.ngettext('In motion group %s, %s won. ', 'In motion group %s, %s won. ', this.winners[questionID].length), questionID,	motionshtml);
 	}
 	return html;
 };
@@ -1007,7 +1010,7 @@ ConfigurableTally.prototype.showOptionPopUp = function (questionID, optionID) {
 	var curOption = curQ.options[optionNo];
 	var fragm = document.createDocumentFragment(); 
 	fragm.appendChild(ConfigurableTally.getOptionTextFragm(curOption, qNo, optionNo));
-	buttonDOM('closePopup', 'Schließen', 'page.tally.removeOptionPopup()', fragm, 'closePopup');
+	buttonDOM('closePopup', i18n.gettext('Close'), 'page.tally.removeOptionPopup()', fragm, 'closePopup');
 	showPopup(fragm);
 };
 
@@ -1075,17 +1078,19 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 				'yesNo': {'numYes': 0, 'numNo': 0, 'numAbstention': 0},
 				'score': 0
 		};
-		htmlcode = htmlcode + '<h3>Stimmen zu <a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(curQuestion.questionID) + ', ' + addQuotationMarksIfString(curQuestion.options[optionIndex].optionID) + ');">Antrag ' + curQuestion.options[optionIndex].optionID + '</a></h3>';
+		htmlcode = htmlcode + '<h3>' + i18n.gettext('Votes on %s '), 
+			'<a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(curQuestion.questionID) + ', ' + addQuotationMarksIfString(curQuestion.options[optionIndex].optionID) + ');">' + 
+			i18n.sprintf(i18n.gettext('motion %s'), curQuestion.options[optionIndex].optionID) + '</a></h3>';
 		htmlcode = htmlcode + '<div class="allvotes"><table>';
 		htmlcode = htmlcode + '<thead>'; 
 		for (var schemeIndex=0; schemeIndex<curQuestion.tallyData.scheme.length; schemeIndex++ ) {
 			switch(curQuestion.tallyData.scheme[schemeIndex].name) {
-			case 'yesNo': htmlcode = htmlcode + '<th>' + 'Ja/Nein</th>'; break;
-			case 'score': htmlcode = htmlcode + '<th>' + 'Bewertung</th>'; break;
-			default: alert('error 875498z54: scheme not supported');
+			case 'yesNo': htmlcode = htmlcode + '<th>' + i18n.gettext('Yes/No') + '</th>'; break;
+			case 'score': htmlcode = htmlcode + '<th>' + i18n.gettext('Score')  + '</th>'; break;
+			default: alert(i18n.gettext('Error 875498z54: scheme not supported'));
 			};
 		}
-		htmlcode = htmlcode + '<th>' + 'Stimmnummer' + '</th><th>Prüfen!</th></thead>';
+		htmlcode = htmlcode + '<th>' + i18n.gettext('Voting number') + '</th><th>' + i18n.gettext('Verify!') + '</th></thead>';
 		htmlcode = htmlcode + '<tbody>';
 		for (var i=0; i<this.votes.length; i++) {
 			htmlcode = htmlcode + '<tr>';
@@ -1093,8 +1098,8 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 			for (var schemeIndex=0; schemeIndex<curQuestion.tallyData.scheme.length; schemeIndex++ ) {
 				var curScheme = curQuestion.tallyData.scheme[schemeIndex];
 				try {vno = this.votes[i].permission.signed.votingno; } catch (e) {vno = 'Error'; disabled = 'disabled';}
-				var vt = 'fehler';
-				var value = 'invalid';
+				var vt = i18n.gettext('Error');
+				var value = i18n.gettext('invalid');
 				try {
 					var vString   = this.votes[i].vote.vote; 
 					v = JSON.parse(vString); 
@@ -1107,20 +1112,20 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 					switch (curScheme.name) {
 					case 'yesNo': 
 						switch (value) {
-						case 1: vt = 'Ja';     freq[optionIndex].yesNo.numYes++;        break;
-						case 0: vt = 'Nein';   freq[optionIndex].yesNo.numNo++;         break;
-						case -1: vt = 'Enth.'; freq[optionIndex].yesNo.numAbstention++; break; // TODO verify if abstention is in the scheme allowed
-						default: vt = 'ungültig'; break;
+						case 1: vt = i18n.gettext('Yes');    freq[optionIndex].yesNo.numYes++;        break;
+						case 0: vt = i18n.gettext('No');     freq[optionIndex].yesNo.numNo++;         break;
+						case -1: vt = i18n.gettext('Abst.'); /* translators: do not use more than 7 characters */ freq[optionIndex].yesNo.numAbstention++; break; // TODO verify if abstention is in the scheme allowed
+						default: vt = i18n.gettext('invalid'); break;
 						}
 						break;
 					case 'score': 
 						vt = value.toString(); 
 						freq[optionIndex].score = freq[optionIndex].score + value; 
 						break; // TODO check range
-					default:      vt = 'ungültig'; break;
+					default:      vt = i18n.gettext('invalid'); break;
 					}
 				} catch (e) {
-					vt   = 'Error'; 
+					vt   = i18n.gettext('Error'); 
 					disabled = 'disabled';
 				}
 				htmlcode = htmlcode + '<td  class="vote ' + curScheme.name + ' ' + curScheme.name + value.toString() + '">';
@@ -1130,10 +1135,11 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 			var vnoText = vno;
 			if (vno === myVno) {
 				vnoAttrib = 'class="votingno myVote" id="myVote' + optionIndex + '"';
-				vnoText = vno + ' - meine Stimme';
+				vnoText = vno + i18n.gettext(' - my vote');
 			}
 			htmlcode = htmlcode + '<td> <div ' + vnoAttrib + '>' + vnoText + '</div></td>'; 
-			htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >Unterschriften pr&uuml;fen!</button>' + '</td>'; 
+			htmlcode = htmlcode + '<td> <button ' + disabled + ' onclick="page.tally.handleUserClickVerifySig(' + i +');" >' + 
+				i18n.gettext('Verify signatures!') + '</button>' + '</td>'; 
 //			htmlcode = htmlcode + '<td>' + this.votes[i].permission.signed.salt     + '</td>'; 
 			htmlcode = htmlcode + '</tr>';
 			// TODO add to votes only if sigOk
@@ -1152,17 +1158,17 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 		var curScheme = curQuestion.tallyData.scheme[schemeIndex];
 		switch (curScheme.name) {
 		case 'yesNo':
-			htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Ja' + '</th>';
-			htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Nein' + '</th>';
+			htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext("Number of YESs") + '</th>';
+			htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext('Numer of NOs') + '</th>';
 			if (curScheme.abstention) {
-				htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Anzahl Enth.' + '</th>';
+				htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext('Number of absten.') + '</th>';
 			}
 			break;
 		case 'score': 
-			htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Summe Bewertungen' + '</th>';
+			htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext('Sum of scores') + '</th>';
 			break; 
 		default:
-			htmlcode2 = htmlcode2 + '<th class="numVotes">' + 'Not Supported Scheme' + '</th>';
+			htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext('Not Supported voting scheme') + '</th>';
 		break;
 		}
 	}
@@ -1172,7 +1178,8 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 		var winnerOption = '';
 		if (this.winners[curQuestion.questionID].indexOf(curQuestion.options[i].optionID) >= 0) winnerOption = ' winnerOption'; 
 		htmlcode2 = htmlcode2 + '<td class="option' + winnerOption + '">' + 
-		'<a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(curQuestion.questionID) + ', ' + addQuotationMarksIfString(curQuestion.options[i].optionID) + ');">Antrag ' + curQuestion.options[i].optionID + '</a>' + 
+		'<a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(curQuestion.questionID) + ', ' + addQuotationMarksIfString(curQuestion.options[i].optionID) + ');">' + 
+		i18n.sprintf(i18n.gettext('motion %s'), curQuestion.options[i].optionID) + '</a>' + 
 		'</td>'; 
 		for (var schemeIndex=0; schemeIndex<curQuestion.tallyData.scheme.length; schemeIndex++ ) {
 			var curScheme = curQuestion.tallyData.scheme[schemeIndex];
@@ -1188,7 +1195,7 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + freq[i].score + '</td>';
 				break; 
 			default:
-				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + 'Not Supported Scheme' + '</td>';
+				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + i18n.gettext('Not supported voting scheme') + '</td>';
 			break;
 			}
 		}
@@ -1197,7 +1204,7 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 	htmlcode2 = htmlcode2 + '</tbody>';
 	htmlcode2 = htmlcode2 + '</table></div>';
 
-	var htmlcode0 = '<h3> Antragsgruppe: ' + this.curQuestionID + '</h3>';
+	var htmlcode0 = '<h3>' + i18n.sprintf(i18n.gettext('Motion group: %s'), this.curQuestionID) + '</h3>';
 	htmlcode0 = htmlcode0 + '<p>' + this.getWinnersHtml(this.curQuestionID) + '</p>';
 
 	var ret = htmlcode0 + '<br>\n\n' + htmlcode2 + '<br> <br>\n\n' + htmlcode;

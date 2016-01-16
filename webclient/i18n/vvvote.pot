@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-01-15 01:08+0100\n"
+"POT-Creation-Date: 2016-01-16 01:04+0100\n"
 "PO-Revision-Date: 2016-01-01 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -36,7 +36,7 @@ msgstr ""
 
 #: getelectionconfig.js:17
 msgid ""
-"The given election URL is not in the expected format (missing '?' or "
+"The given voting URL is not in the expected format (missing '?' or "
 "'confighash=' resp. 'electionUrl=')"
 msgstr ""
 
@@ -59,33 +59,33 @@ msgstr ""
 msgid "Voting link: "
 msgstr ""
 
-#: getresult.js:4 vote.js:23
+#: getresult.js:11 vote.js:23
 msgid "Step 1: Enter voting link"
 msgstr ""
 
-#: getresult.js:5
+#: getresult.js:12
 msgid "Step 2: Show the result"
 msgstr ""
 
-#: getresult.js:6
+#: getresult.js:13
 msgid ""
 "<p>Enter the link of the voting for which you want to see the results<br></"
 "p>"
 msgstr ""
 
-#: getresult.js:7
+#: getresult.js:14
 msgid "Get voting results"
 msgstr ""
 
-#: getresult.js:8
+#: getresult.js:15
 msgid "Get Voting Results"
 msgstr ""
 
-#: getresult.js:65
+#: getresult.js:70
 msgid "Name of the voting: "
 msgstr ""
 
-#: getresult.js:83
+#: getresult.js:88
 #, javascript-format
 msgid ""
 "The voting requieres authorisation module >%s< which is not supported by "
@@ -93,85 +93,74 @@ msgid ""
 "Use a compatible client."
 msgstr ""
 
-#: listoferrors.js:41
+#: listoferrors.js:39
 msgid ""
 "Check of credentials failed. You are not in the list of allowed voters for "
-"this election or secret not accepted."
+"this voting or secret not accepted."
 msgstr ""
 
-#: listoferrors.js:42
+#: listoferrors.js:40
 msgid "Cheating: Your computer sent a wrong name of voting."
 msgstr ""
 
-#: listoferrors.js:43
+#: listoferrors.js:41
 msgid "The phase of creating voting certificates is yet to begin."
 msgstr ""
 
-#: listoferrors.js:44
+#: listoferrors.js:42
 msgid "The phase of creating voting certificates has already ended."
 msgstr ""
 
-#: listoferrors.js:45
+#: listoferrors.js:43
 msgid "The phase of casting votes is yet to begin."
 msgstr ""
 
-#: listoferrors.js:46
+#: listoferrors.js:44
 msgid "The phase of casting votes has already ended."
 msgstr ""
 
-#: listoferrors.js:47
+#: listoferrors.js:45
 msgid ""
 "You can fetch the result of the voting only after the phase of casting "
 "votes has ended."
 msgstr ""
 
-#: listoferrors.js:48
+#: listoferrors.js:46
 msgid "You cannot fetch the voting result anymore."
 msgstr ""
 
-#: listoferrors.js:49
+#: listoferrors.js:47
 msgid "Now is not the phase of casting votes."
 msgstr ""
 
-#: listoferrors.js:50
+#: listoferrors.js:48
 msgid ""
 "The server already confirmed a voting certificate for this voting for you. "
 "For every eligible voter, only one voting certificate will be confirmed "
 "(that means digitally signed by the server)."
 msgstr ""
 
-#: listoferrors.js:51
+#: listoferrors.js:49
 msgid "You already have cast a vote for this voting."
 msgstr ""
 
-#: listoferrors.js:52
+#: listoferrors.js:50
 msgid "The name of the voting is already in use."
 msgstr ""
 
-#: listoferrors.js:53
+#: listoferrors.js:51
 msgid ""
 "The voting does not exist on the server. Most likely the voting link is "
 "wrong. Please correct it and try again."
 msgstr ""
 
-#: listoferrors.js:54
+#: listoferrors.js:52
 msgid ""
 "A voting with the requested name does not exist on the server. Use the "
 "voting link directly."
 msgstr ""
 
-#: listoferrors.js:55
-msgid ""
-"Voting not found on this server. Verify you entered the correct voting url."
-msgstr ""
-
-#: listoferrors.js:56
-msgid ""
-"A voting with the transmitted name does not exists on this server. Call the "
-"election URL directly."
-msgstr ""
-
-#: listoferrors.js:57
+#: listoferrors.js:53
 msgid ""
 "You did not allow this server to check your eligibility at the "
 "Basisentscheid server. Please allow this server to checkt your eligibility "
@@ -182,7 +171,7 @@ msgstr ""
 msgid "Online Voting: anonymous ballots and traceable"
 msgstr ""
 
-#: main.js:3 newelection.js:59 page.js:14
+#: main.js:3 newelection.js:65 page.js:14
 msgid "Open a new voting"
 msgstr ""
 
@@ -275,7 +264,7 @@ msgid ""
 "password given here. Everyone who knows the password can cast his vote.<br>"
 msgstr ""
 
-#: modules-auth/shared-passw/module.js:40 newelection.js:34
+#: modules-auth/shared-passw/module.js:40 newelection.js:40
 msgid "Voting password"
 msgstr ""
 
@@ -429,7 +418,7 @@ msgstr ""
 msgid ""
 "Error verifying a signature:\n"
 "The number of signatures on the voting certificate is not correct. \n"
-"Required number: %d, number in this voting certificate: %d: "
+"Required number: %d, number in this voting certificate: %d"
 msgstr ""
 
 #: modules-election/blinded-voter/module.js:388
@@ -462,8 +451,239 @@ msgid ""
 "server >%s<."
 msgstr ""
 
+#: modules-tally/configurable-tally/module.js:306
+msgid "Motion group"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:307
+msgid "Motion title"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:308
+msgid "Action"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:319
+msgid "Show &amp; <br>vote"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:320
+msgid "Hide"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:394
+msgctxt "voting"
+msgid "Acceptance"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:395
+msgctxt "voting"
+msgid "Yes"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:396
+msgctxt "voting"
+msgid "No"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:398
+msgctxt "voting"
+msgid "Abstentation"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:405
+msgctxt "voting"
+msgid "Scores"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:412
+#, javascript-format
+msgid "Client does not support voting scheme >%s<"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:442
+msgid "Motion text"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:451
+#, javascript-format
+msgid "Initiator: %s"
+msgid_plural "Initiators: %s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: modules-tally/configurable-tally/module.js:551
+msgid "Error 238u8"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:553
+msgid "Vote casting is closed"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:557
+#, javascript-format
+msgid "Vote casting starts at %s"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:568
+#: modules-tally/configurable-tally/module.js:771
+msgid "Vote accepted"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:770
+msgid "The server accepted your vote."
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:942
+msgid ""
+"<p>You cannot fetch the result as long as vote casting is possible.</p>"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:968
+msgid "Show all votes"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:976
+msgid "Error: Expected >showWinners< or >error<"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:976
+#: modules-tally/publish-only/module.js:127
+#: modules-tally/publish-only/module.js:195
+#, javascript-format
+msgid "Got from server: %s"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:983
+#, javascript-format
+msgid "Something did not work: %s"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:989
+#, javascript-format
+msgid "In motion group %s, no motion got the requiered number of votes. "
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:997
+#, javascript-format
+msgid "Motion %s"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:998
+msgid " and "
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1001
+#, javascript-format
+msgid "In motion group %s, %s won. "
+msgid_plural "In motion group %s, %s won. "
+msgstr[0] ""
+msgstr[1] ""
+
+#: modules-tally/configurable-tally/module.js:1013
+msgid "Close"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1081
+#, javascript-format
+msgid "Votes on %s "
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1083
+#: modules-tally/configurable-tally/module.js:1182
+#, javascript-format
+msgid "motion %s"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1088
+msgid "Yes/No"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1089
+msgid "Score"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1090
+msgid "Error 875498z54: scheme not supported"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1093
+#: modules-tally/publish-only/module.js:220
+msgid "Voting number"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1093
+msgid "Verify!"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1101
+#: modules-tally/configurable-tally/module.js:1128
+msgid "Error"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1102
+#: modules-tally/configurable-tally/module.js:1118
+#: modules-tally/configurable-tally/module.js:1125
+msgid "invalid"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1115
+msgid "Yes"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1116
+msgid "No"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1117
+msgid "Abst."
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1138
+#: modules-tally/publish-only/module.js:238
+msgid " - my vote"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1142
+#: modules-tally/publish-only/module.js:242
+msgid "Verify signatures!"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1161
+msgid "Number of YESs"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1162
+msgid "Numer of NOs"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1164
+msgid "Number of absten."
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1168
+msgid "Sum of scores"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1171
+msgid "Not Supported voting scheme"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1198
+msgid "Not supported voting scheme"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:1207
+#, javascript-format
+msgid "Motion group: %s"
+msgstr ""
+
 #: modules-tally/publish-only/module.js:19
 msgid "Question to be voted on"
+msgstr ""
+
+#: modules-tally/publish-only/module.js:70
+msgid "Cast vote!"
 msgstr ""
 
 #: modules-tally/publish-only/module.js:115
@@ -476,12 +696,6 @@ msgstr ""
 
 #: modules-tally/publish-only/module.js:127
 msgid "Error: Expected >saveYourCountedVote<"
-msgstr ""
-
-#: modules-tally/publish-only/module.js:127
-#: modules-tally/publish-only/module.js:195
-#, javascript-format
-msgid "Got from server: %s"
 msgstr ""
 
 #: modules-tally/publish-only/module.js:131
@@ -537,18 +751,6 @@ msgctxt "List_of_Votes"
 msgid "Vote"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:220
-msgid "Voting number"
-msgstr ""
-
-#: modules-tally/publish-only/module.js:238
-msgid " - my vote"
-msgstr ""
-
-#: modules-tally/publish-only/module.js:242
-msgid "Verify signatures!"
-msgstr ""
-
 #: modules-tally/publish-only/module.js:257
 msgid "Number of Votes"
 msgstr ""
@@ -557,61 +759,61 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: newelection.js:6
+#: newelection.js:12
 msgid "Step 1: Set voting preferences"
 msgstr ""
 
-#: newelection.js:7
+#: newelection.js:13
 msgid "Step 2: Save voting link"
 msgstr ""
 
-#: newelection.js:16
+#: newelection.js:22
 msgid ""
 "Here you can create a new voting. In order to do so, fill in the name of "
 "the voting and set the preferences for the authorization mechanism. <br><br>"
 msgstr ""
 
-#: newelection.js:20
+#: newelection.js:26
 msgid "Name of voting"
 msgstr ""
 
-#: newelection.js:23
+#: newelection.js:29
 msgid "Vote on"
 msgstr ""
 
-#: newelection.js:24
+#: newelection.js:30
 msgid "predefined test voting items"
 msgstr ""
 
-#: newelection.js:25
+#: newelection.js:31
 msgid "Enter a question to vote on"
 msgstr ""
 
-#: newelection.js:32
+#: newelection.js:38
 msgid "Autorization method"
 msgstr ""
 
-#: newelection.js:36
+#: newelection.js:42
 msgid "External token verification"
 msgstr ""
 
-#: newelection.js:39
+#: newelection.js:45
 msgid "Upload a list of usernames and passwords"
 msgstr ""
 
-#: newelection.js:51
+#: newelection.js:57
 msgid "Create new voting"
 msgstr ""
 
-#: newelection.js:128
+#: newelection.js:134
 msgid "Save the link and distribute it to all eligable people. "
 msgstr ""
 
-#: newelection.js:131
+#: newelection.js:137
 msgid "This is the voting link: "
 msgstr ""
 
-#: newelection.js:141
+#: newelection.js:147
 msgid "Server reports error: \n"
 msgstr ""
 
@@ -646,23 +848,23 @@ msgstr ""
 msgid "Take part in voting"
 msgstr ""
 
-#: vote.js:65
+#: vote.js:64
 msgid "It is not possible anymore to create a voting certificate"
 msgstr ""
 
-#: vote.js:86
+#: vote.js:85
 #, javascript-format
 msgid ""
-"The voting requires election module >%s< which is not supported by this "
+"The voting requires blinding module >%s< which is not supported by this "
 "client.\n"
 "Use a compatible client."
 msgstr ""
 
-#: vote.js:93
+#: vote.js:92
 msgid "Name of voting:"
 msgstr ""
 
-#: vote.js:119
+#: vote.js:118
 #, javascript-format
 msgid ""
 "The voting requires authorisation module >%s< which is not supported by "
@@ -670,43 +872,43 @@ msgid ""
 "Use a compatible client."
 msgstr ""
 
-#: vote.js:127
+#: vote.js:126
 msgid "Generate voting certificate and save it"
 msgstr ""
 
-#: vote.js:170
+#: vote.js:169
 #, javascript-format
 msgid "Voting mode >%s< is not supported by this client"
 msgstr ""
 
-#: vote.js:196
+#: vote.js:195
 msgid "The voting certificate is not valid"
 msgstr ""
 
-#: vote.js:209
+#: vote.js:208
 msgid ""
 "You directly opened the voting certificate, but you have to save it as file "
 "on your device."
 msgstr ""
 
-#: vote.js:300
+#: vote.js:299
 msgid "Error r83g83"
 msgstr ""
 
-#: vote.js:302
+#: vote.js:301
 msgid "You can cast your vote from now on and without any time limit."
 msgstr ""
 
-#: vote.js:303
+#: vote.js:302
 #, javascript-format
 msgid "You can cast your vote from now on until before %s."
 msgstr ""
 
-#: vote.js:305
+#: vote.js:304
 #, javascript-format
 msgid "You can cast your vote from %s until before %s."
 msgstr ""
 
-#: vote.js:307
+#: vote.js:306
 msgid "It is not possible anymore to cast your vote."
 msgstr ""

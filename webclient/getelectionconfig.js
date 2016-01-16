@@ -14,7 +14,7 @@ function GetElectionConfig(url, serverkeys, gotConfigObject, gotConfigMethod) {
 		var query = URI.parseURL(url); // tools/url/
 		if (!query || !query.confighash) {
 			if (query.electionUrl)	this.url = query.electionUrl; // if the webclient URL is given, it contains the link in electionUrl=
-			else throw new UserInputError(1001, i18n.gettext("The given election URL is not in the expected format (missing '?' or 'confighash=' resp. 'electionUrl=')"), url);
+			else throw new UserInputError(1001, i18n.gettext("The given voting URL is not in the expected format (missing '?' or 'confighash=' resp. 'electionUrl=')"), url);
 		}
 //		var sigsok = verifySigs(query); // TODO implement this
 		this.reqestElectionConfig();

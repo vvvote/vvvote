@@ -67,7 +67,7 @@ PublishOnlyTally.prototype.getMainContentFragm = function(fragm, config) {
 	// submitt button
 	var btn = document.createElement('input');
 	btn.setAttribute('type', 'submit');
-	btn.setAttribute('value', 'abstimmen!');
+	btn.setAttribute('value', i18n.gettext('Cast vote!'));
 	btn.setAttribute('id', 'sendvote');
 	//btn.setAttribute('disabled', 'disabled');
 	btn.setAttribute('onclick', 'page.sendVote(event);');

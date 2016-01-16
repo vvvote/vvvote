@@ -375,7 +375,7 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 	var sig, serverinfo, pubkey, sigOk, slist;
 	slist = ClientConfig.serverList;
 	if (vote.permission.sigs.length != slist.length) {
-		alert(i18n.sprintf(i18n.gettext("Error verifying a signature:\nThe number of signatures on the voting certificate is not correct. \nRequired number: %d, number in this voting certificate: %d: "), slist.length, vote.permission.sigs.length));
+		alert(i18n.sprintf(i18n.gettext("Error verifying a signature:\nThe number of signatures on the voting certificate is not correct. \nRequired number: %d, number in this voting certificate: %d"), slist.length, vote.permission.sigs.length));
 	}
 	for (var i=0; i <vote.permission.sigs.length; i++) {
 		try {

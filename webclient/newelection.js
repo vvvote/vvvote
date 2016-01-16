@@ -3,6 +3,12 @@
 
 function NewElectionPage() {
 	Page.call(this);
+	this.setLanguage();
+}
+
+NewElectionPage.prototype = new Page();
+
+NewElectionPage.prototype.setLanguage = function() {
 	this.steps[1] = i18n.gettext('Step 1: Set voting preferences'); 
 	this.steps[2] = i18n.gettext('Step 2: Save voting link');
 	var OauthHtml = '';
@@ -11,14 +17,14 @@ function NewElectionPage() {
 		OauthHtml += '<label for="' + ClientConfig.oAuth2Config[curroauthconfig].serverId +'">' + ClientConfig.oAuth2Config[curroauthconfig].serverDesc + '</label></input>';
 	}
 
-  
-var newElectionHtmlPre = i18n.gettext(
-	'Here you can create a new voting. ' + 
-	'In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. ' +
+
+	var newElectionHtmlPre = i18n.gettext(
+			'Here you can create a new voting. ' + 
+			'In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. ' +
 	'<br><br>') + 
 	'<input type="text" id="electionId">' + 
-    '	<label for="electionId">' +  i18n.gettext('Name of voting') + '</label>' + 
- 	'<br>' +
+	'	<label for="electionId">' +  i18n.gettext('Name of voting') + '</label>' + 
+	'<br>' +
 
 	'<fieldset><legend>' +  i18n.gettext('Vote on') + '</legend>' +
 	'<input type="radio" id="givenTest"     name="testRadioGroup" onclick="page.setQuestions(\'givenTest\')"    /> <label for="givenTest"    >' + i18n.gettext('predefined test voting items') + '</label>' +
@@ -35,22 +41,22 @@ var newElectionHtmlPre = i18n.gettext(
 	'	<input type="radio" onclick="page.setAuthMethod(\'externalToken\', null);"  name="authMethod" id="externalToken">' +
 	'		<label for="externalToken">' + i18n.gettext('External token verification') + '</label>' +
 
- 	'<!---   	<input type="radio" onclick="page.setAuthMethod(\'userPasswList\', null);" name="authMethod" id="userPasswList">' +
+	'<!---   	<input type="radio" onclick="page.setAuthMethod(\'userPasswList\', null);" name="authMethod" id="userPasswList">' +
 	'		<label for="userPasswList">' + i18n.gettext('Upload a list of usernames and passwords') + '</label></input>' +
 	'--->';
 
- 
 
-  var newElectionHtmlPost = 
-	    '</fieldset>' +
+
+	var newElectionHtmlPost = 
+		'</fieldset>' +
 		'<br>' +
 		'<div id="authInputs">' +
 		'<!--- in this div the different inputs needed for the different auth methods are displayed --->' +
 		'</div>' +
 		'<br>' +
 		'<input type="button" onclick="page.handleNewElectionButton();" value="' + i18n.gettext('Create new voting') + '">';		
-	
-	
+
+
 	var testHtmlml = 
 		'<br><br><button onclick="var r = secureRandom(16); var parser = new UAParser(); var browser = parser.getBrowser(); alert(browser.major + browser.name + browser.version +\'r: \' + r.toString(16)); PublishOnlyTally.test();">Test</button>';
 	var test2Htmlml = 
@@ -59,9 +65,9 @@ var newElectionHtmlPre = i18n.gettext(
 	this.title = i18n.gettext('Open a new voting');
 	this.serverno = 0;
 	this.authModule = Object();
+	Page.prototype.setLanguage.call(this)
 };
 
-NewElectionPage.prototype = new Page();
 
 NewElectionPage.prototype.setAuthMethod = function(method, authServerId) {
 	switch(method) {
