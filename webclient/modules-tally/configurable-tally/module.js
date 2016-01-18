@@ -1078,7 +1078,7 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 				'yesNo': {'numYes': 0, 'numNo': 0, 'numAbstention': 0},
 				'score': 0
 		};
-		htmlcode = htmlcode + '<h3>' + i18n.gettext('Votes on %s '), 
+		htmlcode = htmlcode + '<h3>' + i18n.sprintf(i18n.gettext('Votes on %s ')), 
 			'<a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(curQuestion.questionID) + ', ' + addQuotationMarksIfString(curQuestion.options[optionIndex].optionID) + ');">' + 
 			i18n.sprintf(i18n.gettext('motion %s'), curQuestion.options[optionIndex].optionID) + '</a></h3>';
 		htmlcode = htmlcode + '<div class="allvotes"><table>';
