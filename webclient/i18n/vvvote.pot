@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-01-18 02:46+0100\n"
+"POT-Creation-Date: 2016-01-18 15:25+0100\n"
 "PO-Revision-Date: 2016-01-01 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -198,11 +198,6 @@ msgstr ""
 #: modules-auth/oauth2/module.js:123
 #, javascript-format
 msgid "Step %s: "
-msgstr ""
-
-#: modules-auth/oauth2/module.js:123
-#, javascript-format
-msgid "For %s"
 msgstr ""
 
 #: modules-auth/oauth2/module.js:125
@@ -493,6 +488,14 @@ msgid "Initiator: %s"
 msgid_plural "Initiators: %s"
 msgstr[0] ""
 msgstr[1] ""
+
+#: modules-tally/configurable-tally/module.js:458
+msgid "Summary"
+msgstr ""
+
+#: modules-tally/configurable-tally/module.js:467
+msgid "Reasons"
+msgstr ""
 
 #: modules-tally/configurable-tally/module.js:551
 msgid "Error 238u8"

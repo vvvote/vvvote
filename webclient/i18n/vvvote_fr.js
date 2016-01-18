@@ -121,9 +121,6 @@ translations['fr'] =
          "Step %s: ": [
             ""
          ],
-         "For %s": [
-            ""
-         ],
          "Authorize %s": [
             ""
          ],
@@ -255,6 +252,12 @@ translations['fr'] =
          ],
          "Initiator: %s": [
             "",
+            ""
+         ],
+         "Summary": [
+            ""
+         ],
+         "Reasons": [
             ""
          ],
          "Error 238u8": [

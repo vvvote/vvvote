@@ -121,9 +121,6 @@ translations['en_US'] =
          "Step %s: ": [
             "Step %s: "
          ],
-         "For %s": [
-            "For %s"
-         ],
          "Authorize %s": [
             "Authorize %s"
          ],
@@ -256,6 +253,12 @@ translations['en_US'] =
          "Initiator: %s": [
             "Initiator: %s",
             "Initiators: %s"
+         ],
+         "Summary": [
+            "Summary"
+         ],
+         "Reasons": [
+            "Reasons"
          ],
          "Error 238u8": [
             "Error 238u8"

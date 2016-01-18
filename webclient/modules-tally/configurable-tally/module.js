@@ -455,7 +455,7 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 		legendNode.appendChild(divOptionDescNode);
 	}
 	if ('shortDesc' in curOption) {
-		buttonDOM('buttonQSDid'+qNo, i18n.ngettext('Summary'), 'ConfigurableTally.showOptionDetail("QuestionShortDescQ", ' +qNo+', '+optionNo+')', legendNode);
+		buttonDOM('buttonQSDid'+qNo, i18n.gettext('Summary'), 'ConfigurableTally.showOptionDetail("QuestionShortDescQ", ' +qNo+', '+optionNo+')', legendNode);
 		var divOptionDescNode = document.createElement('div');
 		divOptionDescNode.setAttribute('id', 'QuestionShortDescQ' + qNo + 'O' + optionNo);
 		divOptionDescNode.setAttribute('style', 'display:none');
@@ -464,7 +464,7 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 		legendNode.appendChild(divOptionDescNode);
 	}
 	if ('reasons' in curOption) {
-		buttonDOM('buttonQRid'+qNo, i18n.ngettext('Reasoning'), 'ConfigurableTally.showOptionDetail("QuestionReasonQ", ' +qNo+', '+optionNo+')', legendNode);
+		buttonDOM('buttonQRid'+qNo, i18n.gettext('Reasons'), 'ConfigurableTally.showOptionDetail("QuestionReasonQ", ' +qNo+', '+optionNo+')', legendNode);
 		var divOptionDescNode = document.createElement('div');
 		var optionDescNode = wikiSyntax2DOMFrag(curOption.reasons);
 		divOptionDescNode.setAttribute('id', 'QuestionReasonQ' + qNo + 'O' + optionNo);
