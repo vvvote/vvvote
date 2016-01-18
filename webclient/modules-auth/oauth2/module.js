@@ -120,9 +120,9 @@ OAuth2.getMainContent = function(conf) {
 		if (step == 1) style = '""';
 		mc = mc + 
 		'<div id="substep' + step +'" style=' + style + '>' +
-		'						<label for="login'+step+'"><span class="substeps">' + i18n.sprintf(i18n.gettext('Step %s: '), String.fromCharCode('A'.charCodeAt(0) + step -1)) + '</span>' + i18n.sptrintf(i18n.gettext('For %s'), slist[permServerNr].getDesc()) +': </label> ' +
+		'						<label for="login'+step+'"><span class="substeps">' + i18n.sprintf(i18n.gettext('Step %s: '), String.fromCharCode('A'.charCodeAt(0) + step -1)) + '</span>' + i18n.sprintf(i18n.gettext('For %s'), slist[permServerNr].getDesc()) +': </label> ' +
 	//	'		  				     <a id="login" href="javascript:window.open(\'' + oauthAutorize + '\', \'_blank\');">Zugriff auf &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; erlauben</a><br>';
-		'		  				     <a autofocus="autofocus" id="login'+step+'" href="#" onclick="OAuth2.waitForOAuthServer(\''+oauthAutorize+'\', ' +step+');">' + i18n.sptrintf(i18n.gettext('Authorize %s'), slist[permServerNr].getDesc()) + '</a><br>'+
+		'		  				     <a autofocus="autofocus" id="login'+step+'" href="#" onclick="OAuth2.waitForOAuthServer(\''+oauthAutorize+'\', ' +step+');">' + i18n.sprintf(i18n.gettext('Authorize %s'), slist[permServerNr].getDesc()) + '</a><br>'+
 //		'		  				     <a autofocus="autofocus" id="login'+step+'" href="' + oauthAutorize + '" target="_blank" onclick="OAuth2.showDoneButton(\'loginOauth2Txt2s'+step+'\');">' + slist[permServerNr].desc + ' autorisieren</a><br>'+
 //		'		  				     <a id="login" href="' + oauthAutorize + '" target="_blank">&Uuml;ber &gt;' + ClientConfig.oAuth2Config[serverId].serverDesc + '&lt; einloggen</a><br>';
 		'						<label for="loginOauth2Txt2s'+step+'"> </label> ' +
