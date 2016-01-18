@@ -1195,7 +1195,7 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + freq[i].score + '</td>';
 				break; 
 			default:
-				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + i18n.gettext('Not supported voting scheme') + '</td>';
+				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + i18n.gettext('Voting scheme not supported') + '</td>';
 			break;
 			}
 		}

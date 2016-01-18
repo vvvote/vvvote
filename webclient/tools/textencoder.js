@@ -139,10 +139,10 @@ TextDecoderLite.prototype.decode = function (bytes) {
 
 
 str2arrayBuf = function(str) {
-	return (new TextEncoder().encode(str));
+	return (new TextEncoderLite().encode(str));
 };
 
 
 arrayBuf2str = function(buffer) {
-	return (new TextDecoder().decode(buffer));
+	return (new TextDecoderLite().decode(buffer));
 };
