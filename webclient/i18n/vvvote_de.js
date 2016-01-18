@@ -297,11 +297,11 @@ translations['de'] =
             "Antrag %s"
          ],
          " and ": [
-            "und "
+            " und "
          ],
          "In motion group %s, %s won. ": [
-            "Bei Antragsgruppe %s wurde Antrag %s angemommen.",
-            "Bei Antragsgruppe %s wurden die Anträge %s angemommen."
+            "Bei Antragsgruppe %s wurde %s angemommen.",
+            "Bei Antragsgruppe %s wurden %s angemommen."
          ],
          "Close": [
             "Schließen"

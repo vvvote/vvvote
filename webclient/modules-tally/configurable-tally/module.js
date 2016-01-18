@@ -994,7 +994,7 @@ ConfigurableTally.prototype.getWinnersHtml = function (questionID) {
 		var motionshtml = '';
 		for (var i=0; i<this.winners[questionID].length; i++) {
 			motionshtml = motionshtml + '<a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(questionID) + ', ' + addQuotationMarksIfString(this.winners[questionID][i]) + ');">' +
-			i18n.sprintf(i18n.gettext('Motion %s'), this.winners[questionID]) + '</a>';
+			i18n.sprintf(i18n.gettext('Motion %s'), this.winners[questionID][i]) + '</a>';
 			if (i+2 == this.winners[questionID].length) motionshtml = motionshtml + i18n.gettext(' and ');
 			if ((this.winners[questionID].length > 1) && (i+2 <  this.winners[questionID].length)) motionshtml = motionshtml + ', ';
 		}
