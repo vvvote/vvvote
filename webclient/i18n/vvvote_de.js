@@ -55,6 +55,9 @@ translations['de'] =
          "The voting requieres authorisation module >%s< which is not supported by this client.\nUse a compatible client.": [
             "Die Abstimmung erfordert das Autorisierungsmodul >%s<, das durch diesen Client nicht unterstützt wird.\nVerwenden Sie einen kompatiblen Client"
          ],
+         "Your web browser %s %is not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge.": [
+            "Ihr Browser %s %s wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 34, Chrome ab Version 38 (nicht auf Android) oder Edge."
+         ],
          "Check of credentials failed. You are not in the list of allowed voters for this voting or secret not accepted.": [
             "Fehler bei der Überprüfung der Anmeldeinformationen. Sie sind nicht in der Liste der Stimmberechtigten oder die Zugangsdaten sind falsch oder Sie haben dem Server nicht erlaubt, Ihre Stimmberechtigung zu prüfen."
          ],
@@ -99,24 +102,6 @@ translations['de'] =
          ],
          "You did not allow this server to check your eligibility at the Basisentscheid server. Please allow this server to checkt your eligibility at the Basisentscheid server and try again.": [
             "Sie haben diesem Server keine Erlaubnis erteilt, Ihre Stimmberechtigung beim Basisentscheid-Server zu prüfen. Erlauben Sie den Zugriff auf den Basisentscheid-Server und versuchen Sie es erneut."
-         ],
-         "Online Voting: anonymous ballots and traceable": [
-            "Online Abstimmung: anonym und nachvollziehbar"
-         ],
-         "Open a new voting": [
-            "Neue Abstimmung anlegen"
-         ],
-         "Take part in a voting": [
-            "An Abstimmung teilnehmen"
-         ],
-         "Fetch result": [
-            "Ergebnis abrufen"
-         ],
-         "Procedure": [
-            "So geht's"
-         ],
-         "Show explanations and technical information": [
-            "Erklärungen und technische Informationen anzeigen"
          ],
          "The voters will be identified by a token and the eligibility will be verified by this token.<br>": [
             "Die W&auml;hler werden über ein Token identifiziert und die Wahlberechtigung gepr&uuml;ft.<br>"
@@ -375,8 +360,8 @@ translations['de'] =
          "Not Supported voting scheme": [
             "Nicht unterstütztes Abstimmungsschema"
          ],
-         "Not supported voting scheme": [
-            "Nicht unterstütztes Abstimmungsschema"
+         "Voting scheme not supported": [
+            "Abstimmungsschema wird nicht unterstützt"
          ],
          "Motion group: %s": [
             "Antragsgruppe %s"
@@ -462,6 +447,9 @@ translations['de'] =
          "Create new voting": [
             "Neue Abstimmung anlegen"
          ],
+         "Open a new voting": [
+            "Neue Abstimmung anlegen"
+         ],
          "Save the link and distribute it to all eligable people. ": [
             "Speichern Sie den Link und geben Sie ihn an alle Stimmberechtigten weiter. "
          ],
@@ -470,6 +458,21 @@ translations['de'] =
          ],
          "Server reports error: \n": [
             "Server meldet folgenden Fehler: \n"
+         ],
+         "Online Voting: anonymous ballots and traceable": [
+            "Online Abstimmung: anonym und nachvollziehbar"
+         ],
+         "Take part in a voting": [
+            "An Abstimmung teilnehmen"
+         ],
+         "Fetch result": [
+            "Ergebnis abrufen"
+         ],
+         "Procedure": [
+            "So geht's"
+         ],
+         "Show explanations and technical information": [
+            "Erklärungen und technische Informationen anzeigen"
          ],
          "Step 2: Authorize": [
             "Schritt 2: Autorisieren"

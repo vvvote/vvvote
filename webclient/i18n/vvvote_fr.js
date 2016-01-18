@@ -55,6 +55,9 @@ translations['fr'] =
          "The voting requieres authorisation module >%s< which is not supported by this client.\nUse a compatible client.": [
             "Le vote exige le module d'autorisation  >%s< qui n'est pas pris en charge par ce client.\nUtilisez un client compatible."
          ],
+         "Your web browser %s %is not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge.": [
+            ""
+         ],
          "Check of credentials failed. You are not in the list of allowed voters for this voting or secret not accepted.": [
             ""
          ],
@@ -99,24 +102,6 @@ translations['fr'] =
          ],
          "You did not allow this server to check your eligibility at the Basisentscheid server. Please allow this server to checkt your eligibility at the Basisentscheid server and try again.": [
             ""
-         ],
-         "Online Voting: anonymous ballots and traceable": [
-            "Vote en ligne: bulletins anonymes et traçable"
-         ],
-         "Open a new voting": [
-            "Ouvrir une nouvelle votation"
-         ],
-         "Take part in a voting": [
-            "Participer à une votation"
-         ],
-         "Fetch result": [
-            "Récupérer les résultats"
-         ],
-         "Procedure": [
-            "Procédure"
-         ],
-         "Show explanations and technical information": [
-            "Afficher les explications et informations techniques"
          ],
          "The voters will be identified by a token and the eligibility will be verified by this token.<br>": [
             ""
@@ -375,7 +360,7 @@ translations['fr'] =
          "Not Supported voting scheme": [
             ""
          ],
-         "Not supported voting scheme": [
+         "Voting scheme not supported": [
             ""
          ],
          "Motion group: %s": [
@@ -462,6 +447,9 @@ translations['fr'] =
          "Create new voting": [
             ""
          ],
+         "Open a new voting": [
+            "Ouvrir une nouvelle votation"
+         ],
          "Save the link and distribute it to all eligable people. ": [
             ""
          ],
@@ -470,6 +458,21 @@ translations['fr'] =
          ],
          "Server reports error: \n": [
             "Le serveur indique une erreur:\n"
+         ],
+         "Online Voting: anonymous ballots and traceable": [
+            "Vote en ligne: bulletins anonymes et traçable"
+         ],
+         "Take part in a voting": [
+            "Participer à une votation"
+         ],
+         "Fetch result": [
+            "Récupérer les résultats"
+         ],
+         "Procedure": [
+            "Procédure"
+         ],
+         "Show explanations and technical information": [
+            "Afficher les explications et informations techniques"
          ],
          "Step 2: Authorize": [
             "Etape 2: Autoriser"

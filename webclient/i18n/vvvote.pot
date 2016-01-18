@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-01-16 01:04+0100\n"
+"POT-Creation-Date: 2016-01-18 02:46+0100\n"
 "PO-Revision-Date: 2016-01-01 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -93,6 +93,12 @@ msgid ""
 "Use a compatible client."
 msgstr ""
 
+#: index.js:40 index.js:49 index.js:64
+msgid ""
+"Your web browser %s %is not supported. Please use FireFox at least version "
+"34, Chrome at least version 38 (except on Android) or Edge."
+msgstr ""
+
 #: listoferrors.js:39
 msgid ""
 "Check of credentials failed. You are not in the list of allowed voters for "
@@ -165,30 +171,6 @@ msgid ""
 "You did not allow this server to check your eligibility at the "
 "Basisentscheid server. Please allow this server to checkt your eligibility "
 "at the Basisentscheid server and try again."
-msgstr ""
-
-#: main.js:2 page.js:13
-msgid "Online Voting: anonymous ballots and traceable"
-msgstr ""
-
-#: main.js:3 newelection.js:65 page.js:14
-msgid "Open a new voting"
-msgstr ""
-
-#: main.js:4 page.js:15
-msgid "Take part in a voting"
-msgstr ""
-
-#: main.js:5 page.js:16
-msgid "Fetch result"
-msgstr ""
-
-#: main.js:6 page.js:17
-msgid "Procedure"
-msgstr ""
-
-#: main.js:7 page.js:18
-msgid "Show explanations and technical information"
 msgstr ""
 
 #: modules-auth/external-token/module.js:35
@@ -670,7 +652,7 @@ msgid "Not Supported voting scheme"
 msgstr ""
 
 #: modules-tally/configurable-tally/module.js:1198
-msgid "Not supported voting scheme"
+msgid "Voting scheme not supported"
 msgstr ""
 
 #: modules-tally/configurable-tally/module.js:1207
@@ -805,6 +787,10 @@ msgstr ""
 msgid "Create new voting"
 msgstr ""
 
+#: newelection.js:65 page.js:14
+msgid "Open a new voting"
+msgstr ""
+
 #: newelection.js:134
 msgid "Save the link and distribute it to all eligable people. "
 msgstr ""
@@ -815,6 +801,26 @@ msgstr ""
 
 #: newelection.js:147
 msgid "Server reports error: \n"
+msgstr ""
+
+#: page.js:13
+msgid "Online Voting: anonymous ballots and traceable"
+msgstr ""
+
+#: page.js:15
+msgid "Take part in a voting"
+msgstr ""
+
+#: page.js:16
+msgid "Fetch result"
+msgstr ""
+
+#: page.js:17
+msgid "Procedure"
+msgstr ""
+
+#: page.js:18
+msgid "Show explanations and technical information"
 msgstr ""
 
 #: vote.js:24

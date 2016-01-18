@@ -55,6 +55,9 @@ translations['en_US'] =
          "The voting requieres authorisation module >%s< which is not supported by this client.\nUse a compatible client.": [
             "The voting requieres authorisation module >%s< which is not supported by this client.\nUse a compatible client."
          ],
+         "Your web browser %s %is not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge.": [
+            "Your web browser %s %is not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge."
+         ],
          "Check of credentials failed. You are not in the list of allowed voters for this voting or secret not accepted.": [
             "Check of credentials failed. You are not in the list of allowed voters for this voting or secret not accepted."
          ],
@@ -99,24 +102,6 @@ translations['en_US'] =
          ],
          "You did not allow this server to check your eligibility at the Basisentscheid server. Please allow this server to checkt your eligibility at the Basisentscheid server and try again.": [
             "You did not allow this server to check your eligibility at the Basisentscheid server. Please allow this server to checkt your eligibility at the Basisentscheid server and try again."
-         ],
-         "Online Voting: anonymous ballots and traceable": [
-            "Online Voting: anonymous ballots and traceable"
-         ],
-         "Open a new voting": [
-            "Open a new voting"
-         ],
-         "Take part in a voting": [
-            "Take part in a voting"
-         ],
-         "Fetch result": [
-            "Fetch result"
-         ],
-         "Procedure": [
-            "Procedure"
-         ],
-         "Show explanations and technical information": [
-            "Show explanations and technical information"
          ],
          "The voters will be identified by a token and the eligibility will be verified by this token.<br>": [
             "The voters will be identified by a token and the eligibility will be verified by this token.<br>"
@@ -375,8 +360,8 @@ translations['en_US'] =
          "Not Supported voting scheme": [
             "Not Supported voting scheme"
          ],
-         "Not supported voting scheme": [
-            "Not supported voting scheme"
+         "Voting scheme not supported": [
+            "Voting scheme not supported"
          ],
          "Motion group: %s": [
             "Motion group: %s"
@@ -462,6 +447,9 @@ translations['en_US'] =
          "Create new voting": [
             "Create new voting"
          ],
+         "Open a new voting": [
+            "Open a new voting"
+         ],
          "Save the link and distribute it to all eligable people. ": [
             "Save the link and distribute it to all eligable people. "
          ],
@@ -470,6 +458,21 @@ translations['en_US'] =
          ],
          "Server reports error: \n": [
             "Server reports error: \n"
+         ],
+         "Online Voting: anonymous ballots and traceable": [
+            "Online Voting: anonymous ballots and traceable"
+         ],
+         "Take part in a voting": [
+            "Take part in a voting"
+         ],
+         "Fetch result": [
+            "Fetch result"
+         ],
+         "Procedure": [
+            "Procedure"
+         ],
+         "Show explanations and technical information": [
+            "Show explanations and technical information"
          ],
          "Step 2: Authorize": [
             "Step 2: Authorize"
