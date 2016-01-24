@@ -282,7 +282,7 @@ ConfigurableTally.getNewElectionData = function() {
 			"scheme": [{
 				"name": "pickOne",
 				"quorum": "1", // 0: no quorum, 1: at least as numbers of YESs as of NOs (not selected is counted as NO), 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
-				"mode": "bestOnly", // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set
+				"mode": "quorum", // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set
 				"abstentationOptionID": 4, // if not set, no option is interpreted as abstentation
 				"winnerIfQuorumFailed": 3, // if no option fulfills the quorum, this optionID will be declared as winner ("status quo"-option). If not set, no option will be declared as winner 
 				"abstentionAsNo": false
