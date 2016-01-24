@@ -88,7 +88,8 @@ if (!isset($_GET['code'])) {
 		printTechInfos('URL-request-parameter >state< is not set.');
 		die();
 	}
-	$state = explode('.', $_GET['state']);
+	$tmp = str_replace('\.', '\äoieg089uthiut', $_GET['state']); // mask '.'
+	$state = explode('.', $tmp);
 	if (count($state) != 3) {
 		printTitle('VVVote: Error', 'Daten zur Zuordnung der Anfrage fehlen.');
 		printTechInfos('URL-request-parameter >state< does not contain two dots: >' . $_GET['state']);
@@ -96,9 +97,9 @@ if (!isset($_GET['code'])) {
 	} else {
 		//	print "<br>$oauthdata";
 		//	print_r($oauthdata);
-		$serverId     = $state[0];
-		$electionhash = $state[1];
-		$tmpsecret    = $state[2];
+		$serverId     = str_replace('\äoieg089uthiut', '.', $state[0]);
+		$electionhash = str_replace('\äoieg089uthiut', '.', $state[1]);
+		$tmpsecret    = $state[2]; // this is a hex string, no escaping requiered
 		$curOAuth2Config = $oauthConfig[$serverId];
 
 
