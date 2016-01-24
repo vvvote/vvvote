@@ -150,13 +150,13 @@ ConfigurableTally.getNewElectionData = function() {
 				"\n* Modul 1: Änderung der Entscheidsordnung durch den Basisentscheid" +
 				"\n* Modul 2: An die Arbeit" */ ,
 				"scheme": [{
-					"name": "yesNo",
-					"abstention": true,
-					"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
-					"abstentionAsNo": false,
-					"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
+					"name": "pickOne",
+//					"abstention": true,
+//					"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
+//					"abstentionAsNo": false,
+//					"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
 				}],
-				"findWinner": ["yesNo"],
+				"findWinner": ["pickOne", "random"],
 				"options":
 					[
 							  { "optionID": 1, 
@@ -238,6 +238,7 @@ ConfigurableTally.getNewElectionData = function() {
 					"quorum": "2", // 0: no quorum, 1: at least as numbers of YESs as of NOs, 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
 					"abstentionAsNo": false,
 					"mode": "quorum" // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set   
+					// "winnerIfQuorumFailed": 3, // if no option fulfills the quorum, this optionID will be declared as winner ("status quo"-option). If not set, no option will be declared as winner in this case
 				}],
 				"findWinner": ["yesNo"],
 				"options":
@@ -275,6 +276,46 @@ ConfigurableTally.getNewElectionData = function() {
 										  \n\nEinen Entwurf zur Geschäftsordnung wird es auch noch geben. Der hat aber noch Zeit, da dass ja keine Satzungsänderung ist."
 							  }],
 							  "references":[]
+			},{
+			"questionID": 107,
+			"questionWording":"Eidgenössische Volksinitiative 'Schluss mit uferlosem Bau von Zweitwohnungen!'",
+			"scheme": [{
+				"name": "pickOne",
+				"quorum": "1", // 0: no quorum, 1: at least as numbers of YESs as of NOs (not selected is counted as NO), 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
+				"mode": "bestOnly", // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set
+				"abstentationOptionID": 4, // if not set, no option is interpreted as abstentation
+				"winnerIfQuorumFailed": 3, // if no option fulfills the quorum, this optionID will be declared as winner ("status quo"-option). If not set, no option will be declared as winner 
+				"abstentionAsNo": false
+			}],
+			"findWinner": ["pickOne", "random"],
+			"options":
+				[
+				 { "optionID": 1, 
+					 "optionTitle": "Zustimmung zur eidgenössischen Volksinitiative 'Schluss mit uferlosem Bau von Zweitwohnungen!' empfehlen",
+					 "shortDesc": "Die Piratenpartei soll öffentlich die Zustimmung zur Volksinitiative 'Schluss mit uferlosem Bau von Zweitwohnungen!' empfehlen",
+					 "optionDesc":"\Die Piratenpartei soll öffentlich die Zustimmung zur folgenden eidgenössischen Volksinitiative empfehlen:\n\n\
+						 I\n\n\
+						 Die Bundesverfassung vom 18. April 1999 wird wie folgt geändert:\n\n\
+						 ''Art. 75a ('''neu''') Zweitwohnungen''\n\n\
+						 <sup>1</sup>Der Anteil von Zweitwohnungen am Gesamtbestand der Wohneinheiten und der für Wohnzwecke genutzten Bruttogeschossfläche einer Gemeinde ist auf höchstens zwanzig Prozent beschränkt.\n\n\
+						 <sup>2</sup>Das Gesetz verpflichtet die Gemeinden, ihren Erstwohnungsanteilsplan und den detaillierten Stand seines Vollzugs alljährlich zu veröffentlichen.\n\n\
+						 \n\n\
+						 II\n\n\
+						 Die Übergangsbestimmungen der Bundesverfassung werden wie folgt geändert:\n\n\
+						 '''Art. 197 Ziff. 8 (neu)'''\n\n\
+						 ''8. Übergangsbestimmungen zu Art. 75a (Zweitwohnungen)''\n\n\
+						 <sup>1</sup>Tritt die entsprechende Gesetzgebung nach Annahme von Artikel 75a nicht innerhalb von zwei Jahren in Kraft, so erlässt der Bundesrat die nötigen Ausführungsbestimmungen über Erstellung, Verkauf und Registrierung im Grundbuch durch Verordnung.\n\n\
+						 <sup>2</sup>Baubewilligungen für Zweitwohnungen, die zwischen dem 1. Januar des auf die Annahme von Artikel 75a folgenden Jahres und dem Inkrafttreten der Ausführungsbestimmungen erteilt werden, sind nichtig." },
+				 { "optionID": 2, 
+					 "optionTitle": "Ablehnung öffentlich empfehlen",
+				 },
+				 { "optionID": 3, 
+					 "optionTitle": "Keine öffentliche Empfehlung abgeben", 
+//					 "optionDesc": "Die Piratenpartei soll sich nicht öffentlich zur Initiative positionieren." 
+				 },
+				 { "optionID": 4, 
+					 "optionTitle": "Ich enthalte mich" 
+				 }]
 			}]
 	};
 	return ret;
@@ -325,6 +366,8 @@ ConfigurableTally.prototype.getMainContentFragm = function(fragm, tallyconfig) {
 
 		table[qNo * 2 + 2] = Array(1);
 		var fragm2 = document.createDocumentFragment();
+//		var fieldSetNode = document.createElement('fieldset');
+//		fragm2.appendChild(fieldSetNode);
 		ConfigurableTally.getDOM1Election(tallyconfig, qNo, fragm2);
 		table[qNo * 2 + 2][0] = {'content' : fragm2, 'attrib': [{'name': 'colspan', 'value':'3'}]};
 	}
@@ -390,6 +433,9 @@ ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
 			var curScheme = tallyconfig.questions[qNo].tallyData.scheme[schemetypeindex];
 			legendNode.setAttribute('class', curScheme.name);
 			switch (curScheme.name) {
+			case 'pickOne':
+				radioBtnDOM('optionQ'+qNo+'O'+optionNo+'B', 'optionQ'+qNo+"PickOne", i18n.pgettext('voting', 'Best option')        , optionNo.toString(), fieldSetNode, 'pickOneRadio');
+				break;
 			case 'yesNo':
 				legendNode.appendChild(document.createTextNode(i18n.pgettext('voting','Acceptance')));
 				radioBtnDOM('optionQ'+qNo+'O'+optionNo+'Y', 'optionQ'+qNo+'O'+optionNo+"YesNo", i18n.pgettext('voting', 'Yes')        , '1', fieldSetNode, 'yesNoRadio');
@@ -823,6 +869,11 @@ ConfigurableTally.prototype.disableQuestion = function(buttonText, qNo, selected
 					var curSchemeVote = selected.options[optionNo][ArrayIndexOf(selected.options[optionNo], 'name', curScheme.name)];
 				}
 				switch (curScheme.name) {
+				case 'pickOne':
+					var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'B');
+					el.setAttribute('disabled', 'disabled');
+					el.removeAttribute('checked');
+					break;
 				case 'yesNo':
 					var el = document.getElementById('optionQ'+qNo+'O'+optionNo+'Y');
 					el.setAttribute('disabled', 'disabled');
@@ -879,6 +930,9 @@ ConfigurableTally.prototype.getInputs = function(qNo) {
 			var value = valueYNA;
 			var curScheme = this.config.questions[qNo].tallyData.scheme[schemeIndex]; 
 			switch (curScheme.name) {
+			case 'pickOne':
+				value = document.getElementById('optionQ'+qNo+'O'+optionNo+'B').checked;
+				break;
 			case 'yesNo':                             
 				var voteOptionY =     document.getElementById('optionQ'+qNo+'O'+optionNo+'Y').checked;
 				var voteOptionN =     document.getElementById('optionQ'+qNo+'O'+optionNo+'N').checked;
@@ -1076,7 +1130,8 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 	for (var optionIndex=0; optionIndex<curQuestion.options.length; optionIndex++ ) {
 		freq[optionIndex] = {
 				'yesNo': {'numYes': 0, 'numNo': 0, 'numAbstention': 0},
-				'score': 0
+				'score': 0,
+				'pickOne': {'numBest': 0, 'numNotBest': 0}
 		};
 		htmlcode = htmlcode + '<h3>' + i18n.sprintf(i18n.gettext('Votes on %s '), 
 			'<a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(curQuestion.questionID) + ', ' + addQuotationMarksIfString(curQuestion.options[optionIndex].optionID) + ');">' + 
@@ -1085,9 +1140,11 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 		htmlcode = htmlcode + '<thead>'; 
 		for (var schemeIndex=0; schemeIndex<curQuestion.tallyData.scheme.length; schemeIndex++ ) {
 			switch(curQuestion.tallyData.scheme[schemeIndex].name) {
-			case 'yesNo': htmlcode = htmlcode + '<th>' + i18n.gettext('Yes/No') + '</th>'; break;
-			case 'score': htmlcode = htmlcode + '<th>' + i18n.gettext('Score')  + '</th>'; break;
-			default: alert(i18n.gettext('Error 875498z54: scheme not supported'));
+			case 'yesNo':   htmlcode = htmlcode + '<th>' + i18n.gettext('Yes/No') + '</th>'; break;
+			case 'score':   htmlcode = htmlcode + '<th>' + i18n.gettext('Score')  + '</th>'; break;
+			case 'pickOne': htmlcode = htmlcode + '<th>' + i18n.gettext('Picked') + '</th>'; break;
+			default: 	    htmlcode = htmlcode + '<th>' + i18n.gettext('Scheme not supported')  + '</th>'; 
+						  //alert(i18n.gettext('Error 875498z54: scheme not supported'));
 			};
 		}
 		htmlcode = htmlcode + '<th>' + i18n.gettext('Voting number') + '</th><th>' + i18n.gettext('Verify!') + '</th></thead>';
@@ -1122,6 +1179,14 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 						vt = value.toString(); 
 						freq[optionIndex].score = freq[optionIndex].score + value; 
 						break; // TODO check range
+					case 'pickOne':
+						switch (value) {
+						// TODO make sure that one vote does not contain more than one 'true'
+						case true:  vt = i18n.gettext('Yes'); freq[optionIndex].pickOne.numBest++;        break;
+						case false: vt = i18n.gettext('No');  freq[optionIndex].pickOne.numNotBest++;     break;
+						default:    vt = i18n.gettext('invalid'); break;
+						}
+						break;
 					default:      vt = i18n.gettext('invalid'); break;
 					}
 				} catch (e) {
@@ -1159,14 +1224,17 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 		switch (curScheme.name) {
 		case 'yesNo':
 			htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext("Number of YESs") + '</th>';
-			htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext('Numer of NOs') + '</th>';
+			htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext('Number of NOs') + '</th>';
 			if (curScheme.abstention) {
 				htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext('Number of absten.') + '</th>';
 			}
 			break;
 		case 'score': 
 			htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext('Sum of scores') + '</th>';
-			break; 
+			break;
+		case 'pickOne':
+			htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext('Number picked') + '</th>';
+			break;
 		default:
 			htmlcode2 = htmlcode2 + '<th class="numVotes">' + i18n.gettext('Not Supported voting scheme') + '</th>';
 		break;
@@ -1193,6 +1261,9 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 				break;
 			case 'score': 
 				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + freq[i].score + '</td>';
+				break; 
+			case 'pickOne': 
+				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + freq[i].pickOne.numBest + '</td>';
 				break; 
 			default:
 				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + i18n.gettext('Voting scheme not supported') + '</td>';

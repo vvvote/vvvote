@@ -318,8 +318,11 @@ translations['en_US'] =
          "Score": [
             "Score"
          ],
-         "Error 875498z54: scheme not supported": [
-            "Error 875498z54: scheme not supported"
+         "Picked": [
+            "Picked"
+         ],
+         "Scheme not supported": [
+            "Scheme not supported"
          ],
          "Voting number": [
             "Voting number"
@@ -351,14 +354,17 @@ translations['en_US'] =
          "Number of YESs": [
             "Number of YESs"
          ],
-         "Numer of NOs": [
-            "Numer of NOs"
+         "Number of NOs": [
+            "Number of NOs"
          ],
          "Number of absten.": [
             "Number of absten."
          ],
          "Sum of scores": [
             "Sum of scores"
+         ],
+         "Number picked": [
+            "Number picked"
          ],
          "Not Supported voting scheme": [
             "Not Supported voting scheme"
@@ -536,6 +542,9 @@ translations['en_US'] =
          ],
          "It is not possible anymore to cast your vote.": [
             "It is not possible anymore to cast your vote."
+         ],
+         "voting\u0004Best option": [
+            "Best option"
          ],
          "voting\u0004Acceptance": [
             "Acceptance"

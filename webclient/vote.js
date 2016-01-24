@@ -174,6 +174,11 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEn
 			var elp = document.createElement('h1');
 			elp.appendChild(document.createTextNode(config.electionTitle));
 			elp.setAttribute('id', 'ballotName');
+			elp.appendChild(document.createElement('br'));
+			elp.appendChild(document.createElement('br'));
+			elp.appendChild(document.createElement('br'));
+			elp.appendChild(document.createElement('br'));
+			elp.appendChild(document.createElement('br'));
 			fragm.appendChild(elp);
 			
 			// print voting period

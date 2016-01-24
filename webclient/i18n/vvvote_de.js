@@ -318,8 +318,11 @@ translations['de'] =
          "Score": [
             "Bewertung"
          ],
-         "Error 875498z54: scheme not supported": [
-            "Fehler 875498z54: Abstimmungsschema wird von diesem Client nicht unterstützt."
+         "Picked": [
+            "Ausgewählt"
+         ],
+         "Scheme not supported": [
+            "Abstimmungsschema nicht unterstützt"
          ],
          "Voting number": [
             "Stimmnummer"
@@ -351,7 +354,7 @@ translations['de'] =
          "Number of YESs": [
             "Anzahl Ja"
          ],
-         "Numer of NOs": [
+         "Number of NOs": [
             "Anzahl Nein"
          ],
          "Number of absten.": [
@@ -359,6 +362,9 @@ translations['de'] =
          ],
          "Sum of scores": [
             "Summe Bewertungen"
+         ],
+         "Number picked": [
+            "Anzahl ausgewählt"
          ],
          "Not Supported voting scheme": [
             "Nicht unterstütztes Abstimmungsschema"
@@ -536,6 +542,9 @@ translations['de'] =
          ],
          "It is not possible anymore to cast your vote.": [
             "Es gibt keine Möglichkeit mehr, Ihre Stimme abzugeben."
+         ],
+         "voting\u0004Best option": [
+            "Beste Möglichkeit"
          ],
          "voting\u0004Acceptance": [
             "Zustimmung"

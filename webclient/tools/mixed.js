@@ -272,14 +272,18 @@ function wikiSyntax2DOMFrag(wikisyntax_) {
 	// ''' --> <b>
 	// ''''' --> <i><b>
 	// <u> --> <u>
-	// <s> --> <strike>
+	// <s> --> <del>
+	// <sup> --> <sup>
+	// <sub> --> <sub>
 	// new line ends the following formats: list, i, b, ib, h1, h2, h3, h4, h5, h6 =
 	// new line does not end the following formats: p, <s>, <u>
 	function charFormat(row, frag, openTag) {
 		var tags = [{"wikiOpen": "''" , 'wikiClose': "''"  , 'html': 'em' },
 		            {'wikiOpen': "'''", 'wikiClose': "'''" , 'html': 'strong' },
 		            {'wikiOpen': "<s>", 'wikiClose': "</s>", 'html': 'del' },
-		            {'wikiOpen': "<u>", 'wikiClose': "</u>", 'html': 'u' }
+		            {'wikiOpen': "<u>", 'wikiClose': "</u>", 'html': 'u' },
+		            {'wikiOpen': "<sup>", 'wikiClose': "</sup>", 'html': 'sup' },
+		            {'wikiOpen': "<sub>", 'wikiClose': "</sub>", 'html': 'sub' }
 		            ];
 
 		var firstmatch = Number.MAX_VALUE;

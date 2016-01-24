@@ -106,8 +106,8 @@ TransportEncryption.prototype.decrypt = function (encryptedmessage, decodeJSON) 
 				var decryptedStr = arrayBuf2str(decrypted);
 				var ret = decryptedStr;
 				if (decodeJSON === true) ret = JSON.parse(decryptedStr);
-				console.log(decrypted);
-				console.log('ver- und wieder entschlüsselt: ' + ret);
+				// console.log(decrypted);
+				console.log('decrypted string: ' + decryptedStr);
 				resolve(ret);
 			})
 			.catch(function(err){

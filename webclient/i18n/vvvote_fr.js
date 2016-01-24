@@ -10,29 +10,29 @@ translations['fr'] =
             "lang": "fr"
          },
          "Voting server": [
-            ""
+            "serveur de votation"
          ],
          "Checking server": [
-            "",
-            ""
+            "Vérification de serveur",
+            "Vérification de serveur %d"
          ],
          "Please enter a valid voting link. Valid voting links start with \"http://\" oder \"https://\".": [
-            ""
+            "S'il vous plaît entrer un lien de vote valide. Un liens de vote valide commence par \"http: //\" ou \"https: //\"."
          ],
          "The given voting URL is not in the expected format (missing '?' or 'confighash=' resp. 'electionUrl=')": [
-            ""
+            "L'URL de vote donnée est pas dans le format attendu (manquant »?» Ou 'confighash=' resp. 'electionUrl=')"
          ],
          "The given voting URL is not in the expected format (missing 'confighash=').": [
-            ""
+            "L'URL de vote donnée est pas dans le format attendu (manquant \"confighash = ')."
          ],
          "The voting configuration obtained from the server does not match the checksum. The server is trying to cheat you. Aborted.": [
-            ""
+            "La configuration de vote obtenu à partir du serveur ne correspond pas à la somme de contrôle. Le serveur essaie de vous tromper. Avorté."
          ],
          "The voting configuration could not be loaded from the provided URL": [
-            ""
+            "La configuration de vote ne peut être chargé à partir de l'URL fournie"
          ],
          "Voting link: ": [
-            ""
+            "Lien de la votation"
          ],
          "Step 1: Enter voting link": [
             "Etape 1: Entrez le lien de la votation"
@@ -318,7 +318,10 @@ translations['fr'] =
          "Score": [
             ""
          ],
-         "Error 875498z54: scheme not supported": [
+         "Picked": [
+            ""
+         ],
+         "Scheme not supported": [
             ""
          ],
          "Voting number": [
@@ -351,13 +354,16 @@ translations['fr'] =
          "Number of YESs": [
             ""
          ],
-         "Numer of NOs": [
+         "Number of NOs": [
             ""
          ],
          "Number of absten.": [
             ""
          ],
          "Sum of scores": [
+            ""
+         ],
+         "Number picked": [
             ""
          ],
          "Not Supported voting scheme": [
@@ -536,6 +542,9 @@ translations['fr'] =
          ],
          "It is not possible anymore to cast your vote.": [
             "Il est plus possible de voter."
+         ],
+         "voting\u0004Best option": [
+            ""
          ],
          "voting\u0004Acceptance": [
             ""
