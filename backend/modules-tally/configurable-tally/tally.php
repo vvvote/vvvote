@@ -126,7 +126,7 @@ class ConfigurableTally extends PublishOnlyTally {
 		$optionsStatYesNo = array();
 		foreach ($potWinner as $curOptID) {
 			$optionsStatYesNo[$curOptID] = array('yesNo' => array('numYes' => $optionsStat[$curOptID]['pickOne']['numBest']));
-			$optionsStatYesNo[$curOptID]['yesNo']['numNos'] = $optionsStat[$curOptID]['pickOne']['numNotBest'];
+			$optionsStatYesNo[$curOptID]['yesNo']['numNo'] = $optionsStat[$curOptID]['pickOne']['numNotBest'];
 			if ( isset($pickOneScheme['abstentionOptionID']) && isset($optionsStat[$curOptID]['pickOne']['numAbstention'])) $optionsStatYesNo[$curOptID]['yesNo']['numAbstention'] = $optionsStat[$curOptID]['pickOne']['numAbstention'];  
 		}
 		$winner = $this->GetResultYesNo($optionsStatYesNo, $yesnoScheme, $potWinner);
