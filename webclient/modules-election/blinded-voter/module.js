@@ -46,7 +46,7 @@ BlindedVoterElection.prototype.switchAction = function (result) {
 		break;
 	case 'clientError':
 		removePopup();
-		alert('Client found error:\n '+ result.errorText);
+		alert(i18n.sprintf(i18n.gettext('Client found error:\n %s'), result.errorText));
 		break;
 		// tally
 		/*	case 'sendVote':
@@ -60,7 +60,7 @@ BlindedVoterElection.prototype.switchAction = function (result) {
 		  break; */
 	default:
 		removePopup();
-		alert('handleXmlAnswer(): Internal program error, got unknown action: ' + result.action);
+		alert(i18n.sprintf(i18n.gettext('handleXmlAnswer(): Internal program error, got unknown action: %s'), result.action));
 	}
 };
 
@@ -344,7 +344,17 @@ BlindedVoterElection.prototype.signVote = function (vote, questionID_) {
 	signedvote.vote = votestr;
 	signedvote.sig  = sig;
 	var transm = {};
-	transm.permission = this.permission[q].transm;
+	
+	// copy only the anonymous and relevant parts of the permission
+	var sigs = Array();
+	for (var i=0; i<this.permission[q].transm.sigs.length; i++) {
+		sigs.push({'sig': 	this.permission[q].transm.sigs[i].sig, 'sigBy': this.permission[q].transm.sigs[i].sigBy});
+	}
+
+	transm.permission = {
+		"sigs": sigs,
+		"signed": this.permission[q].transm.signed
+	};
 	transm.vote = signedvote;
 	return transm;
 };
