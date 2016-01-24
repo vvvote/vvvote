@@ -127,7 +127,7 @@ class ConfigurableTally extends PublishOnlyTally {
 		foreach ($potWinner as $curOptID) {
 			$optionsStatYesNo[$curOptID] = array('yesNo' => array('numYes' => $optionsStat[$curOptID]['pickOne']['numBest']));
 			$optionsStatYesNo[$curOptID]['yesNo']['numNos'] = $optionsStat[$curOptID]['pickOne']['numNotBest'];
-			if ( isset($pickOneScheme['abstentationOptionID']) && ($pickOneScheme['abstentationOptionID'] === $curOptID) ) $optionsStatYesNo[$curOptID]['yesNo']['numAbstention'] = $optionsStat[$curOptID]['pickOne']['numAbstention'];  
+			if ( isset($pickOneScheme['abstentionOptionID']) && isset($optionsStat[$curOptID]['pickOne']['numAbstention'])) $optionsStatYesNo[$curOptID]['yesNo']['numAbstention'] = $optionsStat[$curOptID]['pickOne']['numAbstention'];  
 		}
 		$winner = $this->GetResultYesNo($optionsStatYesNo, $yesnoScheme, $potWinner);
 		return $winner;
@@ -181,7 +181,9 @@ class ConfigurableTally extends PublishOnlyTally {
 				$winner = $potWinner_;
 			}
 		}
-		if ( isset($yesNoScheme['winnerIfQuorumFailed']) && (count($winner) < 1) ) array_push($winner, $pickOneScheme['winnerIfQuorumFailed']); 
+		if ( isset($yesNoScheme['winnerIfQuorumFailed']) && (count($winner) < 1) ) {
+			array_push($winner, $yesNoScheme['winnerIfQuorumFailed']); 
+		}
 		return $winner;
 	}
 
@@ -280,11 +282,10 @@ class ConfigurableTally extends PublishOnlyTally {
 						switch ($curSheme['name']) {
 							case 'pickOne':
 								if ($curSheme['value'] == true) 	 {
+									$selectedOpt = 'numBest';
 									$pickOneSchemeConfig = $schemeConfig[find_in_subarray($schemeConfig,'name', 'pickOne')];
-									if (isset($pickOneSchemeConfig['abstentationOptionID']) && ($pickOneSchemeConfig['abstentationOptionID'] === $optionOrder[$optionIndex]) )
-									{    $selectedOpt = 'numAbstention'; $pickOneAbstention = true; }
-									else $selectedOpt = 'numBest';
-								}	else $selectedOpt = 'numNotBest';
+									if (isset($pickOneSchemeConfig['abstentionOptionID']) && ($pickOneSchemeConfig['abstentionOptionID'] === $optionOrder[$optionIndex]) ) $pickOneAbstention = true;
+								} else $selectedOpt = 'numNotBest';
 								break;
 							case 'yesNo':
 								if (!is_int($curSheme['value'])) throw new InvalidVoteException();
@@ -313,7 +314,7 @@ class ConfigurableTally extends PublishOnlyTally {
 						foreach ($scheme as $schemename => $num) {
 							if ($schemename === 'pickOne') {
 								if ($num === 'numBest') $numBest++;
-								if ($pickOneAbstention === true) $voteForStat[$optionOrder[$optionIndex]]['pickOne'] = 'numAbstention';
+								if ($pickOneAbstention === true) $voteForStat[$optionIndex]['pickOne'] = 'numAbstention';
 							}
 						}
 					}

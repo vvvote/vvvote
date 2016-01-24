@@ -283,7 +283,7 @@ ConfigurableTally.getNewElectionData = function() {
 				"name": "pickOne",
 				"quorum": "1", // 0: no quorum, 1: at least as numbers of YESs as of NOs (not selected is counted as NO), 1+: more YESs than NOs, 2: at least twice as much YESs as NOs, 2+: more than twice as much YESs than NOs 
 				"mode": "quorum", // "quorum": all that meet the quorum, "bestOnly": only the one with the most numer yes (if several have the same: returns all of them / if "quorum" set
-				"abstentationOptionID": 4, // if not set, no option is interpreted as abstentation
+				"abstentionOptionID": 4, // if not set, no option is interpreted as abstentation
 				"winnerIfQuorumFailed": 3, // if no option fulfills the quorum, this optionID will be declared as winner ("status quo"-option). If not set, no option will be declared as winner 
 				"abstentionAsNo": false
 			}],
@@ -1131,7 +1131,7 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 		freq[optionIndex] = {
 				'yesNo': {'numYes': 0, 'numNo': 0, 'numAbstention': 0},
 				'score': 0,
-				'pickOne': {'numBest': 0, 'numNotBest': 0}
+				'pickOne': {'numBest': 0, 'numNotBest': 0, 'numAbstention': 0}
 		};
 		htmlcode = htmlcode + '<h3>' + i18n.sprintf(i18n.gettext('Votes on %s '), 
 			'<a href="javascript: page.tally.showOptionPopUp(' + addQuotationMarksIfString(curQuestion.questionID) + ', ' + addQuotationMarksIfString(curQuestion.options[optionIndex].optionID) + ');">' + 
@@ -1151,6 +1151,26 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 		htmlcode = htmlcode + '<tbody>';
 		for (var i=0; i<this.votes.length; i++) {
 			htmlcode = htmlcode + '<tr>';
+			// set pickOneAbstention to true if that option was selected
+			// verify that at maximum 1 option contains true
+			var pickOneAbstention = false;
+			var pickOneInvalid = false;
+			var pickOneSchemeIndex = ArrayIndexOf(curQuestion.tallyData.scheme,'name', 'pickOne'); 
+			if (pickOneSchemeIndex >= 0) {
+				var numBest = 0;
+				try {
+					var vString   = this.votes[i].vote.vote; 
+					var v = JSON.parse(vString); 
+					for (var opts=0; opts < v.options.length; opts++) {
+						var pickOneSchemeIndexVote = ArrayIndexOf(v.options[opts],'name', 'pickOne'); 
+						if (v.options[opts][pickOneSchemeIndexVote].value === true) numBest++;
+						if ( ('abstentionOptionID' in curQuestion.tallyData.scheme[pickOneSchemeIndex]) 
+								&&	(curQuestion.tallyData.scheme[pickOneSchemeIndex].abstentionOptionID === v.optionOrder[opts]) 
+								&& v.options[opts][pickOneSchemeIndexVote].value === true ) pickOneAbstention = true;
+					}
+					if (numBest > 1) pickOneInvalid = true;
+				} catch (e) {pickOneInvalid = true;}  
+			}
 
 			for (var schemeIndex=0; schemeIndex<curQuestion.tallyData.scheme.length; schemeIndex++ ) {
 				var curScheme = curQuestion.tallyData.scheme[schemeIndex];
@@ -1180,11 +1200,19 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 						freq[optionIndex].score = freq[optionIndex].score + value; 
 						break; // TODO check range
 					case 'pickOne':
-						switch (value) {
-						// TODO make sure that one vote does not contain more than one 'true'
-						case true:  vt = i18n.gettext('Yes'); freq[optionIndex].pickOne.numBest++;        break;
-						case false: vt = i18n.gettext('No');  freq[optionIndex].pickOne.numNotBest++;     break;
-						default:    vt = i18n.gettext('invalid'); break;
+						if (pickOneInvalid === true) vt = i18n.gettext('invalid'); 
+						else {
+							if ( pickOneAbstention === true) {
+								if (value === true) vt = i18n.gettext('Yes'); // show the abstention option as "yes" 
+								else 				vt = i18n.gettext('Abst.'); 
+								freq[optionIndex].pickOne.numAbstention++; 
+							} else {
+								switch (value) {
+								case true:  vt = i18n.gettext('Yes'); freq[optionIndex].pickOne.numBest++;        break;
+								case false: vt = i18n.gettext('No');  freq[optionIndex].pickOne.numNotBest++;     break;
+								default:    vt = i18n.gettext('invalid'); break;
+								}
+							}
 						}
 						break;
 					default:      vt = i18n.gettext('invalid'); break;
@@ -1263,7 +1291,9 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + freq[i].score + '</td>';
 				break; 
 			case 'pickOne': 
-				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + freq[i].pickOne.numBest + '</td>';
+				var textgth = freq[i].pickOne.numBest;
+				if (('abstentionOptionID' in curScheme) && (curQuestion.options[i].optionID === curScheme.abstentionOptionID) )  textgth = freq[i].pickOne.numAbstention;
+				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + textgth + '</td>';
 				break; 
 			default:
 				htmlcode2 = htmlcode2 + '<td class="numVotes' + winnerOption + '">' + i18n.gettext('Voting scheme not supported') + '</td>';
