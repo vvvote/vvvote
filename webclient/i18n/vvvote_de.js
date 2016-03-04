@@ -100,8 +100,8 @@ translations['de'] =
          "A voting with the requested name does not exist on the server. Use the voting link directly.": [
             "Eine Abstimmung mit dem übermittelten Namen existiert nicht auf diesem Server. Rufen Sie den Abstimmungslink direkt auf."
          ],
-         "You did not allow this server to check your eligibility at the Basisentscheid server. Please allow this server to checkt your eligibility at the Basisentscheid server and try again.": [
-            "Sie haben diesem Server keine Erlaubnis erteilt, Ihre Stimmberechtigung beim Basisentscheid-Server zu prüfen. Erlauben Sie den Zugriff auf den Basisentscheid-Server und versuchen Sie es erneut."
+         "You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again.": [
+            "Sie haben diesem Server keine Erlaubnis erteilt, Ihre Stimmberechtigung beim Identitätsserver zu prüfen. Erlauben Sie den Zugriff auf den Identitätsserver und versuchen Sie es erneut."
          ],
          "The voters will be identified by a token and the eligibility will be verified by this token.<br>": [
             "Die W&auml;hler werden über ein Token identifiziert und die Wahlberechtigung gepr&uuml;ft.<br>"
@@ -130,8 +130,8 @@ translations['de'] =
          "Name me publicly as ": [
             "Mich &ouml;ffentlich anzeigen als"
          ],
-         "Using the Basisentscheid Online (BEO), a list of eligible voters is created on the BEO server for each voting date. Enter the ID of this list.<br>": [
-            "F&uuml;r den Basisentscheid Online (BEO) wird f&uuml;r jeden Abstimmungstermin auf dem BEO-Server eine Liste der Stimmberechtigten angelegt. Geben Sie hier die ID dieser Liste ein.<br>"
+         "Using the an identity server (which is specifical designed to work with vvvote), a list of eligible voters is created on the identity server for each voting date. Enter the ID of this list.<br>": [
+            "Bei Verwendung eines speziellen Identitätsservers (der für die Zusammenarbeit mit Vvvote programmiert wurde), kann eine Liste der Stimmberechtigten für jedes Abstimmungsdatum erstellt werden. Geben Sie hier die ID dieser Liste ein.<br>"
          ],
          "ID of the list of eligible voters": [
             "ID der Liste, die die Abstimmungsberechtigten enth&auml;lt"
@@ -177,6 +177,12 @@ translations['de'] =
          ],
          "%s has rejected your request (error no  %d):\n %s": [
             "%s hat Ihr Anliegen zurückgewiesen (Fehlernr. %d):\n%s"
+         ],
+         "Client found error:\n %s": [
+            "Die lokale Webanwendung hat den folgenden Fehler festgestellt:\n%s"
+         ],
+         "handleXmlAnswer(): Internal program error, got unknown action: %s": [
+            "Interner Progammfehler in der Webanwendung: handleXmlAnswer(): eine unbekannte Aktion >%s< wude angefordert."
          ],
          "Voting certificate %s": [
             "Wahlschein %s"

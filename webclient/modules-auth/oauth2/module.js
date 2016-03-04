@@ -148,7 +148,7 @@ OAuth2.getConfigObtainedHtml = function () {
 OAuth2.getNewElectionHtml = function (serverId) {
 	// TODO put this in config 
 	var ret =
-		i18n.gettext('Using the Basisentscheid Online (BEO), a list of eligible voters is created on the BEO server for each voting date. Enter the ID of this list.<br>') +
+		i18n.gettext('Using the an identity server (which is specifical designed to work with vvvote), a list of eligible voters is created on the identity server for each voting date. Enter the ID of this list.<br>') +
 		'<input name="listId" id="listId" value="" type="text">' +
 		'<label for="listId">' + i18n.gettext('ID of the list of eligible voters') + '</label> ';
 	return ret;

@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-01-24 14:33+0100\n"
+"POT-Creation-Date: 2016-03-02 21:10+0100\n"
 "PO-Revision-Date: 2016-01-01 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -168,9 +168,9 @@ msgstr ""
 
 #: listoferrors.js:53
 msgid ""
-"You did not allow this server to check your eligibility at the "
-"Basisentscheid server. Please allow this server to checkt your eligibility "
-"at the Basisentscheid server and try again."
+"You did not allow this server to check your eligibility at the identity "
+"server. Please allow this server to checkt your eligibility at the identity "
+"server and try again."
 msgstr ""
 
 #: modules-auth/external-token/module.js:35
@@ -215,8 +215,9 @@ msgstr ""
 
 #: modules-auth/oauth2/module.js:151
 msgid ""
-"Using the Basisentscheid Online (BEO), a list of eligible voters is created "
-"on the BEO server for each voting date. Enter the ID of this list.<br>"
+"Using the an identity server (which is specifical designed to work with "
+"vvvote), a list of eligible voters is created on the identity server for "
+"each voting date. Enter the ID of this list.<br>"
 msgstr ""
 
 #: modules-auth/oauth2/module.js:153
@@ -292,6 +293,18 @@ msgstr ""
 msgid ""
 "%s has rejected your request (error no  %d):\n"
 " %s"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:49
+#, javascript-format
+msgid ""
+"Client found error:\n"
+" %s"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:63
+#, javascript-format
+msgid "handleXmlAnswer(): Internal program error, got unknown action: %s"
 msgstr ""
 
 #: modules-election/blinded-voter/module.js:119
@@ -379,18 +392,18 @@ msgstr ""
 msgid "The voter certificate is not consistent"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:366
+#: modules-election/blinded-voter/module.js:376
 msgid ""
 "The signature on the vote is correct. This means that the vote is unchanged."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:368
+#: modules-election/blinded-voter/module.js:378
 msgid ""
 "The signature on the vote is not correct. This means that the vote is "
 "changed or the key does not match."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:378
+#: modules-election/blinded-voter/module.js:388
 #, javascript-format
 msgid ""
 "Error verifying a signature:\n"
@@ -398,7 +411,7 @@ msgid ""
 "Required number: %d, number in this voting certificate: %d"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:388
+#: modules-election/blinded-voter/module.js:398
 #, javascript-format
 msgid ""
 "The signature by the permission server >%s< for the voting key is correct. "
@@ -406,7 +419,7 @@ msgid ""
 "to vote."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:390
+#: modules-election/blinded-voter/module.js:400
 #, javascript-format
 msgid ""
 "The signature by permission server >%s< for the voting key is not correct. "
@@ -414,267 +427,270 @@ msgid ""
 "persons responsible for the voting"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:393
+#: modules-election/blinded-voter/module.js:403
 #, javascript-format
 msgid ""
 "Error verifying the signature:\n"
 "%s"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:443
+#: modules-election/blinded-voter/module.js:453
 #, javascript-format
 msgid ""
 "For voter >%s< the server >%s< returns a different order of signatures than "
 "server >%s<."
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:345
+#: modules-tally/configurable-tally/module.js:347
 msgid "Motion group"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:346
+#: modules-tally/configurable-tally/module.js:348
 msgid "Motion title"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:347
+#: modules-tally/configurable-tally/module.js:349
 msgid "Action"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:358
+#: modules-tally/configurable-tally/module.js:360
 msgid "Show &amp; <br>vote"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:359
+#: modules-tally/configurable-tally/module.js:361
 msgid "Hide"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:435
+#: modules-tally/configurable-tally/module.js:437
 msgctxt "voting"
 msgid "Best option"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:438
+#: modules-tally/configurable-tally/module.js:440
 msgctxt "voting"
 msgid "Acceptance"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:439
+#: modules-tally/configurable-tally/module.js:441
 msgctxt "voting"
 msgid "Yes"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:440
+#: modules-tally/configurable-tally/module.js:442
 msgctxt "voting"
 msgid "No"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:442
+#: modules-tally/configurable-tally/module.js:444
 msgctxt "voting"
 msgid "Abstentation"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:449
+#: modules-tally/configurable-tally/module.js:451
 msgctxt "voting"
 msgid "Scores"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:456
+#: modules-tally/configurable-tally/module.js:458
 #, javascript-format
 msgid "Client does not support voting scheme >%s<"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:486
+#: modules-tally/configurable-tally/module.js:488
 msgid "Motion text"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:495
+#: modules-tally/configurable-tally/module.js:497
 #, javascript-format
 msgid "Initiator: %s"
 msgid_plural "Initiators: %s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: modules-tally/configurable-tally/module.js:502
+#: modules-tally/configurable-tally/module.js:504
 msgid "Summary"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:511
+#: modules-tally/configurable-tally/module.js:513
 msgid "Reasons"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:595
+#: modules-tally/configurable-tally/module.js:597
 msgid "Error 238u8"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:597
+#: modules-tally/configurable-tally/module.js:599
 msgid "Vote casting is closed"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:601
+#: modules-tally/configurable-tally/module.js:603
 #, javascript-format
 msgid "Vote casting starts at %s"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:612
-#: modules-tally/configurable-tally/module.js:815
+#: modules-tally/configurable-tally/module.js:614
+#: modules-tally/configurable-tally/module.js:817
 msgid "Vote accepted"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:814
+#: modules-tally/configurable-tally/module.js:816
 msgid "The server accepted your vote."
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:994
+#: modules-tally/configurable-tally/module.js:996
 msgid ""
 "<p>You cannot fetch the result as long as vote casting is possible.</p>"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1020
+#: modules-tally/configurable-tally/module.js:1022
 msgid "Show all votes"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1028
+#: modules-tally/configurable-tally/module.js:1030
 msgid "Error: Expected >showWinners< or >error<"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1028
+#: modules-tally/configurable-tally/module.js:1030
 #: modules-tally/publish-only/module.js:127
 #: modules-tally/publish-only/module.js:195
 #, javascript-format
 msgid "Got from server: %s"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1035
+#: modules-tally/configurable-tally/module.js:1037
 #, javascript-format
 msgid "Something did not work: %s"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1041
+#: modules-tally/configurable-tally/module.js:1043
 #, javascript-format
 msgid "In motion group %s, no motion got the requiered number of votes. "
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1049
+#: modules-tally/configurable-tally/module.js:1051
 #, javascript-format
 msgid "Motion %s"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1050
+#: modules-tally/configurable-tally/module.js:1052
 msgid " and "
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1053
+#: modules-tally/configurable-tally/module.js:1055
 #, javascript-format
 msgid "In motion group %s, %s won. "
 msgid_plural "In motion group %s, %s won. "
 msgstr[0] ""
 msgstr[1] ""
 
-#: modules-tally/configurable-tally/module.js:1065
+#: modules-tally/configurable-tally/module.js:1067
 msgid "Close"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1134
+#: modules-tally/configurable-tally/module.js:1136
 #, javascript-format
 msgid "Votes on %s "
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1136
-#: modules-tally/configurable-tally/module.js:1248
+#: modules-tally/configurable-tally/module.js:1138
+#: modules-tally/configurable-tally/module.js:1278
 #, javascript-format
 msgid "motion %s"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1141
+#: modules-tally/configurable-tally/module.js:1143
 msgid "Yes/No"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1142
+#: modules-tally/configurable-tally/module.js:1144
 msgid "Score"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1143
+#: modules-tally/configurable-tally/module.js:1145
 msgid "Picked"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1144
+#: modules-tally/configurable-tally/module.js:1146
 msgid "Scheme not supported"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1148
+#: modules-tally/configurable-tally/module.js:1150
 #: modules-tally/publish-only/module.js:220
 msgid "Voting number"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1148
+#: modules-tally/configurable-tally/module.js:1150
 msgid "Verify!"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1156
-#: modules-tally/configurable-tally/module.js:1191
+#: modules-tally/configurable-tally/module.js:1178
+#: modules-tally/configurable-tally/module.js:1221
 msgid "Error"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1157
-#: modules-tally/configurable-tally/module.js:1173
-#: modules-tally/configurable-tally/module.js:1185
-#: modules-tally/configurable-tally/module.js:1188
+#: modules-tally/configurable-tally/module.js:1179
+#: modules-tally/configurable-tally/module.js:1195
+#: modules-tally/configurable-tally/module.js:1203
+#: modules-tally/configurable-tally/module.js:1213
+#: modules-tally/configurable-tally/module.js:1218
 msgid "invalid"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1170
-#: modules-tally/configurable-tally/module.js:1183
+#: modules-tally/configurable-tally/module.js:1192
+#: modules-tally/configurable-tally/module.js:1206
+#: modules-tally/configurable-tally/module.js:1211
 msgid "Yes"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1171
-#: modules-tally/configurable-tally/module.js:1184
+#: modules-tally/configurable-tally/module.js:1193
+#: modules-tally/configurable-tally/module.js:1212
 msgid "No"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1172
+#: modules-tally/configurable-tally/module.js:1194
+#: modules-tally/configurable-tally/module.js:1207
 msgid "Abst."
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1201
+#: modules-tally/configurable-tally/module.js:1231
 #: modules-tally/publish-only/module.js:238
 msgid " - my vote"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1205
+#: modules-tally/configurable-tally/module.js:1235
 #: modules-tally/publish-only/module.js:242
 msgid "Verify signatures!"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1224
+#: modules-tally/configurable-tally/module.js:1254
 msgid "Number of YESs"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1225
+#: modules-tally/configurable-tally/module.js:1255
 msgid "Number of NOs"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1227
+#: modules-tally/configurable-tally/module.js:1257
 msgid "Number of absten."
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1231
+#: modules-tally/configurable-tally/module.js:1261
 msgid "Sum of scores"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1234
+#: modules-tally/configurable-tally/module.js:1264
 msgid "Number picked"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1237
+#: modules-tally/configurable-tally/module.js:1267
 msgid "Not Supported voting scheme"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1267
+#: modules-tally/configurable-tally/module.js:1299
 msgid "Voting scheme not supported"
 msgstr ""
 
-#: modules-tally/configurable-tally/module.js:1276
+#: modules-tally/configurable-tally/module.js:1308
 #, javascript-format
 msgid "Motion group: %s"
 msgstr ""

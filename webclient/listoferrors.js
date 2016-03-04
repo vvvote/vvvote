@@ -16,7 +16,7 @@ function translateServerError(errorNo, errorTxt) {
 				"2120": "Der Name der Abstimmung ist bereits vergeben.",
 				"4000": "Die Abstimmung existiert nicht auf diesem Server. Vermutlich ist der Abstimmungslinklink falsch. Korrigieren Sie den Abstimmungslink und versuchen es erneut.", // confighash nicht gefunden
 				"6000": "Eine Abstimmung mit dem übermittelten Namen existiert nicht auf diesem Server. Rufen Sie den Abstimmungslink direkt auf.", // electionId nicht gefunden
-				"12000":"Sie haben diesem Server keine Erlaubnis erteilt, Ihre Stimmberechtigung beim Basisentscheid-Server zu prüfen. Erlauben Sie den Zugriff auf den Basisentscheid-Server und versuchen Sie es erneut."
+				"12000":"Sie haben diesem Server keine Erlaubnis erteilt, Ihre Stimmberechtigung beim Identitätsserverserver zu prüfen. Erlauben Sie den Zugriff auf den Identitätsserver und versuchen Sie es erneut."
 			},
 			"en": {
 				"1": "Check of credentials failed. You are not in the list of allowed voters for this voting or secret not accepted.",
@@ -33,7 +33,7 @@ function translateServerError(errorNo, errorTxt) {
 				"2120": "The name of the voting is already in use.",
 				"4000": "The voting does not exist on the server. Most likely the voting link is wrong. Please correct it and try again.", // confighash nicht gefunden
 				"6000": "A voting with the requested name does not exist on the server. Use the voting link directly.", // electionId nicht gefunden
-				"12000": "You did not allow this server to check your eligibility at the Basisentscheid server. Please allow this server to checkt your eligibility at the Basisentscheid server and try again."
+				"12000": "You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again."
 			},
 			"local": {
 				"1": i18n.gettext("Check of credentials failed. You are not in the list of allowed voters for this voting or secret not accepted."),
@@ -50,7 +50,7 @@ function translateServerError(errorNo, errorTxt) {
 				"2120": i18n.gettext("The name of the voting is already in use."),
 				"4000": i18n.gettext("The voting does not exist on the server. Most likely the voting link is wrong. Please correct it and try again."), // confighash nicht gefunden
 				"6000": i18n.gettext("A voting with the requested name does not exist on the server. Use the voting link directly."), // electionId nicht gefunden
-				"12000": i18n.gettext("You did not allow this server to check your eligibility at the Basisentscheid server. Please allow this server to checkt your eligibility at the Basisentscheid server and try again.")
+				"12000": i18n.gettext("You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again.")
 				
 			}
 	};

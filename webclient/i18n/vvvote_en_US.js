@@ -100,8 +100,8 @@ translations['en_US'] =
          "A voting with the requested name does not exist on the server. Use the voting link directly.": [
             "A voting with the requested name does not exist on the server. Use the voting link directly."
          ],
-         "You did not allow this server to check your eligibility at the Basisentscheid server. Please allow this server to checkt your eligibility at the Basisentscheid server and try again.": [
-            "You did not allow this server to check your eligibility at the Basisentscheid server. Please allow this server to checkt your eligibility at the Basisentscheid server and try again."
+         "You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again.": [
+            "You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again."
          ],
          "The voters will be identified by a token and the eligibility will be verified by this token.<br>": [
             "The voters will be identified by a token and the eligibility will be verified by this token.<br>"
@@ -130,8 +130,8 @@ translations['en_US'] =
          "Name me publicly as ": [
             "Name me publicly as "
          ],
-         "Using the Basisentscheid Online (BEO), a list of eligible voters is created on the BEO server for each voting date. Enter the ID of this list.<br>": [
-            "Using the Basisentscheid Online (BEO), a list of eligible voters is created on the BEO server for each voting date. Enter the ID of this list.<br>"
+         "Using the an identity server (which is specifical designed to work with vvvote), a list of eligible voters is created on the identity server for each voting date. Enter the ID of this list.<br>": [
+            "Using the an identity server (which is specifical designed to work with vvvote), a list of eligible voters is created on the identity server for each voting date. Enter the ID of this list.<br>"
          ],
          "ID of the list of eligible voters": [
             "ID of the list of eligible voters"
@@ -177,6 +177,12 @@ translations['en_US'] =
          ],
          "%s has rejected your request (error no  %d):\n %s": [
             "%s has rejected your request (error no  %d):\n %s"
+         ],
+         "Client found error:\n %s": [
+            "Client found error:\n %s"
+         ],
+         "handleXmlAnswer(): Internal program error, got unknown action: %s": [
+            "handleXmlAnswer(): Internal program error, got unknown action: %s"
          ],
          "Voting certificate %s": [
             "Voting certificate %s"
