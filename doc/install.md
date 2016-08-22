@@ -14,11 +14,12 @@ Download vvvote
 On each server, downlaod vvvvote in your home dir, e.g. by executing the following command
 
 	cd ~ # cd into your home dir
-	git clone https://github.com/pfefffer/vvvote.git
+	git clone https://github.com/vvvote/vvvote.git
  
 copy the webclient and the backend directory to your webserver dir, e.g.:
 
 	cd vvvote
+	mkdir /var/www/vvvote
 	cp -r backend /var/www/vvvote
 	cp -r webclient /var/www/vvvote
  
