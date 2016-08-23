@@ -26,11 +26,15 @@ copy the webclient and the backend directory to your webserver dir, e.g.:
 Configure the Server
 ====================
 
-On each server, in directory backend/config, copy the example configs, eg:
+On server 1, in directory backend/config, copy the example configs, eg:
 
 	cp conf-allservers-example.php conf-allservers.php
 	cp conf-thisserver-example.php conf-thisserver.php
-	cp conf-thisserver-example2.php conf-thisserver2.php
+	
+On server 2, in directory backend/config, copy the example configs, eg:
+
+	cp conf-allservers-example.php conf-allservers.php
+	cp conf-thisserver-example2.php conf-thisserver.php
 
 in both conf-thisserver files:
 
