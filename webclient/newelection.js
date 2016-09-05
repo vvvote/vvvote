@@ -70,10 +70,11 @@ NewElectionPage.prototype.setLanguage = function() {
 
 
 NewElectionPage.prototype.setAuthMethod = function(method, authServerId) {
+	this.authServerId = null;
 	switch(method) {
 	case 'sharedPassw':		this.authModule = SharedPasswAuth; 	break;
 	case 'userPasswList':	this.authModule = UserPasswList;   	break;
-	case 'OAuth2':		    this.authModule = OAuth2;       	break;
+	case 'OAuth2':		    this.authModule = OAuth2; this.authServerId = authServerId;	break;
 	case 'sharedAuth':	    this.authModule = SharedAuth;      	break;
 	case 'externalToken':   this.authModule = ExternalTokenAuth;break;
 	default:		alert('Program error 8769867'); 			break;
@@ -97,7 +98,7 @@ NewElectionPage.prototype.setQuestions = function (which) {
 NewElectionPage.prototype.handleNewElectionButton = function () {
 	var ret = {};
 	// authConfig
-	var tmp = this.authModule.getNewElectionData();
+	var tmp = this.authModule.getNewElectionData(this.authServerId);
 	ret.auth =  tmp.auth;
 	ret.authData = tmp.authData;
 	
