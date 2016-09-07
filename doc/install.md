@@ -98,6 +98,7 @@ If you run vvvote not on the default ports, you will need to add the port for ba
 	// to:
 	ClientConfig.storeVoteUrl      = 'http://' + server1urlParts.hostname +':PPPP'/' + server1urlParts.pathname + 'storevote.php'; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
 
+Replace "PPPP" with the port number you are using for non-TLS access to backend/storevote.php.
 
 Thats It!
 =========
