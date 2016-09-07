@@ -91,13 +91,11 @@ in directory webclient/config, copy the example config to config.js, e.g. by
 	cp config-example.js config.js
 
 If do not have special needs, nothings needs to be changed in this config.
-If you run vvvote not on the default ports, you will need to add the port for storevote.php which must not use TLS:
+If you run vvvote not on the default ports, you will need to add the port for backend/storevote.php in the config.js on both servers.  This port must not use TLS:
 
-Change the line:
-
+	// Change the line:
 	ClientConfig.storeVoteUrl      = 'http://' + server1urlParts.hostname +'/' + server1urlParts.pathname + 'storevote.php'; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
-to:
-
+	// to:
 	ClientConfig.storeVoteUrl      = 'http://' + server1urlParts.hostname +':PPPP'/' + server1urlParts.pathname + 'storevote.php'; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
 
 
