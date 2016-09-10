@@ -19,7 +19,7 @@ require_once __DIR__ . '/../rsaMyExts.php';
 /*
  * The only change you need to make in this file is: adjust the urls of servers
  */
-$pServerUrlBases = array('http://www.webhod.ra/vvvote2/backend', 'http://127.0.0.1/vvvote2/backend'); // without trailing slash
+$pServerUrlBases = array('http://demo.vvvote.de/backend', 'http://demo2.vvvote.de/backend'); // without trailing slash
 
 $tServerStoreVotePort = '80'; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
 
