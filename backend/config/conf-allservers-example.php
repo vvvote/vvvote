@@ -21,6 +21,14 @@ require_once __DIR__ . '/../rsaMyExts.php';
  */
 $pServerUrlBases = array('http://www.webhod.ra/vvvote2/backend', 'http://127.0.0.1/vvvote2/backend'); // without trailing slash
 
+$tServerStoreVotePort = '80'; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
+
+
+// construct tServerUrl for the webclient use 
+// do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
+$urltmp = parse_url($pServerUrlBases[0]);
+$tServerStoreVoteUrls = array('http://' . $urltmp['host'] . ':' . $tServerStoreVotePort . $urltmp['path'] . '/storevote.php');
+
 
 // number of ballots the servers have to sign 0: first signing server, 1: second signing server...
 // last server always must be set to 1.

@@ -11,7 +11,7 @@ if(count(get_included_files()) < 2) {
 
 
 require_once 'dbAuth.php';
-require_once 'auth.php';
+require_once __DIR__ . '/../../auth.php';
 
 class UserPasswAuth extends Auth {
 	const name = "userPassw";

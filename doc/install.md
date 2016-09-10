@@ -47,6 +47,7 @@ in both conf-thisserver files:
 in 'conf-allservers.php' adjust
 
 * $pServerUrlBases to point to the first and second server's http-backend-directories (in this order!)
+* $tServerStoreVotePort to point to the first server's http port (not https)
 
 ## Generate and Distribute Server Keys
 Each server uses its own key. Therefore we need to generate a key on each server and distribute thier public part to the other server.
@@ -91,14 +92,6 @@ in directory webclient/config, copy the example config to config.js, e.g. by
 	cp config-example.js config.js
 
 If do not have special needs, nothings needs to be changed in this config.
-If you run vvvote not on the default ports, you will need to add the port for backend/storevote.php in the config.js on both servers.  This port must not use TLS:
-
-	// Change the line:
-	ClientConfig.storeVoteUrl      = 'http://' + server1urlParts.hostname +'/' + server1urlParts.pathname + 'storevote.php'; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
-	// to:
-	ClientConfig.storeVoteUrl      = 'http://' + server1urlParts.hostname +':PPPP'/' + server1urlParts.pathname + 'storevote.php'; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
-
-Replace "PPPP" with the port number you are using for non-TLS access to backend/storevote.php.
 
 Thats It!
 =========
