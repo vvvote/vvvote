@@ -104,7 +104,9 @@ OAuth2.getMainContent = function(conf) {
 	// 'Ihre Wahlberechtigung abzurufen.' +
 		'<br>';
 //	step++;
-	
+	if (! ClientConfig.oAuth2Config[serverId]) {
+		alert(i18n.sprintf(i18n.gettext("Configuration error: serverId >%s< is asked for, but not configured"), serverId)); 
+	}
 	var slist = ClientConfig.serverList;
 	for ( var permissionServerId in ClientConfig.oAuth2Config[serverId].clientId) {
 		var clientId = ClientConfig.oAuth2Config[conf.authConfig.serverId].clientId[permissionServerId];
@@ -168,7 +170,7 @@ OAuth2.getNewElectionData = function (serverId) {
 			"RegistrationStartDate": "2014-01-27T21:20:00Z",
 			"RegistrationEndDate":   "2020-10-10T21:20:00Z"
 			};
-	ret.authData.serverId = ClientConfig.oAuth2Config[serverId].serverId; // TODO read this from selected OAuthServer-config which was selected in the web formular 
+	ret.authData.serverId = ClientConfig.oAuth2Config[serverId].serverId; 
 	var element = document.getElementById('listId');
 	ret.authData.listId = element.value;
 	return ret;

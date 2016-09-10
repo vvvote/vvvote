@@ -28,7 +28,8 @@ $dbInfos = array(
 require_once __DIR__ . '/../rsaMyExts.php';
 
 $serverNo = 1;
-if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== parse_url($pServerUrlBases[$serverNo -1],  PHP_URL_HOST)) {
+if (isset($_SERVER['HTTP_HOST'])   && $_SERVER['HTTP_HOST']   !== parse_url($pServerUrlBases[$serverNo -1],  PHP_URL_HOST) 
+ && isset($_SERVER["SERVER_PORT"]) && $_SERVER['SERVER_PORT'] !== parse_url($pServerUrlBases[$serverNo -1],  PHP_URL_PORT) ) {
 	require_once 'conf-thisserver2.php';
 } else {
 	date_default_timezone_set('Europe/Berlin'); // this is only used to avoid a warning message from PHP -> you do not need to adjust it. All dates are in UTC or use explicit time zone offset.
