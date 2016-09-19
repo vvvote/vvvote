@@ -83,7 +83,7 @@ if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']   !== $urltmp['host']
 					'configId'         => 'basisentscheid_offen', // this is used to identify the correct config and specified in the newElection.php call
 					'checkTokenUrl'    => 'https://basisentscheid.piratenpartei-bayern.de/offen/vvvote_check_token.php', // URL which is used to check if the token is valid and the correspondig user allowed to vote
 					'verifierPassw'    => 'mysecret', // password needed to authorize the check token request
-					'verifyCertificate' => true,
+					'verifyCertificate' => true, // place the needed certificate in the directory of this config file and name it [configId].pem (replacing "[configId]" with the configId you provided here) 
 					'sendmail'          => 'https://basisentscheid.piratenpartei-bayern.de/offen/vvvote_send_confirmation.php'
 			)
 	);
