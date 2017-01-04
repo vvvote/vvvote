@@ -18,6 +18,7 @@ require_once __DIR__ . '/../rsaMyExts.php';
 
 /*
  * The only change you need to make in this file is: adjust the urls of servers
+ * include 'backend' here without trailing slash
  */
 $pServerUrlBases = array('http://demo.vvvote.de/backend', 'http://demo2.vvvote.de/backend'); // without trailing slash
 
@@ -63,4 +64,8 @@ if (! isset($DO_NOT_LOAD_PUB_KEYS)) { // this will be set during key generation
 
 $base = 16;
 $numAllBallots = 5;
+$bitlengthElectionKeys = 512;
+
+const NEW_ELECTION_URL_PART = '/newelection.php';
+
 ?>

@@ -125,7 +125,7 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 		var data = parseServerAnswer(xml, true);
 		switch (data.cmd) {
 		case 'saveElectionUrl':
-			if (this.serverno < ClientConfig.newElectionUrl.length -1) {
+			if (false) { // (this.serverno < ClientConfig.newElectionUrl.length -1) {
 				this.serverno++;
 				var me = this;
 				myXmlSend(ClientConfig.newElectionUrl[this.serverno], JSON.stringify(this.config), me, me.handleNewElectionAnswer);

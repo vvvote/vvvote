@@ -35,11 +35,17 @@ var ErrorInServerAnswer = function (clientErrno, text, details) {
 };
 ErrorInServerAnswer.prototype = new MyException(null, null, null, null);
 
+/**
+ * The User entered something wrong
+ */
 var UserInputError = function (errno, text, details) {
 	MyException.call(this, errno, text, details);
 };
 UserInputError.prototype = new MyException(null, null, null);
 
+/**
+ * The server said that something was wrong
+ */
 var ServerReturnedAnError = function (errno, serverErrorNo, text, details) {
 	MyException.call(this, errno, serverErrorNo, text, details);
 	this.serverErrorNo = serverErrorNo;

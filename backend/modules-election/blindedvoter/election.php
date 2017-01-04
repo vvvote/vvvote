@@ -49,7 +49,83 @@ class BlindedVoter extends Blinder {
 		$this->electionId = $electionId_;
 	}
 
+	/**
+	 * Generates new keys for an election, returns the public part and 
+	 * saves the private part in the database
+	 * {@inheritDoc}
+	 * @see Blinder::handleNewElectionReq()
+	 */
+	function handleNewElectionReq($electionId, $blinderData) {
 
+		// verify the signatures already contained in $blinderData
+		if ( isset($blinderData ['permissionServerKeys']) ) {
+			foreach ($blinderData ['permissionServerKeys'] as $psname => $signedkey) {
+				$ok = $this->verifyPermissionServerKey($psname, $signedkey, $electionId);
+				if ($ok !== true)
+					InternalServerError::throwException(8747856, 'Verification of election key failed', print_r($signedkey, true));
+			}
+		} else {
+			$blinderData['permissionServerKeys'] = array ();
+		}
+		
+		global $serverNo, $pServerKeys, $bitlengthElectionKeys;
+		// $pk = $this->db->loadPrivateKey($electionId);
+		
+		$crypt_rsa = $this->getCrypt();
+		$keypair = $crypt_rsa->createKey($bitlengthElectionKeys);
+		$keystr = str_replace('\/', '/', json_encode($keypair));
+		$crypt_rsa->loadKey($keypair['publickey']);
+		$pubkey = array( // fields defined by JSON Web Key https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41
+				'kty' => 'RSA', // only RSA is supported by vvvote
+				'n'   => base64url_encode($crypt_rsa->modulus->toBytes()),
+				'e'   => base64url_encode($crypt_rsa->exponent->toBytes()),
+				'kid' => $pServerKeys[$serverNo -1]['name'] . '.' . $electionId
+		);
+		// save private key in DB
+		$ok = $this->db->savePrivateKey($electionId, $keypair);
+		if (! $ok) InternalServerError::throwException(19, "Internal server error while saving private key", false);
+		global $pserverkey;
+		$ok = $crypt_rsa->loadKey($pserverkey['privatekey']);
+		if (! $ok) InternalServerError::throwException(20, "Internal server error while parsing private permission server key", false);
+		$sig = $crypt_rsa->sign(json_encode($pubkey));
+		$sigBase64Url = base64url_encode($sig);
+		// test
+		// $base64urldec = base64url_decode($sigBase64Url);
+		// $base64ok = ( $sig === $base64urldec);
+		// $ok = $crypt_rsa->loadKey($pServerKeys[$serverNo -1]);
+		// $verify = $crypt_rsa->verify(json_encode($pubkey), $sigBase64Url);
+		$blinderData['permissionServerKeys'][$pServerKeys[$serverNo -1]['name']] = array('key' => $pubkey, 'sig' => $sigBase64Url);
+		return $blinderData;
+	}
+	
+	function verifyPermissionServerKey($pservername, $signedKey, $electionId) {
+		global $serverNo, $pServerKeys;
+		if ( ! is_string($pservername) ) InternalServerError::throwException(8747850, '$pservername must be a string', 'Got: >' . print_r($pservername, true). '<');
+		$tmp = explode('.', $signedKey['key']['kid'], 2);
+		$pservername2 = $tmp[0];
+		if ($pservername2 === $signedKey['key']['kid']) InternalServerError::throwException(8747851, '<kid> must contain one >.<', 'Got this kid: >' . $signedKey['key']['kid'] . '<');
+		if ($pservername2 !== $pservername) InternalServerError::throwException(8747852, 'Part before >.< in the <kid> does not match the permission server name', 'Got this kid: >' . $signedKey['key']['kid'] . '<, expected permission server name: >' . $pservername . '<');
+		if ($tmp[1] !== $electionId) InternalServerError::throwException(8747849, 'Part after >.< in the <kid> does not match the electionId', 'Got this kid: >' . $signedKey['key']['kid'] . '<, expected election Id: >' . $electionId . '<');
+		$i = find_in_subarray($pServerKeys, 'name', $pservername2);
+		if ($i === false) InternalServerError::throwException(8747853, 'The needed long-term permission server key was not found', 'Looking for: >' . $pservername . '<');
+		$crypt_rsa = $this->getCrypt();
+		$base64urldec = base64url_decode($signedKey['sig']);
+		$ok = $crypt_rsa->loadKey($pServerKeys[$i]);
+		if ($ok !== true) InternalServerError::throwException(8747854, 'Failed to load long-term permission server key', 'key: >' . print_r($pServerKeys[$i], true) . '<');
+		$verify = $crypt_rsa->verify(json_encode($signedKey['key']), $base64urldec);
+		if ($verify !== true) InternalServerError::throwException(8747855, 'Verification of permission server keys failed', 'long-term key: >' . print_r($pServerKeys[$i], true) . '<', ', election key >' . print_r($signedKey, true) . '<');
+		return $verify;
+	}
+
+	function getCrypt() {
+		$crypt_rsa = new Crypt_RSA();
+		$crypt_rsa->setHash('sha256');
+		$crypt_rsa->setMGFHash('sha256');
+		$crypt_rsa->setSaltLength($crypt_rsa->hash->getLength());
+		$crypt_rsa->setSignatureMode(CRYPT_RSA_SIGNATURE_PKCS1);
+		return $crypt_rsa;
+	}
+	
 	function isInVoterList($credentials, $electionId) { 
 		return $this->auth->checkCredentials($credentials, $electionId, 'registering');
 	}

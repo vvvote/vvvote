@@ -7,7 +7,8 @@ class Blinder {
 	 * @param unknown $electionId
 	 * @return multitype:
 	 */
-	function handleNewElectionReq($electionId) {
+	function handleNewElectionReq($electionId, $blinderdata) {
+	
 		return array();
 	}
 	
