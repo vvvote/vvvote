@@ -278,16 +278,22 @@ BlindedVoterElection.prototype.importPermission = function (returnEnvelope) {
 		if (splittedElectionID.mainElectionId !== this.config.electionId) {mainElectionIdMismatch = true;}
 	}
 	if (mainElectionIdMismatch) alert(i18n.gettext('The voter certificate is not consistent')); // TODO throw?
-	// TODO check if all requiered fields are present
-	// TODO check signatures from permissionservers
-	// TODO check for date if voting already/still possible
-	//this.config = {};
-	//this.config.electionId = this.permission.transm.signed.electionId;
-	var me = this;
 	this.permissionOk = !mainElectionIdMismatch;
-	page.onPermLoaded(this.permissionOk, me, this.config, this.returnEnvelopeLStorageId); // call back --> enables vote button or loads ballot
-
+	// TODO check if all requiered fields are present
+	// check signatures from permissionservers on election keys
+	var me = this;
+	var configChecker = new GetElectionConfig(null, null, me, me.onPermissionsServerSigsOk);
+	configChecker.verifyPermissionServerSigs(this.config);
 };
+
+BlindedVoterElection.prototype.onPermissionsServerSigsOk = function() {
+	var me = this;
+	this.permissionOk = true;
+	page.onPermLoaded(this.permissionOk, me, this.config, this.returnEnvelopeLStorageId); // call back --> enables vote button or loads ballot
+	// TODO check signatures from permissionservers on my keys
+	// TODO check for date if voting already/still possible
+};
+
 
 BlindedVoterElection.prototype.getVotingNo = function(questionID_) {
 	if ( !('permission' in this)) return false;

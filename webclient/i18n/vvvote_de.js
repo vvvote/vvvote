@@ -118,6 +118,9 @@ translations['de'] =
          "Create voting certificate": [
             "Wahlschein erstellen"
          ],
+         "Configuration error: serverId >%s< is asked for, but not configured": [
+            "Konfigurationsfehler: Server-ID >%s< wurde angefordert, ist aber nicht konfiguriert."
+         ],
          "Step %s: ": [
             "Schritt %s"
          ],
@@ -223,6 +226,12 @@ translations['de'] =
          "Error verifying a signature:\nThe number of signatures on the voting certificate is not correct. \nRequired number: %d, number in this voting certificate: %d": [
             "Fehler beim überprüfen der Signatur:\nDie Anzahl der Unterschriften unter dem Wahlschein ist nicht korrekt.\nErforderliche Anzahl: %d, Anzahl Unterschriften bei diesem Wahlschein: %d"
          ],
+         "The vote is not for this election (Election IDs do not match).": [
+            "Die Stimme ist nicht für diese Abstimmung (Election-IDs stimmen nicht überein)."
+         ],
+         "The vote is not for this election (Question ID not found in election configuration).": [
+            "Die Stimme ist nicht für diese Abstimmung (Question ID in der Abstimmungskonfiguration nicht gefunden)"
+         ],
          "The signature by the permission server >%s< for the voting key is correct. This means, the server has confirmed that the according voter is entitled to vote.": [
             "Die Unterschrift von Stimmberechtigungsserver >%s< für den Abstimmungsschlüssel ist korrekt, d.h. der Server hat bestätigt, dass der zugehörige Wähler stimmberechtigt ist."
          ],
@@ -271,6 +280,9 @@ translations['de'] =
          ],
          "Vote casting is closed": [
             "Stimmabgabe nicht mehr möglich"
+         ],
+         "Cast vote!": [
+            "Stimme senden!"
          ],
          "Vote casting starts at %s": [
             "Stimme senden ab %s möglich"
@@ -384,9 +396,6 @@ translations['de'] =
          "Question to be voted on": [
             "Frage, über die abgestimmt werden soll"
          ],
-         "Cast vote!": [
-            "Stimme senden!"
-         ],
          "The server did not accept the vote. It says:\n%s": [
             "Der Server hat die Stimme nicht akzeptiert. Er meldet:\n%s"
          ],
@@ -419,9 +428,6 @@ translations['de'] =
          ],
          "Error: some error occured": [
             "Fehler: ein Fehler ist aufgetreten"
-         ],
-         "Find my vote": [
-            "Finde meine Stimme"
          ],
          "Number of Votes": [
             "Anzahl Stimmen"
@@ -464,6 +470,9 @@ translations['de'] =
          ],
          "Open a new voting": [
             "Neue Abstimmung anlegen"
+         ],
+         "Waiting for the servers": [
+            "Auf Server warten"
          ],
          "Save the link and distribute it to all eligable people. ": [
             "Speichern Sie den Link und geben Sie ihn an alle Stimmberechtigten weiter. "

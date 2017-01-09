@@ -115,6 +115,8 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 	var me = this;
 	this.serverno = 0;
 //	myXmlSend(ClientConfig.newElectionUrl[0], data, me, me.handleNewElectionAnswer, 'http://94.228.205.41:8080/');
+	var aniHtml = getWorkingAnimationHtml(); 
+	showPopup(html2Fragm('<h1>' + i18n.gettext('Waiting for the servers') + '</h1>' + aniHtml));
 	myXmlSend(ClientConfig.newElectionUrl[0], data, me, me.handleNewElectionAnswer);
 };
 
@@ -130,6 +132,7 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 				var me = this;
 				myXmlSend(ClientConfig.newElectionUrl[this.serverno], JSON.stringify(this.config), me, me.handleNewElectionAnswer);
 			} else {
+				hidePopup();
 				var a = getAuthModuleStatic(this.config);
 				var ahtml = a.getConfigObtainedHtml();
 				var mc = '<p>' + i18n.gettext('Save the link and distribute it to all eligable people. ') +
@@ -146,11 +149,13 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 		case 'error': // TODO in case the errors is reported not from the first server: handle it somehow: (remove election from all previous servers?)
 			var msg = translateServerError(data.errorNo, data.errorTxt);
 			alert(i18n.gettext("Server reports error: \n") + msg);
+			hidePopup();
 			break;
 		default:
 			break;
 		}
 	}catch (e) {
+		hidePopup();
 		alert('Answer from Server does not match the expected format (JSON decode error)');
 	}
 

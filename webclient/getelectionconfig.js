@@ -7,17 +7,20 @@ function GetElectionConfig(url, serverkeys, gotConfigObject, gotConfigMethod) {
 	this.serverkey = serverkeys;
 	this.onGotConfigObject = gotConfigObject;
 	this.onGotConfigMethod = gotConfigMethod;
-	try { // check the election-URL
-		if ( this.url.indexOf('http://') !== 0 && this.url.indexOf('https://') !== 0 ) {
-			throw new UserInputError(1000, i18n.gettext('Please enter a valid voting link. Valid voting links start with "http://" oder "https://".'), url);
+	try { 
+		if (url !== null) {
+			// check the election-URL
+			if ( this.url.indexOf('http://') !== 0 && this.url.indexOf('https://') !== 0 ) {
+				throw new UserInputError(1000, i18n.gettext('Please enter a valid voting link. Valid voting links start with "http://" oder "https://".'), url);
+			}
+			var query = URI.parseURL(url); // tools/url/
+			if (!query || !query.confighash) {
+				if (query.electionUrl)	this.url = query.electionUrl; // if the webclient URL is given, it contains the link in electionUrl=
+				else throw new UserInputError(1001, i18n.gettext("The given voting URL is not in the expected format (missing '?' or 'confighash=' resp. 'electionUrl=')"), url);
+			}
+//			var sigsok = verifySigs(query); // TODO implement this
+			this.reqestElectionConfig();
 		}
-		var query = URI.parseURL(url); // tools/url/
-		if (!query || !query.confighash) {
-			if (query.electionUrl)	this.url = query.electionUrl; // if the webclient URL is given, it contains the link in electionUrl=
-			else throw new UserInputError(1001, i18n.gettext("The given voting URL is not in the expected format (missing '?' or 'confighash=' resp. 'electionUrl=')"), url);
-		}
-//		var sigsok = verifySigs(query); // TODO implement this
-		this.reqestElectionConfig();
 	} catch (e) {
 		if (e instanceof MyException) { e.alert();}
 		else throw e;
@@ -42,19 +45,7 @@ GetElectionConfig.prototype = {
 				if (!query || !query.confighash) throw new UserInputError(1000, i18n.gettext("The given voting URL is not in the expected format (missing 'confighash=')."), this.url);
 				if ( !(GetElectionConfig.generateConfigHash(config) === query.confighash)) throw new ErrorInServerAnswer(1080, i18n.gettext("The voting configuration obtained from the server does not match the checksum. The server is trying to cheat you. Aborted."), this.url); 
 				// verify sigs on election keys for each permission server
-				this.config2verify = config;
-				var me = this;
-				this.oneSigInvalid = false;
-				this.sigsValid = Array(config.questions.length);
-				for (var qNo = 0; qNo < config.questions.length; qNo++) { // for each question
-					this.sigsValid[qNo] = Array(serverinfos.pkeys.length);
-					for (var pServerNo = 0; pServerNo < serverinfos.pkeys.length; pServerNo++) { // for each permissionServer
-						this.sigsValid[qNo][pServerNo] = false;
-						}
-					for (var pServerNo = 0; pServerNo < serverinfos.pkeys.length; pServerNo++) { // for each permissionServer
-						this.verifyPermissionServerSig(config.questions[qNo].blinderData.permissionServerKeys['PermissionServer' + (pServerNo +1)], serverinfos.pkeys[pServerNo], me, me.onSigValid, me.onSigInvalid, {'qNo': qNo, 'pServerNo': pServerNo});
-					}
-				}
+				this.verifyPermissionServerSigs(config);
 			} catch (e) {
 				if ((e instanceof ErrorInServerAnswer) && (e.errNo == 2001)) { // could not JSON decode
 					// try to extract the confighash from the URL and try to get the electionconfig from a known server
@@ -70,6 +61,29 @@ GetElectionConfig.prototype = {
 				else throw e;
 			}
 		},
+
+		
+		verifyPermissionServerSigs: function(config) {
+			try {
+				this.config2verify = config;
+				var me = this;
+				this.oneSigInvalid = false;
+				this.sigsValid = Array(config.questions.length);
+				for (var qNo = 0; qNo < config.questions.length; qNo++) { // for each question
+					this.sigsValid[qNo] = Array(serverinfos.pkeys.length);
+					for (var pServerNo = 0; pServerNo < serverinfos.pkeys.length; pServerNo++) { // for each permissionServer
+						this.sigsValid[qNo][pServerNo] = false;
+					}
+					for (var pServerNo = 0; pServerNo < serverinfos.pkeys.length; pServerNo++) { // for each permissionServer
+						this.verifyPermissionServerSig(config.questions[qNo].blinderData.permissionServerKeys['PermissionServer' + (pServerNo +1)], serverinfos.pkeys[pServerNo], me, me.onSigValid, me.onSigInvalid, {'qNo': qNo, 'pServerNo': pServerNo});
+					}
+				} 
+			} catch (e) {
+				if (e instanceof MyException) e.alert();
+				else throw e;
+			}
+		},
+		
 		
 		verifyPermissionServerSig: function (signedKey, permanentKey, onObject, onSigValid, onSigInvalid, passthru){
 			// import PermissionServer permanent key
