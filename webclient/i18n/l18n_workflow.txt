@@ -1,0 +1,34 @@
+Prerequisits
+------------
+you need to: 
+* install poEdit: it reads the strings from the source code and generates a .pot file
+* install nodejs: needed for po2json
+* install npm install -g po2json ( https://github.com/mikeedwards/po2json ): converts a .po-file into a json file for gettext
+* install python: it is needed by the transifex command line tool 
+* the cli tool from transifex https://docs.transifex.com/client/installing-the-client: automatically push and pull changes to/from transifex
+
+Strings Changed in Source Code
+------------------------------
+# (1) read the strings from source code
+open vvvote.pot on poEdit
+click on "Catalogue" and "update from sourcecode"
+save the updated catalogue.
+# (2) push the changes to Transiflex
+cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
+tx push -s i18n\vvvote.pot
+
+
+Get Changes of Source Strings from Transflex
+--------------------------------------------
+cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
+tx pull
+
+Push Changes in l10n
+--------------------
+cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
+tx push -t -l de
+
+Integrate l10n into source
+--------------------------
+cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
+updateI18njs.bat
