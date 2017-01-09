@@ -13,7 +13,7 @@ if(count(get_included_files()) < 2) {
 
 require_once 'exception.php';
 require_once 'dbAuth.php';
-require_once 'auth.php';
+require_once __DIR__ . '/../../auth.php';
 require_once 'fetchfromoauthserver.php';
 require_once __DIR__ . '/../../dbelections.php';
 
@@ -173,12 +173,13 @@ class OAuth2 extends Auth {
 	function handleNewElectionReq($electionId, $req) {
 		$authconfig = parent::handleNewElectionReq($electionId, $req);
 		
-		if ( (! isset($req["serverId"]     )) || (! is_string($req['serverId']     )) ) WrongRequestException::throwException(12001, 'Missing /listId/ in election config'       , "request received: \n" . print_r($req, true));
+		if ( (! isset($req["serverId"]     )) || (! is_string($req['serverId']     )) ) WrongRequestException::throwException(12006, 'Missing /serverId/ in election config'     , "request received: \n" . print_r($req, true));
 		if ( (! isset($req["listId"]       )) || (! is_string($req['listId']       )) ) WrongRequestException::throwException(12001, 'Missing /listId/ in election config'       , "request received: \n" . print_r($req, true));
 		if ( (! isset($req["nested_groups"])) || (! is_array( $req['nested_groups'])) ) WrongRequestException::throwException(12002, 'Missing /nested_groups/ in election config', "request received: \n" . print_r($req, true));
 		if ( (! isset($req["verified"]     )) || (! is_bool(  $req['verified']     )) ) WrongRequestException::throwException(12003, 'Missing /verified/ in election config'     , "request received: \n" . print_r($req, true));
 		if ( (! isset($req["eligible"]     )) || (! is_bool(  $req['eligible']     )) ) WrongRequestException::throwException(12004, 'Missing /eligible/ in election config'     , "request received: \n" . print_r($req, true));
-		if ( (! isset($electionId          )) || (! is_string($electionId          )) ) WrongRequestException::throwException(12005, '/ElectionId/ not set or of wrong type', "request received: \n" . print_r($req, true));
+		if ( (! isset($electionId          )) || (! is_string($electionId          )) ) WrongRequestException::throwException(12005, '/ElectionId/ not set or of wrong type'     , "request received: \n" . print_r($req, true));
+		if ( ! (in_array($req['serverId'], $oauthConfig))  )                            WrongRequestException::throwException(12007, 'Configuration for OAuth2-serverId not found' , "request received: \n" . print_r($req, true));
 		$authconfig['serverId']      = $req['serverId'];
 		$authconfig['listId']        = $req["listId"];
 		$authconfig['nested_groups'] = $req["nested_groups"];

@@ -176,10 +176,12 @@ PublishOnlyTally.requestAllVotes = function(mainElectionId, subElectionId, callb
 	myXmlSend(ClientConfig.getResultUrl, datastr, callbackObj, callbackMethod);
 };
 
+/*
 PublishOnlyTally.prototype.findMyVote = function() {
 	
 	var myVoteIndex = ArrayIndexOf(this.votes, 'permission.signed.votingno', myvotingno);
 };
+*/
 
 PublishOnlyTally.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 	try {
@@ -213,7 +215,7 @@ PublishOnlyTally.prototype.processVerifyCountVotes = function (answ) {
 	// process data
 	//   show a list of all votes
 	var htmlcode = ''; //<button onclick="page.tally.handleUserClickGetPermissedBallots();">Liste der Wahlscheine holen</button>';
-	htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">' + i18n.gettext('Find my vote') + '</button>';
+//	htmlcode = htmlcode + '<button onclick="page.tally.findMyVote();">' + i18n.gettext('Find my vote') + '</button>';
 	htmlcode = htmlcode + '<div id="allvotes"><table>';
 	/* in the list of votes */
 	htmlcode = htmlcode + '<thead><th><span id="allvotesHead">' + i18n.pgettext('List_of_Votes','Vote') + '</th>'; 
@@ -221,7 +223,7 @@ PublishOnlyTally.prototype.processVerifyCountVotes = function (answ) {
 	htmlcode = htmlcode + '<tbody>';
 	var myVno = false; // my voting number
 	if ('returnEnvelope' in window) {
-		myVno = this.election.getVotingNo(curQuestion.questionID); //tmp2.votingno; // must be identical to returnEnvelope.permission.keypar.pub.n + ' ' + returnEnvelope.permission.keypar.pub.exp;
+		myVno = this.election.getVotingNo(this.config.questions[0].questionID); //tmp2.votingno; // must be identical to returnEnvelope.permission.keypar.pub.n + ' ' + returnEnvelope.permission.keypar.pub.exp;
 	}
 	var v;   // vote
 	var vno; // vote number
@@ -234,7 +236,7 @@ PublishOnlyTally.prototype.processVerifyCountVotes = function (answ) {
 		var vnoAttrib = 'class="votingno"';
 		var vnoText = vno;
 		if (vno === myVno) {
-			vnoAttrib = 'class="votingno myVote" id="myVote' + optionIndex + '"';
+			vnoAttrib = 'class="votingno myVote" id="myVote' + 0 /* optionIndex in configurableTally */ + '"';
 			vnoText = vno + i18n.gettext(' - my vote');
 		}
 		htmlcode = htmlcode + '<td> <div ' + vnoAttrib + '>' + vnoText + '</div></td>'; 

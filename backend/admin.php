@@ -86,7 +86,7 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 	}
 	if (isset($argv[2])) {
 		switch ($argv[2]) {
-			case 'p': case 'P': $type = 'PermissionServer'; $bitlength =  512; break; // only 512 because blinding in JavaScript will take more than 5 minutes for 2048
+			case 'p': case 'P': $type = 'PermissionServer'; $bitlength =  2048; break; // only 512 because blinding in JavaScript will take more than 5 minutes for 2048
 			case 't': case 'T': $type = 'TallyServer';      $bitlength = 2048; break;
 			default:
 				print "Error: Argument 2 must be either 'p' or 't'";

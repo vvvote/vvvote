@@ -28,7 +28,17 @@ $dbInfos = array(
 require_once __DIR__ . '/../rsaMyExts.php';
 
 $serverNo = 1;
-if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== parse_url($pServerUrlBases[$serverNo -1],  PHP_URL_HOST)) {
+$urltmp = parse_url($pServerUrlBases[$serverNo -1]);
+if (! isset($urltmp['port']) || ($urltmp['port'] == 0)) {
+	switch ($urltmp['scheme']) {
+		case 'http':  $urltmp['port'] =  80; break;
+		case 'https': $urltmp['port'] = 443; break;
+		default: die('$pServerUrlBases must start with >http< or >https<');
+	}
+}
+
+if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']   !== $urltmp['host'] 
+    && isset($urltmp['port']) && isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] !== $urltmp['port'] ) {
 	require_once 'conf-thisserver2.php';
 } else {
 	date_default_timezone_set('Europe/Berlin'); // this is only used to avoid a warning message from PHP -> you do not need to adjust it. All dates are in UTC or use explicit time zone offset.
@@ -73,7 +83,7 @@ if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== parse_url($pServer
 					'configId'         => 'basisentscheid_offen', // this is used to identify the correct config and specified in the newElection.php call
 					'checkTokenUrl'    => 'https://basisentscheid.piratenpartei-bayern.de/offen/vvvote_check_token.php', // URL which is used to check if the token is valid and the correspondig user allowed to vote
 					'verifierPassw'    => 'mysecret', // password needed to authorize the check token request
-					'verifyCertificate' => true,
+					'verifyCertificate' => true, // place the needed certificate and it's complete chain (just concat them) in the directory of this config file and name it [configId].pem (replacing "[configId]" with the configId you provided here) 
 					'sendmail'          => 'https://basisentscheid.piratenpartei-bayern.de/offen/vvvote_send_confirmation.php'
 			)
 	);

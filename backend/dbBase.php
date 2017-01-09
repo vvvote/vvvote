@@ -69,6 +69,12 @@ class DbBase {
 		return $this->connection->resetDb();
 	}
 
+	/**
+	 * 
+	 * @param array $cols
+	 * @param string $tablename
+	 * @return bool true on success or false on failure 
+	 */
 	function save(array $cols, $tablename) {
 		foreach($cols as $colname => $colvalue) { // encode the json==true columns
 			$colnum = find_in_subarray($this->connection->evtables[$tablename], 'name', $colname);

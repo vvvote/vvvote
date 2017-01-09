@@ -40,7 +40,7 @@ server2url = ClientConfig.serverList[1].baseUrl + '/';
 
 //ClientConfig.newElectionUrl    = new Array(	server1url +'newelection.php', server2url +'newelection.php');
 ClientConfig.electionConfigUrl = server1url + 'getelectionconfig.php';
-ClientConfig.storeVoteUrl      = 'http://' + server1urlParts.hostname +'/' + server1urlParts.pathname + 'storevote.php'; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
+ClientConfig.storeVoteUrl      = serverinfos.tServerStoreVoteUrls[0]; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
 ClientConfig.getResultUrl      = server1url + 'getresult.php'; //?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 
 

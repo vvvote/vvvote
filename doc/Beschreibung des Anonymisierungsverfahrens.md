@@ -7,7 +7,7 @@ Anonymisierungsverfahren von vvvote
 -------------------
 VVVote verwendet folgendes Verfahren zur anonymen und gleichzeitig nachvollziehbaren Abstimmung. Das bedeutet, dass
 
-*  niemand nachvollziehen kann, wer wie abgestimmt hat und gleichzeitig 
+*  niemand ohne Hilfe des Wählers nachvollziehen kann, wer wie abgestimmt hat und gleichzeitig 
 *  sichergestellt ist, dass nur Stimmberechtigte abstimmen können und zwar jeder nur einmal.
 
 2. Kurzbeschreibung des Verfahrens

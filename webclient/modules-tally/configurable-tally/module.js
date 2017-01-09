@@ -597,7 +597,7 @@ ConfigurableTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorage
 	var buttonStr = i18n.gettext('Error 238u8');
 	var disable = false;
 	if (voteStart === false) {disable = true;  buttonStr = i18n.gettext('Vote casting is closed'); }
-	if (voteStart === true)  {disable = false; buttonStr = 'Cast vote'; }
+	if (voteStart === true)  {disable = false; buttonStr = i18n.gettext('Cast vote!'); }
 	if (voteStart instanceof Date) {
 		disable = true;
 		buttonStr = i18n.sprintf(i18n.gettext('Vote casting starts at %s'), formatDate(voteStart));

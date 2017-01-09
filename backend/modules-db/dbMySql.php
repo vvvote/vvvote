@@ -102,6 +102,7 @@ class DbMySql { // TODO dbBase
 			foreach ($tabledef as $col) {
 //				if (strlen($colstr) > 0) $colstr = $colstr . ', \n';
 				switch ($col['digits']) {
+					case 'TEXT':        $colstr = $colstr . $col['name'] . " TEXT, ";                       break;
 					case 'MEDIUMTEXT':  $colstr = $colstr . $col['name'] . " MEDIUMTEXT, ";                 break;
 					case 'LONGTEXT':    $colstr = $colstr . $col['name'] . " LONGTEXT, ";                   break;
 					default:			$colstr = $colstr . $col['name'] . " varchar(${col['digits']}), ";	break;
@@ -192,6 +193,13 @@ class DbMySql { // TODO dbBase
 		return $ret; 
 	}
 */
+	
+	/**
+	 * 
+	 * @param unknown $cols
+	 * @param unknown $tablename
+	 * @return bool true on success or false on failure 
+	 */
 	function save($cols, $tablename) {
 		$tname = $this->prefix . $tablename;
 		$colsstr = '(';

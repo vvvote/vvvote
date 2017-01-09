@@ -11,7 +11,7 @@ if(count(get_included_files()) < 2) {
 }
 
 require_once 'dbAuth.php';
-require_once 'auth.php';
+require_once __DIR__ . '/../../auth.php';
 require_once 'exception.php';
 
 /**
@@ -49,41 +49,7 @@ class ExternalTokenAuth extends Auth {
 	 * @return mixed|boolean
 	 */
 	function httpPost($url, $fieldsToJson, $verifyCert) {
-		global $externalTokenConfig;
-
-		$curl_options = array(
-				CURLOPT_RETURNTRANSFER => true,
-				CURLOPT_SSL_VERIFYPEER => false,
-				CURLOPT_POST => true,
-				CURLOPT_POSTFIELDS => json_encode($fieldsToJson),
-				CURLOPT_URL => $url,
-		);
-
-		if ($verifyCert) {
-			$path_to_certificate = realpath(dirname(__FILE__) . '/../../config/' . $this->authConfig['configId'] . '.pem');
-			$curl_options[CURLOPT_SSL_VERIFYHOST] = 2; /* 2: check the common name and that it matches the HOST name*/
-			$curl_options[CURLOPT_CAINFO]         = $path_to_certificate;
-			$curl_options[CURLOPT_SSL_VERIFYPEER] = true;
-		}
-		$ch = curl_init();
-		curl_setopt_array($ch, $curl_options);
-
-		$resultStr = curl_exec($ch);
-		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		$content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-		if ($resultStr === false) $errorText = curl_error($ch);
-		else                      $errorText = print_r($http_code, true);
-		curl_close($ch);
-		if ($http_code !=200 ) {
-			InternalServerError::throwException(34868, 'Error connecting to the external token verifier. Please inform the server administrator', "Got HTTP status / curl-error: " . $errorText);
-		}
-		if ($http_code === 200 && isset($resultStr)) {
-			$result = json_decode($resultStr, true);
-			if ($result == null) InternalServerError::throwException(2350, 'The answer from the external token verifier could not be parsed. Please inform the server administrator', "Got from the token verifier server: >$resultStr<");
-			if (isset($result['errorText'])) InternalServerError::throwException(34867, 'External token verifier returned an error. Please inform the server administrator', $result['errorText']);
-			return $result;
-		}
-		return false;
+		httpPost($url, $fieldsToJson, ($verifyCert?realpath(dirname(__FILE__) . '/../../config/' . $this->authConfig['configId'] . '.pem') : false));
 	}
 
 	/**

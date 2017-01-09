@@ -104,7 +104,9 @@ OAuth2.getMainContent = function(conf) {
 	// 'Ihre Wahlberechtigung abzurufen.' +
 		'<br>';
 //	step++;
-	
+	if (! ClientConfig.oAuth2Config[serverId]) {
+		alert(i18n.sprintf(i18n.gettext("Configuration error: serverId >%s< is asked for, but not configured"), serverId)); 
+	}
 	var slist = ClientConfig.serverList;
 	for ( var permissionServerId in ClientConfig.oAuth2Config[serverId].clientId) {
 		var clientId = ClientConfig.oAuth2Config[conf.authConfig.serverId].clientId[permissionServerId];
@@ -158,7 +160,7 @@ OAuth2.getNewElectionHtml = function (serverId) {
  * this function must returns an Array/Object with .authModule, containing the AuthModuleId
  * and .authData containing an Array/Object with all auth data needed for this module
  */
-OAuth2.getNewElectionData = function () {
+OAuth2.getNewElectionData = function (serverId) {
 	var ret = {};
 	ret.auth = 'oAuth2'; 
 	ret.authData = { 
@@ -168,7 +170,7 @@ OAuth2.getNewElectionData = function () {
 			"RegistrationStartDate": "2014-01-27T21:20:00Z",
 			"RegistrationEndDate":   "2020-10-10T21:20:00Z"
 			};
-	ret.authData.serverId = ClientConfig.oAuth2Config['BEOBayern'].serverId; // TODO read this from selected OAuthServer-config which was selected in the web formular 
+	ret.authData.serverId = ClientConfig.oAuth2Config[serverId].serverId; 
 	var element = document.getElementById('listId');
 	ret.authData.listId = element.value;
 	return ret;

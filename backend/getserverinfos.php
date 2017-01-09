@@ -31,7 +31,12 @@ for ($i = 0; $i < $numTServers; $i++) {
 
 
 
-$serverinfos = array('pkeys' => $pkeys, 'pServerUrlBases' => $pServerUrlBases, 'tkeys' => $tkeys);
+$serverinfos = array(
+		'pkeys' => $pkeys, 
+		'pServerUrlBases' => $pServerUrlBases, 
+		'tkeys' => $tkeys, 
+		'tServerStoreVoteUrls' => $tServerStoreVoteUrls);
+
 $serverinfosStr = str_replace('\/', '/', json_encode($serverinfos));
 
 global $output_as_javascript;

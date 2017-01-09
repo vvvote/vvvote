@@ -2372,8 +2372,8 @@ class Crypt_RSA {
         $tmp = $this->modulus->toBits();
         $modBits = strlen($tmp);// by Pfeffer, has been: 8 * $this->k;
 
-        $s2 = $this->_os2ip($s);
-        $m2 = $this->_rsavp1($s2);
+        $s2 = $this->_os2ip($s); // string to bigInteger
+        $m2 = $this->_rsavp1($s2); // transform the sig to the expected hash value
         if ($m2 === false) {
             user_error('Invalid signature', E_USER_NOTICE);
             return false;

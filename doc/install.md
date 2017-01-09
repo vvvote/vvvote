@@ -14,22 +14,27 @@ Download vvvote
 On each server, downlaod vvvvote in your home dir, e.g. by executing the following command
 
 	cd ~ # cd into your home dir
-	git clone https://github.com/pfefffer/vvvote.git
+	git clone https://github.com/vvvote/vvvote.git
  
 copy the webclient and the backend directory to your webserver dir, e.g.:
 
 	cd vvvote
+	mkdir /var/www/vvvote
 	cp -r backend /var/www/vvvote
 	cp -r webclient /var/www/vvvote
  
 Configure the Server
 ====================
 
-On each server, in directory backend/config, copy the example configs, eg:
+On server 1, in directory backend/config, copy the example configs, eg:
 
 	cp conf-allservers-example.php conf-allservers.php
 	cp conf-thisserver-example.php conf-thisserver.php
-	cp conf-thisserver-example2.php conf-thisserver2.php
+	
+On server 2, in directory backend/config, copy the example configs, eg:
+
+	cp conf-allservers-example.php conf-allservers.php
+	cp conf-thisserver-example2.php conf-thisserver.php
 
 in both conf-thisserver files:
 
@@ -42,6 +47,7 @@ in both conf-thisserver files:
 in 'conf-allservers.php' adjust
 
 * $pServerUrlBases to point to the first and second server's http-backend-directories (in this order!)
+* $tServerStoreVotePort to point to the first server's http port (not https)
 
 ## Generate and Distribute Server Keys
 Each server uses its own key. Therefore we need to generate a key on each server and distribute thier public part to the other server.

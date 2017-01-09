@@ -13,7 +13,7 @@ NewElectionPage.prototype.setLanguage = function() {
 	this.steps[2] = i18n.gettext('Step 2: Save voting link');
 	var OauthHtml = '';
 	for ( var curroauthconfig in ClientConfig.oAuth2Config) {
-		OauthHtml  = '<input type="radio" onclick="page.setAuthMethod(\'OAuth2\',\'' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '\');"     name="authMethod" id="' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '">';
+		OauthHtml += '<input type="radio" onclick="page.setAuthMethod(\'OAuth2\',\'' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '\');"     name="authMethod" id="' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '">';
 		OauthHtml += '<label for="' + ClientConfig.oAuth2Config[curroauthconfig].serverId +'">' + ClientConfig.oAuth2Config[curroauthconfig].serverDesc + '</label></input>';
 	}
 
@@ -70,10 +70,11 @@ NewElectionPage.prototype.setLanguage = function() {
 
 
 NewElectionPage.prototype.setAuthMethod = function(method, authServerId) {
+	this.authServerId = null;
 	switch(method) {
 	case 'sharedPassw':		this.authModule = SharedPasswAuth; 	break;
 	case 'userPasswList':	this.authModule = UserPasswList;   	break;
-	case 'OAuth2':		    this.authModule = OAuth2;       	break;
+	case 'OAuth2':		    this.authModule = OAuth2; this.authServerId = authServerId;	break;
 	case 'sharedAuth':	    this.authModule = SharedAuth;      	break;
 	case 'externalToken':   this.authModule = ExternalTokenAuth;break;
 	default:		alert('Program error 8769867'); 			break;
@@ -97,7 +98,7 @@ NewElectionPage.prototype.setQuestions = function (which) {
 NewElectionPage.prototype.handleNewElectionButton = function () {
 	var ret = {};
 	// authConfig
-	var tmp = this.authModule.getNewElectionData();
+	var tmp = this.authModule.getNewElectionData(this.authServerId);
 	ret.auth =  tmp.auth;
 	ret.authData = tmp.authData;
 	
@@ -124,7 +125,7 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 		var data = parseServerAnswer(xml, true);
 		switch (data.cmd) {
 		case 'saveElectionUrl':
-			if (this.serverno < ClientConfig.newElectionUrl.length -1) {
+			if (false) { // (this.serverno < ClientConfig.newElectionUrl.length -1) {
 				this.serverno++;
 				var me = this;
 				myXmlSend(ClientConfig.newElectionUrl[this.serverno], JSON.stringify(this.config), me, me.handleNewElectionAnswer);

@@ -24,8 +24,12 @@ class DbBlindedVoter extends DbBase {
 			  'signedBallots' /* Table name */ => array(
 				array('name' => 'electionID'   , 'digits' =>   '100', 'json' => false), /* colunm definition */
 				array('name' => 'voterId'      , 'digits' =>   '100', 'json' => false),
-				array('name' => 'signedBallots', 'digits' => 'MEDIUMTEXT', 'json' => true)
-				)
+				array('name' => 'signedBallots', 'digits' =>  'TEXT', 'json' => true),
+			  	),
+			  'privateKeys' /* Table name */ => array(
+			  		array('name' => 'electionID', 'digits' => 'TEXT', 'json' => true), /* colunm definition */
+			  		array('name' => 'privateKey', 'digits' => 'TEXT', 'json' => true), /* colunm definition */
+			  )
 		);
 		
 		parent::__construct($dbInfos, $dbtables, true);
@@ -74,6 +78,18 @@ class DbBlindedVoter extends DbBase {
 	function loadAllVoterIds($electionId) {
 		$ret = $this->load(array('electionId' => $electionId), 'signedBallots', 'voterId');
 		return $ret;		
+	}
+	
+	/**
+	 * @param $key	array of the complete key 
+	 * @return 		bool true on success or false on failure 
+	 */
+	function savePrivateKey($electionId, $key) {
+		return $this->save(array('electionId' => $electionId, 'privateKey' => $key), 'privateKeys');
+	}
+	
+	function loadPrivateKey($electionId) {
+		return $this->load(array('electionId' => $electionId), 'privateKeys', 'privateKey');
 	}
 	
 }

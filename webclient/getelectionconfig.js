@@ -41,8 +41,20 @@ GetElectionConfig.prototype = {
 				var query = URI.parseURL(this.url); 
 				if (!query || !query.confighash) throw new UserInputError(1000, i18n.gettext("The given voting URL is not in the expected format (missing 'confighash=')."), this.url);
 				if ( !(GetElectionConfig.generateConfigHash(config) === query.confighash)) throw new ErrorInServerAnswer(1080, i18n.gettext("The voting configuration obtained from the server does not match the checksum. The server is trying to cheat you. Aborted."), this.url); 
-				// TODO verify config sigs
-				this.onGotConfigMethod.call(this.onGotConfigObject, config);
+				// verify sigs on election keys for each permission server
+				this.config2verify = config;
+				var me = this;
+				this.oneSigInvalid = false;
+				this.sigsValid = Array(config.questions.length);
+				for (var qNo = 0; qNo < config.questions.length; qNo++) { // for each question
+					this.sigsValid[qNo] = Array(serverinfos.pkeys.length);
+					for (var pServerNo = 0; pServerNo < serverinfos.pkeys.length; pServerNo++) { // for each permissionServer
+						this.sigsValid[qNo][pServerNo] = false;
+						}
+					for (var pServerNo = 0; pServerNo < serverinfos.pkeys.length; pServerNo++) { // for each permissionServer
+						this.verifyPermissionServerSig(config.questions[qNo].blinderData.permissionServerKeys['PermissionServer' + (pServerNo +1)], serverinfos.pkeys[pServerNo], me, me.onSigValid, me.onSigInvalid, {'qNo': qNo, 'pServerNo': pServerNo});
+					}
+				}
 			} catch (e) {
 				if ((e instanceof ErrorInServerAnswer) && (e.errNo == 2001)) { // could not JSON decode
 					// try to extract the confighash from the URL and try to get the electionconfig from a known server
@@ -56,6 +68,60 @@ GetElectionConfig.prototype = {
 					e.alert();
 					}
 				else throw e;
+			}
+		},
+		
+		verifyPermissionServerSig: function (signedKey, permanentKey, onObject, onSigValid, onSigInvalid, passthru){
+			// import PermissionServer permanent key
+			tmpPermanentKey = permanentKey;
+			tmpPermanentKey.alg ="RS256";
+			tmpPermanentKey.ext = true;
+			window.crypto.subtle.importKey('jwk', tmpPermanentKey, 
+					{name: 'RSASSA-PKCS1-v1_5', hash:{name: 'SHA-256'}}, true, ['verify'])
+					.then(function(publickey) {	
+						// verify the signatur over the new election key
+						crypto.subtle.verify({'name': 'RSASSA-PKCS1-v1_5', hash:{name: 'SHA-256'}}, 
+								publickey, 
+								base64Url2ArrayBuf(signedKey.sig), 
+								str2arrayBuf(unicodeToBlackslashU(JSON.stringify(signedKey.key))))
+								.then(function(isvalid) {
+									if (isvalid) {
+										onSigValid.call(onObject, passthru);
+										// throw new ErrorInServerAnswer(1080, i18n.gettext("The voting configuration obtained from the server does not match the checksum. The server is trying to cheat you. Aborted."), this.url);
+									}
+									else onSigInvalid.call(onObject, passthru, 'verified with isValid==false');
+								})
+								.catch(function(err) {
+									console.log('verify-catch: ' + err);
+									onSigInvalid.call(onObject, passthru, 'verify-catch: ' + err);
+								});
+					})
+					.catch(function(err) {
+						console.log('importkey-catch: ' + err);
+						onSigInvalid.call(onObject, passthru, 'importkey-catch: ' + err);
+					});
+		},
+		
+		onSigValid: function(verifiedKey) {
+			this.sigsValid[verifiedKey['qNo']][verifiedKey['pServerNo']] = true;
+			if (! this.oneSigInvalid) {
+				var allSigsValid = this.sigsValid[0][0];
+				for (var qNo = 0; qNo < this.config2verify.questions.length; qNo++) { // for each question
+					for (var pServerNo = 0; pServerNo < serverinfos.pkeys.length; pServerNo++) { // for each permissionServer
+						allSigsValid = ( (allSigsValid === true) && (this.sigsValid[qNo][pServerNo] === true) );
+						if (allSigsValid !== true) break;
+					}
+				}
+				if (allSigsValid === true) this.onGotConfigMethod.call(this.onGotConfigObject, this.config2verify);
+			}
+		},
+		
+		onSigInvalid: function (verifiedKey, err) {
+			this.sigsValid[verifiedKey['qNo']][verifiedKey['pServerNo']] = false;
+			if (! this.oneSigInvalid) { // show the alert only once
+				this.oneSigInvalid = true;
+				var e = new ErrorInServerAnswer(10658, 'The signature from a permission server is not valid. Aborting.', 'question no. ' + verifiedKey['qNo'] + ', permission server no. ' + verifiedKey['pServerNo'], err);
+				e.alert();
 			}
 		}
 };
