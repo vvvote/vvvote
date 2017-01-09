@@ -34,9 +34,10 @@ class BlindedVoter extends Blinder {
 	var $auth;
 	var $crypt;
 
-	function __construct($electionId_, $numVerifyBallots_, $numSignBallots_, array $pServerKeys_, $serverkey_, $numAllBallots_, $numSigsRequiered_, $dbInfos, Auth $auth_) {
+	function __construct($electionId_, $numVerifyBallots_, $questions_, $numSignBallots_, array $pServerKeys_, $serverkey_, $numAllBallots_, $numSigsRequiered_, $dbInfos, Auth $auth_) {
 		$this->electionId       = $electionId_;
 		$this->numVerifyBallots = $numVerifyBallots_;
+		$this->questions		= $questions_;
 		$this->numSignBallots   = $numSignBallots_;
 		$this->numAllBallots    = $numAllBallots_;
 		$this->db               = new DbBlindedVoter($dbInfos);
@@ -277,6 +278,12 @@ class BlindedVoter extends Blinder {
 				$picked[$num] = $allowedBallots[$p];
 			}
 			// sign the picked ballots
+			$completeElectionId = makeCompleteElectionId($blindedHashesFromDB['blindedHashes']['electionId'], $question['questionID']);
+			$privKey = $this->db->loadPrivateKey($completeElectionId);
+			global $serverNo, $pServerKeys;
+			$privKey['serverName'] = $pServerKeys[$serverNo -1]['name'];
+			// print_r($privKey);
+			$crypt = new Crypt(array(), $privKey);
 			$ballots = array();
 			for ($i=0; $i<count($picked); $i++) {
 				$ballot = array();
@@ -284,7 +291,7 @@ class BlindedVoter extends Blinder {
 				$ballot['blindedHash'] = $question['ballots'][$picked[$i]]['blindedHash'];
 				if (isset ($question['ballots'][$picked[$i]]['sigs'])) $ballot['sigs'] = array_slice($question['ballots'][$picked[$i]]['sigs'], 0, null ,true);
 				else                                                   $ballot['sigs'] = array();
-				$ballot = $this->crypt->signBlindedHash($ballot['blindedHash'], $ballot);
+				$ballot = $crypt->signBlindedHash($ballot['blindedHash'], $ballot);
 				$ballots[$i] = $ballot;
 			}
 			$ret[$q] = array(
@@ -391,17 +398,27 @@ class BlindedVoter extends Blinder {
 			//	$requestedballots['sent'][$kw] = true;
 			//	}
 				// verify hash
-				$str = $this->ballot2strForSig($curVoterBallot, makeCompleteElectionId($this->electionId, $blindedHashesFromDB['blindedHashes']['questions'][$q]['questionID']));
+				$completeElectionId = makeCompleteElectionId($this->electionId, $blindedHashesFromDB['blindedHashes']['questions'][$q]['questionID']);
+				$str = $this->ballot2strForSig($curVoterBallot, $completeElectionId);
 				$blindedHashFromDatabase    = $blindedHashesFromDB['blindedHashes']['questions'][$q]['ballots'][$curVoterBallot['ballotno']]['blindedHash'];
 				$unblindf                   = $curVoterBallot['unblindf'];
-				$hashOk = $this->crypt->verifyBlindedHash($str, $unblindf, $blindedHashFromDatabase);
-				if (! ($hashOk === true)) {
+				$privKey = $this->db->loadPrivateKey($completeElectionId);
+				// print_r($privKey);
+				// print_r($this->electionId);
+				$privKey['serverName'] = '';
+				$crypt = new Crypt(array(), $privKey);
+				$hashOk = $crypt->verifyBlindedHash($str, $unblindf, $blindedHashFromDatabase);
+				if ($hashOk !== true) {
 					WrongRequestException::throwException(212, "Error: hash wrong", "hash from signature: " . $verifyHash->toHex() . "calculated hash: $hashByMe");
 				}
 				// verify sigs from previous servers .ballots.sigs: .sig(encryptet previous sig or hash if first sig) .sigBy (name of the signing server in order to identify the correct public key)
 				$sigsOk = false;
 				if (isset($curVoterBallot['sigs'])) {
-					$sigsOk = $this->crypt->verifySigs($str, $curVoterBallot['sigs']);
+					$qnoTmp = find_in_subarray($this->questions, 'questionID', $voterReq["questions"][$q]['questionID']);
+					if ($qnoTmp === false) WrongRequestException::throwException(2127645, "Error: could not find questionId in config", "looking for questionId: >" . $voterReq["questions"][$q]['questionID'] . "<");
+					$pubkeys = $this->questions[$qnoTmp]['blinderData']['permissionServerKeys'];
+					$crypt = new Crypt($pubkeys, $privKey, Crypt::KEY_TYPE_JWK); // privKey is not used by verifySigs but must be given
+					$sigsOk = $crypt->verifySigs($str, $curVoterBallot['sigs']);
 				} else { $sigsOk = true;} // no sigs there
 				$tmpret[$i] = ($hashOk === true) && ($sigsOk === true);
 				if ($i == 0) {
@@ -445,8 +462,14 @@ class BlindedVoter extends Blinder {
 			WrongRequestException::throwException(401, "Error: permission does not have the requiered number of signatures from permission servers", "verifyPermission: requiered number of sigs from permission servers: " . $this->numSigsRequiered . 'number of sigs received: ' . count($vote['sigs']));
 			return false;
 		}
+		$completeElectionId = $vote['permission']['signed']['electionId'];
+		$electionIdParts = json_decode($completeElectionId, true);
+		$qId = $electionIdParts['subElectionId'];
+		$qnoTmp = find_in_subarray($this->questions, 'questionID', $qId);
+		$pubkeys = $this->questions[$qnoTmp]['blinderData']['permissionServerKeys'];
+		$crypt = new Crypt($pubkeys, false, Crypt::KEY_TYPE_JWK); // only the public keys are used, but a valid private key must be provided
 		$str = $this->ballot2strForSig($vote['permission']['signed']);
-		return $this->crypt->verifySigs($str, $vote['permission']['sigs']);
+		return $crypt->verifySigs($str, $vote['permission']['sigs']);
 	}
 	
 	function getAllPermissedBallots() {

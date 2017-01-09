@@ -127,6 +127,16 @@ function arrayStr2key(arraystr) {
 	return key;
 }
 
+/**
+ * Converts public RSA jwk to the internal BigInt key format
+ * @param key
+ * @returns key in internal bigInt format
+ */
+function jwk2BigInt(key) {
+	var keyBigInt = {'n': str2bigInt(key.n, -64), 'exp': str2bigInt(key.e, -64)};
+	return keyBigInt;
+}
+
 function RsaEncDec(plaintext, key){
 	if (!greater(key.n, plaintext)) { throw ("RsaEncDec(): modulus " + key.n + " must be greater than plaintext" + plaintext);}
 	return powMod(plaintext, key.exp, key.n);
@@ -175,6 +185,13 @@ function rsaBlind(plaintextBigInt, factors, key) {
 	return ret;
 }
 
+/**
+ * 
+ * @param blindedtextBigInt as bigInt
+ * @param factors containing factors.unblind as bigInt
+ * @param key containing key.n as bigInt
+ * @returns bigInt
+ */
 function rsaUnblind(blindedtextBigInt, factors, key) {
 	var ret;
 	ret = multMod(blindedtextBigInt, factors.unblind, key.n);

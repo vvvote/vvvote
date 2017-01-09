@@ -85,7 +85,7 @@ if (isset ($electionconfigStr)) {
 		// blinder
 		$newconfig['blinding'] = 'blindedVoter';
 		global $numVerifyBallots, $numSignBallots, $pServerKeys, $pserverkey, $numAllBallots, $numPSigsRequiered;
-		$blinder = new BlindedVoter($electionId, $numVerifyBallots, $numSignBallots, $pServerKeys, $pserverkey, $numAllBallots, $numPSigsRequiered, $dbInfos, $authm);
+		$blinder = new BlindedVoter($electionId, $numVerifyBallots, $electionconfig['questions'], $numSignBallots, $pServerKeys, $pserverkey, $numAllBallots, $numPSigsRequiered, $dbInfos, $authm);
 		
 		// tally
 		$tallym = LoadModules::loadTally($electionconfig['tally'], $blinder);

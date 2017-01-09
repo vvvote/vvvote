@@ -387,23 +387,33 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 	if (vote.permission.sigs.length != slist.length) {
 		alert(i18n.sprintf(i18n.gettext("Error verifying a signature:\nThe number of signatures on the voting certificate is not correct. \nRequired number: %d, number in this voting certificate: %d"), slist.length, vote.permission.sigs.length));
 	}
-	for (var i=0; i <vote.permission.sigs.length; i++) {
-		try {
-			sig = vote.permission.sigs[i];
-			serverinfo = ClientConfig.getServerInfoByName(sig.sigBy);
-			pubkey = serverinfo.key;
-			// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
-			sigOk = rsaVerifySig(transm.str, sig.sig, pubkey);
-			if (sigOk) {
-				alert(i18n.sprintf(i18n.gettext('The signature by the permission server >%s< for the voting key is correct. This means, the server has confirmed that the according voter is entitled to vote.'), sig.sigBy));
-			} else {
-				alert(i18n.sprintf(i18n.gettext('The signature by permission server >%s< for the voting key is not correct. Either the configuration is wrong or there is a fraud. Please inform the persons responsible for the voting'), sig.sigBy)); 
+	var completElectionIdStr = vote.permission.signed.electionId;
+	var completElectionId = JSON.parse(completElectionIdStr);
+	if (completElectionId.mainElectionId !== this.config.electionId) alert (i18n.gettext('The vote is not for this election (Election IDs do not match).'));
+	else {
+		var qid = completElectionId.subElectionId;
+		var qno = ArrayIndexOf(this.config.questions, 'questionID', qid);
+		if (qno < 0) alert (i18n.gettext('The vote is not for this election (Question ID not found in election configuration).'));
+		else {
+			for (var i=0; i <vote.permission.sigs.length; i++) {
+				try {
+					sig = vote.permission.sigs[i];
+					// serverinfo = ClientConfig.getServerInfoByName(sig.sigBy);
+					pubkey = jwk2BigInt(this.config.questions[qno].blinderData.permissionServerKeys[sig.sigBy].key);
+					// pubkey = serverinfo.key;
+					// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
+					sigOk = rsaVerifySig(transm.str, sig.sig, pubkey);
+					if (sigOk) {
+						alert(i18n.sprintf(i18n.gettext('The signature by the permission server >%s< for the voting key is correct. This means, the server has confirmed that the according voter is entitled to vote.'), sig.sigBy));
+					} else {
+						alert(i18n.sprintf(i18n.gettext('The signature by permission server >%s< for the voting key is not correct. Either the configuration is wrong or there is a fraud. Please inform the persons responsible for the voting'), sig.sigBy)); 
+					}
+				} catch (e) {
+					alert(i18n.sprintf(i18n.gettext("Error verifying the signature:\n%s"), e.toString()));
+				}
 			}
-		} catch (e) {
-			alert(i18n.sprintf(i18n.gettext("Error verifying the signature:\n%s"), e.toString()));
 		}
 	}
-
 };
 
 BlindedVoterElection.prototype.getAllPermissedBallots = function () {

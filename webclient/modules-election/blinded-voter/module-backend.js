@@ -24,7 +24,8 @@ var BlindedVoterPermObtainer = function(mainElectionId_, questions_, credentials
 	for (var q=0; q<questions_.length; q++) {
 		this.questions[q] = {
 				'completeElectionId': unicodeToBlackslashU(JSON.stringify({"mainElectionId": this.mainElectionId, "subElectionId": questions_[q].questionID})),
-				'questionID': questions_[q].questionID
+				'questionID': questions_[q].questionID,
+				'permissionServerKeys': questions_[q].blinderData.permissionServerKeys // the keys get verified when the config is loaded
 				};
 	}
 	this.credentials = {"obj": credentials_.obj, "method": credentials_.method};
@@ -90,12 +91,16 @@ BlindedVoterPermObtainer.prototype.makeBallots = function() {
 			ballot.transm   = BlindedVoterPermObtainer.addBallothash(ballot.raw);
 			ballot.ballotno = i;
 			ballot.blindingf = new Array();
-			for (var j=0; j<this.config.serverList.length; j++) {
-				ballot.blindingf[j] = RsablindingFactorsGen(bitSize(this.config.serverList[j].key.n) - 1, this.config.serverList[j].key.n);
+			for (var j=0; j<this.config.serverList.length; j++) { 
+				var key = this.questions[q].permissionServerKeys[this.config.serverList[j].name].key
+				var keyBigInt = jwk2BigInt(key);
+				ballot.blindingf[j] = RsablindingFactorsGen(bitSize(keyBigInt.n) - 1, keyBigInt.n); 
 			}
 			ballot.blindedHash = new Array();
-			for (var s=0; s<this.config.serverList.length; s++) {
-				ballot.blindedHash[s] = rsaBlind(str2bigInt(ballot.transm.hash, 16), ballot.blindingf[s], this.config.serverList[s].key);
+			for (var s=0; s<this.config.serverList.length; s++) { 
+				var key = this.questions[q].permissionServerKeys[this.config.serverList[s].name].key
+				var keyBigInt = jwk2BigInt(key);
+				ballot.blindedHash[s] = rsaBlind(str2bigInt(ballot.transm.hash, 16), ballot.blindingf[s], keyBigInt);
 			}
 			/* only for debugging purposes
 		ballot.blindedHashStr = bigInt2str(ballot.blindedHash[0], 10);
@@ -188,7 +193,7 @@ function makePermissionReqsResume(election) {
  */
 BlindedVoterPermObtainer.prototype.savePermissionEvent = function(data) {
 	var sigsOk = this.verifySaveElectionPermiss(data);
-	if (!sigsOk) throw new ErrorInServerAnswer(9238983, i18n.gettext('Verification of server signature failed. Aborted.'), '');
+	if (!sigsOk) throw new ErrorInServerAnswer(9238984, i18n.gettext('Verification of server signature failed. Aborted.'), '');
 	var ret = new Array();
 	for (var q=0; q<this.questions.length; q++) {
 		// find the ballot who got the sigs from all permission servers and save that one
@@ -259,7 +264,6 @@ BlindedVoterPermObtainer.prototype.disclose = function(requestedBallots) {
 
 BlindedVoterPermObtainer.prototype.verifySaveElectionPermiss = function(answ) {
 	var prevServer = this.config.serverSeq[this.xthServer];
-	var serverKey  = this.config.serverList[prevServer].key;
 	// TODO check if the server did sign what I sent to him (e.g. votingno returned is not changed)
 	// TODO check if the server did not sign an unblinded ballot
 	// answ: array of signed: .num .blindSignatur .serverId
@@ -274,6 +278,9 @@ BlindedVoterPermObtainer.prototype.verifySaveElectionPermiss = function(answ) {
 			var qnoAnsw = ArrayIndexOf(answ.questions, 'questionID', questionID);
 			if (qnoAnsw < 0) throw new ErrorInServerAnswer(875636, i18n.gettext('The following questionID is missing in the server answer: '), questionID);
 			var curAnswBallot = answ.questions[qnoAnsw].ballots[i];
+			var serverName = this.config.serverList[prevServer].name;
+			var serverKeyJWK  = this.questions[q].permissionServerKeys[serverName].key
+			var serverKey = jwk2BigInt(serverKeyJWK);
 			if (this.config.serverList[prevServer].name !== curAnswBallot.sigs.slice(-1)[0].sigBy) throw new ErrorInServerAnswer(576793, i18n.gettext('A Signature does not belong to the server we sent the data to in order to let the server sign it.'), i18n.sprintf(i18n.gettext('Expected: >%s<, received: >%s<'), this.config.serverList[prevServer].name, curAnswBallot.sigs.slice(-1)[0].sigBy));
 			// TODO think about: this only checks the newest sigs
 			var blindedSig = str2bigInt(curAnswBallot.sigs.slice(-1)[0].sig, 16);
@@ -287,7 +294,7 @@ BlindedVoterPermObtainer.prototype.verifySaveElectionPermiss = function(answ) {
 			curTransm.sigs[j] = Object();
 			curTransm.sigs[j].blindSig = curAnswBallot.sigs.slice(-1)[0].sig;  
 			curTransm.sigs[j].sig      = bigInt2str(signatur, 16);
-			curTransm.sigs[j].sigBy    = serverKey.serverId;
+			curTransm.sigs[j].sigBy    = serverName;
 			curTransm.sigs[j].sigOk    = sigOk;
 			curTransm.sigs[j].serSig   = curAnswBallot.sigs.slice(-1)[0].serSig; //TODO unblind
 			this.questions[q].ballots[curAnswBallot.ballotno].transm = curTransm; 
@@ -371,9 +378,9 @@ BlindedVoterPermObtainer.prototype.handleServerAnswer = function(dataString) {
 			return Object({'action':'clientError', 'errorText': m});
 		}
 		if (e instanceof Error) { 
-			return Object({'action':'clientError', 'errorText': i18n.sprintf(i18.gettext("An unknown system error occured: %s"), e.toString())});
+			return Object({'action':'clientError', 'errorText': i18n.sprintf(i18n.gettext("An unknown system error occured: %s"), e.toString())});
 		} else
-			return Object({'action':'clientError', 'errorText': i18n.sprintf(i18.gettext("an exception occured: %s"), e.toString())});
+			return Object({'action':'clientError', 'errorText': i18n.sprintf(i18n.gettext("an exception occured: %s"), e.toString())});
 	}
 };
 

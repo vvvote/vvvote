@@ -45,7 +45,7 @@ ClientConfig.getResultUrl      = server1url + 'getresult.php'; //?XDEBUG_SESSION
 
 
 ClientConfig.anonymizerUrl = 'http://anonymouse.org/cgi-bin/anon-www_de.cgi/'; // used to change the ip and to strip browser infos / with trailing slash
-ClientConfig.voteClientUrl = server1url + 'getclient.php';
+ClientConfig.voteClientUrl = server2url + 'getclient.php';
 
 
 

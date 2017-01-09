@@ -34,35 +34,44 @@ class Crypt {
 
 	var $serverKeys;
 	var $myPrivateKey;
+	const KEY_TYPE_JWK = 1; /* JWK = JSON Web Key format */
 	
 	/**
 	 * 
 	 * @param unknown $serverkeys array
 	 * @param unknown $privateKey
 	 */
-	function __construct(array $serverkeys, $privateKey)  {
+	function __construct(array $serverkeys, $privateKey, $keyFormat = 0)  {
 		$this->serverKeys   = $serverkeys;
-		
+		$this->keyFormat = $keyFormat;
 		$rsa = new rsaMyExts();
-		$rsa->loadKey($privateKey['privatekey']);
-		$rsapub = new rsaMyExts();
-		$rsapub->loadKey($privateKey['publickey']);
-		$this->myPrivateKey = array ('privRsa' => $rsa, 
-				'pubRsa' => $rsapub, 
-				'serverName' => $privateKey['serverName']);
+		if ($privateKey) {
+			$rsa->loadKey($privateKey['privatekey']);
+			$rsapub = new rsaMyExts();
+			$rsapub->loadKey($privateKey['publickey']);
+			$this->myPrivateKey = array ('privRsa' => $rsa, 
+					'pubRsa' => $rsapub, 
+					'serverName' => $privateKey['serverName']);
+			}
 	}
 	
 	function getServerKey($servername) {
-		$f = -1;
-		foreach ($this->serverKeys as $num => $s) {
-			if ($s['name'] == $servername) {
-				$f = $num;
+ 		$f = -1;
+		if ($this->keyFormat === self::KEY_TYPE_JWK) {
+			if (isset($this->serverKeys[$servername]) )	
+				$pubkey = $this->serverKeys[$servername]['key'];
+			else WrongRequestException::throwException(87634675, 'key not found', 'looking for the key from server >' . $servername . '<' . ', looking in: ' . print_r($this->serverKeys, true));
+		} else {
+			foreach ($this->serverKeys as $num => $s) {
+				if ($s['name'] == $servername) {
+					$f = $num;
+				}
 			}
-		}
-		if ($f == -1) {
-			WrongRequestException::throwException(1000, "Error: server key not found", "Crypt:getServerKey: Server $servername not found");
-		}
-		$pubkey = $this->serverKeys[$f];
+			if ($f == -1) {
+				WrongRequestException::throwException(1000, "Error: server key not found", "Crypt:getServerKey: Server $servername not found");
+			}
+			$pubkey = $this->serverKeys[$f];
+			}
 		return 	$pubkey;
 	}
 	
@@ -75,20 +84,22 @@ class Crypt {
 	 */
 	function verifySigHash($hash, $sig, $servername) {
 		$pubkey = $this->getServerKey($servername);
-		return static::verifySigKey($hash, $sig, $pubkey);
+		$keyformat = false;
+		if ($this->keyFormat == static::KEY_TYPE_JWK) $keyformat = CRYPT_RSA_PUBLIC_FORMAT_JWK;
+		return static::verifySigKey($hash, $sig, $pubkey, $keyformat);
 	}
 
-	static function verifySigKey($hash, $sig, $pubkey) {
+	static function verifySigKey($hash, $sig, $pubkey, $keyformat) {
 		$rsa = new rsaMyExts();
-		$rsa->loadKey($pubkey);
-		$hashBI = new Math_BigInteger($hash, 16);
+		$rsa->loadKey($pubkey, $keyformat);
+ 		$hashBI = new Math_BigInteger($hash, 16);
 		$sigBI = new Math_BigInteger($sig, 16);
 		if ($sigBI->compare($rsa->zero) < 0 || $sigBI->compare($rsa->modulus) > 0) return false; // the signature has more bits than the modulus --> the signature cannot has been created by the given key and the exponentiation cannot be performed. 
 		$verify = $rsa->_rsaep($sigBI);
 		if ($hashBI->equals($verify)) {
 			return true;
 		}
-		WrongRequestException::throwException(1001, "Error: signature verifcation failed", "verifySig: given hash: $hash, calculated hash: " . $verify->toHex());
+		WrongRequestException::throwException(1001, "Error: signature verifcation failed", "verifySig: given hash: $hash, calculated hash: " . $verify->toHex() . print_r($keyformat, true));
 	}
 
 	
@@ -138,7 +149,7 @@ class Crypt {
 				'n'   => new Math_BigInteger($pubkeyarray[0], 16),
 				'e'   => new Math_BigInteger($pubkeyarray[1], 16));
 		$hashByMe = hash('sha256', $text);
-		return static::verifySigKey($hashByMe, $sig, $pubkey);
+		return static::verifySigKey($hashByMe, $sig, $pubkey, CRYPT_RSA_PUBLIC_FORMAT_RAW);
 	}
 
 	
@@ -173,7 +184,7 @@ class Crypt {
 		$verifyHash                 = $this->myPrivateKey['pubRsa']->_rsasp1($unblindedSignedHash);
 		$hashOk = $hashByMeBigInt->equals($verifyHash);
 		if ($hashOk !== true ) WrongRequestException::throwException(1002, "Error: blinded hash verification failed. Most probable reason: the webclient used a key different from the server's key.", "expected hash: $hashByMe, got unblinded hash: $verifyHash, blinded Hash $blindedHash, unblinding factor $unblindf");
-		return $hashOk;
+		return $hashOk === true;
 	}
 	
 	function signBlindedHash($blindedHash, $ballot) {

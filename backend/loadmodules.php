@@ -76,8 +76,9 @@ class LoadModules {
 	
 	static function loadBlinder($name, $elconfig, $auth) {
 	global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $pserverkey, $numAllBallots, $numPSigsRequiered;
-		$el = new BlindedVoter($elconfig['electionId'],
+		$el = new BlindedVoter($elconfig['electionId'], 
 				$numVerifyBallots,
+				$elconfig['questions'],
 				$numSignBallots,
 				$pServerKeys,
 				$pserverkey,

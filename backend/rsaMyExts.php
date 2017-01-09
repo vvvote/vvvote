@@ -27,7 +27,34 @@ require_once 'Crypt/RSA.php';
 //     otherPrimeInfos   OtherPrimeInfos OPTIONAL
 // }
 
+
+/**
+ * Formatted public key
+ *
+ * Defined JSON Web Key Format (JWK) defined by RFC 7517
+ * added by Pfeffer 2017
+ */
+define('CRYPT_RSA_PUBLIC_FORMAT_JWK', 8);
+
+
+
 class rsaMyExts extends Crypt_RSA {
+	
+	function loadKey($key, $type = false) {
+		$tmp = $key;
+		if ($type === CRYPT_RSA_PUBLIC_FORMAT_JWK) {
+			// print_r($key);
+			$tmpE = new Math_BigInteger(base64url_decode($key['e']), 256);
+		    $tmpN = new Math_BigInteger(base64url_decode($key['n']), 256);
+		    $tmp = array(
+		    		'e' => $tmpE,
+		    		'n' => $tmpN
+		    );
+		    $type = CRYPT_RSA_PUBLIC_FORMAT_RAW;
+		}
+		return parent::loadKey($tmp, $type);
+	}
+	
 	/**
 	 * 
 	 * @param unknown $p prime 1

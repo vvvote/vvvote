@@ -27,7 +27,7 @@ class DbBlindedVoter extends DbBase {
 				array('name' => 'signedBallots', 'digits' =>  'TEXT', 'json' => true),
 			  	),
 			  'privateKeys' /* Table name */ => array(
-			  		array('name' => 'electionID', 'digits' => 'TEXT', 'json' => true), /* colunm definition */
+			  		array('name' => 'electionID', 'digits' => 'TEXT', 'json' => false), /* colunm definition */
 			  		array('name' => 'privateKey', 'digits' => 'TEXT', 'json' => true), /* colunm definition */
 			  )
 		);
@@ -89,7 +89,9 @@ class DbBlindedVoter extends DbBase {
 	}
 	
 	function loadPrivateKey($electionId) {
-		return $this->load(array('electionId' => $electionId), 'privateKeys', 'privateKey');
+		$tmp = $this->load(array('electionId' => $electionId), 'privateKeys', 'privateKey');
+		if ($tmp === false || (count($tmp) !== 1)) InternalServerError::throwException(21745, 'private election key not found in database', 'looking for a match to the electionId: >' . $completeElectionId . '<');
+		return $tmp[0];
 	}
 	
 }
