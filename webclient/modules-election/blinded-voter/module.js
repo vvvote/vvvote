@@ -290,7 +290,7 @@ BlindedVoterElection.prototype.onPermissionsServerSigsOk = function() {
 	var me = this;
 	this.permissionOk = true;
 	page.onPermLoaded(this.permissionOk, me, this.config, this.returnEnvelopeLStorageId); // call back --> enables vote button or loads ballot
-	// TODO check signatures from permissionservers on my keys
+	// TODO check signatures from permissionservers on my voting keys
 	// TODO check for date if voting already/still possible
 };
 

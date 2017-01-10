@@ -483,6 +483,9 @@ translations['de'] =
          "Server reports error: \n": [
             "Server meldet folgenden Fehler: \n"
          ],
+         "Unknown command from Server: \n": [
+            "Unbekannter Befehl vom Server:\n"
+         ],
          "Online Voting: anonymous ballots and traceable": [
             "Online Abstimmung: anonym und nachvollziehbar"
          ],

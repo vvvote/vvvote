@@ -77,6 +77,24 @@ abstract class Auth {
 		}
 		return $ret;
 	}
+	
+	/**
+	 * 
+	 * @param array $authData1
+	 * @param array $authData2
+	 * @return true if authData contain the same dates, false otherwise
+	 */
+	static function AuthDatesEqual(array $authData1, array $authData2) {
+		$fields = ['RegistrationStartDate', 'RegistrationEndDate', 'VotingStart', 'VotingEnd'];
+		$ret = true;
+		foreach ($fields as $field) {
+			$ret = $ret && (strtotime($authData1[$field]) === strtotime($authData2[$field]));
+		}
+		foreach ($authData1['DelayUntil'] as $index => $curdate) {
+			$ret = $ret && (strtotime($curdate) === strtotime($authData2['DelayUntil'][$index]));
+		}
+		return $ret;
+	}
 
 	/**
 	 * In OAuth 2 / BEO the voterId is not read from vvvote client but

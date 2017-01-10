@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-01-09 22:40+0100\n"
+"POT-Creation-Date: 2017-01-10 16:53+0100\n"
 "PO-Revision-Date: 2016-01-01 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -247,7 +247,7 @@ msgid ""
 "password given here. Everyone who knows the password can cast his vote.<br>"
 msgstr ""
 
-#: modules-auth/shared-passw/module.js:40 newelection.js:40
+#: modules-auth/shared-passw/module.js:40 newelection.js:41
 msgid "Voting password"
 msgstr ""
 
@@ -796,62 +796,66 @@ msgstr ""
 msgid "Step 2: Save voting link"
 msgstr ""
 
-#: newelection.js:22
+#: newelection.js:23
 msgid ""
 "Here you can create a new voting. In order to do so, fill in the name of "
 "the voting and set the preferences for the authorization mechanism. <br><br>"
 msgstr ""
 
-#: newelection.js:26
+#: newelection.js:27
 msgid "Name of voting"
 msgstr ""
 
-#: newelection.js:29
+#: newelection.js:30
 msgid "Vote on"
 msgstr ""
 
-#: newelection.js:30
+#: newelection.js:31
 msgid "predefined test voting items"
 msgstr ""
 
-#: newelection.js:31
+#: newelection.js:32
 msgid "Enter a question to vote on"
 msgstr ""
 
-#: newelection.js:38
+#: newelection.js:39
 msgid "Autorization method"
 msgstr ""
 
-#: newelection.js:42
+#: newelection.js:43
 msgid "External token verification"
 msgstr ""
 
-#: newelection.js:45
+#: newelection.js:46
 msgid "Upload a list of usernames and passwords"
 msgstr ""
 
-#: newelection.js:57
+#: newelection.js:58
 msgid "Create new voting"
 msgstr ""
 
-#: newelection.js:65 page.js:14
+#: newelection.js:67 page.js:14
 msgid "Open a new voting"
 msgstr ""
 
-#: newelection.js:119
+#: newelection.js:121
 msgid "Waiting for the servers"
 msgstr ""
 
-#: newelection.js:138
+#: newelection.js:140
 msgid "Save the link and distribute it to all eligable people. "
 msgstr ""
 
-#: newelection.js:141
+#: newelection.js:143
 msgid "This is the voting link: "
 msgstr ""
 
-#: newelection.js:151
+#: newelection.js:154
 msgid "Server reports error: \n"
+msgstr ""
+
+#: newelection.js:158
+msgid "Unknown command from Server: \n"
 msgstr ""
 
 #: page.js:13

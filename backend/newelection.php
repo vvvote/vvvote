@@ -35,7 +35,6 @@ require_once 'dbelections.php';
 require_once 'modules-election/blindedvoter/election.php';
 require_once 'modules-tally/publishonly/tally.php';
 require_once 'modules-tally/configurable-tally/tally.php';
-//require_once 'modules-tally/tally-collection/tally.php';
 
 
 
@@ -56,6 +55,7 @@ if (isset ($electionconfigStr)) {
 	$newconfig = array();
 	try {
 		$electionconfig = json_decode($electionconfigStr, true);
+		$electionconfigOrig = $electionconfig; // php copies array whereas objects would only cops the reference
 		// TODO verify auth
 		if (isset($electionconfig) && 
      		isset($electionconfig['electionId']) && is_string($electionconfig['electionId']) &&
@@ -68,91 +68,117 @@ if (isset ($electionconfigStr)) {
 		}
 		
 		$db = new DbElections($dbInfos);
-		$alreadyGiven = $db->loadElectionConfigFromElectionId($electionId);
-		if (count($alreadyGiven) > 0) WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
-		
-		// create public election config and secret election config
-		$newconfig['electionId'] = $electionId;
-		if (isset($electionconfig['electionTitle'])) $newconfig["electionTitle"] = $electionconfig['electionTitle'];
-		else  										 $newconfig["electionTitle"] = $electionId;
-//		$authm = LoadModules::laodAuthModule($electionconfig['auth']);
-		global $dbInfos;
-		$authm = new SharedAuth($dbInfos);
-		$authTmp = $authm->handleNewElectionReq($electionId, $electionconfig);
-		$newconfig['authConfig'] = $authTmp['authConfig']; 
-		$newconfig["auth"] = $authTmp['auth'];
-		
-		// blinder
-		$newconfig['blinding'] = 'blindedVoter';
-		global $numVerifyBallots, $numSignBallots, $pServerKeys, $pserverkey, $numAllBallots, $numPSigsRequiered;
-		$blinder = new BlindedVoter($electionId, $numVerifyBallots, $electionconfig['questions'], $numSignBallots, $pServerKeys, $pserverkey, $numAllBallots, $numPSigsRequiered, $dbInfos, $authm);
-		
-		// tally
-		$tallym = LoadModules::loadTally($electionconfig['tally'], $blinder);
-		
-		$newconfig['tally'] = constant(get_class($tallym) . '::name');
-//		$newconfig['tallyData'] = $tallym->handleNewElectionReq($electionId, $authm, $blinder, $electionconfig['tallyData']);
-		
-		// $this->subTally->handleNewElectionReq($req['subTallyData']);
-		if ( (! isset($electionconfig["questions"])) || (! is_array($electionconfig["questions"]))) WrongRequestException::throwException(2146, 'Request must contain an array of questions', print_r($electionconfig, true));
-		foreach ($electionconfig['questions'] as $i => $question) {
-			$completeElectionId = json_encode(array ('mainElectionId' => $electionId,  'subElectionId' => $question['questionID']));
-			
-//			$subAuthConf = $authm->newSubElection($completeElectionId);
-			
-			$subBlinderConf = $blinder->handleNewElectionReq($completeElectionId, (isset($question['blinderData'])?$question['blinderData']:array()));
-			$subTallyConf = $tallym->handleNewElectionReq($completeElectionId, $authm, $blinder, $question);
-			$ret[$i] = array( // TODO take the names of the modules from config / use a new function getModuleName()
-					'questionID'  		=> $question['questionID'],
-					'questionWording' 	=> $question['questionWording'],
-					'blinderData' 		=> $subBlinderConf,
-					'tallyData'   		=> $subTallyConf);
-		if (isset($question['options'])) $ret[$i]['options'] = $question['options'];
-		$electionconfig['questions'][$i]['blinderData'] = $subBlinderConf;
-		}
-		
-		$newconfig['questions']  = $ret;
-			
-		// create new config on the next server
-		if ($serverNo < count($pServerUrlBases) ) {
-			$url = $pServerUrlBases[$serverNo] . NEW_ELECTION_URL_PART; // first server has no. 1 --> [$serverNo] means the next server
-			$tmp = parse_url($url);
-			$certfile = false;
-			if ($tmp['scheme'] === 'https') {
-				$host = $tmp['host'];
-				$certfile = realpath(dirname(__FILE__) . '/config/permissionservercerts/' . $host . '.pem');
-			}
-			
-			$configWithAllKeys = httpPost($url, $electionconfig, $certfile, true);
-			if (! isset($configWithAllKeys['questions'])) InternalServerError::throwException(8734634, 'Error creating a new election: a permission server returned a config without questions. Server URL delivering wrong config: ' . $url, ''); 
-			if (! is_array($configWithAllKeys['questions'])) InternalServerError::throwException(8734635, 'Error creating a new election: a permission server returned a config withot questions not as array. Server URL delivering wrong config: ' . $url, ''); 
-			foreach ($configWithAllKeys['questions'] as $qNo => $question ) {
-				foreach ($pServerKeys as $pNum => $publickey) {
-					if ($pNum < $serverNo) { // verify if the keys from the new-election request are unmodified
-						if (!    isset($question['blinderData'])) InternalServerError::throwException(8734636, 'Error creating a new election: a permission server returned a config without blinderData. Server URL delivering wrong config: ' . $url, ''); 
-						if (! is_array($question['blinderData'])) InternalServerError::throwException(8734637, 'Error creating a new election: a permission server returned a config with blinderData not as array. Server URL delivering wrong config: ' . $url, ''); 
-						if (!    isset($question['blinderData']['permissionServerKeys'])) InternalServerError::throwException(8734646, 'Error creating a new election: a permission server returned a config without permissionServerKeys. Server URL delivering wrong config: ' . $url, ''); 
-						if (! is_array($question['blinderData']['permissionServerKeys'])) InternalServerError::throwException(8734647, 'Error creating a new election: a permission server returned a config with permissionServerKeys not as array. Server URL delivering wrong config: ' . $url, ''); 
-						if (!    isset($question['blinderData']['permissionServerKeys'][$publickey['name']]) ) InternalServerError::throwException(8734638, 'Error creating a new election: a permission server returned a config without blinderData for previous permission servers. Server URL delivering wrong config: ' . $url, ''); 
-						if (! is_array($question['blinderData']['permissionServerKeys'][$publickey['name']]) ) InternalServerError::throwException(8734639, 'Error creating a new election: a permission server returned a config with blinderData for previous permission servers not as array. Server URL delivering wrong config: ' . $url, ''); 
-						if (           $question['blinderData']['permissionServerKeys'][$publickey['name']] !== $newconfig['questions'][$qNo]['blinderData']['permissionServerKeys'][$publickey['name']])
-							InternalServerError::throwException(8734656, 'Error creating a new election: a permission server changed the keys of an other permission server on quesion no. ' . $qNo, 'expected: ' . print_r($newconfig['questions'][$qNo]['blinderData'][$publickey['name']], true) . ',\r\n received: ' . $question['blinderData'][$publickey['name']]);
-					} else { // verify if the newly obtained keys are signed correctly
-						$completeElectionId = json_encode(array ('mainElectionId' => $electionId,  'subElectionId' => $question['questionID']));
-						$ok = $blinder->verifyPermissionServerKey($publickey['name'], $question['blinderData']['permissionServerKeys'][$publickey['name']], $completeElectionId);
-						if ($ok !== true) InternalServerError::throwException(8734657, 'Error creating a new election: a permission server delivered not valid keys on quesion no. ' . $qNo, 'expected: ' . print_r($newconfig['questions'][$qNo]['blinderData'][$publickey['name']], true) . ',\r\n received: ' . $question['blinderData'][$publickey['name']]);
+		$electionconfigFromDB = $db->loadElectionConfigFromElectionId($electionId);
+		if (count($electionconfigFromDB) > 0) {
+			// verify if the new request matches the already saved one
+			if (	($electionconfig['auth']     === $electionconfigFromDB['auth']) 		&&
+				 	//($electionconfig['blinding'] == $electionconfigFromDB['blinding']) 	&& // this is not set by the new election request
+				 	($electionconfig['tally']    === $electionconfigFromDB['tally']) 	&&
+					(count($electionconfig['questions']) === count($electionconfigFromDB['questions'])) 
+				) {
+					if (isset($electionconfig['electionTitle']) && // electionTitle is copied from electionId if it was not set
+					($electionconfig['electionTitle'] !== $electionconfigFromDB['electionTitle']) ) WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
+					
+					if ($electionconfigFromDB['auth'] === 'sharedPassw') unset($electionconfig['authData']['sharedPassw']); // we do not check if the new password machtes the old one as we do not want to have a way here to check the password
+					if (! Auth::AuthDatesEqual($electionconfig['authData'], $electionconfigFromDB['authConfig']) ) WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
+					
+					foreach ($electionconfigFromDB['questions'] as $qno => $question) {
+							// unset($question['blinderData']); // compare without on the server generated blinder data
+						if ($question['questionID']                   !== $electionconfig['questions'][$qno]['questionID'])      WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
+						if ($question['questionWording']              !== $electionconfig['questions'][$qno]['questionWording']) WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
+						if ($question['options']                      !== $electionconfig['questions'][$qno]['options'])         WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
+						if ($question['tallyData']['scheme']          !== $electionconfig['questions'][$qno]['scheme'])          WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
+						if ($question['tallyData']['findWinner']      !== $electionconfig['questions'][$qno]['findWinner'])      WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
 					}
-				}
-				$newconfig['questions'][$qNo]['blinderData'] = $question['blinderData'];
-			}
+					// the new request matches the saved election 								
+					// --> return the saved config
+					$hash = $db->electionIdToConfigHash($electionId);
+		} else {
+			WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
 		}
-
+	} else {
+			// create public election config and secret election config
+			$newconfig['electionId'] = $electionId;
+			if (isset($electionconfig['electionTitle'])) $newconfig["electionTitle"] = $electionconfig['electionTitle'];
+			else  										 $newconfig["electionTitle"] = $electionId;
+//			$authm = LoadModules::laodAuthModule($electionconfig['auth']);
+			global $dbInfos;
+			$authm = new SharedAuth($dbInfos);
+			$authTmp = $authm->handleNewElectionReq($electionId, $electionconfig);
+			$newconfig['authConfig'] = $authTmp['authConfig']; 
+			$newconfig["auth"] = $authTmp['auth'];
+		
+			// blinder
+			$newconfig['blinding'] = 'blindedVoter';
+			global $numVerifyBallots, $numSignBallots, $pServerKeys, $pserverkey, $numAllBallots, $numPSigsRequiered;
+			$blinder = new BlindedVoter($electionId, $numVerifyBallots, $electionconfig['questions'], $numSignBallots, $pServerKeys, $pserverkey, $numAllBallots, $numPSigsRequiered, $dbInfos, $authm);
+		
+			// tally
+			$tallym = LoadModules::loadTally($electionconfig['tally'], $blinder);
+		
+			$newconfig['tally'] = constant(get_class($tallym) . '::name');
+//			$newconfig['tallyData'] = $tallym->handleNewElectionReq($electionId, $authm, $blinder, $electionconfig['tallyData']);
+		
+			// $this->subTally->handleNewElectionReq($req['subTallyData']);
+			if ( (! isset($electionconfig["questions"])) || (! is_array($electionconfig["questions"]))) WrongRequestException::throwException(2146, 'Request must contain an array of questions', print_r($electionconfig, true));
+			foreach ($electionconfig['questions'] as $i => $question) {
+				$completeElectionId = json_encode(array ('mainElectionId' => $electionId,  'subElectionId' => $question['questionID']));
+			
+//				$subAuthConf = $authm->newSubElection($completeElectionId);
+			
+				$subBlinderConf = $blinder->handleNewElectionReq($completeElectionId, (isset($question['blinderData'])?$question['blinderData']:array()));
+				$subTallyConf = $tallym->handleNewElectionReq($completeElectionId, $authm, $blinder, $question);
+				$ret[$i] = array( // TODO take the names of the modules from config / use a new function getModuleName()
+						'questionID'  		=> $question['questionID'],
+						'questionWording' 	=> $question['questionWording'],
+						'blinderData' 		=> $subBlinderConf,
+						'tallyData'   		=> $subTallyConf);
+			if (isset($question['options'])) $ret[$i]['options'] = $question['options'];
+			$electionconfig['questions'][$i]['blinderData'] = $subBlinderConf;
+			}
+		
+			$newconfig['questions']  = $ret;
+			
+			// create new config on the next server
+			if ($serverNo < count($pServerUrlBases) ) {
+				$url = $pServerUrlBases[$serverNo] . NEW_ELECTION_URL_PART; // first server has no. 1 --> [$serverNo] means the next server
+				$tmp = parse_url($url);
+				$certfile = false;
+				if ($tmp['scheme'] === 'https') {
+					$host = $tmp['host'];
+					$certfile = realpath(dirname(__FILE__) . '/config/permissionservercerts/' . $host . '.pem');
+				}
+			
+				$configWithAllKeys = httpPost($url, $electionconfig, $certfile, true);
+				if (! isset($configWithAllKeys['questions'])) InternalServerError::throwException(8734634, 'Error creating a new election: a permission server returned a config without questions. Server URL delivering wrong config: ' . $url, ''); 
+				if (! is_array($configWithAllKeys['questions'])) InternalServerError::throwException(8734635, 'Error creating a new election: a permission server returned a config withot questions not as array. Server URL delivering wrong config: ' . $url, ''); 
+				foreach ($configWithAllKeys['questions'] as $qNo => $question ) {
+					foreach ($pServerKeys as $pNum => $publickey) {
+						if ($pNum < $serverNo) { // verify if the keys from the new-election request are unmodified
+							if (!    isset($question['blinderData'])) InternalServerError::throwException(8734636, 'Error creating a new election: a permission server returned a config without blinderData. Server URL delivering wrong config: ' . $url, ''); 
+							if (! is_array($question['blinderData'])) InternalServerError::throwException(8734637, 'Error creating a new election: a permission server returned a config with blinderData not as array. Server URL delivering wrong config: ' . $url, ''); 
+							if (!    isset($question['blinderData']['permissionServerKeys'])) InternalServerError::throwException(8734646, 'Error creating a new election: a permission server returned a config without permissionServerKeys. Server URL delivering wrong config: ' . $url, ''); 
+							if (! is_array($question['blinderData']['permissionServerKeys'])) InternalServerError::throwException(8734647, 'Error creating a new election: a permission server returned a config with permissionServerKeys not as array. Server URL delivering wrong config: ' . $url, ''); 
+							if (!    isset($question['blinderData']['permissionServerKeys'][$publickey['name']]) ) InternalServerError::throwException(8734638, 'Error creating a new election: a permission server returned a config without blinderData for previous permission servers. Server URL delivering wrong config: ' . $url, ''); 
+							if (! is_array($question['blinderData']['permissionServerKeys'][$publickey['name']]) ) InternalServerError::throwException(8734639, 'Error creating a new election: a permission server returned a config with blinderData for previous permission servers not as array. Server URL delivering wrong config: ' . $url, ''); 
+							if (           $question['blinderData']['permissionServerKeys'][$publickey['name']] !== $newconfig['questions'][$qNo]['blinderData']['permissionServerKeys'][$publickey['name']])
+								InternalServerError::throwException(8734656, 'Error creating a new election: a permission server changed the keys of an other permission server on quesion no. ' . $qNo, 'expected: ' . print_r($newconfig['questions'][$qNo]['blinderData'][$publickey['name']], true) . ',\r\n received: ' . $question['blinderData'][$publickey['name']]);
+						} else { // verify if the newly obtained keys are signed correctly
+							$completeElectionId = json_encode(array ('mainElectionId' => $electionId,  'subElectionId' => $question['questionID']));
+							$ok = $blinder->verifyPermissionServerKey($publickey['name'], $question['blinderData']['permissionServerKeys'][$publickey['name']], $completeElectionId);
+							if ($ok !== true) InternalServerError::throwException(8734657, 'Error creating a new election: a permission server delivered not valid keys on quesion no. ' . $qNo, 'expected: ' . print_r($newconfig['questions'][$qNo]['blinderData'][$publickey['name']], true) . ',\r\n received: ' . $question['blinderData'][$publickey['name']]);
+						}
+					}
+					$newconfig['questions'][$qNo]['blinderData'] = $question['blinderData'];
+				}
+			}
 		$hash = $db->saveElectionConfig($electionId, $newconfig);
+		}
 		//e.g. http://www.webhod.ra/vvvote2/backend/getelectionconfig.php?confighash=
 		$configurl = "${configUrlBase}/getelectionconfig.php?confighash=${hash}";
 		
-		if ($serverNo === 1) { 
-			// the request came from external --> deliver a link to the config
+		if (!isset($electionconfigOrig['questions'][0]['blinderData']['permissionServerKeys'])) { 
+			// the request came from external (e.g. not from another vvvote server) --> deliver a link to the config
 			$result['cmd'] = 'saveElectionUrl';
 			$result['configUrl'] = $configurl;
 		} else {

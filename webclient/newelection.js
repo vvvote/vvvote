@@ -18,11 +18,12 @@ NewElectionPage.prototype.setLanguage = function() {
 	}
 
 
-	var newElectionHtmlPre = i18n.gettext(
+	var newElectionHtmlPre = '<form>' + 
+			i18n.gettext(
 			'Here you can create a new voting. ' + 
 			'In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. ' +
 	'<br><br>') + 
-	'<input type="text" id="electionId">' + 
+	'<input type="text" id="electionId" autofocus="autofocus">' + 
 	'	<label for="electionId">' +  i18n.gettext('Name of voting') + '</label>' + 
 	'<br>' +
 
@@ -54,7 +55,8 @@ NewElectionPage.prototype.setLanguage = function() {
 		'<!--- in this div the different inputs needed for the different auth methods are displayed --->' +
 		'</div>' +
 		'<br>' +
-		'<input type="button" onclick="page.handleNewElectionButton();" value="' + i18n.gettext('Create new voting') + '">';		
+		'<input type="submit" onclick="page.handleNewElectionButton(); return false;" value="' + i18n.gettext('Create new voting') + '">' +
+		'</form>';		
 
 
 	var testHtmlml = 
@@ -120,6 +122,18 @@ NewElectionPage.prototype.handleNewElectionButton = function () {
 	myXmlSend(ClientConfig.newElectionUrl[0], data, me, me.handleNewElectionAnswer);
 };
 
+/**
+ * Check weather the following servers return the same config hash
+ * throws an ErrorInServerAnswer if not.
+ */
+NewElectionPage.prototype.hashEquals = function(configUrl) {
+	var configUrlParts = URI.parseURL(configUrl);
+	if (this.serverno === 0) {
+		this.configHash = configUrlParts.confighash;
+	} else {
+		if (this.configHash !== configUrlParts.confighash) throw new ErrorInServerAnswer(8754435, i18n.gettext("The hash obtained from the server does not match the hash from another server. The server is trying to cheat you. Aborted."), 'new hash:' + configUrlParts.confighash + ', old hash: ' + this.configHash);
+	}
+}
 
 
 NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
@@ -127,12 +141,14 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 		var data = parseServerAnswer(xml, true);
 		switch (data.cmd) {
 		case 'saveElectionUrl':
-			if (false) { // (this.serverno < ClientConfig.newElectionUrl.length -1) {
+			if (this.serverno < ClientConfig.newElectionUrl.length -1) {
+				this.hashEquals(data.configUrl);
 				this.serverno++;
 				var me = this;
 				myXmlSend(ClientConfig.newElectionUrl[this.serverno], JSON.stringify(this.config), me, me.handleNewElectionAnswer);
 			} else {
 				hidePopup();
+				this.hashEquals(data.configUrl);
 				var a = getAuthModuleStatic(this.config);
 				var ahtml = a.getConfigObtainedHtml();
 				var mc = '<p>' + i18n.gettext('Save the link and distribute it to all eligable people. ') +
@@ -147,11 +163,13 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 			}
 			break;
 		case 'error': // TODO in case the errors is reported not from the first server: handle it somehow: (remove election from all previous servers?)
+			hidePopup();
 			var msg = translateServerError(data.errorNo, data.errorTxt);
 			alert(i18n.gettext("Server reports error: \n") + msg);
-			hidePopup();
 			break;
 		default:
+			hidePopup();
+			alert(i18n.gettext("Unknown command from Server: \n") + data.cmd);
 			break;
 		}
 	}catch (e) {
