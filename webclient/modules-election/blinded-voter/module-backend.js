@@ -123,7 +123,7 @@ BlindedVoterPermObtainer.prototype.makeBallots = function() {
 
 BlindedVoterPermObtainer.prototype.makePermissionReqs = function() {
 	var req = new Object();
-	req.cmd = 'pickBallots';
+	req.cmd = 'signBallots';
 	req.questions = [];
 	for (var q=0; q<this.questions.length; q++) {
 		req.questions[q] = {

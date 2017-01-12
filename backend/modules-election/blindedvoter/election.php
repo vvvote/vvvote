@@ -252,13 +252,14 @@ class BlindedVoter extends Blinder {
 
 	function signBallots($blindedHashesFromDB) {
 		$ret = array();
-		$xthserver = $this->getXthServer($blindedHashesFromDB['blindedHashes']['questions'][0]['ballots']); // find out the x-th server I am // verifyBallots already checked that the x-th server is identical on all questions
-		foreach ($blindedHashesFromDB['blindedHashes']['questions'] as $q => $question) {
+		$xthserver = $this->getXthServer($blindedHashesFromDB['questions'][0]['ballots']); // find out the x-th server I am // verifyBallots already checked that the x-th server is identical on all questions
+		foreach ($blindedHashesFromDB['questions'] as $q => $question) {
 			
 			// make an array of ballot numbers that can be signed (e.g. only already signed ones by previous servers are allowed that are not disclosed to this server
+		/*
 			$allowedBallots = array();
 			foreach ($question['ballots'] as $ballot) {
-				if (!in_array($ballot['ballotno'], $blindedHashesFromDB['requestedBallots']['questions'][$q]['picked'])) { // not disclosed to this server
+				if (!in_array($ballot['ballotno'], $blindedHashesFromDB['questions'][$q]['picked'])) { // not disclosed to this server
 					if ($xthserver == 0) array_push($allowedBallots, $ballot['ballotno']);
 					else {
 						if (isset($ballot['sigs']) && count($ballot['sigs']) == $xthserver)
@@ -266,6 +267,9 @@ class BlindedVoter extends Blinder {
 					}
 				}
 			}
+		*/
+			$allowedBallots = array(0);
+				
 			if (count($allowedBallots) < 1) {
 				WrongRequestException::throwException(301, "Error: no non-disclosed ballots left to sign", "signBallots: " . json_encode($allowedBallots));
 			}
@@ -278,7 +282,7 @@ class BlindedVoter extends Blinder {
 				$picked[$num] = $allowedBallots[$p];
 			}
 			// sign the picked ballots
-			$completeElectionId = makeCompleteElectionId($blindedHashesFromDB['blindedHashes']['electionId'], $question['questionID']);
+			$completeElectionId = makeCompleteElectionId($blindedHashesFromDB['electionId'], $question['questionID']);
 			$privKey = $this->db->loadPrivateKey($completeElectionId);
 			global $serverNo, $pServerKeys;
 			$privKey['serverName'] = $pServerKeys[$serverNo -1]['name'];
@@ -305,14 +309,19 @@ class BlindedVoter extends Blinder {
 
 
 	function signBallotsEvent($voterReq) {
-		// TODO: check credentials? It is not necassary because providing the correct unblinding factors show that the Client is the one who sent the pickBallots-Request and back then the credentials have been verified. 
-
+		// in pickBallots-mode: check credentials? It is not necassary because providing the correct unblinding factors show that the Client is the one who sent the pickBallots-Request and back then the credentials have been verified. 
+		// check credentials
+		if (! isset($voterReq['credentials'])) WrongRequestException::throwException(436, 'Request does not contain credentials', print_r($voterReq, true));
+		$permitted = $this->isPermitted($voterReq['credentials'], $this->electionId, 1); // $voterReq['voterId'], $voterReq['secret'], $voterReq['electionId'], 1); // @TODO substitude ThreadId for 1
+		$voterId = $this->auth->getVoterId($voterReq['credentials'], $this->electionId);
+		
 		// load the blinded Hashes from cmd 'pickBallots'
 		$voterId = $this->auth->getVoterId($voterReq['credentials'], $voterReq['electionId']);
 		$isFirstRequestSig = $this->db->isFirstReqForSign($voterReq['electionId'], $voterId);
 		if (! ($isFirstRequestSig === true)) {
 			WrongRequestException::throwException(301, 'Error: This server already signed a return envelop for you', "voterId: " . print_r($voterId, true));
 		}
+	/*
 		$blindedHashesFromDB = $this->db->loadBlindedHashes($this->electionId, $voterId);
 		if (count($blindedHashesFromDB) < 1) {
 			WrongRequestException::throwException(302, 'Error: Sign request without request for disclosing ballots', "All requested ballots: " . print_r($blindedHashesFromDB, true));
@@ -324,9 +333,9 @@ class BlindedVoter extends Blinder {
 		if (! $verified) {
 			WrongRequestException::throwException(300, 'Error: Ballot verification failed. I will not sign a ballot.', "voterreq: \n" . json_encode($voterReq)) . "loaded blinded hashes: " .  json_encode($blindedHashesFromDB);
 		} // TODO: for debugging purpose only: add loaded ballots here
-
+	*/
 		// sign ballots 
-		$signedBallots = $this->signBallots($blindedHashesFromDB);
+		$signedBallots = $this->signBallots($voterReq);
 		// encrypt $signedBallots so that only the voter can decrypt it
 
 		$ret = array('questions' => $signedBallots);
