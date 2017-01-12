@@ -49,25 +49,25 @@ Putting these things togehter, we get the following protocol:
 
 ```sequence
 Note right of Voter: subroutine: "Generate Return Envelops" \ngenerates \n - 5 RSA key pairs and \n - 5 corresponding blinding factors\n - blinded hashes of the public parts of the RSA key pairs
-Voter->Server_1: (1) I am Bob, my password is <secret>,\n the blinded hashes of the 5 public keys I generated are []
+Voter->Server_1: (1) I am Bob, my password is <secret>,\n the blinded hashes of the 5 public keys I generated are [] - 'pickBallots'
 Note left of Server_1: - verify password,\n - is first request for a ballot?
 Note left of Server_1: randomly select 3 of the generated keys,\n e.g. key numbers 1, 3 and 4
-Server_1->Voter: (2) Send me the unblinding factors of hashes 1,3 and 4\nas well as all the data belonging to the corresponding hashes
-Voter-Server_1: (3) (str, unblindFactor)[1], [3] and [4]
+Server_1->Voter: (2) Send me the unblinding factors of hashes 1,3 and 4\nas well as all the data belonging to the corresponding hashes - 'unblindBallots'
+Voter-Server_1: (3) (str, unblindFactor)[1], [3] and [4] - 'signBallots'
 Note left of Server_1: verify if voter has done everything correctly:\n - unblind the hashes 1, 3 and 4 sent in (1),\n - verify if they match the corresponding hashes of str,\n - verify that the public key contained in str is not used already,\n - verify electionId
 Note left of Server_1: randomly select 2 still blinded hashes (e.g. 2 and 5) and sign them\n BlindServer_1Sigs={Sign blindedHash[2], Sign blindedHash[5]}
-Server_1->Voter: (4) BlindServer_1Sigs
+Server_1->Voter: (4) BlindServer_1Sigs - 'reqSigsNextpServer'
 Note right of Voter: Verify if the BlindServer_1Sigs are correct
-Voter->Server_2: (5) I am Bob, my password is <secret>,\n the BlindServer_1Sigs are []
+Voter->Server_2: (5) I am Bob, my password is <secret>,\n the BlindServer_1Sigs are [] - 'pickBallots'
 Note left of Server_2: - verify password,\n - is first request for a ballot at this server?
 Note left of Server_2: randomly select 1 one of the 2 BlindServer_1Sigs, e.g. 2.
-Server_2->Voter: (6) send me the unblindig factor for BlindServer_1Sig no. 2.
+Server_2->Voter: (6) send me the unblindig factor for BlindServer_1Sig no. 2  - 'unblindBallots'
 Note right of Voter: Server_1Sig no. 2 = unblind BlindServerSig
-Voter->Server_2: (7) str, unblind factor for no. 2
+Voter->Server_2: (7) str, unblind factor for no. 2 - 'signBallots'
 Note left of Server_2: verify if voter has done everything correctly:\n - unblind the hash of no. 2 sent in (5),\n - verify if they match the corresponding hashes of str,\n - verify that the public key contained in str is not used already,\n - verify electionId
 Note left of Server_2: verify if Server_1 has done everything correctly: verify the signature of Server_1
 Note left of Server_2: sign the left over still blind hash: BlindServer_2Sig = Sign blindedHash[5]
-Server_2->Voter: (8) BlindedServer_2Sig
+Server_2->Voter: (8) BlindedServer_2Sig - 'savePermission'
 Note right of Voter: - Server_1Sig = unblind BlindServer_1Sigs[5]\n  - Server_2Sig = unblind BlindServer_2Sig
 Note right of Voter: Save(private key, public key, Server_1Sig, Server_2Sig) = returnEnvelope
 ```
