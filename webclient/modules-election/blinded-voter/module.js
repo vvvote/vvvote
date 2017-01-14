@@ -80,7 +80,7 @@ BlindedVoterElection.prototype.gotWebclient = function(xml) {
 
 BlindedVoterElection.prototype.saveReturnEnvelopeAgain = function() {
 	var me = this;
-	httpGet(ClientConfig.voteClientUrl, me, me.gotWebclientPermAlreadyObteined, false);
+	httpPostDownload(ClientConfig.voteClientUrl, me, me.gotWebclientPermAlreadyObteined, false);
 };
 
 BlindedVoterElection.prototype.gotWebclientPermAlreadyObteined = function(xml) {
@@ -118,9 +118,11 @@ BlindedVoterElection.prototype.injectPermissionIntoClientSave = function(ballot)
 BlindedVoterElection.prototype.saveReturnEnvelope = function() {
 	var filename = i18n.sprintf(i18n.gettext('Voting certificate %s'), clearForFilename(this.config.electionTitle) + '.html');
 	var htmlStr = i18n.gettext('In order to be able to cast your vote, you have to save your voting certificate on your device now') +
-	'<p><button autofocus="autofocus" onclick="removePopup(); saveAs(page.blinder.returnEnvelopeBlob, \'' + filename +'\');">Ok</button></p>';
+	'<form><p><button id="okbuttonid" type="submit" autofocus="autofocus" onclick="removePopup(); saveAs(page.blinder.returnEnvelopeBlob, \'' + filename +'\'); return false;">Ok</button></p></form>';
 	var fragm = html2Fragm(htmlStr);
 	showPopup(fragm);
+	var el = document.getElementById('okbuttonid');
+	el.focus();
 };
 
 BlindedVoterElection.prototype.onUserDidSaveReturnEnvelope = function()  {
@@ -158,7 +160,7 @@ BlindedVoterElection.prototype.onGetPermClick = function(authmodule_, retry_)  {
 	this.retry = retry_; // set to true if authentification failed
 	// download webclient
 	var me = this;
-	httpGet(ClientConfig.voteClientUrl, me, me.gotWebclient, false);
+	httpPostDownload(ClientConfig.voteClientUrl, me, me.gotWebclient, false);
 };
 
 

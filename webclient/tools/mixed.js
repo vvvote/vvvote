@@ -63,20 +63,39 @@ function sendThroughProxy() {
  */
 function myXmlSend(url, data, callbackObject, callbackFunction, proxy) {
 	if (typeof url !== 'string') { // typeof returns 'undefined' if url is not set
-		alert('Ein Fehler in den Einstellungen ist aufgetreten. Bitte informieren Sie den Wahlverantwortlichen (Fehlernr.: 875765: URL nicht definiert oder kein String)');
+		alert(i18n.gettext('There is an error in the configuration. Please inform the administrator. (error no.: 875765: URL not defined or not of type string)'));
 		return;
 	} 
 	myXmlSend_(url, data, callbackObject, callbackFunction, proxy, 'POST', true);
 }
 
-function httpGet(url, callbackObject, callbackFunction, log, proxy) {
+/**
+ * Sends a http-post request
+ * actually a http-get would be the way to go, but version 14.14393/38.14393.0.0 (earlier versions not affected) of the edge-browser is blocking the GET-Answer (silently), so we use POST instead
+ * @param url string
+ * @param callbackObject object
+ * @param callbackFunction method
+ * @param log boolean weather the data transfer should be logged by a userlog call
+ * @param proxy string URL of a proxy server (used for anonymization)
+ */
+function httpPostDownload(url, callbackObject, callbackFunction, log, proxy) {
 	if (typeof url !== 'string') { // typeof returns 'undefined' if url is not set
-		alert('Ein Fehler in den Einstellungen ist aufgetreten. Bitte informieren Sie den Wahlverantwortlichen (Fehlernr.: 875766: URL nicht definiert oder kein String)');
+		alert(i18n.gettext('There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)')); // Ein Fehler in den Einstellungen ist aufgetreten. Bitte informieren Sie den Wahlverantwortlichen (Fehlernr.: 875766: URL nicht definiert oder kein String)');
 		return;
 	}
-	myXmlSend_(url, null, callbackObject, callbackFunction, proxy, 'GET', log);
+	myXmlSend_(url, null, callbackObject, callbackFunction, proxy, 'POST', log);
 }
 
+
+/**
+ * @param url string
+ * @param data DOMstring/ArrayBuffer/Blob/Document/FormData data to be send in request body
+ * @param callbackObject object
+ * @param callbackFunction method 
+ * @param method string ('GET' or 'POST')
+ * @param proxy string URL of a proxy server (used for anonymization) or null
+ * @param log boolean weather the data transfer should be logged by a userlog call
+ */
 
 function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, log) {
 	if (url !== null) { // if url == null: an error occoured and retry was pressed
