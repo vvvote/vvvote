@@ -34,13 +34,14 @@ $tServerStoreVoteUrls = array('http://' . $urltmp['host'] . ':' . $tServerStoreV
 // number of ballots the servers have to sign 0: first signing server, 1: second signing server...
 // last server always must be set to 1.
 //     $numBallots = 2; 
-$numSignBallots   = array(0 => 3, 1 => 1);  
-$numVerifyBallots = array(0 => 2, 1 => 2);
+$numSignBallots   = array(0 => 1, 1 => 1);  
+$numVerifyBallots = array(0 => 0, 1 => 0);
 $numPSigsRequiered = count($numSignBallots); // this number of sigs from permission servers are requiered in order for a return envelope to be accepted
 $numPServers = $numPSigsRequiered; // number of permission servers
 $numTServers = 1;
 
 if (! isset($DO_NOT_LOAD_PUB_KEYS)) { // this will be set during key generation
+	define('CRYPT_RSA_MODE', CRYPT_RSA_MODE_INTERNAL); // this is needed for RSA Key generation (in newelection-->election.php because otherwise openssl (if present) needs special configuration in openssl.cnf when creating a new key pair)
 	function loadkeys($filenameprefix, $num) {
 		$serverKeys = array();
 		for ($i = 1; $i <= $num; $i++) {
