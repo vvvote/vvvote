@@ -147,7 +147,7 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 				var me = this;
 				myXmlSend(ClientConfig.newElectionUrl[this.serverno], JSON.stringify(this.config), me, me.handleNewElectionAnswer);
 			} else {
-				hidePopup();
+				removePopup();
 				this.hashEquals(data.configUrl);
 				var a = getAuthModuleStatic(this.config);
 				var ahtml = a.getConfigObtainedHtml();
@@ -163,17 +163,17 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 			}
 			break;
 		case 'error': // TODO in case the errors is reported not from the first server: handle it somehow: (remove election from all previous servers?)
-			hidePopup();
+			removePopup();
 			var msg = translateServerError(data.errorNo, data.errorTxt);
 			alert(i18n.gettext("Server reports error: \n") + msg);
 			break;
 		default:
-			hidePopup();
+			removePopup();
 			alert(i18n.gettext("Unknown command from Server: \n") + data.cmd);
 			break;
 		}
 	}catch (e) {
-		hidePopup();
+		removePopup();
 		alert('Answer from Server does not match the expected format (JSON decode error)');
 	}
 
