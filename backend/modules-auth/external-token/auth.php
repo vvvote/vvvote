@@ -49,7 +49,7 @@ class ExternalTokenAuth extends Auth {
 	 * @return mixed|boolean
 	 */
 	function httpPost($url, $fieldsToJson, $verifyCert) {
-		httpPost($url, $fieldsToJson, ($verifyCert?realpath(dirname(__FILE__) . '/../../config/' . $this->authConfig['configId'] . '.pem') : false));
+		return httpPost($url, $fieldsToJson, ($verifyCert?realpath(dirname(__FILE__) . '/../../config/' . $this->authConfig['configId'] . '.pem') : false));
 	}
 
 	/**
