@@ -81,7 +81,7 @@ ClientConfig.getServerInfoByName = function (servername) {
 };
 
 ClientConfig.BlindedVoter = {
-		'numCreateBallots': 5,	
+		'numCreateBallots': 1,	
 		'shuffleServerSeq': false,
 		'serverList':       ClientConfig.serverList
 		// TODO: add config which server has to verify and to sign how many ballots
