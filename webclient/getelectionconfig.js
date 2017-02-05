@@ -69,12 +69,16 @@ GetElectionConfig.prototype = {
 				var me = this;
 				this.oneSigInvalid = false;
 				this.sigsValid = Array(config.questions.length);
+				if (typeof config.questions === 'undefined') throw new ErrorInServerAnswer(876876873, i18n.gettext("Error: The config does not contain the questions"), '');
 				for (var qNo = 0; qNo < config.questions.length; qNo++) { // for each question
 					this.sigsValid[qNo] = Array(serverinfos.pkeys.length);
 					for (var pServerNo = 0; pServerNo < serverinfos.pkeys.length; pServerNo++) { // for each permissionServer
 						this.sigsValid[qNo][pServerNo] = false;
 					}
 					for (var pServerNo = 0; pServerNo < serverinfos.pkeys.length; pServerNo++) { // for each permissionServer
+						if (typeof config.questions[qNo].blinderData === 'undefined') throw new ErrorInServerAnswer(876876874, i18n.gettext("Error: The config does not contain the blinder Data"), 'On question ' + qNo);
+						if (typeof config.questions[qNo].blinderData.permissionServerKeys === 'undefined') throw new ErrorInServerAnswer(876876875, i18n.gettext("Error: The config does not contain the permission server keys"), '');
+						if (typeof config.questions[qNo].blinderData.permissionServerKeys['PermissionServer' + (pServerNo +1)] === 'undefined') throw new ErrorInServerAnswer(876876876, i18n.gettext("Error: The config does not contain the permission server key"), 'PermissionServer' + (pServerNo +1));
 						this.verifyPermissionServerSig(config.questions[qNo].blinderData.permissionServerKeys['PermissionServer' + (pServerNo +1)], serverinfos.pkeys[pServerNo], me, me.onSigValid, me.onSigInvalid, {'qNo': qNo, 'pServerNo': pServerNo});
 					}
 				} 
@@ -100,8 +104,13 @@ GetElectionConfig.prototype = {
 								str2arrayBuf(unicodeToBlackslashU(JSON.stringify(signedKey.key))))
 								.then(function(isvalid) {
 									if (isvalid) {
-										onSigValid.call(onObject, passthru);
+										try {
+											onSigValid.call(onObject, passthru);
 										// throw new ErrorInServerAnswer(1080, i18n.gettext("The voting configuration obtained from the server does not match the checksum. The server is trying to cheat you. Aborted."), this.url);
+										} catch (e) {
+											console.log(e);
+											alert("An error occured: " + e);
+										}
 									}
 									else onSigInvalid.call(onObject, passthru, 'verified with isValid==false');
 								})
