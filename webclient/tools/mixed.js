@@ -159,7 +159,7 @@ function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, 
 		} */
 	};
 	try {
-		if (myXmlSend_.proxy && myXmlSend_.proxy.length > 0) {
+		if ( (url !== null) && myXmlSend_.proxy && (myXmlSend_.proxy.length > 0) ) {
 //			var urlparts = URI.getParts(url);
 			myXmlSend_.url = myXmlSend_.proxy + url; // urlparts.pathname + urlparts.search +urlparts.hash;
 		}
