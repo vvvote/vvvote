@@ -388,7 +388,7 @@ function wikiSyntax2DOMFrag(wikisyntax_) {
 	var olLevel = 0;
 	var matched = false;
 	var prevTag = '';
-	var prevNode = document.createElement('div');
+	var prevNode = document.createElement('p');
 	var openTags = '';
 	for (var rowNo=0; rowNo<rows.length; rowNo++) {
 		matched = false;
