@@ -179,7 +179,8 @@ class OAuth2 extends Auth {
 		if ( (! isset($req["verified"]     )) || (! is_bool(  $req['verified']     )) ) WrongRequestException::throwException(12003, 'Missing /verified/ in election config'     , "request received: \n" . print_r($req, true));
 		if ( (! isset($req["eligible"]     )) || (! is_bool(  $req['eligible']     )) ) WrongRequestException::throwException(12004, 'Missing /eligible/ in election config'     , "request received: \n" . print_r($req, true));
 		if ( (! isset($electionId          )) || (! is_string($electionId          )) ) WrongRequestException::throwException(12005, '/ElectionId/ not set or of wrong type'     , "request received: \n" . print_r($req, true));
-		if ( ! (in_array($req['serverId'], $oauthConfig))  )                            WrongRequestException::throwException(12007, 'Configuration for OAuth2-serverId not found' , "request received: \n" . print_r($req, true));
+        global $oauthConfig;
+  		if ( ! (array_key_exists($req['serverId'], $oauthConfig))  )                            WrongRequestException::throwException(12007, 'Configuration for OAuth2-serverId not found' , "request received: \n" . print_r($req, true));
 		$authconfig['serverId']      = $req['serverId'];
 		$authconfig['listId']        = $req["listId"];
 		$authconfig['nested_groups'] = $req["nested_groups"];
