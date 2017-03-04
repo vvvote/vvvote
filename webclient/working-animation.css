@@ -18,7 +18,7 @@
 	position: relative;
 	margin: auto;
 	display: block
-};
+}
 
 .uil-default-css > div:nth-of-type(1){
 	animation:         uil-default-anim 1s linear infinite;
