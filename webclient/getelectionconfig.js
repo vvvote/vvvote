@@ -100,9 +100,15 @@ GetElectionConfig.prototype = {
 								str2arrayBuf(unicodeToBlackslashU(JSON.stringify(signedKey.key))))
 								.then(function(isvalid) {
 									if (isvalid) {
-										onSigValid.call(onObject, passthru);
-										// throw new ErrorInServerAnswer(1080, i18n.gettext("The voting configuration obtained from the server does not match the checksum. The server is trying to cheat you. Aborted."), this.url);
+									        try {
+										        onSigValid.call(onObject, passthru);
+										        // throw new ErrorInServerAnswer(1080, i18n.gettext("The voting configuration obtained from the server does not match the checksum. The server is trying to cheat you. Aborted."), this.url);
+                                                                                } catch (e) {
+                                                                                console.log(e);
+                                                                                alert("An error occured: " + e);
+                                                                                }
 									}
+									
 									else onSigInvalid.call(onObject, passthru, 'verified with isValid==false');
 								})
 								.catch(function(err) {
@@ -151,10 +157,10 @@ GetElectionConfig.getMainContent = function(buttontext, gotConfigObject, gotConf
 	} 
 	var maincontent = 
 		'<div id="divElectionUrl">'+
-		'	<form id="formGetelectionConfig">'+
+		'	<form id="formGetelectionConfig"><span class="txt">'+
 		i18n.gettext('Voting link: ') +
-		'			<input style="width:100%" name="electionUrl" id="electionUrlId" autocomplete="off" type="text" value="' + url +'">'+
-		'		<input type="button" name="getelectionconfig" id="buttonElectionUrlId" value="' + buttontext + '"'+ 
+		'			</span><input name="electionUrl" id="electionUrlId" autocomplete="off" type="text" value="' + url +'">'+
+		'		<input type="button" class="orange_but" name="getelectionconfig" id="buttonElectionUrlId" value="' + buttontext + '"'+ 
 		'			onclick="'+
 		'				var a = document.getElementById(\'electionUrlId\');' + 
 		'				new GetElectionConfig(a.value, null, ' + gotConfigObject + ', ' + gotConfigMethod + ');' +

@@ -20,7 +20,7 @@ Page.prototype.setLanguage = function() {
 
 
 Page.prototype.display = function() {
-	document.getElementById('ciSubHead').textContent = this.ciSubHead;
+	document.getElementById('ciSubHead').innerHTML = this.ciSubHead;
 	document.getElementById('newElectionLink').textContent = this.menu[1];
 	document.getElementById('takepartLink').textContent    = this.menu[2];
 	document.getElementById('fetchresult').textContent     = this.menu[3];
@@ -59,8 +59,8 @@ Page.prototype.setStep = function(step) {
 			if (i > step)  { element.setAttribute('class', 'todo'); elementli.setAttribute('class', 'todo'); }
 			}
 		
-		element = document.getElementById('steptitle');
-		element.textContent = this.steps[step];
+		// element = document.getElementById('steptitle');
+		// element.textContent = this.steps[step];
 		Page.setAddiTechInfos('');
 };
 
