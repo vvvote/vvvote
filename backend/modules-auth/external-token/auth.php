@@ -92,6 +92,7 @@ class ExternalTokenAuth extends Auth {
 		);
 		
 		$result = $this->httpPost($url, $fieldsToJson, $verifyCert);
+//		print_r($result);
 		if ( isset($result['allowed']) && ($result['allowed'] === true) ) return true;
 		return false;
 	}
