@@ -1,3 +1,7 @@
+Um dieses Dokument mit Ablaufdiagrammen anzuzeigen, klicken Sie hier: https://stackedit.io/viewer#!url=https://raw.githubusercontent.com/vvvote/vvvote/master/doc/flowchart_memberDB_VotezillaPortal_Vvvote.md
+
+
+
 # Schritt 1: Registrierung am Votezilla Portal
 ```sequence
 Note right of MitgliedsDB: Erzeuge für jedes Mitglied ein zufälliges Registrierungstoken
