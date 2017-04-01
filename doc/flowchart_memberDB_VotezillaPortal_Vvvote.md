@@ -1,8 +1,9 @@
 Um dieses Dokument mit Ablaufdiagrammen anzuzeigen, klicken Sie hier: https://stackedit.io/viewer#!url=https://raw.githubusercontent.com/vvvote/vvvote/master/doc/flowchart_memberDB_VotezillaPortal_Vvvote.md
 
+# Datenfluss Mitgliedsdatenbank, VotezillaPortal und Vvvote
+Bei dem Datenfluss ist zwischen zwei Schritten zu unterscheiden: Der Registrierung am VotezillaPortal und der Abstimmung.
 
-
-# Schritt 1: Registrierung am Votezilla Portal
+## Schritt 1: Registrierung am Votezilla Portal
 ```sequence
 Note right of MitgliedsDB: Erzeuge für jedes Mitglied ein zufälliges Registrierungstoken
 MitgliedsDB->Votezilla_Portal: sendet alle Registrierungstoken
@@ -11,7 +12,7 @@ Mitglied->Votezilla_Portal: Registriert sich, wählt Benutzername, Passwort und 
 Note left of Mitglied: Mitglied kann Antragsentwürfe einstellen, Anträge unterstützen, Anträge einreichen, an Abstimmungen teilnehmen
 ```
 
-# Schritt 2: Anonyme Abstimmung
+## Schritt 2: Anonyme Abstimmung
 
 ```sequence
 Mitglied->Votezilla_Portal: loggt sich ein und klickt auf "Wahlschein"
