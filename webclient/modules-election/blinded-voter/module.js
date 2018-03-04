@@ -204,10 +204,19 @@ BlindedVoterElection.getStep3HtmlDetails = function() {
  * provide HTML code to be presented in step 3 (voting)
  *  
  */
+
 BlindedVoterElection.loadReturnEnvelopeHtml = function() {
-	return i18n.gettext('Please load the voter certification file') + '<br>'+
-	'<input type="file" id="loadfile" accept=".html" onchange="BlindedVoterElection.onClickedLoadFile(event)"/>'; //+ varname +'.loadPermFile(event);"/>';
+	return i18n.gettext('Please load the voter certification file') +
+	// '<input type="file" id="loadfile" accept=".html" name="file" onchange="BlindedVoterElection.onClickedLoadFile(event)"/>'; //+ varname +'.loadPermFile(event);"/>';
+	'<div class="file_upload">' +
+	'<input id="uploadFile" class="fileName" disabled="disabled" />' +
+	'<div class="fileUpload fileBtn">' +
+	    '<span>'+i18n.gettext('Search')+'</span>' +
+	    '<input id="loadfile" type="file" class="upload" accept=".html" name="file" onchange="BlindedVoterElection.onClickedLoadFile(event)"/>' +
+	'</div>' +
+	'</div>';
 };
+
 
 /**
  * provide HTML code to be presented after successful voting permission generated

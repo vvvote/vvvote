@@ -1,151 +1,221 @@
 <!DOCTYPE html>
 <html>
-<head>
-<!-- 
-    VVVote: An Anonymity and Traceability Providing Online Voting System
-    Copyright (C) 2016 Robert Arnold, prog@robert-arnold.de
+	<head>
+		<!--
+		VVVote: An Anonymity and Traceability Providing Online Voting System
+		Copyright (C) 2016 Robert Arnold, prog@robert-arnold.de
+		This program is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 3 of the License, or
+		(at your option) any later version.
+		This program is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		GNU General Public License for more details.
+		You should have received a copy of the GNU General Public License
+		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		-->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<title>Votezilla</title>
+		<style type="text/css">
+		@import url("standard.css");
+		@import url("substeps.css");
+		@import url("working-animation.css");
+		@import url("style_new.css");
+		/* evtl. seitenspezifische CSS-Definitionen */
+		</style>
+		<!-- <script type="text/javascript" src="fileinput.js"></script>
+		<script type="text/javascript" src="custom.js"></script> -->
+		<!-- <script src="tests.js"></script> -->
+		<script src="tools/BigInt.js"></script>
+		<script src="tools/rsa.js"></script>
+		<script src="tools/sha256.js"></script>
+		<script src="tools/filehandling.js"></script>
+		<script src="tools/textencoder.js"></script>
+		<script src="exception.js"></script>
+		<script src="tools/mixed.js"></script>
+		<script src="tools/url.js"></script>
+		<script src= "../backend/getserverinfos.php?js"></script>
+		<script src="config/config.js"></script>
+		<script src="getelectionconfig.js"></script>
+		<script src="listoferrors.js"></script>
+		<script src="tools/ua-parser.js"></script>
+		<script src="tools/jed.js"></script>
+		<script src="i18n/vvvote_de.js"></script>
+		<script src="i18n/vvvote_en_US.js"></script>
+		<script src="i18n/vvvote_fr.js"></script>
+		<script>
+		// strings = <?php readfile('../i18n/vvvote-de_DE.json'); ?>
+		</script>
+		<script src="tools/i18n.js"></script>
+		<script src="modules-auth/user-passw-list/module.js"></script>
+		<script src="modules-auth/shared-passw/module.js"></script>
+		<script src="modules-auth/oauth2/module.js"></script>
+		<script src="modules-auth/external-token/module.js"></script>
+		<script src="modules-election/blinded-voter/module.js"></script>
+		<script src="modules-election/blinded-voter/module-backend.js"></script>
+		<script src="modules-tally/publish-only/module.js"></script>
+		<script src="modules-tally/publish-only/transportencryption.js"></script>
+		<script src="modules-tally/configurable-tally/module.js"></script>
+		<script src="page.js"></script>
+		<script src="newelection.js"></script>
+		<script src="vote.js"></script>
+		<script src="getresult.js"></script>
+		
+		<!-- Crypto-tool
+		<script type="text/javascript" src="tools/jsrsasign-master/ext/jsbn.js"></script>
+		<script type="text/javascript" src="tools/jsrsasign-master/ext/jsbn2.js"></script>
+		<script type="text/javascript" src="tools/jsrsasign-master/ext/prng4.js"></script>
+		<script type="text/javascript" src="tools/jsrsasign-master/ext/rng.js"></script>
+		<script type="text/javascript" src="tools/jsrsasign-master/ext/rsa.js"></script>
+		<script type="text/javascript" src="tools/jsrsasign-master/ext/rsa2.js"></script>
+		<script type="text/javascript" src="tools/jsrsasign-master/ext/base64.js"></script>
+		** geprüft, sind notwendig ######## es wird eval() verwendet #########
+		#base64: wegen rstring2hex() **
+		<script type="text/javascript" src="tools/jsrsasign-master/base64x-1.1.js"></script>
+		<script type="text/javascript" src="tools/jsrsasign-master/crypto-1.1.js"></script>
+		<script type="text/javascript" src="tools/jsrsasign-master/core.js"></script>
+		<script type="text/javascript" src="tools/jsrsasign-master/sha256.js"></script>
+		<script type="text/javascript" src="tools/jsrsasign-master/rsasign-1.2.js"></script>
+		** Crypto-tool Ende **
+		-->
+		<script type="text/javascript" src="index.js"></script>
+		<script type="text/javascript">
+		  $(document).ready(function(){
+				setTimeout(function(){
+				  	$('#loadfile').change(function() {
+						    
+				  			setTimeout(function(){
+						      $(".evenTableRow>button, .unevenTableRow>button").click(function(){
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+						        $("tr").not($(this).parents("tr").first()).removeClass("tr_active");
+						        $("tr").not($(this).parents("tr").first()).removeClass("cont_box");
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+						        $(this).parents("tr").first().toggleClass( "tr_active" );
+						        setTimeout(function(){
+						          $(".slideShow").parents("tr").first().toggleClass( "tr_active cont_box" );
+						        },10);
+						      });
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- -->
-<meta charset="utf-8">
-<title>VVVote</title>
-<style type="text/css">
-@import url("standard.css");
-@import url("substeps.css");
-@import url("working-animation.css");
-/* evtl. seitenspezifische CSS-Definitionen */
-</style>
+						    
+						    
+						      $(".votingOption>button").click(function(){
 
-<!-- <script src="tests.js"></script> -->
-<script src="tools/BigInt.js"></script>
-<script src="tools/rsa.js"></script>
-<script src="tools/sha256.js"></script>
-<script src="tools/filehandling.js"></script>
-<script src="tools/textencoder.js"></script>
-
-<script src="exception.js"></script>
-<script src="tools/mixed.js"></script>
-<script src="tools/url.js"></script>
-<script src= "../backend/getserverinfos.php?js"></script>
-<script src="config/config.js"></script>
-<script src="getelectionconfig.js"></script>
-<script src="listoferrors.js"></script>
-<script src="tools/ua-parser.js"></script>
-
-<script src="tools/jed.js"></script>
-<script src="i18n/vvvote_de.js"></script>
-<script src="i18n/vvvote_en_US.js"></script>
-<script src="i18n/vvvote_fr.js"></script>
-<script> 
-// strings = <?php readfile('../i18n/vvvote-de_DE.json'); ?>
-</script>
-<script src="tools/i18n.js"></script>
-
-<script src="modules-auth/user-passw-list/module.js"></script>
-<script src="modules-auth/shared-passw/module.js"></script>
-<script src="modules-auth/oauth2/module.js"></script>
-<script src="modules-auth/external-token/module.js"></script>
-<script src="modules-election/blinded-voter/module.js"></script>
-<script src="modules-election/blinded-voter/module-backend.js"></script>
-<script src="modules-tally/publish-only/module.js"></script>
-<script src="modules-tally/publish-only/transportencryption.js"></script>
-<script src="modules-tally/configurable-tally/module.js"></script>
-<script src="page.js"></script>
-<script src="newelection.js"></script>
-<script src="vote.js"></script>
-<script src="getresult.js"></script>
-
-
-<!-- Crypto-tool
-<script type="text/javascript" src="tools/jsrsasign-master/ext/jsbn.js"></script>
-<script type="text/javascript" src="tools/jsrsasign-master/ext/jsbn2.js"></script>
-<script type="text/javascript" src="tools/jsrsasign-master/ext/prng4.js"></script>
-<script type="text/javascript" src="tools/jsrsasign-master/ext/rng.js"></script>
-<script type="text/javascript" src="tools/jsrsasign-master/ext/rsa.js"></script>
-<script type="text/javascript" src="tools/jsrsasign-master/ext/rsa2.js"></script>
-<script type="text/javascript" src="tools/jsrsasign-master/ext/base64.js"></script>
-
-
-** geprüft, sind notwendig ######## es wird eval() verwendet #########
-#base64: wegen rstring2hex() **
-<script type="text/javascript" src="tools/jsrsasign-master/base64x-1.1.js"></script>
-<script type="text/javascript" src="tools/jsrsasign-master/crypto-1.1.js"></script>
-<script type="text/javascript" src="tools/jsrsasign-master/core.js"></script>
-<script type="text/javascript" src="tools/jsrsasign-master/sha256.js"></script>
-
-<script type="text/javascript" src="tools/jsrsasign-master/rsasign-1.2.js"></script>
-** Crypto-tool Ende **
--->
-
-<script type="text/javascript" src="index.js"></script>
-</head>
-
-<body onload="onWebsiteLoad(); onToggleTechInfosSwitch(); //startVoting(true); //test();" onClick="// rng_seed_time(); // better random" onKeyPress="// rng_seed_time(); // better random">
-	<div id="errorDiv" style="display:none"></div>
-	<!--  <div id="diagnosisControlDiv" style="display:none"></div>   -->
-	<div id="all">
-		<div id="ci">
-				<div id="logoimg">
-					<img id="logoimg" alt="Logo" src="logo125x149.svg">
+						        $(this).toggleClass( "active" );
+						      });
+						    
+						      },1000);
+				    });
+				},1000);
+		  });
+		</script>
+	</head>
+	<body onload="onWebsiteLoad(); onToggleTechInfosSwitch(); //startVoting(true); //test();" onClick="// rng_seed_time(); // better random" onKeyPress="// rng_seed_time(); // better random">
+		<div class="wraper">
+			<div id="errorDiv" style="display:none"></div>
+			<!--  <div id="diagnosisControlDiv" style="display:none"></div>   -->
+			<header>
+				<div class="container">
+					<div class="row">
+						<div class="col-md-11">
+							
+							<nav class="navbar">
+								<div class="navbar-header">
+									<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
+									<span class="sr-only">Toggle navigation</span>
+									<span class="icon-bar"></span>
+									<span class="icon-bar"></span>
+									<span class="icon-bar"></span>
+									</button>
+									<a href="/" class="navbar-brand" id="logo" tabindex="-1"><img src="img/logo.png" alt=""></a>
+									<span id="ciSubHead" class="slogan"></span>
+								</div>
+								
+								<div class="collapse navbar-collapse top_menu" id="navbar-collapse-1">
+									<ul class="nav navbar-nav">
+										<li><a id="newElectionLink" href="javascript:page = newElectionPage; page.display(); // handleNewElection();"  >Neue Abstimmung anlegen</a></li>
+										<li><a id="takepartLink"    href="javascript:page = votePage;        page.display(); // startVoting(true);"    >An Abstimmung teilnehmen</a></li>
+										<li><a id="fetchresult"     href="javascript:page = getResultPage;   page.display(); // startLoadingResult();" >Abstimmungsergebnis abrufen</a></li>
+									</ul>
+								</div>
+							</nav>
+						</div>
+						<div class="col-md-1">
+							<select id="locale_select" onChange="changeLanguage(this.value)">
+								<option selected="selected" value="de">De</option>
+								<option value="en_US">En</option>
+								<option value="fr">Fr</option>
+							</select>
+						</div>
+					</div>
 				</div>
-			<h1>VVVote</h1>
-			<p id="ciSubHead"></p>
-		</div>
+			</header>
+			<div class="container">
+				<div class="row filter_row">
+					<div class="col-md-3">
+						<h1 id="pagetitle">An Abstimmung teilnehmen</h1>
+					</div>
+					<div class="col-md-9">
+						<div id="steps">
+							<div id="idstepstitle">Vorgehensweise</div>
+							<ul id="stepslist">
+								<li><span id="step1" class="curr">Schritt 1: Wahlunterlagen holen</span></li>
+								<li><span id="step2">Schritt 2: Autorisierung</span></li>
+								<li><span id="step3"><a onclick="startStep3();">Schritt 3: Stimme abgeben</a></span></li>
+								<li><span id="step4"><a onclick="startStep4();">Schritt 4: Abstimmungsergebnis holen</a></span></li>
+							</ul>
+						</div>
+					</div>
+					
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div id="all">
+							
+							<div id="maincontent">
+								
+								<!-- this div is replaced by the html of the according auth-module -->
+								<div id="loadedmaincontent">
+									<script type="text/javascript">
+										// document.write('');
+									</script>
+									
+								</div>
+							</div>
+							
 
-		<div id="nav">
-			 <a id="newElectionLink" href="javascript:page = newElectionPage; page.display(); // handleNewElection();"  >Neue Abstimmung anlegen</a> &nbsp;&nbsp;&nbsp;
-			 <a id="takepartLink"    href="javascript:page = votePage;        page.display(); // startVoting(true);"    >An Abstimmung teilnehmen</a> &nbsp;&nbsp;&nbsp; 
-			 <a id="fetchresult"     href="javascript:page = getResultPage;   page.display(); // startLoadingResult();" >Abstimmungsergebnis abrufen</a>
-			 <select id="locale_select" onChange="changeLanguage(this.value)">
-    			<option selected="selected" value="de">Deutsch</option>
-    			<option value="en_US">English</option>
-    			<option value="fr">Français</option>
-  			</select>
-			 
-		</div>
+							<div id="techinfosswitch">
+								<input type="checkbox" class="hidden check" name="techinfocheckbox" id="techinfocheckbox" value="techinfocheckbox" onclick="onToggleTechInfosSwitch();">
+								<label class="orange_but" for="techinfocheckbox" id="idtechinfocheckbox"> </label>
+							</div>
 
-		<div id="steps">
-			<h1 id="idstepstitle">Vorgehensweise</h1>
-			<ul id="stepslist">
-				<li><span id="step1" class="curr">Schritt 1: Wahlunterlagen holen</span></li>
-				<li><span id="step2">Schritt 2: Autorisierung</span></li>
-				<li><span id="step3"><a onclick="startStep3();">Schritt 3: Stimme abgeben</a></span></li>
-				<li><span id="step4"><a onclick="startStep4();">Schritt 4: Abstimmungsergebnis holen</a></span></li>
-			</ul>
 
-		</div>
-		<div id="maincontent">
-			<h1 id="pagetitle">An Abstimmung teilnehmen</h1>
-			<h2 id="steptitle">Schritt 1: Wahlunterlagen holen</h2>
-			<!-- this div is replaced by the html of the according auth-module -->
-			<div id="loadedmaincontent">
-			<script type="text/javascript">
-				// document.write('');
-			</script>
+								<div id="techinfos" style="display:none;">
+									<div id="additiontechinfos"></div>
+									<div id="log">
+										<h1>Log:</h1>
+										<textarea id="logtextarea" name="log"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-		</div>
-		<div id="techinfosswitch">
-		<input type="checkbox" name="techinfocheckbox" id="techinfocheckbox" value="techinfocheckbox" onclick="onToggleTechInfosSwitch();">
-		<label for="techinfocheckbox" id="idtechinfocheckbox"> </label></div>
-		<div id="techinfos" style="display:none;">
-		<div id="additiontechinfos"></div>
-		<div id="log">
-			<h1>Log:</h1>
-			<textarea id="logtextarea" name="log"></textarea>
-
-		</div>
-		</div>
-	</div>
-</body>
-</html>
+			<footer>
+				<div class="footer_wraper">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="copyright">
+								<img src="logo125x149.svg" width="30" /> <span>powered by <a href="http://www.vvvote.de" target="_blank">VVVote</a></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+			</footer>
+			
+		</body>
+	</html>

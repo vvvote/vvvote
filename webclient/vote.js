@@ -86,15 +86,15 @@ VotePage.prototype.startStep2 = function (config) {
 	break;			
 	}
 	
-	mc = mc + '<div id="auth">' +
+	mc = mc + '<div id="auth" class="auth_doc">' +
 	'<form onsubmit="return false;">' +
-	'                       <br>' +
-	'						<h3><label for="electionId">' + i18n.gettext('Name of voting:') + '</label> ' +
-	'                            <span id="electionId">' + config.electionTitle + '</span></h3>'+		
+	'                       ' +
+	// '						<label for="electionId">' + i18n.gettext('Name of voting:') + '</label> ' +
+	'                            <h3><span id="electionId">' + config.electionTitle + '</span></h3>'+		
 //	'						<label for="electionId">Name der Abstimmung:</label> ' +
 //  '                            <input readonly="readonly" name="electionId" id="electionId" value="' + config.electionId + '">' + // TODO use element.settext for election (instead of escaping electionId) 
     '                            <input type="hidden" readonly="readonly" name="electionId" id="electionId" value="' + config.electionId + '">' + // TODO use element.settext for election (instead of escaping electionId) 
-    '                       <br>';
+    '                       ';
 
 
 	switch (config.auth) {
@@ -124,7 +124,7 @@ VotePage.prototype.startStep2 = function (config) {
 	'						<label for="reqPermiss"></label> ' +
 	'						     <input type="submit" name="reqPermiss" id="reqPermiss" ' +
 	'							  value=" ' + i18n.gettext('Generate voting certificate and save it') + '" onclick="page.onGetPermClick();">' +
-    '                       <br>' +
+    '                       ' +
     '</div>' +
     '</form>' +
     '</div>';
@@ -174,11 +174,11 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEn
 			var elp = document.createElement('h1');
 			elp.appendChild(document.createTextNode(config.electionTitle));
 			elp.setAttribute('id', 'ballotName');
-			elp.appendChild(document.createElement('br'));
-			elp.appendChild(document.createElement('br'));
-			elp.appendChild(document.createElement('br'));
-			elp.appendChild(document.createElement('br'));
-			elp.appendChild(document.createElement('br'));
+			// elp.appendChild(document.createElement('br'));
+			// elp.appendChild(document.createElement('br'));
+			// elp.appendChild(document.createElement('br'));
+			// elp.appendChild(document.createElement('br'));
+			// elp.appendChild(document.createElement('br'));
 			fragm.appendChild(elp);
 			
 			// print voting period
