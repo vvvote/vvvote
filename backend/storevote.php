@@ -9,8 +9,8 @@ require_once 'exception.php';
 require_once 'loadmodules.php';
 require_once 'getcmd.php';
 require_once 'crypt.php';
-require_once 'config/conf-allservers.php';
-require_once 'config/conf-thisserver.php';
+// require_once 'config/conf-allservers.php';
+require_once 'loadconfig.php';
 
 if (isset($HTTP_RAW_POST_DATA)) {
 	$electionIdPlace = function ($a) {

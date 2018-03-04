@@ -26,61 +26,57 @@ copy the webclient and the backend directory to your webserver dir, e.g.:
 Configure the Server
 ====================
 
-On server 1, in directory backend/config, copy the example configs, eg:
+The default configuration directory is backend/config. But it is strongly recommended to use a directory outside of the document root of the webserver in order to make sure that the private information stored in the config directory is never leaked accidently. In order to do so, set the environment variable VVVOTE_CONFIG_DIR to point to the according directory.
+In apache2, you can set the environment variable by this command: SetEnv VVVOTE_CONFIG_DIR "/etc/vvvote"
+On server 1 and 2, in directory backend/config, copy the example configs, eg:
 
-	cp conf-allservers-example.php conf-allservers.php
-	cp conf-thisserver-example.php conf-thisserver.php
+	cp conf-thisserver-example.toml <your-config-dir>/conf-thisserver.toml
 	
-On server 2, in directory backend/config, copy the example configs, eg:
+if conf-thisserver.toml is not found, Vvvote will look for conf-[hostname].toml and conf-[hostname]_[port].toml where [hostname] is the hostname of the server as requested from the webbrowser and [port] the server's port.
 
-	cp conf-allservers-example.php conf-allservers.php
-	cp conf-thisserver-example2.php conf-thisserver.php
-
-in both conf-thisserver files:
-
-* adjust $dbinfos 
+In both conf-thisserver.toml files:
+* make pServerUrlBases to point to the first and second server's http-backend-directories (in this order!)
+* make tServerStoreVotePort to point to the first server's http port (not https!)
+* adjust the section [dbInfos] 
 * depending on which auth mechanism you want to use
- * adjust $oauthBayern 'client_id', 'client_secret', 'redirect_uri'
- * adjust the externalTokenConfig
+ * in [[oauthConfig]] adjust 'client_id', 'client_secret', 'redirect_uri'
+ * in [[externalTokenConfig]] adjust the values.
+You can add additinal [[oauthConfig]] or [[externalTokenConfig]] sections, if you want Vvvote to work with several authentification services.
 
 
-in 'conf-allservers.php' adjust
-
-* $pServerUrlBases to point to the first and second server's http-backend-directories (in this order!)
-* $tServerStoreVotePort to point to the first server's http port (not https)
 
 ## Generate and Distribute Server Keys
-Each server uses its own key. Therefore we need to generate a key on each server and distribute thier public part to the other server.
+Each server uses its own key(s). Therefore we need to generate a key on each server and distribute their public part to the other server.
 
 ### Generate Server Keys
-Server 1 will act as permission server and as tallying server. We are using different keys for each role. That is why on server 1 we will create two kes. 
+Server 1 will act as permission server and as tallying server. We are using different keys for each role. That is why on server 1 we will create two keys. 
 On server 1 cd into the backend-dir and start the key generation (it can take a minute or two):
 
-	php -f admin.php createKeypair p 1
-	php -f admin.php createKeypair t 1
+	php admin.php createKeypair p 1 <your-config-dir>
+	php admin.php createKeypair t 1 <your-config-dir>
 
 The first line creates the key pair for the permission server, the second line creates the key pair for the role as tallying server.
 
 Server 2 acts as permission server only. That is why we do not need to create a key pair for the tallying server role.
 On server 2 also cd into the backend-dir and also start the key generation for the permission server by
 
-	php -f admin.php createKeypair p 2
+	php -f admin.php createKeypair p 2 <your-config-dir>
 
 
 ### Distribute Server Keys
 On server 1:
 
-This generates four files:
+This generates 4 files:
 
-	backend/config/PermissionServer1.privatekey.pem.php
-	backend/config/PermissionServer1.publickey
-	backend/config/TallyServer1.privatekey.pem.php
-	backend/config/TallyServer1.publickey
-Copy (somehow) the "backend/config/PermissionServer1.publickey" and backend/config/TallyServer1.publickey to server 2 into the same directory. These key files are public - you can email them unencrypted.
+	<your-config-dir>/PermissionServer1.privatekey.pem.php
+	<your-config-dir>/PermissionServer1.publickey.pem
+	<your-config-dir>/TallyServer1.privatekey.pem.php
+	<your-config-dir>/config/TallyServer1.publickey.pem
+Copy (somehow) the "<your-config-dir>/PermissionServer1.publickey.pem" and <your-config-dir>/TallyServer1.publickey.pem to server 2 into according config directory. These key files are public - you can email them unencrypted.
 
 On Server 2:
 
-Copy (somehow) the "backend/config/PermissionServer2.publickey" to server 1 into the same directory. This key file is public - you can email it unencrypted.
+Copy (somehow) the "<your-config-dir>/PermissionServer2.publickey.pem" to server 1 into the according config directory. This key file is public - you can email it unencrypted.
 
 
 
@@ -91,7 +87,7 @@ in directory webclient/config, copy the example config to config.js, e.g. by
 
 	cp config-example.js config.js
 
-If do not have special needs, nothings needs to be changed in this config.
+If do not have special needs, nothing needs to be changed in this config.
 
 Thats It!
 =========
@@ -144,6 +140,7 @@ on the command line:
 You will be ask for the password of the user root to the mysql database (if that is set).
 
 In the mysql shell (on server 1):
+CHANGE new_secret1 TO A LONG RANDOM VALUE!
 
 	CREATE database election_server1;
 	CREATE USER 'vvvote1'@'localhost' IDENTIFIED BY 'new_secret1';
@@ -151,6 +148,7 @@ In the mysql shell (on server 1):
 	FLUSH PRIVILEGES;
 
 and the same on server 2:
+CHANGE new_secret1 AND new_secret2 TO A LONG RANDOM VALUE!
 
 	CREATE database election_server2;
 	CREATE USER 'vvvote2'@'localhost' IDENTIFIED BY 'new_secret2';
@@ -219,7 +217,7 @@ Replace "vvvote.my.url" by the dns-host name of our vvvote installation.
 lighthttpd
 ----------
 If you are using lighthttpd version 1.4 you might expiriencing "417 - Expectation Failed" error when you try to create a new election on vvvote. This is usually caused when you use curl to send the POST request.
-The problem is that lighthttpd does not support the http-header "Expect: 100 continue" which curl makes use of.
+The problem arises from lighthttpd not supporting the http-header "Expect: 100 continue" which curl makes use of.
 You can work around the problem of lighthttpd v1.4 does not support the http-header "Expect: 100 continue" by the following config line in the lighthttp-config:
 
 	server.reject-expect-100-with-417 = "disable"

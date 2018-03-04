@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../config/conf-allservers.php';
-require_once '../../config/conf-thisserver.php';
+// require_once '../../config/conf-allservers.php';
+require_once '../../config/loadconfig.php';
 
 require_once '../../exception.php';
 require_once 'fetchfromoauthserver.php';

@@ -28,18 +28,16 @@ class BlindedVoter extends Blinder {
 	var $electionId; // = 'wahl1';
 	var $numVerifyBallots;
 	var $numSignBallots;
-	var $numAllBallots;
 	var $numSigsRequiered;
 	var $db;
 	var $auth;
 	var $crypt;
 
-	function __construct($electionId_, $numVerifyBallots_, $questions_, $numSignBallots_, array $pServerKeys_, $serverkey_, $numAllBallots_, $numSigsRequiered_, $dbInfos, Auth $auth_) {
+	function __construct($electionId_, $numVerifyBallots_, $questions_, $numSignBallots_, array $pServerKeys_, $serverkey_, $numSigsRequiered_, $dbInfos, Auth $auth_) {
 		$this->electionId       = $electionId_;
 		$this->numVerifyBallots = $numVerifyBallots_;
 		$this->questions		= $questions_;
 		$this->numSignBallots   = $numSignBallots_;
-		$this->numAllBallots    = $numAllBallots_;
 		$this->db               = new DbBlindedVoter($dbInfos);
 		$this->auth				= $auth_;
 		$this->crypt            = new Crypt($pServerKeys_, $serverkey_);

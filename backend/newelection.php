@@ -23,8 +23,8 @@
 
 require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
 
-require_once __DIR__ . '/config/conf-allservers.php';
-require_once 'config/conf-thisserver.php';
+// require_once __DIR__ . '/config/conf-allservers.php';
+require_once 'loadconfig.php';
 require_once 'exception.php';
 require_once 'modules-auth/shared-passw/auth.php';
 require_once 'modules-auth/user-passw-list/auth.php';
@@ -122,8 +122,8 @@ if (isset ($electionconfigStr)) {
 		
 			// blinder
 			$newconfig['blinding'] = 'blindedVoter';
-			global $numVerifyBallots, $numSignBallots, $pServerKeys, $pserverkey, $numAllBallots, $numPSigsRequiered;
-			$blinder = new BlindedVoter($electionId, $numVerifyBallots, $electionconfig['questions'], $numSignBallots, $pServerKeys, $pserverkey, $numAllBallots, $numPSigsRequiered, $dbInfos, $authm);
+			global $numVerifyBallots, $numSignBallots, $pServerKeys, $pserverkey, $numPSigsRequiered;
+			$blinder = new BlindedVoter($electionId, $numVerifyBallots, $electionconfig['questions'], $numSignBallots, $pServerKeys, $pserverkey, $numPSigsRequiered, $dbInfos, $authm);
 		
 			// tally
 			$tallym = LoadModules::loadTally($electionconfig['tally'], $blinder);

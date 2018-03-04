@@ -27,13 +27,13 @@ require_once 'modules-auth/external-token/auth.php';
 require_once 'modules-tally/publishonly/tally.php';
 require_once 'modules-tally/configurable-tally/tally.php';
 
-require_once 'config/conf-allservers.php';
-require_once 'config/conf-thisserver.php';
+// require_once 'config/conf-allservers.php';
+require_once 'loadconfig.php';
 
 
 function loadElectionModules($httpRawPostData, $electionIdPlace) {
 	// getpermission: $reqdecoded['electionId']
-	global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $numAllBallots, $numPSigsRequiered;
+	global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $numPSigsRequiered;
 	$dbElections = new DbElections($dbInfos);
 	$reqdecoded = json_decode($httpRawPostData, true);
 	if ($reqdecoded == null) 						WrongRequestException::throwException(7040, 'Data in JSON format expected'         	, 'got: ' . $HTTP_RAW_POST_DATA);
@@ -75,14 +75,13 @@ class LoadModules {
 	}
 	
 	static function loadBlinder($name, $elconfig, $auth) {
-	global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $pserverkey, $numAllBallots, $numPSigsRequiered;
+	global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $pserverkey, $numPSigsRequiered;
 		$el = new BlindedVoter($elconfig['electionId'], 
 				$numVerifyBallots,
 				$elconfig['questions'],
 				$numSignBallots,
 				$pServerKeys,
 				$pserverkey,
-				$numAllBallots,
 				$numPSigsRequiered,
 				$dbInfos,
 				$auth);
