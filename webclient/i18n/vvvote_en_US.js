@@ -9,6 +9,9 @@ translations['en_US'] =
             "plural_forms": "nplurals=2; plural=(n != 1);",
             "lang": "en_US"
          },
+         "Search": [
+            "Search"
+         ],
          "Voting server": [
             "Voting server"
          ],
@@ -35,10 +38,10 @@ translations['en_US'] =
             "Voting link: "
          ],
          "Step 1: Enter voting link": [
-            "Step 1: Enter voting link"
+            "1. Enter voting link"
          ],
          "Step 2: Show the result": [
-            "Step 2: Show the result"
+            "2. Show the result"
          ],
          "<p>Enter the link of the voting for which you want to see the results<br></p>": [
             "<p>Enter the link of the voting for which you want to see the results<br></p>"
@@ -430,10 +433,10 @@ translations['en_US'] =
             "Total"
          ],
          "Step 1: Set voting preferences": [
-            "Step 1: Set voting preferences"
+            "1. Set voting preferences"
          ],
          "Step 2: Save voting link": [
-            "Step 2: Save voting link"
+            "2. Save voting link"
          ],
          "Here you can create a new voting. In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. <br><br>": [
             "Here you can create a new voting. In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. <br><br>"
@@ -475,7 +478,7 @@ translations['en_US'] =
             "Server reports error: \n"
          ],
          "Online Voting: anonymous ballots and traceable": [
-            "Online Voting: anonymous ballots and traceable"
+            "Online Voting:<br> anonymous ballots and traceable"
          ],
          "Take part in a voting": [
             "Take part in a voting"
@@ -490,10 +493,10 @@ translations['en_US'] =
             "Show explanations and technical information"
          ],
          "Step 2: Authorize": [
-            "Step 2: Authorize"
+            "2. Authorize"
          ],
          "Step 3: Vote": [
-            "Step 3: Vote"
+            "3. Vote"
          ],
          "Enter Voting Link": [
             "Enter Voting Link"

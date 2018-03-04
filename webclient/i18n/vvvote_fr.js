@@ -9,6 +9,9 @@ translations['fr'] =
             "plural_forms": "nplurals=2; plural=(n > 1);",
             "lang": "fr"
          },
+         "Search": [
+            "Recherche"
+         ],
          "Voting server": [
             "serveur de votation"
          ],
@@ -35,10 +38,10 @@ translations['fr'] =
             "Lien de la votation"
          ],
          "Step 1: Enter voting link": [
-            "Etape 1: Entrez le lien de la votation"
+            "1. Entrez le lien de la votation"
          ],
          "Step 2: Show the result": [
-            "Étape 2: Afficher le résultat"
+            "2. Afficher le résultat"
          ],
          "<p>Enter the link of the voting for which you want to see the results<br></p>": [
             "<p> Entrez le lien de la votatiom pour laquelle vous voulez voir les résultats </ p>"
@@ -430,10 +433,10 @@ translations['fr'] =
             "Total"
          ],
          "Step 1: Set voting preferences": [
-            "Étape 1: Definer les préférences de vote "
+            "1. Definer les préférences de vote "
          ],
          "Step 2: Save voting link": [
-            "Étape 2: enregistrer le lien de la votation"
+            "2. enregistrer le lien de la votation"
          ],
          "Here you can create a new voting. In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. <br><br>": [
             "Ici, vous pouvez créer une nouvelle votation. Pour faire ça, remplissez le nom de la votation et définissez les préférences pour le mécanisme d'autorisation. <br><br>"
@@ -475,7 +478,7 @@ translations['fr'] =
             "Le serveur indique une erreur:\n"
          ],
          "Online Voting: anonymous ballots and traceable": [
-            "Vote en ligne: bulletins anonymes et traçable"
+            "Vote en ligne:<br> bulletins anonymes et traçable"
          ],
          "Take part in a voting": [
             "Participer à une votation"
@@ -490,10 +493,10 @@ translations['fr'] =
             "Afficher les explications et informations techniques"
          ],
          "Step 2: Authorize": [
-            "Etape 2: Autoriser"
+            "2. Autoriser"
          ],
          "Step 3: Vote": [
-            "Etape 3: Voter"
+            "3. Voter"
          ],
          "Enter Voting Link": [
             "Inserer le lien pour acceder à la votation"

@@ -53,6 +53,8 @@ if (isset($HTTP_RAW_POST_DATA)) {
 
 if (isset ($electionconfigStr)) {
 	global $serverNo;
+		if ($serverNo > 1 && !isset($electionconfigOrig['questions'][0]['blinderData']['permissionServerKeys']) )
+			WrongRequestException::throwException(216577, 'You must create the new election on the first server first', "complete request received:\n" . $electionconfigStr);
 	$newconfig = array();
 	try {
 		$electionconfig = json_decode($electionconfigStr, true);

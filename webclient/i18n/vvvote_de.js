@@ -9,6 +9,9 @@ translations['de'] =
             "plural_forms": "nplurals=2; plural=(n != 1);",
             "lang": "de"
          },
+         "Search": [
+            "Durchsuchen"
+         ],
          "Voting server": [
             "Abstimmserver"
          ],
@@ -35,10 +38,10 @@ translations['de'] =
             "Abstimmungslink: "
          ],
          "Step 1: Enter voting link": [
-            "Schritt 1: Abstimmungslink eingeben"
+            "1. Abstimmungslink eingeben"
          ],
          "Step 2: Show the result": [
-            "Schritt 2: Ergebnis anzeigen"
+            "2. Ergebnis anzeigen"
          ],
          "<p>Enter the link of the voting for which you want to see the results<br></p>": [
             "<p>Geben Sie den Link zu der Abstimmung ein, dessen Ergebnis Sie sehen wollen <br></p>"
@@ -203,7 +206,7 @@ translations['de'] =
             "<p><h2>Weitere technische Information</h2>\nDer Wahlschein ist digital von mindestens 2 Servern unterschrieben. Diese Unterschrift führt dazu, dass der Wahlschein bei der Stimmabgabe akzeptiert wird.<br>\nDer Wahlschein enth&auml;lt eine eindeutige Wahlscheinnummer, die nur Ihr Computer kennt - sie wurde von Ihrem Computer erzeugt und verschl&uuml;sselt, bevor die Server den Wahlschein unterschrieben haben, und danach auf Ihrem Computer entschl&uuml;sselt (Man spricht von &quot;Blinded Signature&quot;). Die Server kennen daher die Wahlscheinnummer nicht.<br>\nMan kann sich das so vorstellen:<br>\nIhr Computer schreibt auf den Wahlschein die Wahlscheinnummer, die er sich selbst &quot;ausdenkt&quot; (Zufallszahl). Dieser Wahlschein wird zusammen mit einem Blatt Kohlepapier in einen Umschlag gelegt und an den Server geschickt. \nDer Server unterschreibt außen auf dem Umschlag (wenn Sie wahlberechtigt sind), so dass sich die Unterschrift durch das Kohlepapier auf Ihren Wahlschein &uuml;berträgt. Ohne den Umschlag ge&ouml;ffnet zu haben (was der Server nicht kann, weil er den daf&uuml;r notwendigen Schl&uuml;ssel nicht kennt), schickt er den Brief an Ihren Computer zur&uuml;ck. \nIhr Computer &ouml;ffnet den Umschlag (d.h. entschl&uuml;sselt die Wahlscheinnummer) und h&auml;lt einen vom Server unterschriebenen Wahlschein in der Hand, deren Nummer der Server nicht kennt. \n</p>"
          ],
          "Please load the voter certification file": [
-            "Bitte laden Sie die Datei, in der Ihr Wahlschein gespeichert ist:"
+            "<span class='txt'>Bitte laden Sie die Datei, in der Ihr Wahlschein gespeichert ist:</span>"
          ],
          "<h2>Voting certificate generated.</h2><p id=\"didSaveButtonsId\">Did you save the voting certificate on your devide?<br><button id=\"savedReturnEnvelope\" onclick=\"page.blinder.onUserDidSaveReturnEnvelope();\" >Yes</button>&emsp;<button id=\"didNotSaveReturnEnvelope\" onclick=\"page.blinder.saveReturnEnvelope();\" >No</button></p><p><ul id=\"howToVoteId\" style=\"display:none\"><li>You got a voting certificate in the form of a webpage file which you saved on your device.</li><li>Please remember the place where you saved it.</li><li>The voting certificate is needed in order to cast the vote. There is no way obaining a new one. Thus, save it securly till the end of the voting.</li><li>In order to cast a vote, open the voting certificate in a web browser. You can do this by double clicking it in the file explorer.</li><li>Everyone who has the voting certificate can use it to cast the vote - thus do not pass it on</li><li>Casting the vote using the voting certificate is anonymous. That means, as long as you do not help, nobody can find out who sent the vote.</li><li>%s</li></ul></p>": [
             "<h2>Wahlschein erfolgreich erstellt. </h2>\n<p id=\"didSaveButtonsId\">Haben Sie den Wahlschein als Datei auf Ihrem Gerät gespeichert?<br>\n<button id=\"savedReturnEnvelope\" onclick=\"page.blinder.onUserDidSaveReturnEnvelope();\" >Ja</button>\n&emsp;<button id=\"didNotSaveReturnEnvelope\" onclick=\"page.blinder.saveReturnEnvelope();\" >Nein</button>\n</p><p><ul id=\"howToVoteId\" style=\"display:none\">\n<li>Sie haben einen Wahlschein in Form einer Webseiten-Datei erhalten, die Sie auf ihrem Computer gespeichert haben.</li>\n<li>Merken Sie sich bitte, wo Sie die Datei gespeichert haben.</li>\n<li>Der Wahlschein wird benötigt, um die Stimme abzugeben und kann nicht ersetzt werden. Daher wird empfohlen, den Wahlschein bis zum Ende der Abstimmung zu sichern.</li>\n<li>Zum Abstimmen &ouml;ffnen Sie den Wahlschein im Internet-Browser. \nEine M&ouml;glichkeit dazu ist: Klicken Sie im Datei-Explorer doppelt auf die Wahlschein-Datei.</li>\n<li>Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht \nweiter! Die Stimmabgabe damit ist anonym, d.h. ohne Ihre Mithilfe kann nicht festgestellt werden, von wem die Stimme abgegeben wurde.</li>\n<li>%s</li>\n</ul></p>"
@@ -436,10 +439,10 @@ translations['de'] =
             "Gesamt"
          ],
          "Step 1: Set voting preferences": [
-            "Schritt 1: Abstimmungseinstellungen festlegen"
+            "1. Abstimmungseinstellungen festlegen"
          ],
          "Step 2: Save voting link": [
-            "Schritt 2: Abstimmungslink speichern"
+            "2. Abstimmungslink speichern"
          ],
          "Here you can create a new voting. In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. <br><br>": [
             "Hier k&ouml;nnen Sie eine neue Abstimmung starten. Zum Anlegen einer neuen Abstimmung legen Sie den Namen der Abstimmung und die Authorisierungsmethode fest. <br><br>"
@@ -487,7 +490,7 @@ translations['de'] =
             "Unbekannter Befehl vom Server:\n"
          ],
          "Online Voting: anonymous ballots and traceable": [
-            "Online Abstimmung: anonym und nachvollziehbar"
+            "Online Abstimmung:<br> anonym und nachvollziehbar"
          ],
          "Take part in a voting": [
             "An Abstimmung teilnehmen"
@@ -502,10 +505,10 @@ translations['de'] =
             "Erklärungen und technische Informationen anzeigen"
          ],
          "Step 2: Authorize": [
-            "Schritt 2: Autorisieren"
+            "2. Autorisieren"
          ],
          "Step 3: Vote": [
-            "Schritt 3: Abstimmen"
+            "3. Abstimmen"
          ],
          "Enter Voting Link": [
             "Abstimmungslink eingeben"
