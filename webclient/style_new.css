@@ -12093,8 +12093,8 @@ button.styler[disabled], input[type=button].styler[disabled], input[type=submit]
 }
 @font-face {
   font-family: 'CenturyGothicRegular';
-  src: url('/webclient/fonts/CenturyGothicRegular/CenturyGothicRegular.eot');
-  src: url('/webclient/fonts/CenturyGothicRegular/CenturyGothicRegular.eot?#iefix') format('embedded-opentype'), url('/webclient/fonts/CenturyGothicRegular/CenturyGothicRegular.woff') format('woff'), url('fonts/CenturyGothicRegular/CenturyGothicRegular.ttf') format('truetype');
+  src: url('fonts/CenturyGothicRegular/CenturyGothicRegular.eot');
+  src: url('fonts/CenturyGothicRegular/CenturyGothicRegular.eot?#iefix') format('embedded-opentype'), url('fonts/CenturyGothicRegular/CenturyGothicRegular.woff') format('woff'), url('fonts/CenturyGothicRegular/CenturyGothicRegular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -12103,21 +12103,21 @@ button.styler[disabled], input[type=button].styler[disabled], input[type=submit]
   font-family: 'Oswald';
   font-style: normal;
   font-weight: 400;
-  src: local('Oswald Regular'), local('Oswald-Regular'), url(/webclient/fonts/Oswald/Oswald_regular.woff2) format('woff2');
+  src: local('Oswald Regular'), local('Oswald-Regular'), url(fonts/Oswald/Oswald_regular.woff2) format('woff2');
 }
 
 @font-face {
   font-family: 'Oswald-Light';
   font-style: normal;
   font-weight: 100;
-  src: local('Oswald Light'), local('Oswald-Light'), url(/webclient/fonts/Oswald/Oswald_light.woff2) format('woff2');
+  src: local('Oswald Light'), local('Oswald-Light'), url(fonts/Oswald/Oswald_light.woff2) format('woff2');
 }
 
 @font-face {
   font-family: 'Oswald-Bold';
   font-style: normal;
   font-weight: 700;
-  src: local('Oswald Bold'), local('Oswald-Bold'), url(/webclient/fonts/Oswald/Oswald_bold.woff2) format('woff2');
+  src: local('Oswald Bold'), local('Oswald-Bold'), url(fonts/Oswald/Oswald_bold.woff2) format('woff2');
 }
 html {
   min-height: 100%;
