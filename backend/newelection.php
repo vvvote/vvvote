@@ -53,8 +53,6 @@ if (isset($HTTP_RAW_POST_DATA)) {
 
 if (isset ($electionconfigStr)) {
 	global $serverNo;
-		if ($serverNo > 1 && !isset($electionconfigOrig['questions'][0]['blinderData']['permissionServerKeys']) )
-			WrongRequestException::throwException(216577, 'You must create the new election on the first server first', "complete request received:\n" . $electionconfigStr);
 	$newconfig = array();
 	try {
 		$electionconfig = json_decode($electionconfigStr, true);
@@ -156,10 +154,10 @@ if (isset ($electionconfigStr)) {
 					$certfile = realpath(dirname(__FILE__) . '/config/permissionservercerts/' . $host . '.pem');
 				}
 				$configWithAllKeys = httpPost($url, $electionconfig, $certfile, true);
-				if ($configWithAllKeys === false) InternalServerError::throwException(8734632, 'Next permission server returned an error', print_r($configWithAllKeys, true));
-				if (isset($configWithAllKeys['cmd'])  && $configWithAllKeys['cmd'] === 'error') InternalServerError::throwException(8734633, 'Next permission server returned an error', print_r($configWithAllKeys, true));
+				if ($configWithAllKeys === false) InternalServerError::throwException(8734632, 'Next permission server returned an error', 'Server URL which returned an error: >' . $url ."<\n returned error:\n" . print_r($configWithAllKeys, true));
+				if (isset($configWithAllKeys['cmd'])  && $configWithAllKeys['cmd'] === 'error') InternalServerError::throwException(8734633, 'Next permission server returned an error', 'Server URL which returned an error: >' . $url ."<\n returned error:\n" .print_r($configWithAllKeys, true));
 				if (! isset($configWithAllKeys['questions'])) InternalServerError::throwException(8734634, 'Error creating a new election: a permission server returned a config without questions. Server URL delivering wrong config: ' . $url, ''); 
-				if (! is_array($configWithAllKeys['questions'])) InternalServerError::throwException(8734635, 'Error creating a new election: a permission server returned a config withot questions not as array. Server URL delivering wrong config: ' . $url, ''); 
+				if (! is_array($configWithAllKeys['questions'])) InternalServerError::throwException(8734635, 'Error creating a new election: a permission server returned a config without questions not as array. Server URL delivering wrong config: ' . $url, ''); 
 				foreach ($configWithAllKeys['questions'] as $qNo => $question ) {
 					foreach ($pServerKeys as $pNum => $publickey) {
 						if ($pNum < $serverNo) { // verify if the keys from the new-election request are unmodified
