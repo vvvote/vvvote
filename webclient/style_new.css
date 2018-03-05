@@ -12424,7 +12424,7 @@ span.txt {
         }
 .fileUpload.fileBtn {
   background: #f39200;
-    font-family: 'Oswald', sans-serif;
+    font-family: 'CenturyGothicRegular', sans-serif; /* designer: 'Oswald', sans-serif; */
     font-size: 18px;
     color: #fff;
     padding: 8px 20px;
@@ -13078,13 +13078,18 @@ div#freq {
     font-size: 18px;
   }
   #formGetelectionConfig input#electionUrlId {
-        width: 30%;
+    width: 30%;
     margin: 0 13px 0 20px;
-}
-#formGetelectionConfig input[type="button"].orange_but{
-  font-size: 14px;
-      margin-right: 0;
-}
+  }
+  #formGetelectionConfig input[type="button"].orange_but{
+    font-size: 14px;
+    margin-right: 0;
+  }
+  #loadedmaincontent .fileBtn {
+    font-size: 14px;
+    margin-right: 0;
+  }
+
 }
 @media (max-width:767px) {
   .navbar-toggle {

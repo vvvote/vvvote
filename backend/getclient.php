@@ -107,7 +107,7 @@ foreach ($includeCssFiles as $f) {
 	readfile($pathToClient . $f);
 }
 echo '</style>';
-
+/*
 echo '
 <script type="text/javascript">
   $(document).ready(function(){
@@ -133,6 +133,7 @@ echo '
     },1000);
   });
 </script>';
+*/
 
 // print the main content take from index.html - logo125x149.svg is included somewhere in the middle of the following text 
 echo <<<EOT
