@@ -183,7 +183,7 @@ echo <<<EOT
 									<span class="icon-bar"></span>
 									<span class="icon-bar"></span>
 									</button>
-									<a href="/" class="navbar-brand" id="logo" tabindex="-1">
+									<a href="$linkToHostingOrganization" class="navbar-brand" id="logo" tabindex="-1">
 EOT;
 
 									readfile($pathToClient . 'logo_hd47x51.svg');
@@ -276,7 +276,7 @@ readfile($pathToClient . 'logo_auto.svg');
 
 echo <<<EOT
 </div>
-						<span>powered by <a href="/">VVVote</a></span>
+						<span>powered by <a href="https://www.vvvote.de/">VVVote</a></span>
 							</div>
 						</div>
 					</div>

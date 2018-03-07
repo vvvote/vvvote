@@ -24,6 +24,7 @@ $pServerUrlBases = array('http://demo.vvvote.de/backend', 'http://demo2.vvvote.d
 
 $tServerStoreVotePort = '80'; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
 
+$linkToHostingOrganization = 'http://www.your-organisation.org'; // this link will be used on click on the "logo_hd47x51.svg" which you can replace with the logo of your organisation
 
 // construct tServerUrl for the webclient use 
 // do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
