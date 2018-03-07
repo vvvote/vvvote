@@ -103,9 +103,33 @@ echo '</script>';
 
 // print stylesheets
 echo '<style type="text/css">';
-foreach ($includeCssFiles as $f) {
-	readfile($pathToClient . $f);
+foreach ( $includeCssFiles as $f ) {
+	
+	// replace /*DataUrl ...path=<nnn> */ by base64 encoded font file
+	$cssfile = file_get_contents($pathToClient . $f);
+	$pattern = '/\/\*DataUrl (.*) path=<(.*)>(.*)\*\//'; 	// find strings like "/*DataUrl src: url( path=<fonts/CenturyGothicRegular/CenturyGothicRegular.woff>) format('woff'); */"
+	$matches = null;
+	while (preg_match($pattern, $cssfile, $matches)) {
+		// matches contains:
+		// matches[0] = /*DataUrl src: url( path=<fonts/CenturyGothicRegular/CenturyGothicRegular.woff>) format(\'woff\'); */
+		// matches[1][0] = 'src: url('
+		// matches[2][0] = 'fonts/CenturyGothicRegular/CenturyGothicRegular.woff'
+		// matches[3][0] = ') format(\'woff\'); '
+		
+		// matches2 = null;
+		// $numMatches preg_match('/path=<(.*)>/', $matches, $pathToFontFile);
+		
+		$fontfile = file_get_contents ($pathToClient . $matches [2]);
+		$type = pathinfo ($pathToClient . $matches [2], PATHINFO_EXTENSION);
+		$fontDataUrl = 'data:font/' . $type . ';base64,' . base64_encode ( $fontfile );
+		$cssfile = preg_replace ( $pattern, '$1 ' . $fontDataUrl . '$3', $cssfile, 1 );
+		$matches = null;
+	} ;
+	echo $cssfile;
+	 
+//	readfile($pathToClient . $f);
 }
+
 echo '</style>';
 /*
 echo '

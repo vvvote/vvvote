@@ -12095,10 +12095,12 @@ button.styler[disabled], input[type=button].styler[disabled], input[type=submit]
   font-family: 'CenturyGothicRegular';
   src: url('fonts/CenturyGothicRegular/CenturyGothicRegular.eot');
   src: url('fonts/CenturyGothicRegular/CenturyGothicRegular.eot?#iefix') format('embedded-opentype'), url('fonts/CenturyGothicRegular/CenturyGothicRegular.woff') format('woff'), url('fonts/CenturyGothicRegular/CenturyGothicRegular.ttf') format('truetype');
+/*DataUrl src: url( path=<fonts/CenturyGothicRegular/CenturyGothicRegular.woff>) format('woff'); */
   font-weight: normal;
   font-style: normal;
 }
 
+/* licence: http://scripts.sil.org/cms/scripts/page.php?item_id=OFL_web */
 @font-face {
   font-family: 'Oswald';
   font-style: normal;
