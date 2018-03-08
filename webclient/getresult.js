@@ -8,8 +8,8 @@ function GetResultPage() {
 GetResultPage.prototype = new Page();
 
 GetResultPage.prototype.setLanguage = function() {
-	this.steps[1] = i18n.gettext('Step 1: Enter voting link'); 
-	this.steps[2] = i18n.gettext('Step 2: Show the result');
+	this.steps[1] = i18n.gettext('1<sup>st</sup> Enter voting link'); 
+	this.steps[2] = i18n.gettext('2<sup>nd</sup> Show the result');
 	this.mainContent = i18n.gettext('<p>Enter the link of the voting for which you want to see the results<br></p>') +
 	                   GetElectionConfig.getMainContent(i18n.gettext('Get voting results'), 'page', 'page.gotElectionConfig');
 	this.title = i18n.gettext('Get Voting Results');

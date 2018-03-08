@@ -9,8 +9,8 @@ function NewElectionPage() {
 NewElectionPage.prototype = new Page();
 
 NewElectionPage.prototype.setLanguage = function() {
-	this.steps[1] = i18n.gettext('Step 1: Set voting preferences'); 
-	this.steps[2] = i18n.gettext('Step 2: Save voting link');
+	this.steps[1] = i18n.gettext('1<sup>st</sup> Set voting preferences'); 
+	this.steps[2] = i18n.gettext('2<sup>nd</sup> Save voting link');
 	var OauthHtml = '';
 	for ( var curroauthconfig in ClientConfig.oAuth2Config) {
 		OauthHtml += '<input type="radio" onclick="page.setAuthMethod(\'OAuth2\',\'' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '\');"     name="authMethod" id="' + ClientConfig.oAuth2Config[curroauthconfig].serverId + '">';

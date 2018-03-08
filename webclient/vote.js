@@ -20,9 +20,9 @@ VotePage.prototype.reset = function() {
 };
 
 VotePage.prototype.setLanguage = function() {
-	this.steps[1] = i18n.gettext('Step 1: Enter voting link'); 
-	this.steps[2] = i18n.gettext('Step 2: Authorize');
-	this.steps[3] = i18n.gettext('Step 3: Vote');
+	this.steps[1] = i18n.gettext('1<sup>st</sup> Enter voting link'); 
+	this.steps[2] = i18n.gettext('2<sup>nd</sup> Authorize');
+	this.steps[3] = i18n.gettext('3<sup>rd</sup> Vote');
 	this.mainContent = '<h3>' + i18n.gettext('Enter Voting Link') + '</h3>' +
 	i18n.gettext(
 	'<p><ul><li>I yet do not have a voting certificate</li>' +

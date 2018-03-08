@@ -9,9 +9,6 @@ translations['en_US'] =
             "plural_forms": "nplurals=2; plural=(n != 1);",
             "lang": "en_US"
          },
-         "Search": [
-            "Search"
-         ],
          "Voting server": [
             "Voting server"
          ],
@@ -34,14 +31,26 @@ translations['en_US'] =
          "The voting configuration could not be loaded from the provided URL": [
             "The voting configuration could not be loaded from the provided URL"
          ],
+         "Error: The config does not contain the questions": [
+            "Error: The config does not contain the questions"
+         ],
+         "Error: The config does not contain the blinder Data": [
+            "Error: The config does not contain the blinder Data"
+         ],
+         "Error: The config does not contain the permission server keys": [
+            "Error: The config does not contain the permission server keys"
+         ],
+         "Error: The config does not contain the permission server key": [
+            "Error: The config does not contain the permission server key"
+         ],
          "Voting link: ": [
             "Voting link: "
          ],
-         "Step 1: Enter voting link": [
-            "1. Enter voting link"
+         "1<sup>st</sup> Enter voting link": [
+            "1<sup>st</sup> Enter voting link"
          ],
-         "Step 2: Show the result": [
-            "2. Show the result"
+         "2<sup>nd</sup> Show the result": [
+            "2<sup>nd</sup> Show the result"
          ],
          "<p>Enter the link of the voting for which you want to see the results<br></p>": [
             "<p>Enter the link of the voting for which you want to see the results<br></p>"
@@ -120,6 +129,9 @@ translations['en_US'] =
          ],
          "Create voting certificate": [
             "Create voting certificate"
+         ],
+         "Configuration error: serverId >%s< is asked for, but not configured": [
+            "Configuration error: serverId >%s< is asked for, but not configured"
          ],
          "Step %s: ": [
             "Step %s: "
@@ -205,6 +217,9 @@ translations['en_US'] =
          "Please load the voter certification file": [
             "Please load the voter certification file"
          ],
+         "Search": [
+            "Search"
+         ],
          "<h2>Voting certificate generated.</h2><p id=\"didSaveButtonsId\">Did you save the voting certificate on your devide?<br><button id=\"savedReturnEnvelope\" onclick=\"page.blinder.onUserDidSaveReturnEnvelope();\" >Yes</button>&emsp;<button id=\"didNotSaveReturnEnvelope\" onclick=\"page.blinder.saveReturnEnvelope();\" >No</button></p><p><ul id=\"howToVoteId\" style=\"display:none\"><li>You got a voting certificate in the form of a webpage file which you saved on your device.</li><li>Please remember the place where you saved it.</li><li>The voting certificate is needed in order to cast the vote. There is no way obaining a new one. Thus, save it securly till the end of the voting.</li><li>In order to cast a vote, open the voting certificate in a web browser. You can do this by double clicking it in the file explorer.</li><li>Everyone who has the voting certificate can use it to cast the vote - thus do not pass it on</li><li>Casting the vote using the voting certificate is anonymous. That means, as long as you do not help, nobody can find out who sent the vote.</li><li>%s</li></ul></p>": [
             "<h2>Voting certificate generated.</h2><p id=\"didSaveButtonsId\">Did you save the voting certificate on your devide?<br><button id=\"savedReturnEnvelope\" onclick=\"page.blinder.onUserDidSaveReturnEnvelope();\" >Yes</button>&emsp;<button id=\"didNotSaveReturnEnvelope\" onclick=\"page.blinder.saveReturnEnvelope();\" >No</button></p><p><ul id=\"howToVoteId\" style=\"display:none\"><li>You got a voting certificate in the form of a webpage file which you saved on your device.</li><li>Please remember the place where you saved it.</li><li>The voting certificate is needed in order to cast the vote. There is no way obaining a new one. Thus, save it securly till the end of the voting.</li><li>In order to cast a vote, open the voting certificate in a web browser. You can do this by double clicking it in the file explorer.</li><li>Everyone who has the voting certificate can use it to cast the vote - thus do not pass it on</li><li>Casting the vote using the voting certificate is anonymous. That means, as long as you do not help, nobody can find out who sent the vote.</li><li>%s</li></ul></p>"
          ],
@@ -225,6 +240,12 @@ translations['en_US'] =
          ],
          "Error verifying a signature:\nThe number of signatures on the voting certificate is not correct. \nRequired number: %d, number in this voting certificate: %d": [
             "Error verifying a signature:\nThe number of signatures on the voting certificate is not correct. \nRequired number: %d, number in this voting certificate: %d"
+         ],
+         "The vote is not for this election (Election IDs do not match).": [
+            "The vote is not for this election (Election IDs do not match)."
+         ],
+         "The vote is not for this election (Question ID not found in election configuration).": [
+            "The vote is not for this election (Question ID not found in election configuration)."
          ],
          "The signature by the permission server >%s< for the voting key is correct. This means, the server has confirmed that the according voter is entitled to vote.": [
             "The signature by the permission server >%s< for the voting key is correct. This means, the server has confirmed that the according voter is entitled to vote."
@@ -274,6 +295,9 @@ translations['en_US'] =
          ],
          "Vote casting is closed": [
             "Vote casting is closed"
+         ],
+         "Cast vote!": [
+            "Cast vote!"
          ],
          "Vote casting starts at %s": [
             "Vote casting starts at %s"
@@ -387,9 +411,6 @@ translations['en_US'] =
          "Question to be voted on": [
             "Question to be voted on"
          ],
-         "Cast vote!": [
-            "Cast vote!"
-         ],
          "The server did not accept the vote. It says:\n%s": [
             "The server did not accept the vote. It says:\n%s"
          ],
@@ -423,20 +444,17 @@ translations['en_US'] =
          "Error: some error occured": [
             "Error: some error occured"
          ],
-         "Find my vote": [
-            "Find my vote"
-         ],
          "Number of Votes": [
             "Number of Votes"
          ],
          "Total": [
             "Total"
          ],
-         "Step 1: Set voting preferences": [
-            "1. Set voting preferences"
+         "1<sup>st</sup> Set voting preferences": [
+            "1<sup>st</sup> Set voting preferences"
          ],
-         "Step 2: Save voting link": [
-            "2. Save voting link"
+         "2<sup>nd</sup> Save voting link": [
+            "2<sup>nd</sup> Save voting link"
          ],
          "Here you can create a new voting. In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. <br><br>": [
             "Here you can create a new voting. In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. <br><br>"
@@ -468,6 +486,12 @@ translations['en_US'] =
          "Open a new voting": [
             "Open a new voting"
          ],
+         "Waiting for the servers": [
+            "Waiting for the servers"
+         ],
+         "The hash obtained from the server does not match the hash from another server. The server is trying to cheat you. Aborted.": [
+            "The hash obtained from the server does not match the hash from another server. The server is trying to cheat you. Aborted."
+         ],
          "Save the link and distribute it to all eligable people. ": [
             "Save the link and distribute it to all eligable people. "
          ],
@@ -477,8 +501,11 @@ translations['en_US'] =
          "Server reports error: \n": [
             "Server reports error: \n"
          ],
-         "Online Voting: anonymous ballots and traceable": [
-            "Online Voting:<br> anonymous ballots and traceable"
+         "Unknown command from Server: \n": [
+            "Unknown command from Server: \n"
+         ],
+         "Online Voting:<br> anonymous and traceable": [
+            "Online Voting:<br> anonymous and traceable"
          ],
          "Take part in a voting": [
             "Take part in a voting"
@@ -486,17 +513,23 @@ translations['en_US'] =
          "Fetch result": [
             "Fetch result"
          ],
-         "Procedure": [
-            "Procedure"
+         "That's how": [
+            "That's how"
          ],
          "Show explanations and technical information": [
             "Show explanations and technical information"
          ],
-         "Step 2: Authorize": [
-            "2. Authorize"
+         "There is an error in the configuration. Please inform the administrator. (error no.: 875765: URL not defined or not of type string)": [
+            "There is an error in the configuration. Please inform the administrator. (error no.: 875765: URL not defined or not of type string)"
          ],
-         "Step 3: Vote": [
-            "3. Vote"
+         "There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)": [
+            "There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)"
+         ],
+         "2<sup>nd</sup> Authorize": [
+            "2<sup>nd</sup> Authorize"
+         ],
+         "3<sup>rd</sup> Vote": [
+            "3<sup>rd</sup> Vote"
          ],
          "Enter Voting Link": [
             "Enter Voting Link"
@@ -518,9 +551,6 @@ translations['en_US'] =
          ],
          "The voting requires blinding module >%s< which is not supported by this client.\nUse a compatible client.": [
             "The voting requires blinding module >%s< which is not supported by this client.\nUse a compatible client."
-         ],
-         "Name of voting:": [
-            "Name of voting:"
          ],
          "The voting requires authorisation module >%s< which is not supported by this client.\nUse a compatible client.": [
             "The voting requires authorisation module >%s< which is not supported by this client.\nUse a compatible client."

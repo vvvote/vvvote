@@ -32,7 +32,7 @@ translations['de'] =
             "Die Abstimmungskonfiguration konnte nicht vom angegebenen Link geladen werden."
          ],
          "Error: The config does not contain the questions": [
-            "Fehler: Die Konfiguration enthält die Anträge nicht"
+            "Fehler: Die vom Server erhaltene Konfiguration enthält die Anträge nicht"
          ],
          "Error: The config does not contain the blinder Data": [
             "Fehler: Die Konfiguration enthält die Serverdaten nicht"
@@ -46,11 +46,11 @@ translations['de'] =
          "Voting link: ": [
             "Abstimmungslink: "
          ],
-         "Step 1: Enter voting link": [
-            "Schritt 1: Abstimmungslink eingeben"
+         "1<sup>st</sup> Enter voting link": [
+            "1. Abstimmungslink eingeben"
          ],
-         "Step 2: Show the result": [
-            "Schritt 2: Ergebnis anzeigen"
+         "2<sup>nd</sup> Show the result": [
+            "2. Ergebnis anzeigen"
          ],
          "<p>Enter the link of the voting for which you want to see the results<br></p>": [
             "<p>Geben Sie den Link zu der Abstimmung ein, dessen Ergebnis Sie sehen wollen <br></p>"
@@ -450,11 +450,11 @@ translations['de'] =
          "Total": [
             "Gesamt"
          ],
-         "Step 1: Set voting preferences": [
-            "Schritt 1: Abstimmungseinstellungen festlegen"
+         "1<sup>st</sup> Set voting preferences": [
+            "1. Abstimmungseinstellungen festlegen"
          ],
-         "Step 2: Save voting link": [
-            "Schritt 2: Abstimmungslink speichern"
+         "2<sup>nd</sup> Save voting link": [
+            "2. Abstimmungslink speichern"
          ],
          "Here you can create a new voting. In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. <br><br>": [
             "Hier k&ouml;nnen Sie eine neue Abstimmung starten. Zum Anlegen einer neuen Abstimmung legen Sie den Namen der Abstimmung und die Authorisierungsmethode fest. <br><br>"
@@ -504,8 +504,8 @@ translations['de'] =
          "Unknown command from Server: \n": [
             "Unbekannter Befehl vom Server: \n"
          ],
-         "Online Voting: anonymous ballots and traceable": [
-            "Online Abstimmung: anonym und nachvollziehbar"
+         "Online Voting:<br> anonymous and traceable": [
+            "Online-Abstimmung<br>anonym und nachvollziehbar"
          ],
          "Take part in a voting": [
             "An Abstimmung teilnehmen"
@@ -513,7 +513,7 @@ translations['de'] =
          "Fetch result": [
             "Ergebnis abrufen"
          ],
-         "Procedure": [
+         "That's how": [
             "So geht's"
          ],
          "Show explanations and technical information": [
@@ -525,11 +525,11 @@ translations['de'] =
          "There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)": [
             "Die Konfiguration enthält einen Fehler. Bitte informieren Sie den Administrator (Fehlernr. 875766 URL not defined or not of type string)"
          ],
-         "Step 2: Authorize": [
-            "Schritt 2: Autorisieren"
+         "2<sup>nd</sup> Authorize": [
+            "2. Autorisieren"
          ],
-         "Step 3: Vote": [
-            "Schritt 3: Abstimmen"
+         "3<sup>rd</sup> Vote": [
+            "3. Abstimmen"
          ],
          "Enter Voting Link": [
             "Abstimmungslink eingeben"

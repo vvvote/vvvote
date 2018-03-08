@@ -26,7 +26,8 @@ tx push -s
 Get Changes of Source Strings from Transflex
 --------------------------------------------
 cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
-tx pull
+tx pull -a
+tx pull -l en_US
 
 Push Changes in l10n
 --------------------

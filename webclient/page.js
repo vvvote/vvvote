@@ -10,11 +10,11 @@ function Page() {
 Page.prototype.setLanguage = function() {
 	this.menu = new Array();
 	if (typeof (i18n) == 'undefined') i18n = new Jed({});
-	this.ciSubHead = i18n.gettext('Online Voting: anonymous ballots and traceable');
+	this.ciSubHead = i18n.gettext('Online Voting:<br> anonymous and traceable');
 	this.menu[1] = i18n.gettext('Open a new voting');
 	this.menu[2] = i18n.gettext('Take part in a voting');
 	this.menu[3] = i18n.gettext('Fetch result');
-	this.stepstitle = i18n.gettext('Procedure');
+	this.stepstitle = i18n.gettext("That's how");
 	this.techinfocheckboxlabel = i18n.gettext('Show explanations and technical information');
 };
 

@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-03-08 18:52+0100\n"
+"POT-Creation-Date: 2018-03-08 23:20+0100\n"
 "PO-Revision-Date: 2016-01-01 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -76,11 +76,11 @@ msgid "Voting link: "
 msgstr ""
 
 #: getresult.js:11 vote.js:23
-msgid "Step 1: Enter voting link"
+msgid "1<sup>st</sup> Enter voting link"
 msgstr ""
 
 #: getresult.js:12
-msgid "Step 2: Show the result"
+msgid "2<sup>nd</sup> Show the result"
 msgstr ""
 
 #: getresult.js:13
@@ -809,11 +809,11 @@ msgid "Total"
 msgstr ""
 
 #: newelection.js:12
-msgid "Step 1: Set voting preferences"
+msgid "1<sup>st</sup> Set voting preferences"
 msgstr ""
 
 #: newelection.js:13
-msgid "Step 2: Save voting link"
+msgid "2<sup>nd</sup> Save voting link"
 msgstr ""
 
 #: newelection.js:23
@@ -885,7 +885,7 @@ msgid "Unknown command from Server: \n"
 msgstr ""
 
 #: page.js:13
-msgid "Online Voting: anonymous ballots and traceable"
+msgid "Online Voting:<br> anonymous and traceable"
 msgstr ""
 
 #: page.js:15
@@ -897,7 +897,7 @@ msgid "Fetch result"
 msgstr ""
 
 #: page.js:17
-msgid "Procedure"
+msgid "That's how"
 msgstr ""
 
 #: page.js:18
@@ -917,11 +917,11 @@ msgid ""
 msgstr ""
 
 #: vote.js:24
-msgid "Step 2: Authorize"
+msgid "2<sup>nd</sup> Authorize"
 msgstr ""
 
 #: vote.js:25
-msgid "Step 3: Vote"
+msgid "3<sup>rd</sup> Vote"
 msgstr ""
 
 #: vote.js:26
