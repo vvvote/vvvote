@@ -9,9 +9,6 @@ translations['de'] =
             "plural_forms": "nplurals=2; plural=(n != 1);",
             "lang": "de"
          },
-         "Search": [
-            "Durchsuchen"
-         ],
          "Voting server": [
             "Abstimmserver"
          ],
@@ -34,14 +31,26 @@ translations['de'] =
          "The voting configuration could not be loaded from the provided URL": [
             "Die Abstimmungskonfiguration konnte nicht vom angegebenen Link geladen werden."
          ],
+         "Error: The config does not contain the questions": [
+            "Fehler: Die Konfiguration enthält die Anträge nicht"
+         ],
+         "Error: The config does not contain the blinder Data": [
+            "Fehler: Die Konfiguration enthält die Serverdaten nicht"
+         ],
+         "Error: The config does not contain the permission server keys": [
+            "Fehler: Es fehlen die öffentlichen Serverschlüssel in der vom Server erhaltenen Konfiguraion"
+         ],
+         "Error: The config does not contain the permission server key": [
+            "Fehler: In der vom Server erhaltenen Konfiguration fehlt der Schlüssel des Verblindungsservers"
+         ],
          "Voting link: ": [
             "Abstimmungslink: "
          ],
          "Step 1: Enter voting link": [
-            "1. Abstimmungslink eingeben"
+            "Schritt 1: Abstimmungslink eingeben"
          ],
          "Step 2: Show the result": [
-            "2. Ergebnis anzeigen"
+            "Schritt 2: Ergebnis anzeigen"
          ],
          "<p>Enter the link of the voting for which you want to see the results<br></p>": [
             "<p>Geben Sie den Link zu der Abstimmung ein, dessen Ergebnis Sie sehen wollen <br></p>"
@@ -206,7 +215,10 @@ translations['de'] =
             "<p><h2>Weitere technische Information</h2>\nDer Wahlschein ist digital von mindestens 2 Servern unterschrieben. Diese Unterschrift führt dazu, dass der Wahlschein bei der Stimmabgabe akzeptiert wird.<br>\nDer Wahlschein enth&auml;lt eine eindeutige Wahlscheinnummer, die nur Ihr Computer kennt - sie wurde von Ihrem Computer erzeugt und verschl&uuml;sselt, bevor die Server den Wahlschein unterschrieben haben, und danach auf Ihrem Computer entschl&uuml;sselt (Man spricht von &quot;Blinded Signature&quot;). Die Server kennen daher die Wahlscheinnummer nicht.<br>\nMan kann sich das so vorstellen:<br>\nIhr Computer schreibt auf den Wahlschein die Wahlscheinnummer, die er sich selbst &quot;ausdenkt&quot; (Zufallszahl). Dieser Wahlschein wird zusammen mit einem Blatt Kohlepapier in einen Umschlag gelegt und an den Server geschickt. \nDer Server unterschreibt außen auf dem Umschlag (wenn Sie wahlberechtigt sind), so dass sich die Unterschrift durch das Kohlepapier auf Ihren Wahlschein &uuml;berträgt. Ohne den Umschlag ge&ouml;ffnet zu haben (was der Server nicht kann, weil er den daf&uuml;r notwendigen Schl&uuml;ssel nicht kennt), schickt er den Brief an Ihren Computer zur&uuml;ck. \nIhr Computer &ouml;ffnet den Umschlag (d.h. entschl&uuml;sselt die Wahlscheinnummer) und h&auml;lt einen vom Server unterschriebenen Wahlschein in der Hand, deren Nummer der Server nicht kennt. \n</p>"
          ],
          "Please load the voter certification file": [
-            "<span class='txt'>Bitte laden Sie die Datei, in der Ihr Wahlschein gespeichert ist:</span>"
+            "Bitte laden Sie die Datei, in der Ihr Wahlschein gespeichert ist:"
+         ],
+         "Search": [
+            "Durchsuchen"
          ],
          "<h2>Voting certificate generated.</h2><p id=\"didSaveButtonsId\">Did you save the voting certificate on your devide?<br><button id=\"savedReturnEnvelope\" onclick=\"page.blinder.onUserDidSaveReturnEnvelope();\" >Yes</button>&emsp;<button id=\"didNotSaveReturnEnvelope\" onclick=\"page.blinder.saveReturnEnvelope();\" >No</button></p><p><ul id=\"howToVoteId\" style=\"display:none\"><li>You got a voting certificate in the form of a webpage file which you saved on your device.</li><li>Please remember the place where you saved it.</li><li>The voting certificate is needed in order to cast the vote. There is no way obaining a new one. Thus, save it securly till the end of the voting.</li><li>In order to cast a vote, open the voting certificate in a web browser. You can do this by double clicking it in the file explorer.</li><li>Everyone who has the voting certificate can use it to cast the vote - thus do not pass it on</li><li>Casting the vote using the voting certificate is anonymous. That means, as long as you do not help, nobody can find out who sent the vote.</li><li>%s</li></ul></p>": [
             "<h2>Wahlschein erfolgreich erstellt. </h2>\n<p id=\"didSaveButtonsId\">Haben Sie den Wahlschein als Datei auf Ihrem Gerät gespeichert?<br>\n<button id=\"savedReturnEnvelope\" onclick=\"page.blinder.onUserDidSaveReturnEnvelope();\" >Ja</button>\n&emsp;<button id=\"didNotSaveReturnEnvelope\" onclick=\"page.blinder.saveReturnEnvelope();\" >Nein</button>\n</p><p><ul id=\"howToVoteId\" style=\"display:none\">\n<li>Sie haben einen Wahlschein in Form einer Webseiten-Datei erhalten, die Sie auf ihrem Computer gespeichert haben.</li>\n<li>Merken Sie sich bitte, wo Sie die Datei gespeichert haben.</li>\n<li>Der Wahlschein wird benötigt, um die Stimme abzugeben und kann nicht ersetzt werden. Daher wird empfohlen, den Wahlschein bis zum Ende der Abstimmung zu sichern.</li>\n<li>Zum Abstimmen &ouml;ffnen Sie den Wahlschein im Internet-Browser. \nEine M&ouml;glichkeit dazu ist: Klicken Sie im Datei-Explorer doppelt auf die Wahlschein-Datei.</li>\n<li>Der Wahlschein berechtigt zur Stimmabgabe - geben Sie ihn also nicht \nweiter! Die Stimmabgabe damit ist anonym, d.h. ohne Ihre Mithilfe kann nicht festgestellt werden, von wem die Stimme abgegeben wurde.</li>\n<li>%s</li>\n</ul></p>"
@@ -439,10 +451,10 @@ translations['de'] =
             "Gesamt"
          ],
          "Step 1: Set voting preferences": [
-            "1. Abstimmungseinstellungen festlegen"
+            "Schritt 1: Abstimmungseinstellungen festlegen"
          ],
          "Step 2: Save voting link": [
-            "2. Abstimmungslink speichern"
+            "Schritt 2: Abstimmungslink speichern"
          ],
          "Here you can create a new voting. In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. <br><br>": [
             "Hier k&ouml;nnen Sie eine neue Abstimmung starten. Zum Anlegen einer neuen Abstimmung legen Sie den Namen der Abstimmung und die Authorisierungsmethode fest. <br><br>"
@@ -477,6 +489,9 @@ translations['de'] =
          "Waiting for the servers": [
             "Auf Server warten"
          ],
+         "The hash obtained from the server does not match the hash from another server. The server is trying to cheat you. Aborted.": [
+            "Die Prüfsumme der Konfiguration, die die Server senden, stimmen nicht überein. Ein Server arbeitet nicht korrekt. Abbruch."
+         ],
          "Save the link and distribute it to all eligable people. ": [
             "Speichern Sie den Link und geben Sie ihn an alle Stimmberechtigten weiter. "
          ],
@@ -487,10 +502,10 @@ translations['de'] =
             "Server meldet folgenden Fehler: \n"
          ],
          "Unknown command from Server: \n": [
-            "Unbekannter Befehl vom Server:\n"
+            "Unbekannter Befehl vom Server: \n"
          ],
          "Online Voting: anonymous ballots and traceable": [
-            "Online Abstimmung:<br> anonym und nachvollziehbar"
+            "Online Abstimmung: anonym und nachvollziehbar"
          ],
          "Take part in a voting": [
             "An Abstimmung teilnehmen"
@@ -504,11 +519,17 @@ translations['de'] =
          "Show explanations and technical information": [
             "Erklärungen und technische Informationen anzeigen"
          ],
+         "There is an error in the configuration. Please inform the administrator. (error no.: 875765: URL not defined or not of type string)": [
+            "Die Konfiguration enthält einen Fehler. Bitte informieren Sie den Administrator (Fehlernr. 875765 URL not defined or not of type string)"
+         ],
+         "There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)": [
+            "Die Konfiguration enthält einen Fehler. Bitte informieren Sie den Administrator (Fehlernr. 875766 URL not defined or not of type string)"
+         ],
          "Step 2: Authorize": [
-            "2. Autorisieren"
+            "Schritt 2: Autorisieren"
          ],
          "Step 3: Vote": [
-            "3. Abstimmen"
+            "Schritt 3: Abstimmen"
          ],
          "Enter Voting Link": [
             "Abstimmungslink eingeben"
@@ -530,9 +551,6 @@ translations['de'] =
          ],
          "The voting requires blinding module >%s< which is not supported by this client.\nUse a compatible client.": [
             "Die Abstimmung erfordert das Verblindungsmodul >%s<, welches von diesem Client nicht unterstützt wird.\nVerwenden Sie einen kompatiblen Client."
-         ],
-         "Name of voting:": [
-            "Name der Abstimmung:"
          ],
          "The voting requires authorisation module >%s< which is not supported by this client.\nUse a compatible client.": [
             "Die Abstimmung erfordert das Autorisierungsmodul >%s<, welches von diesem Client nicht unterstützt wird.\nVerwenden Sie einen kompatiblen Client."

@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-01-10 16:53+0100\n"
+"POT-Creation-Date: 2018-03-08 18:52+0100\n"
 "PO-Revision-Date: 2016-01-01 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 2.0.5\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -55,7 +55,23 @@ msgstr ""
 msgid "The voting configuration could not be loaded from the provided URL"
 msgstr ""
 
-#: getelectionconfig.js:155
+#: getelectionconfig.js:72
+msgid "Error: The config does not contain the questions"
+msgstr ""
+
+#: getelectionconfig.js:79
+msgid "Error: The config does not contain the blinder Data"
+msgstr ""
+
+#: getelectionconfig.js:80
+msgid "Error: The config does not contain the permission server keys"
+msgstr ""
+
+#: getelectionconfig.js:81
+msgid "Error: The config does not contain the permission server key"
+msgstr ""
+
+#: getelectionconfig.js:165
 msgid "Voting link: "
 msgstr ""
 
@@ -93,7 +109,7 @@ msgid ""
 "Use a compatible client."
 msgstr ""
 
-#: index.js:40 index.js:49 index.js:64
+#: index.js:41 index.js:51 index.js:67
 msgid ""
 "Your web browser %s %is not supported. Please use FireFox at least version "
 "34, Chrome at least version 38 (except on Android) or Edge."
@@ -323,11 +339,11 @@ msgid ""
 "certificate on your device now"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:156
+#: modules-election/blinded-voter/module.js:158
 msgid "Creating voting certificate"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:172
+#: modules-election/blinded-voter/module.js:174
 msgid ""
 "<ul><li>You will get voting certificae in the form of a webpage file as "
 "result of this step.</li><li>Please remember where you saved it.</"
@@ -336,7 +352,7 @@ msgid ""
 "of the voting.</li></ul>"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:183
+#: modules-election/blinded-voter/module.js:185
 msgid ""
 "<p><h2>Technical information</h2>The voting certificate is digitally signed "
 "by at least two servers. This signatures makes the certificate valid for "
@@ -360,11 +376,15 @@ msgid ""
 "server's signatures and the ballot is called >voting certificate<.</p>"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:206
+#: modules-election/blinded-voter/module.js:209
 msgid "Please load the voter certification file"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:216
+#: modules-election/blinded-voter/module.js:214
+msgid "Search"
+msgstr ""
+
+#: modules-election/blinded-voter/module.js:227
 #, javascript-format
 msgid ""
 "<h2>Voting certificate generated.</h2><p id=\"didSaveButtonsId\">Did you "
@@ -385,30 +405,30 @@ msgid ""
 "can find out who sent the vote.</li><li>%s</li></ul></p>"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:262
+#: modules-election/blinded-voter/module.js:273
 msgid "Error: voting certificate data not found"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:264
+#: modules-election/blinded-voter/module.js:275
 msgid "Error: voting certificate data could not be read: JSON decode failed"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:280
+#: modules-election/blinded-voter/module.js:291
 msgid "The voter certificate is not consistent"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:382
+#: modules-election/blinded-voter/module.js:393
 msgid ""
 "The signature on the vote is correct. This means that the vote is unchanged."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:384
+#: modules-election/blinded-voter/module.js:395
 msgid ""
 "The signature on the vote is not correct. This means that the vote is "
 "changed or the key does not match."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:394
+#: modules-election/blinded-voter/module.js:405
 #, javascript-format
 msgid ""
 "Error verifying a signature:\n"
@@ -416,17 +436,17 @@ msgid ""
 "Required number: %d, number in this voting certificate: %d"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:398
+#: modules-election/blinded-voter/module.js:409
 msgid "The vote is not for this election (Election IDs do not match)."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:402
+#: modules-election/blinded-voter/module.js:413
 msgid ""
 "The vote is not for this election (Question ID not found in election "
 "configuration)."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:413
+#: modules-election/blinded-voter/module.js:424
 #, javascript-format
 msgid ""
 "The signature by the permission server >%s< for the voting key is correct. "
@@ -434,7 +454,7 @@ msgid ""
 "to vote."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:415
+#: modules-election/blinded-voter/module.js:426
 #, javascript-format
 msgid ""
 "The signature by permission server >%s< for the voting key is not correct. "
@@ -442,14 +462,14 @@ msgid ""
 "persons responsible for the voting"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:418
+#: modules-election/blinded-voter/module.js:429
 #, javascript-format
 msgid ""
 "Error verifying the signature:\n"
 "%s"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:469
+#: modules-election/blinded-voter/module.js:480
 #, javascript-format
 msgid ""
 "For voter >%s< the server >%s< returns a different order of signatures than "
@@ -842,19 +862,25 @@ msgstr ""
 msgid "Waiting for the servers"
 msgstr ""
 
-#: newelection.js:140
-msgid "Save the link and distribute it to all eligable people. "
-msgstr ""
-
-#: newelection.js:143
-msgid "This is the voting link: "
+#: newelection.js:134
+msgid ""
+"The hash obtained from the server does not match the hash from another "
+"server. The server is trying to cheat you. Aborted."
 msgstr ""
 
 #: newelection.js:154
+msgid "Save the link and distribute it to all eligable people. "
+msgstr ""
+
+#: newelection.js:157
+msgid "This is the voting link: "
+msgstr ""
+
+#: newelection.js:168
 msgid "Server reports error: \n"
 msgstr ""
 
-#: newelection.js:158
+#: newelection.js:172
 msgid "Unknown command from Server: \n"
 msgstr ""
 
@@ -876,6 +902,18 @@ msgstr ""
 
 #: page.js:18
 msgid "Show explanations and technical information"
+msgstr ""
+
+#: tools/mixed.js:66
+msgid ""
+"There is an error in the configuration. Please inform the administrator. "
+"(error no.: 875765: URL not defined or not of type string)"
+msgstr ""
+
+#: tools/mixed.js:83
+msgid ""
+"There is an error in the configuration. Please inform the administrator. "
+"(error no.: 875766: URL not defined or not of type string)"
 msgstr ""
 
 #: vote.js:24
@@ -919,10 +957,6 @@ msgid ""
 "The voting requires blinding module >%s< which is not supported by this "
 "client.\n"
 "Use a compatible client."
-msgstr ""
-
-#: vote.js:92
-msgid "Name of voting:"
 msgstr ""
 
 #: vote.js:118
