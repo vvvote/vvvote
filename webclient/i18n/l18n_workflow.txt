@@ -7,6 +7,12 @@ you need to:
 * install python: it is needed by the transifex command line tool 
 * the cli tool from transifex https://docs.transifex.com/client/installing-the-client: automatically push and pull changes to/from transifex
 
+Setting it up
+-------------
+cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
+tx init
+
+
 Strings Changed in Source Code
 ------------------------------
 # (1) read the strings from source code
