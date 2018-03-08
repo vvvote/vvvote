@@ -12,7 +12,6 @@ Setting it up
 cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
 tx init
 
-
 Strings Changed in Source Code
 ------------------------------
 # (1) read the strings from source code
@@ -21,7 +20,7 @@ click on "Catalogue" and "update from sourcecode"
 save the updated catalogue.
 # (2) push the changes to Transiflex
 cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
-tx push -s i18n\vvvote.pot
+tx push -s
 
 
 Get Changes of Source Strings from Transflex
@@ -38,3 +37,7 @@ Integrate l10n into source
 --------------------------
 cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
 updateI18njs.bat
+
+upgrade the transifex tx client 
+-------------------------------
+pip install transifex-client --upgrade
