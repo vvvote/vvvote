@@ -41,9 +41,9 @@ function loadElectionModules($httpRawPostData, $electionIdPlace) {
 	if (! is_string($electionIdPlace($reqdecoded))) WrongRequestException::throwException(7050, 'Election id must be a string'			, 'got: ' . print_r($reqdecoded['electionId'], true));
 	// load election config from database by election id
 	$completeElectionId = $electionIdPlace($reqdecoded);
-	$splittedElectionId = json_decode($completeElectionId);
-	if ($splittedElectionId == null) $mainElectionId = $completeElectionId; // TODO this is not a good thing: trying... better generally use json encoded ElectionId
-	else                             $mainElectionId = $splittedElectionId->mainElectionId;
+	$splittedElectionId = json_decode($completeElectionId, true);
+	if (($splittedElectionId == null) || ! is_array($splittedElectionId)) $mainElectionId = $completeElectionId; // TODO this is not a good thing: trying... better generally use json encoded ElectionId
+	else                                                                  $mainElectionId = $splittedElectionId['mainElectionId'];
 	$elconfig = $dbElections->loadElectionConfigFromElectionId($mainElectionId);
 	if (count($elconfig) < 1)					WrongRequestException::throwException(7000, 'Election id not found in server database', "ElectionId you sent: " . $reqdecoded['electionId']);
 
