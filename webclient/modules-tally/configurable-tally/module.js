@@ -606,10 +606,12 @@ ConfigurableTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorage
 	}
 	
 	var tmp = null;
-	if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
-		tmp = localStorage.getItem('sentQNo' + this.returnEnvelopeLStorageId);
-		if (tmp != null) this.sentQNo = JSON.parse(tmp);
-	}
+	try {
+		if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
+			tmp = localStorage.getItem('sentQNo' + this.returnEnvelopeLStorageId);
+			if (tmp != null) this.sentQNo = JSON.parse(tmp);
+		}
+	} catch (e) {console.log('problem accessing local storage ignored: ' + e.toString());} // EDGE causes sometimes a "SCRIPT16389: Unbekannter Fehler." when trying to acces the localstorage. As this is not an important feature, we just ignore it
 	for (var qNo=0; qNo<this.config.questions.length; qNo++) {
 		if (tmp != null && this.sentQNo.indexOf(qNo) >=0) this.disableQuestion(i18n.gettext('Vote accepted'), qNo, false);
 		else                                              this.enDisableSendButton(buttonStr, qNo, disable);
@@ -817,8 +819,13 @@ ConfigurableTally.prototype.handleServerAnswerStoreVoteSuccess = function (data)
 	this.disableQuestion(i18n.gettext('Vote accepted'), this.qNo, this.vote);
 	if (!Array.isArray(this.sentQNo)) this.sentQNo = new Array();
 	this.sentQNo.push(this.qNo);
-	if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
-		localStorage.setItem('sentQNo'+ this.returnEnvelopeLStorageId, JSON.stringify(this.sentQNo));
+	try { // edge sometimes (ca. 20%) causes a SCRIPT16389 unspecified error (which supposedly means "permission denied") when trying to access local storage from a local file
+		if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
+			localStorage.setItem('sentQNo'+ this.returnEnvelopeLStorageId, JSON.stringify(this.sentQNo));
+		}
+	} catch (e) {
+		alert ("Info: Problem accessing localStorage:" + e.toString());
+		console.log('Info: handleServerAnswerStoreVoteSuccess: problem accessing local storage ignored: ' + e.toString());
 	}
 };
 
