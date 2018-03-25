@@ -42,6 +42,7 @@ class DbMySql { // TODO dbBase
 		try {
 			$this->connection = new PDO("{$dbInfos['dbtype']}:host={$dbInfos['dbhost']};dbname={$dbInfos['dbname']}", $dbInfos['dbuser'], $dbInfos['dbpassw']);
 		} catch (PDOException $e) {
+			// may be the connection did not work because the database is still not created --> we try to create it. 
 			// TODO check if non existing DB was the cause of the error
 			// if ($this->connection->connect_error) {
 			//echo "construct4";
