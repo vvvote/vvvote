@@ -68,7 +68,7 @@ translations['fr'] =
             "Le vote exige le module d'autorisation  >%s< qui n'est pas pris en charge par ce client.\nUtilisez un client compatible."
          ],
          "Your web browser %s %is not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge.": [
-            "Votre navigateur web %s %s n'est pas compatible avec ce système de vote. S'il vous plaît utilisez FireFox au moins la version 34, Chrome au moins la version 38 (sauf sur Android) ou Edge."
+            "Votre navigateur web %s %s n'est pas compatible avec ce système de vote. S'il vous plaît utilisez FireFox au moins la version 34, Chrome au moins la version 38 (sauf sur Android) ou Edge (sauf sur Android)."
          ],
          "Check of credentials failed. You are not in the list of allowed voters for this voting or secret not accepted.": [
             "La vérification de vos informations d'identification a échoué. Vous n'êtes pas dans la liste des électeurs autorisés pour cette votation ou le secret n'a pas été accepté."
@@ -560,6 +560,9 @@ translations['fr'] =
          ],
          "Voting mode >%s< is not supported by this client": [
             "Mode de vote >%s< n'est pas pris en charge par ce client"
+         ],
+         "Voting Certificate for %s": [
+            "Certificat de vote pour %s"
          ],
          "The voting certificate is not valid": [
             "Ce certificat de vote n'est pas valable"

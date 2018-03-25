@@ -172,7 +172,7 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEn
 
 			// print election title
 			var elp = document.createElement('h1');
-			elp.appendChild(document.createTextNode(config.electionTitle));
+			elp.appendChild(document.createTextNode(i18n.sprintf(i18n.gettext('Voting Certificate for %s'), config.electionTitle)));
 			elp.setAttribute('id', 'ballotName');
 			// elp.appendChild(document.createElement('br'));
 			// elp.appendChild(document.createElement('br'));

@@ -68,7 +68,7 @@ translations['de'] =
             "Die Abstimmung erfordert das Autorisierungsmodul >%s<, das durch diesen Client nicht unterstützt wird.\nVerwenden Sie einen kompatiblen Client"
          ],
          "Your web browser %s %is not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge.": [
-            "Ihr Browser %s %s wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 34, Chrome ab Version 38 (nicht auf Android) oder Edge."
+            "Ihr Browser %s %s wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 34, Chrome ab Version 38 (nicht auf Android) oder Edge (nicht auf Android)."
          ],
          "Check of credentials failed. You are not in the list of allowed voters for this voting or secret not accepted.": [
             "Fehler bei der Überprüfung der Anmeldeinformationen. Sie sind nicht in der Liste der Stimmberechtigten oder die Zugangsdaten sind falsch oder Sie haben dem Server nicht erlaubt, Ihre Stimmberechtigung zu prüfen."
@@ -560,6 +560,9 @@ translations['de'] =
          ],
          "Voting mode >%s< is not supported by this client": [
             "Abstimmunsmodus >%s< wird vom Client nicht unterstützt"
+         ],
+         "Voting Certificate for %s": [
+            "Wahlschein für %s"
          ],
          "The voting certificate is not valid": [
             "Der Wahlschein ist nicht gültig"

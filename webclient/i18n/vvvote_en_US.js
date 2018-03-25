@@ -561,6 +561,9 @@ translations['en_US'] =
          "Voting mode >%s< is not supported by this client": [
             "Voting mode >%s< is not supported by this client"
          ],
+         "Voting Certificate for %s": [
+            "Voting Certificate for %s"
+         ],
          "The voting certificate is not valid": [
             "The voting certificate is not valid"
          ],
