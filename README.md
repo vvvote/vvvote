@@ -9,7 +9,7 @@ VVVote is an online voting system which provides the following features:
 - The votes are anonymous. That means, no one can find out which vote came from which voter - except the voter himself. Even the admin of the voting server cannot do this matching.
 - The whole process is transparent: every voter can verify that: (a) all votes are unchanged, (b) his vote is counted, (c) only votes from entitled users are accepted.
 
-The system does not provide secrecy in the meaning it cannot ensure that no one looks over the voter's shoulder when voting. And that there is a way for a voter to prove how we decided to vote.
+The system does not provide secrecy in the following meaning: It cannot ensure that no one looks over the voter's shoulder when voting. And that there is a way for a voter to prove how he decided to vote.
 
 License
 =======
