@@ -102,8 +102,9 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 
 	// save private key to file
 	$keystr = str_replace('\/', '/', json_encode($keypair));
-	file_put_contents("config/${thisServerName}.privatekey.pem.php", "<?php\r\n/* \r\n" . $keypair['privatekey'] . "\r\n*/\r\n?>");
-
+	$filename = "config/${thisServerName}.privatekey.pem.php";
+	file_put_contents($filename, "<?php\r\n/* \r\n" . $keypair['privatekey'] . "\r\n*/\r\n?>");
+	echo "Saved private key to '$filename'<br>\r\n";
 	// save public key to file
 	$crypt_rsa->loadKey($keypair['publickey']);
 	$pubkey = array( // fields defined by JSON Web Key http://openid.net/specs/draft-jones-json-web-key-03.html
@@ -113,14 +114,17 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 	);
 	// 'kid' 	=> $thisServerName);
 	//print_r($crypt_rsa->modulus);
-	echo '<br>n: ' . base64url_encode($crypt_rsa->modulus->toBytes());
-	echo '<br>k: ' . $crypt_rsa->k;
+	echo "public key:<br>\r\n";
+	echo ' n: ' . base64url_encode($crypt_rsa->modulus->toBytes()) . "<br>\r\n";
+	echo ' k: ' . $crypt_rsa->k ."<br>\r\n";
 	// print_r($crypt_rsa->k);
 	echo '<br>exp: ' . base64url_encode($crypt_rsa->exponent->toBytes());
 	//print_r($crypt_rsa->exponent);
 	echo "<br>\r\n";
 	$pubkeystr = str_replace('\/', '/', json_encode($pubkey));
-	file_put_contents("config/${thisServerName}.publickey", $keypair['publickey']); //$pubkeystr
+	$filename = "config/${thisServerName}.publickey.pem";
+	file_put_contents($filename, $keypair['publickey']); //$pubkeystr
+	echo "Saved public key to '$filename'<br>\r\n";
 }
 // for database debugging use phpMyAdmin or the like
 
