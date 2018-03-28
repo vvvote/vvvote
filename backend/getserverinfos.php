@@ -47,7 +47,7 @@ if (isset($_GET['js']) || isset($output_as_javascript)) {
 	echo "\r\n";
 			
 } else {
-	echo "$serverinfos";
+	echo "$serverinfosStr";
 }
 
 /*
