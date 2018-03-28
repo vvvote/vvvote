@@ -115,10 +115,9 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 	// 'kid' 	=> $thisServerName);
 	//print_r($crypt_rsa->modulus);
 	echo "public key:<br>\r\n";
-	echo ' n: ' . base64url_encode($crypt_rsa->modulus->toBytes()) . "<br>\r\n";
-	echo ' k: ' . $crypt_rsa->k ."<br>\r\n";
-	// print_r($crypt_rsa->k);
-	echo '<br>exp: ' . base64url_encode($crypt_rsa->exponent->toBytes());
+	echo ' n:   ' . base64url_encode($crypt_rsa->modulus->toBytes()) . "<br>\r\n";
+	echo ' k:   ' . $crypt_rsa->k ."<br>\r\n";
+	echo ' exp: ' . base64url_encode($crypt_rsa->exponent->toBytes());
 	//print_r($crypt_rsa->exponent);
 	echo "<br>\r\n";
 	$pubkeystr = str_replace('\/', '/', json_encode($pubkey));

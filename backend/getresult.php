@@ -15,7 +15,9 @@ header('Access-Control-Allow-Origin: *', false); // this allows any cross-site s
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 
-if (isset($HTTP_RAW_POST_DATA)) {
+$HTTP_RAW_POST_DATA = file_get_contents('php://input'); // read the post data, works in php 7 without muddling in php.ini
+
+if ($HTTP_RAW_POST_DATA !== false) {
 	$electionIdPlace = function ($a) {
 		if (! isset($a['electionId'])) WrongRequestException::throwException(7200, 'Election id missing in client request'	, $httpRawPostData);
 		return      $a['electionId'];
