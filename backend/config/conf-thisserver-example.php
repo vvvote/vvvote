@@ -109,6 +109,7 @@ if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']   !== $urltmp['host']
 		$rsa       = new rsaMyExts();
 		$rsa->loadKey($serverkey['publickey']);
 		$i = find_in_subarray($publickeys, 'name', $serverkey['serverName']);
+		if ($i === false) InternalServerError::throwException(656661, 'Internal server configuration error: no publickey found for the privatekey for ', $serverkey['serverName']);
 		$test = $rsa->modulus->compare($publickeys[$i]['modulus']);
 		if ($test !== 0) InternalServerError::throwException(656662, 'Internal server configuration error: .publickey does not match the .privatekey for ', $serverkey['serverName']);
 		return $serverkey;
