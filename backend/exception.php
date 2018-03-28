@@ -27,6 +27,10 @@ class ElectionServerException extends Exception {
 		return $ret;
 	}
 	
+	static function MyException($errorno, $errortxt) {
+		throw new ElectionServerException($errorno, $errortxt);
+	}
+	
 	
 	static function throwException($errorno, $errortxt, $data) {
 		global $debug;
@@ -36,16 +40,20 @@ class ElectionServerException extends Exception {
 		} else {
 			$errortxt = $errortxt;
 		}
-		throw new WrongRequestException($errorno, $errortxt);
+		self::MyException($errorno, $errortxt);
 	}
 }
 
 class WrongRequestException extends ElectionServerException {
-
+	static function MyException($errorno, $errortxt) {
+		throw new WrongRequestException($errorno, $errortxt);
+	}
 }
 
 class InternalServerError extends ElectionServerException {
-
+	static function MyException($errorno, $errortxt) {
+		throw new InternalServerError($errorno, $errortxt);
+	}
 }
 
 ?>

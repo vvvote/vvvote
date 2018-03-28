@@ -55,7 +55,7 @@ function loadprivatekey($typePrefix, $serverNo, array $publickeys) {
 	$rsa->loadKey($serverkey['publickey']);
 	$i = find_in_subarray($publickeys, 'name', $serverkey['serverName']);
 	$test = $rsa->modulus->compare($publickeys[$i]['modulus']);
-	if ($test !== 0) throw ('internal server configuration error: .publickey does not match the .privatekey for ' . $serverkey['serverName']);
+	if ($test !== 0) InternalServerError::throwException(656662, 'Internal server configuration error: .publickey does not match the .privatekey for ', $serverkey['serverName']);
 	return $serverkey;
 }
 $pserverkey = loadprivatekey('PermissionServer', $serverNo, $pServerKeys);

@@ -23,39 +23,35 @@
 
 require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
 
-require_once __DIR__ . '/config/conf-allservers.php';
-require_once 'config/conf-thisserver.php';
 require_once 'exception.php';
-require_once 'modules-auth/shared-passw/auth.php';
-require_once 'modules-auth/user-passw-list/auth.php';
-require_once 'modules-auth/oauth/auth.php';
-require_once 'modules-auth/shared-auth/auth.php';
-require_once 'modules-auth/external-token/auth.php';
-require_once 'dbelections.php';
-require_once 'modules-election/blindedvoter/election.php';
-require_once 'modules-tally/publishonly/tally.php';
-require_once 'modules-tally/configurable-tally/tally.php';
+try {
+	require_once __DIR__ . '/config/conf-allservers.php';
+	require_once 'config/conf-thisserver.php';
+	require_once 'modules-auth/shared-passw/auth.php';
+	require_once 'modules-auth/user-passw-list/auth.php';
+	require_once 'modules-auth/oauth/auth.php';
+	require_once 'modules-auth/shared-auth/auth.php';
+	require_once 'modules-auth/external-token/auth.php';
+	require_once 'dbelections.php';
+	require_once 'modules-election/blindedvoter/election.php';
+	require_once 'modules-tally/publishonly/tally.php';
+	require_once 'modules-tally/configurable-tally/tally.php';
 
-
-
-header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
-header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept'); // this allows any cross-site scripting (needed for chrome)
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-//header('Access-Control-Allow-Methods:', 'PUT, GET, POST, DELETE, OPTIONS'); // - See more at: http://www.wilsolutions.com.br/content/fix-request-header-field-content-type-not-allowed-access-control-allow-headers#sthash.TdDHtHfX.dpuf
-/**
- * error starts at 2100
- */
-
-
-if (isset($HTTP_RAW_POST_DATA)) {
-	$electionconfigStr = $HTTP_RAW_POST_DATA;
+	header ( 'Access-Control-Allow-Origin: *', false ); // this allows any cross-site scripting
+	header ( 'Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept' ); // this allows any cross-site scripting (needed for chrome)
+	header ( 'Access-Control-Allow-Methods: GET, POST, OPTIONS' );
+	// header('Access-Control-Allow-Methods:', 'PUT, GET, POST, DELETE, OPTIONS'); // - See more at: http://www.wilsolutions.com.br/content/fix-request-header-field-content-type-not-allowed-access-control-allow-headers#sthash.TdDHtHfX.dpuf
+	/**
+	 * error starts at 2100
+	 */
+	
+	if (isset($HTTP_RAW_POST_DATA)) {
+		$electionconfigStr = $HTTP_RAW_POST_DATA;
 	}
-
-if (isset ($electionconfigStr)) {
-	global $serverNo;
-	$newconfig = array();
-	try {
-		$electionconfig = json_decode($electionconfigStr, true);
+	if (isset ($electionconfigStr)) {
+		global $serverNo;
+		$newconfig = array ();
+		$electionconfig = json_decode ( $electionconfigStr, true );
 		$electionconfigOrig = $electionconfig; // php copies array whereas objects would only copy the reference
 		// TODO verify auth
 		if (isset($electionconfig) && 
@@ -193,6 +189,7 @@ if (isset ($electionconfigStr)) {
 			$result = $newconfig;
 		}
 		// TODO sign the answer
+}
 	} catch (ElectionServerException $e) {
 		// TODO: think about: the auth module is saving data in db which stays there and blocks another try in case the same electionId is used again - implement a reverseNewElection() oder reversTransaction in each module
 		$result = $e->makeServerAnswer();
@@ -200,6 +197,5 @@ if (isset ($electionconfigStr)) {
 	
 	$ret = json_encode($result);
 	print($ret);
-}
 
 ?>
