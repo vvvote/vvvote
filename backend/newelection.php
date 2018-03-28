@@ -45,10 +45,9 @@ try {
 	 * error starts at 2100
 	 */
 	
-	if (isset($HTTP_RAW_POST_DATA)) {
-		$electionconfigStr = $HTTP_RAW_POST_DATA;
-	}
-	if (isset ($electionconfigStr)) {
+	$electionconfigStr = file_get_contents('php://input'); // read the post data, works in php 7 without muddling in php.ini
+
+	if ($electionconfigStr !== false) {
 		global $serverNo;
 		$newconfig = array ();
 		$electionconfig = json_decode ( $electionconfigStr, true );

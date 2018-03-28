@@ -12,7 +12,9 @@ require_once 'crypt.php';
 require_once 'config/conf-allservers.php';
 require_once 'config/conf-thisserver.php';
 
-if (isset($HTTP_RAW_POST_DATA)) {
+$HTTP_RAW_POST_DATA = file_get_contents('php://input'); // read the post data, works in php 7 without muddling in php.ini
+
+if ($HTTP_RAW_POST_DATA !== false) {
 	$electionIdPlace = function ($a) {
 		if (! isset($a['permission']['signed']['electionId'])) WrongRequestException::throwException(1200, 'Election id missing in client request'	, $httpRawPostData);
 		return      $a['permission']['signed']['electionId'];
