@@ -46,7 +46,7 @@ if (! isset($DO_NOT_LOAD_PUB_KEYS)) { // this will be set during key generation
 	function loadkeys($filenameprefix, $num) {
 		$serverKeys = array();
 		for ($i = 1; $i <= $num; $i++) {
-			$pubkeystr = file_get_contents(__DIR__ . "/$filenameprefix$i.publickey");
+			$pubkeystr = file_get_contents(__DIR__ . "/$filenameprefix$i.publickey.pem");
 
 			$rsa = new rsaMyExts();
 			$rsa->loadKey($pubkeystr);
