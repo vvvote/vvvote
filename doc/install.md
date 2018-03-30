@@ -56,6 +56,7 @@ Each server uses its own key. Therefore we need to generate a key on each server
 Server 1 will act as permission server and as tallying server. We are using different keys for each role. That is why on server 1 we will create two kes. 
 On server 1 cd into the backend-dir and start the key generation (it can take a minute or two):
 
+	cd backend/admin
 	php -f admin.php createKeypair p 1
 	php -f admin.php createKeypair t 1
 
@@ -64,6 +65,7 @@ The first line creates the key pair for the permission server, the second line c
 Server 2 acts as permission server only. That is why we do not need to create a key pair for the tallying server role.
 On server 2 also cd into the backend-dir and also start the key generation for the permission server by
 
+	cd backend/admin
 	php -f admin.php createKeypair p 2
 
 
@@ -72,15 +74,15 @@ On server 1:
 
 This generates four files:
 
-	backend/config/PermissionServer1.privatekey.pem.php
-	backend/config/PermissionServer1.publickey
-	backend/config/TallyServer1.privatekey.pem.php
-	backend/config/TallyServer1.publickey
-Copy (somehow) the "backend/config/PermissionServer1.publickey" and backend/config/TallyServer1.publickey to server 2 into the same directory. These key files are public - you can email them unencrypted.
+	backend/config/voting-keys/PermissionServer1.privatekey.pem.php
+	backend/config/voting-keys/PermissionServer1.publickey.pem
+	backend/config/voting-keys/TallyServer1.privatekey.pem.php
+	backend/config/voting-keys/TallyServer1.publickey.pem
+Copy (somehow) the "backend/config/voting-keys/PermissionServer1.publickey.pem" and backend/config/voting-keys/TallyServer1.publickey.pem to server 2 into the same directory. These key files are public - you can email them unencrypted.
 
 On Server 2:
 
-Copy (somehow) the "backend/config/PermissionServer2.publickey" to server 1 into the same directory. This key file is public - you can email it unencrypted.
+Copy (somehow) the "backend/config/voting-keys/PermissionServer2.publickey.pem" to server 1 into the same directory. This key file is public - you can email it unencrypted.
 
 
 
@@ -92,6 +94,75 @@ in directory webclient/config, copy the example config to config.js, e.g. by
 	cp config-example.js config.js
 
 If do not have special needs, nothings needs to be changed in this config.
+
+Configure TLS / SSL 
+===================
+If you are running / forcing the clients to connect via https (TLS) which is recommended, you must 
+(1) place the complete certificate chain of all other servers in config/tls-certificates and
+(2) exempt backend/storevote.php from forcing to https.
+
+(1) Place the Complete Certificate Chain of all other Servers in config/tls-certificates
+----------------------------------------------------------------------------------------
+Vvvote servers needs to communicate with one another. That's why they need the complete certificate chain of the other vvvote servers. Furthermore the certifications chains of the authorisation servers (if any) are needed. There is a script doing this automatically:
+
+	cd backend/admin
+	php -f retrieve-tls-chains.php
+
+You could also do this manually: Place the chain into the folder backend/config/tls-certificates. Put the complete chain in 1 file for each server. Name the file [hostname.domain].pem, replacing [hostname.domain] with the full domain name of the target host:
+
+	# obtain the complete certificate chain
+	cd backend/config/tls-certificates
+	host=[hostname.domain]
+	echo "" | openssl s_client -connect $host:443 -servername $host -prexit 2>/dev/null | sed -n -e '/BEGIN\ CERTIFICATE/,/END\ CERTIFICATE/ p' >$host.pem
+
+Replace [hostname.domain] with the complete dns name of the according server. Repeat this for all vvvote servers and all needed authorisation servers (externalToken and oAuth servers).
+The last line of code retrieves the certification chain. You can also download and export them from your favorite web browser and save it to the required location. 
+
+ 
+(2) Exempt backend/storevote.php from Forcing to https
+------------------------------------------------------
+You must do this because this enables the anonymizing service to strip off the browser's request header which is important for anonymization.
+Here are some according examples for popular web server software configuration.
+
+## Apache
+The apache .htaccess might then look like:
+
+	RewriteEngine On
+	RewriteCond %{REQUEST_FILENAME} !backend/storevote.php$
+	RewriteCond %{HTTPS} off
+	RewriteRule  ^(.*)$  https://%{HTTP_HOST}/$1   [R=301,L]
+
+### Ngnix
+(in reverse proxy mode)
+
+	server {
+    	listen 80;  
+	    server_name my.vvvote.url;
+    	
+    	location backend/storevote.php { 
+    	    proxy_set_header Host $host:$server_port;
+    	    proxy_pass  http://http_vvvote_backend;
+    		}
+    
+    location / {
+        return  301 https://my.vvvote.url$request_uri;
+    	}
+	}
+
+Do not forget to replace "my.vvvote.url" with the dns name of your server in both occurances.
+
+### lighthttpd
+In the site config add the following lines:
+
+	    # Redirect to https
+        $HTTP["scheme"] != "https" {
+                $HTTP["url"] !~ "^/backend/storevote.php$" {
+                        # Moved Permanently
+                        url.redirect-code = 301
+                        url.redirect = ( "^/(.*)" => "https://vvvote.my.url/$1" )
+                }
+        }
+Replace "vvvote.my.url" by the dns-host name of our vvvote installation.
 
 Thats It!
 =========
@@ -167,59 +238,13 @@ delete all data (__do not do that!__):
 	drop database election_server1;
 	drop database election_server2;
 	
-	
 Notes
-=====	
-TLS / SSL 
----------
-If you are running / forcing the clients to connect via https (TLS) which is recommended, you should exempt backend/storevote.php from forcing to https. 
-You should do this because this enables the anonymizing service to strip off the browser's request header which is important for anonymization.
-
-### Apache
-The apache .htaccess might then look like:
-
-	RewriteEngine On
-	RewriteCond %{REQUEST_FILENAME} !backend/storevote.php$
-	RewriteCond %{HTTPS} off
-	RewriteRule  ^(.*)$  https://%{HTTP_HOST}/$1   [R=301,L]
-
-### Ngnix
-(in reverse proxy mode)
-
-	server {
-    	listen 80;  
-	    server_name my.vvvote.url;
-    	
-    	location backend/storevote.php { 
-    	    proxy_set_header Host $host:$server_port;
-    	    proxy_pass  http://http_vvvote_backend;
-    		}
-    
-    location / {
-        return  301 https://my.vvvote.url$request_uri;
-    	}
-	}
-
-Do not forget to replace "my.vvvote.url" with the dns name of your server in both occurances.
-
-### lighthttpd
-In the site config add the following lines:
-
-	    # Redirect to https
-        $HTTP["scheme"] != "https" {
-                $HTTP["url"] !~ "^/backend/storevote.php$" {
-                        # Moved Permanently
-                        url.redirect-code = 301
-                        url.redirect = ( "^/(.*)" => "https://vvvote.my.url/$1" )
-                }
-        }
-Replace "vvvote.my.url" by the dns-host name of our vvvote installation.
-
-
+=====
 lighthttpd
 ----------
-If you are using lighthttpd version 1.4 you might expiriencing "417 - Expectation Failed" error when you try to create a new election on vvvote. This is usually caused when you use curl to send the POST request.
+If you are using lighthttpd version 1.4, you might expiriencing "417 - Expectation Failed" error when you try to create a new election on vvvote. This is usually caused when you use curl to send the POST request.
 The problem is that lighthttpd does not support the http-header "Expect: 100 continue" which curl makes use of.
 You can work around the problem of lighthttpd v1.4 does not support the http-header "Expect: 100 continue" by the following config line in the lighthttp-config:
 
 	server.reject-expect-100-with-417 = "disable"
+

@@ -26,13 +26,13 @@ if (PHP_SAPI !== 'cli') {
 }
 
 
-require_once 'Math/BigInteger.php';
-require_once 'Crypt/RSA.php';
+require_once '../Math/BigInteger.php';
+require_once '../Crypt/RSA.php';
 
 
 
-require_once 'modules-auth/user-passw-list/dbAuth.php';
-require_once 'modules-election/blindedvoter/dbBlindedVoter.php';
+require_once '../modules-auth/user-passw-list/dbAuth.php';
+require_once '../modules-election/blindedvoter/dbBlindedVoter.php';
 
 if ((isset($_GET['createTables' ])) || (isset($_POST['createTables' ]))) {
 	$dbauth = new DbAuth($dbInfos);
@@ -66,9 +66,9 @@ if ((isset($_GET['checkCredentials' ])) || (isset($_POST['checkCredentials' ])))
 */
 
 if ( /* (isset($_GET['DeleteDatabaseContent' ])) || ( isset($_POST['DeleteDatabaseContent' ])) || */ (PHP_SAPI === 'cli' && isset($argv[1]) &&  $argv[1] === 'DeleteDatabaseContent')) {
-	require_once 'config/conf-allservers.php';
-	require_once 'config/conf-thisserver.php'; // TODO this is required for database access but if the server's key is not generated cause an error
-	require_once 'dbelections.php';
+	require_once '../config/conf-allservers.php';
+	require_once '../config/conf-thisserver.php'; // TODO this is required for database access but if the server's key is not generated cause an error
+	require_once '../dbelections.php';
 	$db = new DbBlindedVoter($dbInfos);
 	$ok = $db->resetDb();
 	$db = new DbElections($dbInfos);
@@ -79,7 +79,7 @@ if ( /* (isset($_GET['DeleteDatabaseContent' ])) || ( isset($_POST['DeleteDataba
 if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  || */ (isset($argv[1]) && (strcasecmp($argv[1], 'createKeyPair') === 0)) ) {
 	define('CRYPT_RSA_MODE', CRYPT_RSA_MODE_INTERNAL); // this is needed because otherwise openssl (if present) needs special configuration in openssl.cnf when creating a new key pair
 	$DO_NOT_LOAD_PUB_KEYS = true; // interpreted from conf-allservers.php
-	require_once 'config/conf-allservers.php';
+	require_once '../config/conf-allservers.php';
 	
 	if (isset($argv[1]) && (count($argv) < 4) ) {
 		print 'usage: php -f admin.php createKeyPair <p|t> <serverIdNumber>' . "\np: for permission server\nt: for tallying server"; exit(1);
@@ -102,7 +102,7 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 
 	// save private key to file
 	$keystr = str_replace('\/', '/', json_encode($keypair));
-	$filename = "config/${thisServerName}.privatekey.pem.php";
+	$filename = "../config/voting-keys/${thisServerName}.privatekey.pem.php";
 	file_put_contents($filename, "<?php\r\n/* \r\n" . $keypair['privatekey'] . "\r\n*/\r\n?>");
 	echo "Saved private key to '$filename'<br>\r\n";
 	// save public key to file
@@ -121,7 +121,7 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 	//print_r($crypt_rsa->exponent);
 	echo "<br>\r\n";
 	$pubkeystr = str_replace('\/', '/', json_encode($pubkey));
-	$filename = "config/${thisServerName}.publickey.pem";
+	$filename = "../config/voting-keys/${thisServerName}.publickey.pem";
 	file_put_contents($filename, $keypair['publickey']); //$pubkeystr
 	echo "Saved public key to '$filename'<br>\r\n";
 }

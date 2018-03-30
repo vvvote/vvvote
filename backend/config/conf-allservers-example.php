@@ -47,7 +47,10 @@ if (! isset($DO_NOT_LOAD_PUB_KEYS)) { // this will be set during key generation
 		$serverKeys = array();
 		for ($i = 1; $i <= $num; $i++) {
 			$pubkeystr = file_get_contents(__DIR__ . "/$filenameprefix$i.publickey.pem");
-
+			$pubkeyfilename = __DIR__ . "/voting-keys/$filenameprefix$i.publickey.pem";
+			$pubkeystr = @file_get_contents($pubkeyfilename);
+			if ($pubkeystr === false) InternalServerError::throwException(6345986, 'Internal server configuration error: Could not read public voting key', 'Looking for file >' . $pubkeyfilename. '<');
+				
 			$rsa = new rsaMyExts();
 			$rsa->loadKey($pubkeystr);
 			$pServerKey = array(

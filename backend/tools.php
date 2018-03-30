@@ -67,10 +67,11 @@ function httpPost($url, array $fieldsToJson, $verifyCertfile=false, $contentType
 	if ($contentTypeTextPlain) 	$curl_options[CURLOPT_HTTPHEADER] = array('Content-type: text/plain');
 		
 	if ($verifyCertfile) {
+		if (@file_get_contents($verifyCertfile) === false) InternalServerError::throwException(6754534, 'Internal server configuration error: Could not read chain of SSL-certificates', 'Looking for file ' . print_r($verifyCertfile), true);
 		$path_to_certificate = $verifyCertfile;
-		$curl_options [CURLOPT_SSL_VERIFYHOST] = 2; /* 2: check the common name and that it matches the HOST name */
-		$curl_options [CURLOPT_CAINFO] = $path_to_certificate;
-		$curl_options [CURLOPT_SSL_VERIFYPEER] = true;
+		$curl_options[CURLOPT_SSL_VERIFYHOST] = 2; /* 2: check the common name and that it matches the HOST name */
+		$curl_options[CURLOPT_CAINFO] = $path_to_certificate;
+		$curl_options[CURLOPT_SSL_VERIFYPEER] = true;
 	}
 	$ch = curl_init();
 	curl_setopt_array($ch, $curl_options );

@@ -146,7 +146,7 @@ try {
 				$certfile = false;
 				if ($tmp['scheme'] === 'https') {
 					$host = $tmp['host'];
-					$certfile = realpath(dirname(__FILE__) . '/config/permissionservercerts/' . $host . '.pem');
+					$certfile = realpath(dirname(__FILE__) . '/config/tls-certificates/' . $host . '.pem');
 				}
 				$configWithAllKeys = httpPost($url, $electionconfig, $certfile, true);
 				if ($configWithAllKeys === false) InternalServerError::throwException(8734632, 'Next permission server returned an error', 'Server URL which returned an error: >' . $url ."<\n returned error:\n" . print_r($configWithAllKeys, true));

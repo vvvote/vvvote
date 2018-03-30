@@ -49,7 +49,13 @@ class ExternalTokenAuth extends Auth {
 	 * @return mixed|boolean
 	 */
 	function httpPost($url, $fieldsToJson, $verifyCert) {
-		return httpPost($url, $fieldsToJson, ($verifyCert?realpath(dirname(__FILE__) . '/../../config/' . $this->authConfig['configId'] . '.pem') : false));
+		$hostname = parse_url($url, PHP_URL_HOST);
+		if ($hostname === false) InternalServerError::throwException(8756653, 'Internal server configuration error (external token auth): Could not decode URL', 'trying to decode >' . $url. '<'); 
+		$tlscertfilename = realpath(dirname(__FILE__) . '/../../config/tls-certificates/' . $hostname . '.pem');
+		if ($verifyCert !== false) {
+			if (@file_get_contents($tlscertfilename)) InternalServerError::throwException(673454, 'Internal server configuration error: Could not read tls certificate chain', 'Looking for file >' . $tlscertfilename . '<');
+		}
+		return httpPost($url, $fieldsToJson, ($verifyCert?$tlscertfilename:false));
 	}
 
 	/**

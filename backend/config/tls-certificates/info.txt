@@ -1,0 +1,3 @@
+This file is here just for making git to create this directory. 
+Place the certification chains of all other servers here. For each server put the whole chain into one .pem file, named [target.host.domain].pem. Replace [target.host.domain] with the complete dns name of the target host.
+You can call php -f backend/admin/retrieve.tls.php to automatically do it. 

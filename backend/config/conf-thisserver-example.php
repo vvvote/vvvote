@@ -94,7 +94,9 @@ if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']   !== $urltmp['host']
 		$serverkey = Array();
 		$serverkey['serverName'] = $typePrefix . $serverNo;
 
-		$privateKeyStrWraped = file_get_contents(__DIR__ . "/$typePrefix${serverNo}.privatekey.pem.php");
+		$privatekeyfilename = __DIR__ . "/voting-keys/$typePrefix${serverNo}.privatekey.pem.php";
+		$privateKeyStrWraped = @file_get_contents($privatekeyfilename);
+		if ($privateKeyStrWraped === false) InternalServerError::throwException(646584, 'Internal server configuration error: Could not read chain of SSL-certificates', 'Looking for file >' . $privatekeyfilename . '<');
 		// extract the key from that file (when created with admin.php there are php markers around it in order to make apache execute it instead of delivering it)
 		$privateKeyStr =  preg_replace('/.*(-----BEGIN RSA PRIVATE KEY-----(.*)-----END RSA PRIVATE KEY-----).*/mDs', '$1', $privateKeyStrWraped);
 		$serverkey['privatekey'] = $privateKeyStr;

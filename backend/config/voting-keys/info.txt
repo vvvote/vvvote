@@ -1,0 +1,3 @@
+This file is here just for making git to create this directory.
+In this directory the public voting keys of all vvvote servers are placed.
+The key generation is done by backend/admin.php. See doc/install.md for details 

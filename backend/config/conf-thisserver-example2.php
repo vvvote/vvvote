@@ -38,8 +38,11 @@ function loadprivatekey($typePrefix, $serverNo, array $publickeys) {
 
 	$serverkey = Array();
 	$serverkey['serverName'] = $typePrefix . $serverNo;
-
-	$privateKeyStrWraped = file_get_contents(__DIR__ . "/$typePrefix${serverNo}.privatekey.pem.php");
+	
+	$privatekeyfilename = __DIR__ . "/voting-keys/$typePrefix${serverNo}.privatekey.pem.php";
+	$privateKeyStrWraped = file_get_contents($privatekeyfilename);
+	if ($privateKeyStrWraped === false) InternalServerError::throwException(646584, 'Internal server configuration error: Could not read chain of SSL-certificates', 'Looking for file >' . $privatekeyfilename . '<');
+	
 	// extract the key from that file (when created with admin.php there are php markers around it in order to make apache execute it instead of delivering it)
 	$privateKeyStr =  preg_replace('/.*(-----BEGIN RSA PRIVATE KEY-----(.*)-----END RSA PRIVATE KEY-----).*/mDs', '$1', $privateKeyStrWraped);
 	$serverkey['privatekey'] = $privateKeyStr;
@@ -50,13 +53,13 @@ function loadprivatekey($typePrefix, $serverNo, array $publickeys) {
 	$rsapub    = new rsaMyExts();
 	$serverkey['publickey'] = $rsapub->_convertPublicKey($rsa->modulus, $rsa->publicExponent);
 
-	// tests if .publickey matches to the public key in this .privatekey file
+	// tests if .publickey.pem matches to the public key in this .privatekey.pem.php file
 	$rsa       = new rsaMyExts();
 	$rsa->loadKey($serverkey['publickey']);
 	$i = find_in_subarray($publickeys, 'name', $serverkey['serverName']);
 	if ($i === false) InternalServerError::throwException(656661, 'Internal server configuration error: no publickey found for the privatekey for ', $serverkey['serverName']);
 	$test = $rsa->modulus->compare($publickeys[$i]['modulus']);
-	if ($test !== 0) InternalServerError::throwException(656662, 'Internal server configuration error: .publickey does not match the .privatekey for ', $serverkey['serverName']);
+	if ($test !== 0) InternalServerError::throwException(656662, 'Internal server configuration error: .publickey.pem does not match the .privatekey.pem.php for ', $serverkey['serverName']);
 	return $serverkey;
 }
 $pserverkey = loadprivatekey('PermissionServer', $serverNo, $pServerKeys);
