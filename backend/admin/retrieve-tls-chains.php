@@ -11,8 +11,8 @@ if (PHP_SAPI !== 'cli') {
 echo "This command automatically downloads all needed certification chains for all servers using https in the config. It places them in the need location config/tls-certificates/[hostname].pem. \r\n\r\n";
 
 require __DIR__ . '/../exception.php';
-require '../config/conf-allservers.php';
-require '../config/conf-thisserver.php';
+require __DIR__ . '/../loadconfig.php';
+// require __DIR__ . '/../config/conf-thisserver.php';
 
 $tlshosts = array ();
 
@@ -84,7 +84,8 @@ foreach ( $tlshosts as $host ) {
 	try {
 		$pemstr = retrievePem ( $host );
 		// echo $pemstr;
-		$pemfilename = '../config/tls-certificates/' . $host . '.pem';
+		global $configdir; 
+		$pemfilename = $configdir . '/tls-certificates/' . $host . '.pem';
 		$written = file_put_contents ( $pemfilename, $pemstr );
 		// $ret = exec ( 'echo "" | openssl s_client -connect ' . $host . ':443 -servername ' . $host . ' -prexit 2>/dev/null | sed -n -e "/BEGIN\ CERTIFICATE/,/END\ CERTIFICATE/ p" >' . $pemfilename, $output, $retval );
 		// var_dump ( $ret );
@@ -99,6 +100,7 @@ foreach ( $tlshosts as $host ) {
 		echo "    ...error retrieving certification chain: " . $e->__toString () . "\r\n\r\n";
 	}
 }
+
 function retrievePem($hostname) {
 	$ssloptions = array (
 			"capture_peer_cert_chain" => true,
@@ -119,7 +121,7 @@ function retrievePem($hostname) {
 	if ($errno)
 		ElectionServerException::throwException ( 19843954, "Error opening SSL-Socket: $errstr", '' );
 	if ($result === false)
-		ElectionServerException::throwException ( 19843955, "Error opening SSL-Socket before connect(): This can happen e.g. when of hostname does not match certificate. If you have curl installed, you can call >curl -v https://$hostname/< to find out more details", '' );
+		ElectionServerException::throwException ( 19843955, "Error opening SSL-Socket before connect(): This can happen e.g. when the hostname does not match certificate. If you have curl installed, you can call >curl -v https://$hostname/< to find out more details", '' );
 	$cont = stream_context_get_params ( $result );
 	$ret = '';
 	foreach ( $cont ["options"] ["ssl"] ["peer_certificate_chain"] as $cert ) {

@@ -9,8 +9,8 @@ require_once 'exception.php';
 require_once 'loadmodules.php';
 require_once 'getcmd.php';
 require_once 'crypt.php';
-require_once 'config/conf-allservers.php';
-require_once 'config/conf-thisserver.php';
+require_once 'loadconfig.php';
+// require_once 'config/conf-thisserver.php';
 
 $HTTP_RAW_POST_DATA = file_get_contents('php://input'); // read the post data, works in php 7 without muddling in php.ini
 

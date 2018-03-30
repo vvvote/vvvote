@@ -10,8 +10,8 @@ if(count(get_included_files()) < 2) {
 }
 
 
-require_once 'modules-db/dbMySql.php'; 
-require_once 'dbBase.php';
+require_once __DIR__ . '/../../modules-db/dbMySql.php'; 
+require_once __DIR__ . '/../../dbBase.php';
 
 class DbBlindedVoter extends DbBase {
 	function __construct($dbInfos) {

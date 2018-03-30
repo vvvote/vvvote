@@ -194,7 +194,7 @@ class BlindedVoter extends Blinder {
 			$numPick = $this->numVerifyBallots[$xthServer]; 
 			$numBallots = count($question['ballots']); // TODO take from config?
 			if ($numBallots <= array_sum($this->numSignBallots) ) WrongRequestException::throwException(432, 'not enough ballots sent', "$numBallots sent, at least " . array_sum($this->numSignBallots) + 1 . ' are necessary');
-			// Take the number of ballots which has to be left to sign from $numSignBallots in conf-allservers.php
+			// Take the number of ballots which has to be left to sign from $numSignBallots in loadconfig.php
 			$requestBallots['questions'][$i]['picked'] = $this->pickBallots($numPick, $numBallots);
 			$requestBallots['questions'][$i]['questionID'] = $question['questionID'];
 		}

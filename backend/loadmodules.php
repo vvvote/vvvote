@@ -27,8 +27,8 @@ require_once 'modules-auth/external-token/auth.php';
 require_once 'modules-tally/publishonly/tally.php';
 require_once 'modules-tally/configurable-tally/tally.php';
 
-require_once 'config/conf-allservers.php';
-require_once 'config/conf-thisserver.php';
+require_once 'loadconfig.php';
+// require_once 'config/conf-thisserver.php';
 
 
 function loadElectionModules($httpRawPostData, $electionIdPlace) {

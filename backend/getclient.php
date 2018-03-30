@@ -27,8 +27,6 @@ $includeJsFiles = Array(
 		'exception.js',
 		'tools/mixed.js',
 		'tools/url.js',
-		'config/config.js',
-		'getelectionconfig.js',
 		'listoferrors.js',
 		'tools/ua-parser.js',
 
@@ -37,7 +35,9 @@ $includeJsFiles = Array(
 		'i18n/vvvote_en_US.js',
 		'i18n/vvvote_fr.js',
 		'tools/i18n.js',
-		
+
+		'config/config.js',
+		'getelectionconfig.js',
 		'modules-auth/user-passw-list/module.js',
 		'modules-auth/shared-passw/module.js',
 		'modules-auth/oauth2/module.js',
@@ -183,7 +183,7 @@ echo <<<EOT
 									<span class="icon-bar"></span>
 									<span class="icon-bar"></span>
 									</button>
-									<a href="$linkToHostingOrganization" class="navbar-brand" id="logo" tabindex="-1">
+									<a href="$linkToHostingOrganisation" class="navbar-brand" id="logo" tabindex="-1">
 EOT;
 
 									readfile($pathToClient . 'logo_hd47x51.svg');

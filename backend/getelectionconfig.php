@@ -8,8 +8,8 @@
 
 require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
 
-require_once 'config/conf-allservers.php';
-require_once 'config/conf-thisserver.php';
+require_once 'loadconfig.php';
+// require_once 'config/conf-thisserver.php';
 require_once 'exception.php';
 require_once 'dbelections.php';
 

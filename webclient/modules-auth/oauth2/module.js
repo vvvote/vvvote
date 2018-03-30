@@ -6,7 +6,7 @@ var OAuth2 = function(authConfig) {
 OAuth2.prototype.getCredentials = function (electionId, permissionServerId) {
 	el = document.getElementById('displayname');
 	var displayname = el.value;
-	var clientId = ClientConfig.oAuth2Config[this.serverId].clientId[permissionServerId];
+	var clientId = ClientConfig.oAuth2Config[this.serverId].clientIds[permissionServerId];
 	var credentials = {
 			identifier: OAuth2.random[clientId],
 			displayname: displayname
@@ -108,13 +108,13 @@ OAuth2.getMainContent = function(conf) {
 		alert(i18n.sprintf(i18n.gettext("Configuration error: serverId >%s< is asked for, but not configured"), serverId)); 
 	}
 	var slist = ClientConfig.serverList;
-	for ( var permissionServerId in ClientConfig.oAuth2Config[serverId].clientId) {
-		var clientId = ClientConfig.oAuth2Config[conf.authConfig.serverId].clientId[permissionServerId];
+	for ( var permissionServerId in ClientConfig.oAuth2Config[serverId].clientIds) {
+		var clientId = ClientConfig.oAuth2Config[conf.authConfig.serverId].clientIds[permissionServerId];
 		OAuth2.random[clientId] = bigInt2str(randBigInt(200,0), 62);
 		var oauthAutorize = ClientConfig.oAuth2Config[serverId].authorizeUri + 
 		'scope=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].scope) +
 		'&state=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].serverId.replace('.', '\\.') + '.' + elelctionId.replace('.', '\\.') + '.' + SHA256(OAuth2.random[clientId])) + 
-		'&redirect_uri=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].redirectUri[permissionServerId]) + 
+		'&redirect_uri=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].redirectUris[permissionServerId]) + 
 		'&response_type=code' +
 		'&client_id=' + encodeURIComponent(clientId);
 		var permServerNr =  ArrayIndexOf(slist, 'name', permissionServerId);

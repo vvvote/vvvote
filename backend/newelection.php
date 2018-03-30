@@ -25,8 +25,9 @@ require_once 'connectioncheck.php';  // answers if &connectioncheck is part of t
 
 require_once 'exception.php';
 try {
-	require_once __DIR__ . '/config/conf-allservers.php';
-	require_once 'config/conf-thisserver.php';
+//	require_once __DIR__ . '/config/conf-allservers.php';
+//	require_once 'config/conf-thisserver.php';
+	require_once 'loadconfig.php';
 	require_once 'modules-auth/shared-passw/auth.php';
 	require_once 'modules-auth/user-passw-list/auth.php';
 	require_once 'modules-auth/oauth/auth.php';
