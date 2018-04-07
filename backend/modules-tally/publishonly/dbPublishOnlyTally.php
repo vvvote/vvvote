@@ -10,9 +10,8 @@ if(count(get_included_files()) < 2) {
 }
 
 
-
-require_once 'modules-db/dbMySql.php';
-require_once 'dbBase.php';
+chdir(__DIR__); require_once './../../modules-db/dbMySql.php';
+chdir(__DIR__); require_once './../../tools/dbBase.php';
 
 class DbPublishOnlyTally extends DbBase {
 	function __construct($dbInfos) {

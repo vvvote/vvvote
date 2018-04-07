@@ -16,10 +16,10 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-require_once __DIR__ . '/../../crypt.php';
-require_once __DIR__ . '/../../exception.php';
-require_once __DIR__ . '/../../tally.php';
-require_once __DIR__ . '/dbPublishOnlyTally.php';
+chdir(__DIR__); require_once './../../tools/crypt.php';
+chdir(__DIR__); require_once './../../tools/exception.php';
+chdir(__DIR__); require_once './../../root-classes/tally.php';
+chdir(__DIR__); require_once './dbPublishOnlyTally.php';
 
 /**
  * Class that just collects and publishes the votes

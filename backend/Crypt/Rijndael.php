@@ -610,7 +610,7 @@ class Crypt_Rijndael {
                 }
 
                 if (!class_exists('Crypt_Hash')) {
-                    require_once('Crypt/Hash.php');
+                    chdir(__DIR__); require_once('./Crypt/Hash.php');
                 }
 
                 $i = 1;

@@ -25,8 +25,8 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-require_once 'modules-db/dbMySql.php';
-require_once 'tools.php';
+chdir(__DIR__); require_once './../modules-db/dbMySql.php';
+chdir(__DIR__); require_once './tools.php';
 
 /**
  * This class is made in order to make it easy to implement the usage of

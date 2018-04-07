@@ -9,10 +9,10 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-require_once 'dbBlindedVoter.php';
-require_once 'exception.php'; // I dont know why this works - the files are in different directories but this way php finds both
-require_once 'crypt.php';
-require_once 'blinder.php';
+chdir(__DIR__); require_once './dbBlindedVoter.php';
+chdir(__DIR__); require_once './../../tools/exception.php'; // I dont know why this works - the files are in different directories but this way php finds both
+chdir(__DIR__); require_once './../../tools/crypt.php';
+chdir(__DIR__); require_once './../../root-classes/blinder.php';
 
 /**
  * Class that implements the blinded voter scheme
@@ -340,8 +340,6 @@ class BlindedVoter extends Blinder {
 
 		$ret = array('questions' => $signedBallots);
 		$tmp = array('voterId' => $voterId, 'signedBallots' => $signedBallots);
-			// TODO think about: save all signed ballots not only the ones where this server is the last signer?
-		$this->db->saveSignedBallots($this->electionId, $voterId, $tmp);
 		if (count($ret['questions'][0]['ballots'][0]['sigs']) >= $this->crypt->getNumServers() ) {
 			$ret['cmd'] = 'savePermission';
 			// up to now it is only used for tally.js to show who requested a Wahlschein
@@ -350,7 +348,10 @@ class BlindedVoter extends Blinder {
 		} else {
 			$ret['cmd'] = 'reqSigsNextpServer';
 		}
-
+		
+		// TODO think about: save all signed ballots not only the ones where this server is the last signer?
+		$this->db->saveSignedBallots($this->electionId, $voterId, $tmp);
+		
 		return $ret;
 	}
 

@@ -11,8 +11,12 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-require_once 'exception.php';
-require_once 'loadmodules.php';
+chdir(__DIR__); require_once './../../tools/exception.php';
+chdir(__DIR__); require_once './../../tools/loadmodules.php';
+
+/**
+ * This class allows sharing the authentification between subElections (questions)
+ */
 
 class SharedAuth extends Auth {
 	const name = "sharedAuth";

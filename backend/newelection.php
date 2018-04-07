@@ -20,23 +20,22 @@
  */
 
 
+chdir(__DIR__); require_once './connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
 
-require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
-
-require_once 'exception.php';
+chdir(__DIR__); require_once './tools/exception.php';
 try {
 //	require_once __DIR__ . '/config/conf-allservers.php';
 //	require_once 'config/conf-thisserver.php';
-	require_once 'loadconfig.php';
-	require_once 'modules-auth/shared-passw/auth.php';
-	require_once 'modules-auth/user-passw-list/auth.php';
-	require_once 'modules-auth/oauth/auth.php';
-	require_once 'modules-auth/shared-auth/auth.php';
-	require_once 'modules-auth/external-token/auth.php';
-	require_once 'dbelections.php';
-	require_once 'modules-election/blindedvoter/election.php';
-	require_once 'modules-tally/publishonly/tally.php';
-	require_once 'modules-tally/configurable-tally/tally.php';
+	chdir(__DIR__); require_once './tools/loadconfig.php';
+	chdir(__DIR__); require_once './modules-auth/shared-passw/auth.php';
+	chdir(__DIR__); require_once './modules-auth/user-passw-list/auth.php';
+	chdir(__DIR__); require_once './modules-auth/oauth/auth.php';
+	chdir(__DIR__); require_once './modules-auth/shared-auth/auth.php';
+	chdir(__DIR__); require_once './modules-auth/external-token/auth.php';
+	chdir(__DIR__); require_once './tools/dbelections.php';
+	chdir(__DIR__); require_once './modules-election/blindedvoter/election.php';
+	chdir(__DIR__); require_once './modules-tally/publishonly/tally.php';
+	chdir(__DIR__); require_once './modules-tally/configurable-tally/tally.php';
 
 	header ( 'Access-Control-Allow-Origin: *', false ); // this allows any cross-site scripting
 	header ( 'Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept' ); // this allows any cross-site scripting (needed for chrome)
@@ -178,7 +177,7 @@ try {
 		}
 
 		//e.g. http://demo2.vvvote.de/vvvote/backend/getelectionconfig.php?confighash=
-		$configurl = "${configUrlBase}/getelectionconfig.php?confighash=${hash}";
+		$configurl = "${configUrlBase}getelectionconfig?confighash=${hash}";
 
 		if (!isset($electionconfigOrig['questions'][0]['blinderData']['permissionServerKeys'])) { 
 			// the request came from external (e.g. not from another vvvote server) --> deliver a link to the config

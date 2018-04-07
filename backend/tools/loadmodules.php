@@ -14,20 +14,21 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-require_once 'Crypt/RSA.php';
-require_once 'modules-db/dbMySql.php';
-require_once 'dbelections.php';
-require_once 'blinder.php';
-require_once 'modules-election/blindedvoter/election.php';
-// require_once 'modules-election/blinder-collection/election.php';
-require_once 'modules-auth/user-passw-list/auth.php';
-require_once 'modules-auth/shared-passw/auth.php';
-require_once 'modules-auth/oauth/auth.php';
-require_once 'modules-auth/external-token/auth.php';
-require_once 'modules-tally/publishonly/tally.php';
-require_once 'modules-tally/configurable-tally/tally.php';
 
-require_once 'loadconfig.php';
+chdir(__DIR__); require_once './../Crypt/RSA.php';
+chdir(__DIR__); require_once './../modules-db/dbMySql.php';
+chdir(__DIR__); require_once './dbelections.php';
+chdir(__DIR__); require_once './../root-classes/blinder.php';
+chdir(__DIR__); require_once './../modules-election/blindedvoter/election.php';
+// require_once 'modules-election/blinder-collection/election.php';
+chdir(__DIR__); require_once './../modules-auth/user-passw-list/auth.php';
+chdir(__DIR__); require_once './../modules-auth/shared-passw/auth.php';
+chdir(__DIR__); require_once './../modules-auth/oauth/auth.php';
+chdir(__DIR__); require_once './../modules-auth/external-token/auth.php';
+chdir(__DIR__); require_once './../modules-tally/publishonly/tally.php';
+chdir(__DIR__); require_once './../modules-tally/configurable-tally/tally.php';
+
+chdir(__DIR__); require_once 'loadconfig.php';
 // require_once 'config/conf-thisserver.php';
 
 
@@ -95,7 +96,6 @@ class LoadModules {
 			case 'userPassw': 	  $auth = new UserPasswAuth($dbInfos); break;
 			case 'sharedPassw':	  $auth = new SharedPasswAuth($dbInfos); break;
 			case 'oAuth2': 	      $auth = new OAuth2($dbInfos); break;
-			case 'sharedAuth':    $auth = new SharedAuth($dbInfos); break;
 			case 'externalToken': $auth = new ExternalTokenAuth($dbInfos); break;
 			default: 			WrongRequestException::throwException(7030, 'auth module not supported (supported: userPassw, sharedPassw, oAuth2, sharedAuth)', "auth module requested: " . $elconfig['auth']);
 			break;

@@ -1,5 +1,6 @@
 <?php
 
+chdir(__DIR__);
 require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
 
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
@@ -15,7 +16,39 @@ header("Last-Modified: ".gmdate( "D, d M Y H:i:s")."GMT");
 header("Cache-Control: no-cache, must-revalidate");
 header('Content-type: text/html; charset=utf-8');
 
-$pathToClient = '../webclient/';
+chdir(__DIR__); 
+require_once 'tools/tools.php';
+
+parse_str($_SERVER['QUERY_STRING'], $queryArray); 
+if(array_key_exists('download', $queryArray)) header('Content-Disposition: attachment; filename=vvvote_client_' . 'vvvote_client_' . clearForFilename($_SERVER['HTTP_HOST']) . '.html');
+
+$pathToClientSource = __DIR__ . '/webclient-sources/';
+
+// first do the action that requires possibly wrong config
+ob_start();
+	$output_as_javascript = true; // interpreted by getpublicserverkeys.php
+	include 'getserverinfos.php';
+	$PrintedServerinfos = ob_get_contents();
+ob_end_clean();
+
+if (array_key_exists ( 'cmd', $serverinfos ) && ($serverinfos['cmd'] === 'serverError') ) {
+	if (PHP_SAPI === 'cli') {
+		fwrite ( STDERR, "Error in server configuration. Client not compiled. Details: " . $serverinfosStr );
+	} else {
+		echo '
+		<head>
+		<title>Vvvote Client Error</title>
+		</head>
+		<body>
+			<h1>Error Compiling Webclient</h1>
+			There is an error in the server\'s configuration.<br>
+			Datails:<br>
+			' . $PrintedServerinfos . '<p>
+			If you are the administrator: Setting debug = true in the config file and calling on the command line "php -f getclient.php >client.html" you might get more information.<br>
+			';
+	}
+	return 1;
+}
 
 $includeJsFiles = Array(
 		'tools/BigInt.js',
@@ -86,12 +119,12 @@ echo '
 				<title>VVVote</title>';
 // print all Javascript files 
 echo '<script>';
-$output_as_javascript = true; // interpreted by getpublicserverkeys.php
 foreach ($includeJsFiles as $f) {
 	if ($f == 'config/config.js') { // insert server infos immedeately in front of config.js
-		include 'getserverinfos.php';
+	echo $PrintedServerinfos;
+	//	include 'getserverinfos.php';
 	}
-	readfile($pathToClient . $f);
+	readfile($pathToClientSource . $f);
 	echo "\r\n";
 }
 
@@ -106,7 +139,7 @@ echo '<style type="text/css">';
 foreach ( $includeCssFiles as $f ) {
 	
 	// replace /*DataUrl ...path=<nnn> */ by base64 encoded font file
-	$cssfile = file_get_contents($pathToClient . $f);
+	$cssfile = file_get_contents($pathToClientSource . $f);
 	$pattern = '/\/\*DataUrl (.*) path=<(.*)>(.*)\*\//'; 	// find strings like "/*DataUrl src: url( path=<fonts/CenturyGothicRegular/CenturyGothicRegular.woff>) format('woff'); */"
 	$matches = null;
 	while (preg_match($pattern, $cssfile, $matches)) {
@@ -119,8 +152,8 @@ foreach ( $includeCssFiles as $f ) {
 		// matches2 = null;
 		// $numMatches preg_match('/path=<(.*)>/', $matches, $pathToFontFile);
 		
-		$fontfile = file_get_contents ($pathToClient . $matches [2]);
-		$type = pathinfo ($pathToClient . $matches [2], PATHINFO_EXTENSION);
+		$fontfile = file_get_contents ($pathToClientSource . $matches [2]);
+		$type = pathinfo ($pathToClientSource . $matches [2], PATHINFO_EXTENSION);
 		$fontDataUrl = 'data:font/' . $type . ';base64,' . base64_encode ( $fontfile );
 		$cssfile = preg_replace ( $pattern, '$1 ' . $fontDataUrl . '$3', $cssfile, 1 );
 		$matches = null;
@@ -186,7 +219,9 @@ echo <<<EOT
 									<a href="$linkToHostingOrganisation" class="navbar-brand" id="logo" tabindex="-1">
 EOT;
 
-									readfile($pathToClient . 'logo_hd47x51.svg');
+if (file_exists(__DIR__ . '/config/logo_brand_47x51.svg'))									
+ 	   readfile(__DIR__ . '/config/logo_brand_47x51.svg');
+else   readfile(__DIR__ . '/config/logo_brand_47x51_example.svg');
 
 echo <<<EOT
 									</a>
@@ -272,7 +307,7 @@ echo <<<EOT
 <div class="logo_foot" style="width: 30px;display: inline-block;vertical-align: middle;">						
 EOT;
 
-readfile($pathToClient . 'logo_auto.svg');
+readfile($pathToClientSource . 'logo_auto.svg');
 
 echo <<<EOT
 </div>

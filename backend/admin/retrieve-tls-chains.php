@@ -8,10 +8,16 @@ if (PHP_SAPI !== 'cli') {
 	exit ();
 }
 
-echo "This command automatically downloads all needed certification chains for all servers using https in the config. It places them in the need location config/tls-certificates/[hostname].pem. \r\n\r\n";
-
-require __DIR__ . '/../exception.php';
-require __DIR__ . '/../loadconfig.php';
+echo "This command automatically downloads all needed certification chains for all servers using https in the config. It places them in the needed location config/tls-certificates/[hostname].pem. \r\n\r\nsyntax: php -f retrieve-tls-chains.php [configfile]\r\n [configfile] path including file name to the config file (optional). Start with './' for a relative path from the workign dir\r\n";
+$curdir = getcwd();
+chdir(__DIR__);
+chdir(__DIR__); require '../tools/exception.php';
+if ($argc > 1) {
+	$configFilepath = $argv[1];
+	if (substr_compare($configFilepath, './', 0, 2) === 0) // relativ path
+		$configFilepath = $curdir . '/' . $configFilepath;  // make it absolute
+}
+chdir(__DIR__); require '../tools/loadconfig.php';
 // require __DIR__ . '/../config/conf-thisserver.php';
 
 $tlshosts = array ();

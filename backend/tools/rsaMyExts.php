@@ -9,9 +9,8 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-
-include_once 'Math/BigInteger.php';
-require_once 'Crypt/RSA.php';
+chdir(__DIR__); include_once './../Math/BigInteger.php';
+chdir(__DIR__); require_once './../Crypt/RSA.php';
 
 // from <http://tools.ietf.org/html/rfc3447#appendix-A.1.2>:
 // RSAPrivateKey ::= SEQUENCE {

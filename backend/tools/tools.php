@@ -26,6 +26,12 @@ function find_in_subarray($array, $subarraykey, $subarrayvalue) {
 	return false;
 }
 
+function clearForFilename($filename) {
+	$replace = array('<', '>', ':', '\\', '/', '|', '?', '*');
+	$ret = str_replace($replace, '_', $filename);
+	return $ret;
+}
+
 function makeCompleteElectionId($mainElectionId, $questionID) {
 	$completeElectionId = json_encode(array('mainElectionId' => $mainElectionId,  'subElectionId' => $questionID));
 	return $completeElectionId;

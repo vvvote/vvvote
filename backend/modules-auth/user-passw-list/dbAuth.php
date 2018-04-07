@@ -10,8 +10,8 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
+chdir(__DIR__); require_once './../../tools/dbBase.php';
 
-require_once __DIR__ . '/../../dbBase.php';
 class DbAuth extends DbBase {
 	
 	function __construct($dbInfos) {

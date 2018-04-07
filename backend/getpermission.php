@@ -2,11 +2,10 @@
 
 
 
+chdir(__DIR__); require_once './connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
 
-require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
-
-require_once 'exception.php';
-require_once 'loadmodules.php';
+chdir(__DIR__); require_once './tools/exception.php';
+chdir(__DIR__); require_once './tools/loadmodules.php';
 
 header("Content-type: text/plain");
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting

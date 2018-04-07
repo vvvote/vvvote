@@ -9,46 +9,45 @@ if (count ( get_included_files () ) < 2) {
 	exit ();
 }
 
-require_once 'exception.php';
-require_once 'tools.php';
+chdir(__DIR__); require_once './exception.php';
+chdir(__DIR__); require_once './tools.php';
 
-// config dir: use environmant variable if set, otherwise use config dir under the 'backend'-dir
-$tmp = getenv ( 'VVVOTE_CONFIG_DIR' );
-if (is_string ( $tmp ))
-	$configdir = rtrim ( $tmp, '/\\' );
-else
-	$configdir = __DIR__ . '/config';
-if (! is_dir ( $configdir )) {
-	user_error ( 'Error: Config directory does not exist or is not a directory: >' . $configdir . '<', E_USER_ERROR );
-	die ();
-}
-
-// config filename: try "config-[hostname]_[port].php", "config-[hostname].php" and 'config.php'
-if (array_key_exists ( 'HTTP_HOST', $_SERVER ) && array_key_exists ( 'SERVER_PORT', $_SERVER )) {
-	$hostfn = preg_replace ( '/(.*)\:[0-9]*/', '${1}', $_SERVER ['HTTP_HOST'] ); // apache (sometimes) appends the port to the hostname if it is not the default port 80 or 443 --> remove that
-	$configFilename = 'config-' . $hostfn . '_' . $_SERVER ['SERVER_PORT'] . '.php'; // try hostname with port
-	if (! is_file ( $configdir . '/' . $configFilename )) {
-		$configFilename = 'config-' . $hostfn . '.php'; // try hostname without port
-		if (! is_file ( $configdir . '/' . $configFilename )) {
-			$configFilename = 'config.php';
-			if (! is_file ( $configdir . '/' . $configFilename )) {
-				user_error ( 'Error: config file: >' . $configdir . '/' . $configFilename . '< not found', E_USER_ERROR );
-				die ();
-			}
-		}
-	}
-} else {
-	$configFilename = 'config.php';
-	if (! is_file ( $configdir . '/' . $configFilename )) {
-		user_error ( 'Error: config file: >' . $configdir . '/' . $configFilename . '< not found', E_USER_ERROR );
+// use globally set path to configfile, if set
+if (! isset ( $configFilepath )) {
+	// config dir: use environmant variable if set, otherwise use config dir under the 'backend'-dir
+	$tmp = getenv ( 'VVVOTE_CONFIG_DIR' );
+	if (is_string ( $tmp ))
+		$configdir = rtrim ( $tmp, '/\\' );
+	else
+		$configdir = __DIR__ . '/../config';
+	if (! is_dir ( $configdir )) {
+		user_error ( 'Error: Config directory does not exist or is not a directory: >' . $configdir . '<', E_USER_ERROR );
 		die ();
 	}
-}
-
+	
+	// config filename: try "config-[hostname]_[port].php", "config-[hostname].php" and 'config.php'
+	if (array_key_exists ( 'HTTP_HOST', $_SERVER ) && array_key_exists ( 'SERVER_PORT', $_SERVER )) {
+		$hostfn = preg_replace ( '/(.*)\:[0-9]*/', '${1}', $_SERVER ['HTTP_HOST'] ); // apache (sometimes) appends the port to the hostname if it is not the default port 80 or 443 --> remove that
+		$configFilename = 'config-' . $hostfn . '_' . $_SERVER ['SERVER_PORT'] . '.php'; // try hostname with port
+		if (! is_file ( $configdir . '/' . $configFilename )) {
+			$configFilename = 'config-' . $hostfn . '.php'; // try hostname without port
+			if (! is_file ( $configdir . '/' . $configFilename )) {
+				$configFilename = 'config.php';
+			}
+		}
+	} else {
+		$configFilename = 'config.php';
+	}
 $configFilepath = $configdir . '/' . $configFilename;
+}
+if (! is_file ( $configFilepath )) {
+	user_error ( 'Error: config file: >' .$configFilepath . '< not found', E_USER_ERROR );
+	die();
+}
+$configdir = dirname($configFilepath);
 
 // load the config file
-require_once $configFilepath;
+chdir(__DIR__); require_once $configFilepath;
 if ($config === null) {
 	user_error ( "Could not decode the given config file >$configFilepath<.", E_USER_ERROR );
 	die ();
@@ -59,42 +58,49 @@ $debug = false;
 if (isset ( $config ['debug'] ))
 	$debug = $config ['debug'];
 
-$pServerUrlBases = $config ['pServerUrlBases'];
+$serverNo = $config ['serverNo'];
+	
+$pServerUrlBases = array ();
+$ApiPrefix = 'api/v1/';
+foreach ( $config ['pServerUrlBases'] as $i => $curUrl ) {
+	$urltmp0 = trim ( $curUrl, '/' ) . '/';
+	$urltmp = parse_url ( $urltmp0 );
+	if (! isset ( $urltmp ['port'] ) || ($urltmp ['port'] == 0)) {
+		switch ($urltmp ['c']) {
+			case 'http' :
+				$urltmp ['port'] = 80;
+				break;
+			case 'https' :
+				$urltmp ['port'] = 443;
+				break;
+			default :
+				InternalServerError::throwException ( 643986, 'Error: pServerUrlBases must start with >http< or >https<, ', 'found: >' . $pServerUrlBases [$serverNo - 1] . '<' );
+		}
+	}
+//	if ( (($i + 1) === $serverNo) && isset ( $_SERVER ) && array_key_exists('HTTP_HOST', $_SERVER) && array_key_exists('SERVER_PORT', $_SERVER) ) {
+//		if (($urltmp ['host'] !== preg_replace ( '/(.*)\:[0-9]*/', '${1}', $_SERVER ['HTTP_HOST'])) || ($urltmp ['port'] != $_SERVER ['SERVER_PORT']))
+//			InternalServerError::throwException ( 8347546, 'Warning: http request host does not match configured hostname/port. A reason for this might be wrong serverNo in config', 'http requested host >' . preg_replace ( '/(.*)\:[0-9]*/', '${1}', $_SERVER ['HTTP_HOST']) . ':' . $_SERVER ['SERVER_PORT'] . "<, configured (serverNo: $serverNo >" . $urltmp ['host'] . ':' . $urltmp ['port'] . '<.' );
+//	}
+	$pServerUrlBases [] = $urltmp0 . $ApiPrefix;			
+}
+
+
 if (isset ( $config ['tServerStoreVotePorts'] ))
 	$tServerStoreVotePorts = $config ['tServerStoreVotePorts'];
 else
 	$tServerStoreVotePorts = Array (
 			'80' 
 	);
-$serverNo = $config ['serverNo'];
 
-$urltmp = parse_url ( $pServerUrlBases [$serverNo - 1] );
-if (! isset ( $urltmp ['port'] ) || ($urltmp ['port'] == 0)) {
-	switch ($urltmp ['scheme']) {
-		case 'http' :
-			$urltmp ['port'] = 80;
-			break;
-		case 'https' :
-			$urltmp ['port'] = 443;
-			break;
-		default :
-			die ( 'pServerUrlBases must start with >http< or >https<' );
-	}
-}
-
-if (isset ( $_SERVER ) && array_key_exists('HTTP_HOST', $_SERVER) && array_key_exists('SERVER_PORT', $_SERVER) ) {
-	if (($urltmp ['host'] !== preg_replace ( '/(.*)\:[0-9]*/', '${1}', $_SERVER ['HTTP_HOST'])) || ($urltmp ['port'] != $_SERVER ['SERVER_PORT']))
-		InternalServerError::throwException ( 8347546, 'Warning: http request host does not match configured hostname/port. A reason for this might be wrong serverNo in config', 'http requested host >' . $_SERVER ['HTTP_HOST'] . ':' . $_SERVER ['SERVER_PORT'] . "<, configured (serverNo: $serverNo >" . $urltmp ['host'] . ':' . $urltmp ['port'] . '<.' );
-}
 
 $linkToHostingOrganisation = '#';
 if (isset ( $config ['linkToHostingOrganisation'] )) {
 	$linkToHostingOrganisation = $config ['linkToHostingOrganisation'];
 }
 
-$webclientUrlbase = '../webclient'; // relativ to backend or absolute, no trailing slash
+$webclientUrlbase = '../../webclient/'; // relativ to api/v1/index.php or absolute, with trailing slash, URL allowed
 if (isset ( $config ['webclientUrlbase'] ))
-	$webclientUrlbase = $config ['webclientUrlbase'];
+	$webclientUrlbase = rtrim($config ['webclientUrlbase'], '/') . '/';
 $configUrlBase = $pServerUrlBases [$serverNo - 1];
 
 $dbInfos = $config ['dbInfos'];
@@ -103,8 +109,8 @@ $dbInfos = $config ['dbInfos'];
 if (isset ( $config ['externalTokenConfig'] )) {
 	$externalTokenConfig = array ();
 	foreach ( $config ['externalTokenConfig'] as $curExternalTokenConfig ) {
-		$curExternalTokenConfig ['checkTokenUrl'] = rtrim ( $curExternalTokenConfig ['checkerUrl'], '/' ) . 'vvvote_check_token';
-		$curExternalTokenConfig ['sendmail'] = rtrim ( $curExternalTokenConfig ['checkerUrl'], '/' ) . 'vvvote_send_confirmation.php';
+		$curExternalTokenConfig ['checkTokenUrl'] = rtrim ( $curExternalTokenConfig ['checkerUrl'], '/' ) . '/vvvote_check_token.php';
+		$curExternalTokenConfig ['sendmail'] = rtrim ( $curExternalTokenConfig ['checkerUrl'], '/' ) . '/vvvote_send_confirmation.php';
 		$externalTokenConfig [] = $curExternalTokenConfig;
 	}
 }
@@ -115,7 +121,7 @@ date_default_timezone_set ( 'Europe/Berlin' ); // this is only used to avoid a w
 
 $urltmp = parse_url ( $pServerUrlBases [0] );
 $tServerStoreVoteUrls = array (
-		'http://' . $urltmp ['host'] . ':' . $tServerStoreVotePorts [0] . $urltmp ['path'] . '/storevote.php' 
+		'http://' . $urltmp ['host'] . ':' . $tServerStoreVotePorts [0] . $urltmp ['path'] . 'storevote' 
 );
 
 // number of ballots the servers have to sign 0: first signing server, 1: second signing server...
@@ -134,7 +140,7 @@ $numPServers = $numPSigsRequiered; // number of permission servers
 $numTServers = 1;
 
 if (! isset ( $DO_NOT_LOAD_PUB_KEYS )) { // this will be set during key generation
-	require_once __DIR__ . '/rsaMyExts.php';
+	chdir(__DIR__); require_once './rsaMyExts.php';
 	define ( 'CRYPT_RSA_MODE', CRYPT_RSA_MODE_INTERNAL ); // this is needed for RSA Key generation (in newelection-->election.php because otherwise openssl (if present) needs special configuration in openssl.cnf when creating a new key pair)
 	function loadkeys($dir, $filenameprefix, $num) {
 		$serverKeys = array ();
@@ -161,7 +167,7 @@ if (! isset ( $DO_NOT_LOAD_PUB_KEYS )) { // this will be set during key generati
 
 // length of the keys which will be generated for each question in an election on the newelection-request
 $bitlengthElectionKeys = 512; // only 512 because blinding in JavaScript will take more than 5 minutes for 2048
-const NEW_ELECTION_URL_PART = '/newelection.php';
+const NEW_ELECTION_URL_PART = 'newelection';
 
 // load private key of the permission server and if serverno === 1 also of the tally server
 function loadprivatekey($dir, $typePrefix, $serverNo, array $publickeys) {
@@ -200,13 +206,13 @@ if (! isset ( $DO_NOT_LOAD_PUB_KEYS )) {
 		$tserverkey = loadprivatekey ( $configdir, 'TallyServer', $serverNo, $tServerKeys ); // TODO use separate numeration for tally and permission servers
 }
 
-if (isset ( $config ['oauthConfig'] )) {
+if (isset ( $config ['oauth2Config'] )) {
 	$oauthConfig = array ();
-	foreach ( $config ['oauthConfig'] as               $curOauthConfig ) {
+	foreach ( $config ['oauth2Config'] as $curOauthConfig) {
 		if (! array_key_exists('oauth_url',            $curOauthConfig)) InternalServerError::throwException(346548, 'missing >oauth_url< in oAuth2 config', '');
 		if (! array_key_exists('ressources_url',       $curOauthConfig)) InternalServerError::throwException(346549, 'missing >ressources_url< in oAuth2 config', '');
 		if (! array_key_exists('client_ids',           $curOauthConfig)) InternalServerError::throwException(346550, 'missing >clientIds< in oAuth2 config', '');
-		if (! is_array($curOauthConfig['client_ids'])                   ) InternalServerError::throwException(346555, '>clientIds< in oAuth2 must be an array', '');
+		if (! is_array($curOauthConfig['client_ids'])                  ) InternalServerError::throwException(346555, '>clientIds< in oAuth2 must be an array', '');
 		if (! array_key_exists('client_secret',        $curOauthConfig)) InternalServerError::throwException(346551, 'missing >client_secret< in oAuth2 config', '');
 		if (! array_key_exists('mail_identity',        $curOauthConfig)) InternalServerError::throwException(346552, 'missing >mail_identity< in oAuth2 config', '');
 		if (! array_key_exists('mail_content_subject', $curOauthConfig)) InternalServerError::throwException(346553, 'missing >mail_content_subject< in oAuth2 config', '');
@@ -220,7 +226,6 @@ if (isset ( $config ['oauthConfig'] )) {
 		$oauthUrlTrimmed = rtrim ( $curOauthConfig ['oauth_url'], '/' );
 		$resUrlTrimmed =  rtrim ( $curOauthConfig ['ressources_url'], '/' );
 				
-		$curOauthConfig ['redirect_uri'] = rtrim ( $pServerUrlBases [$serverNo - 1], '/' ) . '/modules-auth/oauth/callback.php';
 		$curOauthConfig ['authorization_endp'] =  $oauthUrlTrimmed . '/oauth2/authorize/';
 		$curOauthConfig ['token_endp'] = $oauthUrlTrimmed . '/oauth2/token/';
 		$curOauthConfig ['get_profile_endp'] =  $resUrlTrimmed . '/user/profile/';
@@ -228,15 +233,16 @@ if (isset ( $config ['oauthConfig'] )) {
 		$curOauthConfig ['get_membership_endp'] = $resUrlTrimmed . '/user/membership/';
 		$curOauthConfig ['get_auid_endp'] = $resUrlTrimmed . '/user/auid/';
 		$curOauthConfig ['sendmail_endp'] = $resUrlTrimmed . '/user/mails/';
-		$curOauthConfig ['clientId'] = $curOauthConfig ['client_ids'][$serverNo - 1];
+		$curOauthConfig ['client_id'] = $curOauthConfig ['client_ids'][$serverNo - 1];
 		// the following only needed for the webclient provided throu getserverinfos.php
 		$curOauthConfig ['authorize_url'] = $oauthUrlTrimmed . '/oauth2/authorize/?'; // must end with ?
 		$curOauthConfig ['login_url'] = $oauthUrlTrimmed . '/';
 		for ($i = 0; $i < count($pServerUrlBases); $i++) {
-			$curOauthConfig ['redirectUris'][$pServerKeys[$i]['name']] = rtrim ($pServerUrlBases[$i],'/') . '/modules-auth/oauth/callback.php';
+			$curOauthConfig ['redirectUris'][$pServerKeys[$i]['name']] = rtrim ($pServerUrlBases[$i],'/') . '/modules-auth/oauth2/callback';
 			$curOauthConfig ['clientIds']   [$pServerKeys[$i]['name']] = $curOauthConfig['client_ids'][$i];
 		}
-		$oauthConfig [] = $curOauthConfig;
+		$curOauthConfig ['redirect_uri'] = $curOauthConfig ['redirectUris'][$pServerKeys[$serverNo -1]['name']];
+		$oauthConfig[$curOauthConfig['serverId']] = $curOauthConfig;
 	}
 }
 

@@ -24,11 +24,10 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-
-require_once 'exception.php';
-require_once 'Crypt/AES.php';
-require_once 'tools.php'; /* base64url encoder */
-require_once 'rsaMyExts.php';
+chdir(__DIR__); require_once 'exception.php';
+chdir(__DIR__); require_once './../Crypt/AES.php';
+chdir(__DIR__); require_once './tools.php'; /* base64url encoder */
+chdir(__DIR__); require_once './rsaMyExts.php';
 
 class Crypt {
 

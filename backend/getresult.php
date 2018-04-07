@@ -1,15 +1,15 @@
 <?php
 /**
- * This class handles the XmlHttp-messages between the counting server and the voter
+ * This class handles the XmlHttp-messages between the tally server and the voter
  * getAllVotes
  * ErrorNo start at 7200
  */
 
-require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
+chdir(__DIR__); require_once './connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
 
-require_once 'exception.php';
-require_once 'loadmodules.php';
-require_once 'getcmd.php';
+chdir(__DIR__); require_once './tools/exception.php';
+chdir(__DIR__); require_once './tools/loadmodules.php';
+chdir(__DIR__); require_once './tools/getcmd.php';
 
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");

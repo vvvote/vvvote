@@ -11,8 +11,8 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-
-require_once 'client.php';
+chdir(__DIR__);
+require_once './client.php';
 
 class FetchFromOAuth2Server {
 
@@ -20,6 +20,7 @@ class FetchFromOAuth2Server {
 		//$this->serverId = $serverId;
 		//$this->authInfos = $authInfos;
 		global $oauthConfig;
+		if (! array_key_exists($serverId, $oauthConfig)) WrongRequestException::throwException(128754786, 'Config mismatch: The requested oauth2 server id is not configured in this vvvote server', "requested server id: >$serverId<");
 		$this->curOAuth2Config =  $oauthConfig[$serverId];
 		$this->client = new nsOAuth2\Client($this->curOAuth2Config['client_id'], $this->curOAuth2Config['client_secret']);
 		$this->client->setAccessToken($authInfos);
@@ -102,7 +103,7 @@ class FetchFromOAuth2Server {
 	
 	
 	function sendConfirmMail($electionId) {
-		$content = str_replace('$electionId', $electionId, $this->curOAuth2Config['mail_content']);
+		$content = str_replace('$electionId', $electionId, $this->curOAuth2Config['mail_content_body']);
 		$msg = json_encode(array(
 				'identity' => $this->curOAuth2Config['mail_identity'],
  				'sign'     => $this->curOAuth2Config['mail_sign_it'],

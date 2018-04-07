@@ -34,25 +34,25 @@ for (var i=0; i<serverinfos.pServerUrlBases.length; i++) {
 
 ClientConfig.tkeys = serverinfos.tkeys;
 
-server1url = ClientConfig.serverList[0].baseUrl + '/';
+server1url = ClientConfig.serverList[0].baseUrl;
 var server1urlParts = URI.getParts(server1url);
-server2url = ClientConfig.serverList[1].baseUrl + '/';
+server2url = ClientConfig.serverList[1].baseUrl;
 
 //ClientConfig.newElectionUrl    = new Array(	server1url +'newelection.php', server2url +'newelection.php');
-ClientConfig.electionConfigUrl = server1url + 'getelectionconfig.php';
+ClientConfig.electionConfigUrl = server1url + 'getelectionconfig';
 ClientConfig.storeVoteUrl      = serverinfos.tServerStoreVoteUrls[0]; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
-ClientConfig.getResultUrl      = server1url + 'getresult.php'; //?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
+ClientConfig.getResultUrl      = server1url + 'getresult'; //?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 
 
 ClientConfig.anonymizerUrl = 'http://anonymouse.org/cgi-bin/anon-www_de.cgi/'; // used to change the ip and to strip browser infos / with trailing slash
-ClientConfig.voteClientUrl = server2url + 'getclient.php';
+ClientConfig.voteClientUrl = server2url + 'getclient';
 
 
 
 //configs for OAuth 2.0 Servers
 var redirectUriTMP = [];
-redirectUriTMP[ClientConfig.serverList[0].name] = server1url + 'modules-auth/oauth/callback.php';
-redirectUriTMP[ClientConfig.serverList[1].name] = server2url + 'modules-auth/oauth/callback.php'; //https://84.246.124.167/backend//modules-auth/oauth/callback.php
+redirectUriTMP[ClientConfig.serverList[0].name] = server1url + 'modules-auth/oauth/callback';
+redirectUriTMP[ClientConfig.serverList[1].name] = server2url + 'modules-auth/oauth/callback'; //https://84.246.124.167/backend//modules-auth/oauth/callback.php
 
 var clientIdTMP = [];
 clientIdTMP[ClientConfig.serverList[0].name] = 'vvvote';

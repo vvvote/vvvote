@@ -1,10 +1,11 @@
 <?php
 
-require_once '../../loadconfig.php';
+chdir(__DIR__);
+require_once './../../tools/loadconfig.php';
 // require_once '../../config/conf-thisserver.php';
 
-require_once '../../exception.php';
-require_once 'fetchfromoauthserver.php';
+chdir(__DIR__); require_once './../../tools/exception.php';
+chdir(__DIR__); require_once './fetchfromoauthserver.php';
 
 // config
 // $acc_url = 'https://beoauth.piratenpartei-bayern.de/oauth2/token/'; // URL for fetching the access token
@@ -12,21 +13,20 @@ require_once 'fetchfromoauthserver.php';
 // append to this URL: //?scope=member&state=BEO+Bayern.12345&redirect_uri=https://abstimmung.piratenpartei-nrw.de/backend/modules-auth/oauth/callback.php&response_type=code&client_id=vvvote';
 
 
-require_once 'client.php';
-require_once 'GrantType/IGrantType.php';
-require_once 'GrantType/AuthorizationCode.php';
+chdir(__DIR__); require_once './client.php';
+chdir(__DIR__); require_once './GrantType/IGrantType.php';
+chdir(__DIR__); require_once './GrantType/AuthorizationCode.php';
 
-require_once 'dbAuth.php';
+chdir(__DIR__); require_once './dbAuth.php';
 
 use nsOAuth2\Client;
 
 
 print "<!DOCTYPE html>\n<html>\n";
 print "<head>\n<meta charset=\"ISO-8859-1\">\n";
-if (strpos($webclientUrlbase, "http") === 0) $pathwebclient = $webclientUrlbase ; // absolute path given
-else                                         $pathwebclient = '../../' . $webclientUrlbase;
 print "<style type=\"text/css\">\n";
-print '@import url("' . $pathwebclient . '/standard.css' .'");\n';
+//print '@import url("' . $pathwebclient . '/standard.css' .'");\n';
+chdir(__DIR__); readfile('../../webclient-sources/standard.css');
 print "</style>";
 print '
 <script>
@@ -51,9 +51,13 @@ function printTitle($headertitle, $h1) {
 	print '</head><body>';
 	echo '
 		<div id="all">
-			<div id="ci">
-				<img id="logoimg" alt="Logo" src="' . $pathwebclient . '/logo125x149.svg" align="left">
-				<h1>VVVote</h1>
+			<div id="ci"><h1>
+				<img id="logoimg" alt="Logo" align="left" src="data:image/svg+xml;base64,';
+	global $configdir;
+	if (file_exists($configdir . '/logo_brand_47x51.svg'))									
+ 	       echo base64_encode(file_get_contents($configdir . '/logo_brand_47x51.svg'));
+	else   echo base64_encode(file_get_contents(__DIR__ . '/../../config/logo_brand_47x51_example.svg'));
+	echo  '">&nbsp; VVVote</h1>
 				Online Wahl: Anonyme und nachvollziehbare Abstimmungen
 			</div>
 		<div id="maincontent">
@@ -64,15 +68,18 @@ function printTitle($headertitle, $h1) {
 function printTechInfos($techinfos) {
 	echo '
 			<br><button autofocus="autofocus" onClick="window.close();">Fenster schlie&szlig;en und zur&uuml;ck zum Hauptfenster</button>
-			</div>
+			</div>';
+	global $debug;
+	if ($debug) echo '
 			<div id="techinfosswitch">
 				<input type="checkbox" name="techinfocheckbox" id="techinfocheckbox" value="techinfocheckbox" onclick="onToggleTechInfosSwitch();">
 				<label for="techinfocheckbox">Technische Informationen/Erkl&auml;rungen anzeigen</label>
 			</div>
 			<div id="techinfos" style="display:none;">'
 				. $techinfos . '
-			</div>
-		</body>';
+			</div>';
+						
+	echo '</body>';
 }
 
 
@@ -88,7 +95,7 @@ if (!isset($_GET['code'])) {
 		printTechInfos('URL-request-parameter >state< is not set.');
 		die();
 	}
-	$tmp = str_replace('\.', '\äoieg089uthiut', $_GET['state']); // mask '.'
+	$tmp = str_replace('\.', '\äoieg089uthiut', $_GET['state']); // mask '.' // '.' is escaped as '\.' in the strings between the separating dots. Mask them, so that the split command does not split escaped '.'
 	$state = explode('.', $tmp);
 	if (count($state) != 3) {
 		printTitle('VVVote: Error', 'Daten zur Zuordnung der Anfrage fehlen.');
@@ -100,7 +107,13 @@ if (!isset($_GET['code'])) {
 		$serverId     = str_replace('\äoieg089uthiut', '.', $state[0]);
 		$electionhash = str_replace('\äoieg089uthiut', '.', $state[1]);
 		$tmpsecret    = $state[2]; // this is a hex string, no escaping requiered
-		$curOAuth2Config = $oauthConfig[$serverId];
+		$serverIndex = find_in_subarray($oauthConfig, 'serverId', $serverId);
+		if ($serverIndex === false) {
+			printTitle('VVVote: Error', 'Server ID des oAuth-Servers in der Vvvote-Konfiguration nicht gefunden.');
+			printTechInfos('URL-request-parameter >state< requests serverId: >' . $serverId);
+		die();
+		}
+		$curOAuth2Config = $oauthConfig[$serverIndex];
 
 
 
@@ -120,10 +133,12 @@ if (!isset($_GET['code'])) {
 						<li>Wenn die Autorisierung urspr&uuml;nglich geklappt hatte und Sie bei dieser Seite lediglich auf &quot;Neu Laden&quot; gedr&uuml;ckt haben, dann gilt vermutlich die alte Autorisierung weiterhin. Schlie&szlig;en Sie einfach dieses Fenster.</li>
 						<li>Anonsten schlie&szlig;en Sie dieses Fenster und loggen sich erneut beim Basisentscheid-Server ein.</li>
 					</ul>';
-			
-			$techinfos = // for debuggin, you can use: '>' . $curOAuth2Config['client_secret'] . '<' .
+			$techinfos = '';
+			if ($response['code'] === 401) $techinfos = '<br>The Vvvote server\'s client secret is likely wrong';
+			$techinfos = $techinfos . '<br>client secret: >' . $curOAuth2Config['client_secret'] . '<' .
+			'<br>received error from oAuth2 server: >' . print_r($response, true) . '<' .
 			'<br>client_id: >' . 	$curOAuth2Config['client_id'] . '<' .
-			'<br>client_secret: ' . 'secret' .  
+			'<br>client_secret: ' . '[secret]' .  
 			'<br>code: >' . 		$_GET['code'] . '<' .
 			'<br>redirect_uri: >' . $curOAuth2Config['redirect_uri'] . '<' .
 			'<br>token_endp: >' . 	$curOAuth2Config['token_endp'] . '<' .
@@ -139,7 +154,7 @@ if (!isset($_GET['code'])) {
 		$client->setAccessToken($tokeninfos);
 		$now =  new DateTime('now');
 		
-		$fetcher = new FetchFromOAuth2Server($serverId, $tokeninfos);
+		$fetcher = new FetchFromOAuth2Server($serverIndex, $tokeninfos);
 		$auid        = $fetcher->fetchAuid(); // TODO error handling 404 --> $auid = empty
 		if ($auid        === false) print "Fehler: auid konnte nicht geholt werden";
 //		$userProfile = $fetcher->fetchUserProilfe(); // TODO error handling 404 --> $userProfile = empty

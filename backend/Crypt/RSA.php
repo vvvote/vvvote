@@ -84,8 +84,9 @@ if(count(get_included_files()) < 2) {
 /**
  * Include Math_BigInteger
  */
+chdir(__DIR__);
 if (!class_exists('Math_BigInteger')) {
-    require_once('Math/BigInteger.php');
+    chdir(__DIR__); require_once './../Math/BigInteger.php';
 }
 
 /**
@@ -96,14 +97,14 @@ if (!class_exists('Math_BigInteger')) {
 // call function_exists() a second time to stop the require_once from being called outside
 // of the auto loader
 if (!function_exists('crypt_random') && !class_exists('Crypt_Random') && !function_exists('crypt_random')) {
-    require_once(__DIR__ . '/Random.php');
+    require_once('Random.php');
 }
 
 /**
  * Include Crypt_Hash
  */
 if (!class_exists('Crypt_Hash')) {
-    require_once(__DIR__ . '/Hash.php');
+    chdir(__DIR__); require_once('./Hash.php');
 }
 
 /**#@+
@@ -737,7 +738,7 @@ class Crypt_RSA {
                     $private.= $this->_random(16 - (strlen($private) & 15));
                     $source.= pack('Na*', strlen($private), $private);
                     if (!class_exists('Crypt_AES')) {
-                        require_once('Crypt/AES.php');
+                        chdir(__DIR__); require_once('./Crypt/AES.php');
                     }
                     $sequence = 0;
                     $symkey = '';
@@ -758,7 +759,7 @@ class Crypt_RSA {
                 $key.= 'Private-Lines: ' . ((strlen($private) + 32) >> 6) . "\r\n";
                 $key.= chunk_split($private, 64);
                 if (!class_exists('Crypt_Hash')) {
-                    require_once('Crypt/Hash.php');
+                    chdir(__DIR__); require_once('./Crypt/Hash.php');
                 }
                 $hash = new Crypt_Hash('sha1');
                 $hash->setKey(pack('H*', sha1($hashkey)));
@@ -798,7 +799,7 @@ class Crypt_RSA {
                     $symkey = pack('H*', md5($this->password . $iv)); // symkey is short for symmetric key
                     $symkey.= substr(pack('H*', md5($symkey . $this->password . $iv)), 0, 8);
                     if (!class_exists('Crypt_TripleDES')) {
-                        require_once('Crypt/TripleDES.php');
+                        chdir(__DIR__); require_once('./Crypt/TripleDES.php');
                     }
                     $des = new Crypt_TripleDES();
                     $des->setKey($symkey);
@@ -964,26 +965,26 @@ class Crypt_RSA {
                     switch ($matches[1]) {
                         case 'AES-128-CBC':
                             if (!class_exists('Crypt_AES')) {
-                                require_once('Crypt/AES.php');
+                                chdir(__DIR__); require_once('./Crypt/AES.php');
                             }
                             $symkey = substr($symkey, 0, 16);
                             $crypto = new Crypt_AES();
                             break;
                         case 'DES-EDE3-CFB':
                             if (!class_exists('Crypt_TripleDES')) {
-                                require_once('Crypt/TripleDES.php');
+                                chdir(__DIR__); require_once('./Crypt/TripleDES.php');
                             }
                             $crypto = new Crypt_TripleDES(CRYPT_DES_MODE_CFB);
                             break;
                         case 'DES-EDE3-CBC':
                             if (!class_exists('Crypt_TripleDES')) {
-                                require_once('Crypt/TripleDES.php');
+                                chdir(__DIR__); require_once('./Crypt/TripleDES.php');
                             }
                             $crypto = new Crypt_TripleDES();
                             break;
                         case 'DES-CBC':
                             if (!class_exists('Crypt_DES')) {
-                                require_once('Crypt/DES.php');
+                                chdir(__DIR__); require_once('./Crypt/DES.php');
                             }
                             $crypto = new Crypt_DES();
                             break;
@@ -1189,7 +1190,7 @@ class Crypt_RSA {
                 switch ($encryption) {
                     case 'aes256-cbc':
                         if (!class_exists('Crypt_AES')) {
-                            require_once('Crypt/AES.php');
+                            chdir(__DIR__); require_once('./Crypt/AES.php');
                         }
                         $symkey = '';
                         $sequence = 0;

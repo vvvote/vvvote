@@ -25,12 +25,11 @@ if (PHP_SAPI !== 'cli') {
 	';
 }
 
+chdir(__DIR__); require_once '../Math/BigInteger.php';
+chdir(__DIR__); require_once '../Crypt/RSA.php';
 
-require_once '../Math/BigInteger.php';
-require_once '../Crypt/RSA.php';
-
-require_once '../modules-auth/user-passw-list/dbAuth.php';
-require_once '../modules-election/blindedvoter/dbBlindedVoter.php';
+chdir(__DIR__); require_once '../modules-auth/user-passw-list/dbAuth.php';
+chdir(__DIR__); require_once '../modules-election/blindedvoter/dbBlindedVoter.php';
 
 if ((isset($_GET['createTables' ])) || (isset($_POST['createTables' ]))) {
 	$dbauth = new DbAuth($dbInfos);
@@ -72,9 +71,9 @@ call php -f admin.php <command> in order to get help for the command.';
 
 if ( /* (isset($_GET['DeleteDatabaseContent' ])) || ( isset($_POST['DeleteDatabaseContent' ])) || */ (PHP_SAPI === 'cli' && isset($argv[1]) &&  $argv[1] === 'DeleteDatabaseContent')) {
 	$DO_NOT_LOAD_PUB_KEYS = true; // interpreted from loadconfig.php
-	require_once '../loadconfig.php';
+	chdir(__DIR__); require_once '../tools/loadconfig.php';
 //	require_once '../config/conf-thisserver.php'; // TODO this is required for database access but if the server's key is not generated cause an error
-	require_once '../dbelections.php';
+	chdir(__DIR__); require_once '../tools/dbelections.php';
 	$db = new DbBlindedVoter($dbInfos);
 	$ok = $db->resetDb();
 	$db = new DbElections($dbInfos);
@@ -85,13 +84,11 @@ if ( /* (isset($_GET['DeleteDatabaseContent' ])) || ( isset($_POST['DeleteDataba
 if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  || */ (isset ( $argv [1] ) && (strcasecmp ( $argv [1], 'createKeyPair' ) === 0))) {
 	try {
 		define ( 'CRYPT_RSA_MODE', CRYPT_RSA_MODE_INTERNAL ); // this is needed because otherwise openssl (if present) needs special configuration in openssl.cnf when creating a new key pair
-		$DO_NOT_LOAD_PUB_KEYS = true; // interpreted from loadconfig.php
-		require_once '../loadconfig.php';
-		
 		if (isset ( $argv [1] ) && (count ( $argv ) < 4)) {
-			print 'usage: php -f admin.php createKeyPair <p|t> <serverIdNumber>' . "\np: for permission server\nt: for tallying server";
+			print 'usage: php -f admin.php createKeyPair <p|t> <serverIdNumber> [configdir]' . "\np: for permission server\nt: for tallying server\nconfigfile: use this directory instead of the default config dir (optional).";
 			exit ( 1 );
 		}
+		
 		if (isset ( $argv [2] )) {
 			switch ($argv [2]) {
 				case 'p' :
@@ -105,7 +102,7 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 					$bitlength = 2048;
 					break;
 				default :
-					print "Error: Argument 2 must be either 'p' or 't'";
+					print "Error: Argument 2 must be either 'p' or 't'. Call 'admin.php createKeyPair' without further parameters to get help.";
 					exit ( 1 );
 			}
 		}
@@ -115,7 +112,16 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 			else
 				$thisServerName = $argv [3];
 		}
+		
+		if (isset ($argv[4]) ) {
+			$configdir = $argv[4]; 
+		} else {
+			$DO_NOT_LOAD_PUB_KEYS = true; // interpreted from loadconfig.php
+			chdir(__DIR__); require_once '../tools/loadconfig.php';
+		}
+		
 		$crypt_rsa = new Crypt_RSA ();
+		echo "Creating key pair...<br>\r\n";
 		$keypair = $crypt_rsa->createKey ( $bitlength );
 		
 		// save private key to file

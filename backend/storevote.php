@@ -3,13 +3,13 @@ header('Access-Control-Allow-Origin: *', false); // this allows any cross-site s
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 
-require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
+chdir(__DIR__); require_once './connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
 
-require_once 'exception.php';
-require_once 'loadmodules.php';
-require_once 'getcmd.php';
-require_once 'crypt.php';
-require_once 'loadconfig.php';
+chdir(__DIR__); require_once './tools/exception.php';
+chdir(__DIR__); require_once './tools/loadmodules.php';
+chdir(__DIR__); require_once './tools/getcmd.php';
+chdir(__DIR__); require_once './tools/crypt.php';
+chdir(__DIR__); require_once './tools/loadconfig.php';
 // require_once 'config/conf-thisserver.php';
 
 $HTTP_RAW_POST_DATA = file_get_contents('php://input'); // read the post data, works in php 7 without muddling in php.ini

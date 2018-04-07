@@ -12105,7 +12105,7 @@ button.styler[disabled], input[type=button].styler[disabled], input[type=submit]
   font-family: 'Oswald';
   font-style: normal;
   font-weight: 400;
-  src: local('Oswald Regular'), local('Oswald-Regular'), url(fonts/Oswald/Oswald_regular.woff2) format('woff2');
+  src: local('Oswald Regular'), local('Oswald-Regular'); /*, url(fonts/Oswald/Oswald_regular.woff2) format('woff2'); */
 }
 
 @font-face {

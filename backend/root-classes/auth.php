@@ -88,10 +88,15 @@ abstract class Auth {
 		$fields = ['RegistrationStartDate', 'RegistrationEndDate', 'VotingStart', 'VotingEnd'];
 		$ret = true;
 		foreach ($fields as $field) {
-			$ret = $ret && (strtotime($authData1[$field]) === strtotime($authData2[$field]));
+			if (array_key_exists($field, $authData1) && array_key_exists($field, $authData1))
+				$ret = $ret && (strtotime($authData1[$field]) === strtotime($authData2[$field]));
+			else 
+				$ret = $ret && (array_key_exists($field, $authData1) === array_key_exists($field, $authData1));
 		}
-		foreach ($authData1['DelayUntil'] as $index => $curdate) {
-			$ret = $ret && (strtotime($curdate) === strtotime($authData2['DelayUntil'][$index]));
+		if (array_key_exists('DelayUntil', $authData1)) {
+			foreach ($authData1['DelayUntil'] as $index => $curdate) {
+				$ret = $ret && (strtotime($curdate) === strtotime($authData2['DelayUntil'][$index]));
+			}
 		}
 		return $ret;
 	}

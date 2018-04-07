@@ -1,0 +1,9 @@
+# This only works if you have set "AllowOverride All" for the directory
+
+RewriteEngine On
+
+# stop rewriting if a file (index.php) exists
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# insert index.php
+RewriteRule ^(.*)$   index.php/$1 [L]

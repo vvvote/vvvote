@@ -11,11 +11,11 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-require_once 'exception.php';
-require_once 'dbAuth.php';
-require_once __DIR__ . '/../../auth.php';
-require_once 'fetchfromoauthserver.php';
-require_once __DIR__ . '/../../dbelections.php';
+chdir(__DIR__); require_once './../../tools/exception.php';
+chdir(__DIR__); require_once './dbAuth.php';
+chdir(__DIR__); require_once './../../root-classes/auth.php';
+chdir(__DIR__); require_once './fetchfromoauthserver.php';
+chdir(__DIR__); require_once './../../tools/dbelections.php';
 
 /**
  * Provides an interface to oauth
@@ -180,7 +180,7 @@ class OAuth2 extends Auth {
 		if ( (! isset($req["eligible"]     )) || (! is_bool(  $req['eligible']     )) ) WrongRequestException::throwException(12004, 'Missing /eligible/ in election config'     , "request received: \n" . print_r($req, true));
 		if ( (! isset($electionId          )) || (! is_string($electionId          )) ) WrongRequestException::throwException(12005, '/ElectionId/ not set or of wrong type'     , "request received: \n" . print_r($req, true));
 		global $oauthConfig;
-		if ( ! (array_key_exists($req['serverId'], $oauthConfig))  )                            WrongRequestException::throwException(12007, 'Configuration for OAuth2-serverId not found' , "request received: \n" . print_r($req, true));
+		if ( find_in_subarray($oauthConfig, 'serverId', $req['serverId']) === false)    WrongRequestException::throwException(12007, 'Server configuration for OAuth2-serverId not found' , "request received: \n" . print_r($req, true));
 		$authconfig['serverId']      = $req['serverId'];
 		$authconfig['listId']        = $req["listId"];
 		$authconfig['nested_groups'] = $req["nested_groups"];

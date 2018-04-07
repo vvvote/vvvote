@@ -6,12 +6,12 @@
  * errorno starts at 4000
  */
 
-require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
+chdir(__DIR__); require_once './connectioncheck.php';  // answers if &connectioncheck is part of the URL ans exists
 
-require_once 'loadconfig.php';
+chdir(__DIR__); require_once './tools/loadconfig.php';
 // require_once 'config/conf-thisserver.php';
-require_once 'exception.php';
-require_once 'dbelections.php';
+chdir(__DIR__); require_once './tools/exception.php';
+chdir(__DIR__); require_once './tools/dbelections.php';
 
 header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"); // this allows any cross-site scripting (needed for chrome)
@@ -27,7 +27,10 @@ if (isset($_GET) && isset($_GET['confighash']) ) {
 		if (isset($_GET['token'])) $token = '&token=' . $_GET['token'];
 		$showResult = '';
 		if (isset($_GET['showresult'])) $showResult = '&showresult';
-		header('Location: ' . $webclientUrlbase . '/index.html?confighash=' . $hash . $token . $showResult, true, 301);
+		$insert = '';
+//		if ( ($webclientUrlbase[0] !== '/') && (strpos($webclientUrlbase, '://') === false) )
+//				$insert = '../';
+		header('Location: ' . /*$insert .*/ $webclientUrlbase . '?confighash=' . $hash . $token . $showResult, true, 307);
 		die();
 	}
 }
@@ -44,15 +47,7 @@ if (isset ($hash)) {
 	} catch (ElectionServerException $e) {
 		$result = $e->makeServerAnswer();
 	}
-	/*
-	 $result = array(
-	 		'electionId' => $electionId,
-	 		'auth'       => 'userPassw',
-	 		'blinding'   => 'blindedVoter',
-	 		'ballot'     => array('opt1' => 'Europäische Zentralbank soll künftig direkt Kredit an Staaten geben', 'opt2' => 'Europäische Zentralbank soll weiterhin keine Kredite an Staaten geben dürfen'),
-	 		'tally'      => 'publishOnly'
-	 );
-	*/
+	
 	// TODO sign the config
 	$ret = json_encode($result);
 	print($ret);

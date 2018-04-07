@@ -10,8 +10,8 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-
-require_once 'dbBase.php';
+chdir(__DIR__);
+require_once './dbBase.php';
 
 class DbElections extends DbBase {
 

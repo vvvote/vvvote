@@ -4,8 +4,11 @@
  * prints the content of the servers's public keys as JavaScript
  * with assignment to PermissionServer${i}pubkey
  */
+
+chdir(__DIR__);
+
 try {
-	require_once 'loadconfig.php'; // needed for $numPServers and $pServerUrlBases
+	chdir(__DIR__); require_once './tools/loadconfig.php'; // needed for $numPServers and $pServerUrlBases and $oauthConfig
 	
 	for($i = 0; $i < $numPServers; $i ++) {
 		$key = array (
@@ -29,26 +32,29 @@ try {
 		$tkeys [] = $key;
 	}
 	
-	foreach ($oauthConfig as $curConfig) {
-		$oauth = array (
-		'serverId' 		=>	$curConfig['serverId'],
-		'serverDesc' 	=>	$curConfig['serverDesc'],
-		'authorizeUri' 	=>	$curConfig['authorize_url'], 
-		'loginUri' 		=>	$curConfig['login_url'],
-		'scope' 		=>	$curConfig['scope'],
-		'redirectUris' 	=>	$curConfig['redirectUris'],
-		'clientId' 		=>	$curConfig['clientId'],
-		);
-		$oauthConfigs[$curConfig['serverId']] = $oauth;
+	if (isset ( $oauthConfig )) {
+		foreach ( $oauthConfig as $curConfig ) {
+			$oauth = array (
+					'serverId' => $curConfig ['serverId'],
+					'serverDesc' => $curConfig ['serverDesc'],
+					'authorizeUri' => $curConfig ['authorize_url'],
+					'loginUri' => $curConfig ['login_url'],
+					'scope' => $curConfig ['scope'],
+					'redirectUris' => $curConfig ['redirectUris'],
+					'clientIds' => $curConfig ['clientIds'] 
+			);
+			$oauthConfigs [$curConfig ['serverId']] = $oauth;
+		}
 	}
 	
 	$serverinfos = array (
 			'pkeys' => $pkeys,
 			'pServerUrlBases' => $pServerUrlBases,
 			'tkeys' => $tkeys,
-			'tServerStoreVoteUrls' => $tServerStoreVoteUrls,
-			'authModules' => array ('oAuth2' => $oauthConfigs)
-	);
+			'tServerStoreVoteUrls' => $tServerStoreVoteUrls);
+	if (isset($oauthConfigs)) $serverinfos['authModules'] = array ('oAuth2' => $oauthConfigs);
+	else $serverinfos['authModules'] = array ();
+
 } catch ( Exception $e ) {
 	$serverinfos = array (
 			'cmd' => 'serverError',
