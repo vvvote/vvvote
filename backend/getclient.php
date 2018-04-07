@@ -30,7 +30,6 @@ $pathToClientSource = __DIR__ . '/webclient-sources/';
 
 if ( (PHP_SAPI === 'cli') && ($argc > 1) ) {
 	$configFilepath = $argv[1]; // interpreted by tools/loadconfig.php which is called from getserverinfos.php
-	var_dump($argv);
 	if (substr_compare($configFilepath, './', 0, 2) === 0) // relativ path
 		$configFilepath = $workingDir . '/' . $configFilepath;  // make it absolute
 }
