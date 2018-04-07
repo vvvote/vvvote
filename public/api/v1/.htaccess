@@ -10,7 +10,7 @@ RewriteCond %{PATH_INFO} ^$
 RewriteCond %{IS_SUBREQ} false
 
 # insert index.php
-RewriteRule ^(.*)$  index.php?/$1 [QSA,END]
+RewriteRule ^(.*)$  api/v1/index.php?/$1 [QSA,END]
 
 # The questionmark after "index.php" is a work around as without, it does not work
 # on some servers. See https://stackoverflow.com/questions/1557258/htaccess-issues-no-input-file-specified#1568937
