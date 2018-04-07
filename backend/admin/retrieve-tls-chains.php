@@ -70,16 +70,18 @@ foreach ( $externalTokenConfig as $id => $curConfig ) {
 }
 
 // add all oAuth servers
-foreach ( $oauthConfig as $id => $curConfig ) {
-	// var_dump ( $curConfig );
-	addHost ( $curConfig, 'authorization_endp', 'oAuthConfig >' . $id . '<' );
-	addHost ( $curConfig, 'token_endp', 'oAuthConfig >' . $id . '<' );
-	addHost ( $curConfig, 'get_profile_endp', 'oAuthConfig >' . $id . '<' );
-	addHost ( $curConfig, 'is_in_voter_list_endp', 'oAuthConfig >' . $id . '<' );
-	addHost ( $curConfig, 'get_membership_endp', 'oAuthConfig >' . $id . '<' );
-	addHost ( $curConfig, 'get_auid_endp', 'oAuthConfig >' . $id . '<' );
-	addHost ( $curConfig, 'sendmail_endp', 'oAuthConfig >' . $id . '<' );
-	addHost ( $curConfig, 'authorization_endp', 'oAuthConfig >' . $id . '<' );
+if (isset ( $oauthConfig )) {
+	foreach ( $oauthConfig as $id => $curConfig ) {
+		// var_dump ( $curConfig );
+		addHost ( $curConfig, 'authorization_endp', 'oAuthConfig >' . $id . '<' );
+		addHost ( $curConfig, 'token_endp', 'oAuthConfig >' . $id . '<' );
+		addHost ( $curConfig, 'get_profile_endp', 'oAuthConfig >' . $id . '<' );
+		addHost ( $curConfig, 'is_in_voter_list_endp', 'oAuthConfig >' . $id . '<' );
+		addHost ( $curConfig, 'get_membership_endp', 'oAuthConfig >' . $id . '<' );
+		addHost ( $curConfig, 'get_auid_endp', 'oAuthConfig >' . $id . '<' );
+		addHost ( $curConfig, 'sendmail_endp', 'oAuthConfig >' . $id . '<' );
+		addHost ( $curConfig, 'authorization_endp', 'oAuthConfig >' . $id . '<' );
+	}
 }
 
 // array_unique($tlsurls,SORT_STRING);

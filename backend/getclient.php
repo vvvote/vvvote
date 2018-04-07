@@ -1,4 +1,5 @@
 <?php
+$workingDir = getcwd();
 
 chdir(__DIR__);
 require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
@@ -19,11 +20,20 @@ header('Content-type: text/html; charset=utf-8');
 chdir(__DIR__); 
 require_once 'tools/tools.php';
 
-parse_str($_SERVER['QUERY_STRING'], $queryArray); 
-if(array_key_exists('download', $queryArray)) header('Content-Disposition: attachment; filename=vvvote_client_' . 'vvvote_client_' . clearForFilename($_SERVER['HTTP_HOST']) . '.html');
+// if ?download is appended, set header 'Content-Disposition: attachment'
+if (array_key_exists('QUERY_STRING', $_SERVER) ){
+	parse_str($_SERVER['QUERY_STRING'], $queryArray); 
+	if(array_key_exists('download', $queryArray)) header('Content-Disposition: attachment; filename=vvvote_client_' . 'vvvote_client_' . clearForFilename($_SERVER['HTTP_HOST']) . '.html');
+}
 
 $pathToClientSource = __DIR__ . '/webclient-sources/';
 
+if ( (PHP_SAPI === 'cli') && ($argc > 1) ) {
+	$configFilepath = $argv[1]; // interpreted by tools/loadconfig.php which is called from getserverinfos.php
+	var_dump($argv);
+	if (substr_compare($configFilepath, './', 0, 2) === 0) // relativ path
+		$configFilepath = $workingDir . '/' . $configFilepath;  // make it absolute
+}
 // first do the action that requires possibly wrong config
 ob_start();
 	$output_as_javascript = true; // interpreted by getpublicserverkeys.php
