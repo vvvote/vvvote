@@ -25,6 +25,8 @@ if (PHP_SAPI !== 'cli') {
 	';
 }
 
+$workingDir = getcwd();
+
 chdir(__DIR__); require_once '../Math/BigInteger.php';
 chdir(__DIR__); require_once '../Crypt/RSA.php';
 
@@ -85,7 +87,7 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 	try {
 		define ( 'CRYPT_RSA_MODE', CRYPT_RSA_MODE_INTERNAL ); // this is needed because otherwise openssl (if present) needs special configuration in openssl.cnf when creating a new key pair
 		if (isset ( $argv [1] ) && (count ( $argv ) < 4)) {
-			print 'usage: php -f admin.php createKeyPair <p|t> <serverIdNumber> [configdir]' . "\np: for permission server\nt: for tallying server\nconfigfile: use this directory instead of the default config dir (optional).";
+			print 'usage: php -f admin.php createKeyPair <p|t> <serverIdNumber> [configdir]' . "\np: for permission server\nt: for tallying server\nconfigfile: use this directory instead of the default config dir (optional). Absolut path or relavtive to working dir if starting with './'";
 			exit ( 1 );
 		}
 		
@@ -114,7 +116,8 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 		}
 		
 		if (isset ($argv[4]) ) {
-			$configdir = $argv[4]; 
+			$configdir = $argv[4];
+			if (substr_compare($configdir, './',0, 2) === 0) $configdir = $workingDir . '/' . $workingDir;
 		} else {
 			$DO_NOT_LOAD_PUB_KEYS = true; // interpreted from loadconfig.php
 			chdir(__DIR__); require_once '../tools/loadconfig.php';
