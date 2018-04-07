@@ -117,7 +117,6 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 		
 		if (isset ($argv[4]) ) {
 			$configdir = $argv[4];
-			if (substr_compare($configdir, './',0, 2) === 0) $configdir = $workingDir . '/' . $workingDir;
 		} else {
 			$DO_NOT_LOAD_PUB_KEYS = true; // interpreted from loadconfig.php
 			chdir(__DIR__); require_once '../tools/loadconfig.php';
@@ -129,6 +128,7 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 		
 		// save private key to file
 		$keystr = str_replace ( '\/', '/', json_encode ( $keypair ) );
+		chdir($workingDir);
 		global $configdir;
 		$filename = "$configdir/voting-keys/${thisServerName}.privatekey.pem.php";
 		file_put_contents ( $filename, "<?php\r\n/* \r\n" . $keypair ['privatekey'] . "\r\n*/\r\n?>" );
