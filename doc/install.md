@@ -102,13 +102,19 @@ Configure your webserver to use the 'public' dir as document root. This way it i
 e.g. for Apache:
 	
 	DocumentRoot "/var/www/vvvote/public"
+	
 e.g. for Ngnix:
 
 	
 
 Vvote relies on the webserver's ability to rewrite the URI.
 For Apache, the needed .htaccess file is included, so you do not need to configure anything exempt allowing/enabling the rewrite engine.
-For Apache:
+On some apache servers, you will have to tell wich URL correspondes to this folder in the filesystem in order to make URL rewriting work. You can do it by the following command:
+
+	cd public
+	echo "RewriteBase /" >.htaccess
+
+Additional, rewritig requires that FollowSymlinks is allowed. Usually it is allowed. Anyway, you can set this for Apache by:
 
 	<Directory "/var/www/vvvote/public">
 		AllowOverride All

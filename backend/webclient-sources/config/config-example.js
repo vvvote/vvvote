@@ -1,8 +1,8 @@
 /**
  * config
- * Normally there is no need to change anything here, except: If you are using OAuth2: the config for the authorization verification process.
+ * Normally there is no need to change anything here, except: If you want to change the anonymising service address
  * 
- * The server URLs and keys are automatically included by calling backend/getserverinfos.php?js (result in serverinfos)
+ * The server URLs, keys and the oAuht2-config are automatically included by calling backend/getserverinfos.php?js (result in serverinfos)
  * OR are included in the complete .html file which has the backend/getserverinfos.php integrated
  * 
  */
@@ -11,6 +11,11 @@ function ClientConfig() { }
 
 ClientConfig.serverList     = new Array();
 ClientConfig.newElectionUrl = new Array();
+
+if (serverinfos.cmd === 'serverError' ) {
+	alert(i18n.sprintf(i18n.gettext("There is an error in the server configuration. The server did not deliver the server infos. api/./getserverinfos says %s"), serverinfos.errorDesc));
+}
+
 for (var i=0; i<serverinfos.pServerUrlBases.length; i++) {
 	if (serverinfos.pkeys[i].kty !== 'RSA') alert('Error in server infos: only RSA is a supported by this client');
 	ClientConfig.serverList[i] = {
@@ -20,7 +25,7 @@ for (var i=0; i<serverinfos.pServerUrlBases.length; i++) {
 				if (this.i === 0) return i18n.gettext('Voting server');
 				return i18n.sprintf(i18n.ngettext('Checking server', 'Checking server %d', serverinfos.pServerUrlBases.length -1), this.i);	
 			},
-			'url' :    serverinfos.pServerUrlBases[i] + '/getpermission.php', // 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
+			'url' :    serverinfos.pServerUrlBases[i] + 'getpermission', // 'getpermission.php?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 			'baseUrl': serverinfos.pServerUrlBases[i],
 			'key': {
 				'exp':      str2bigInt(serverinfos.pkeys[i].e, -64), // str2bigInt('65537', 10),  
@@ -29,7 +34,7 @@ for (var i=0; i<serverinfos.pServerUrlBases.length; i++) {
 				'serverId': serverinfos.pkeys[i].kid
 			},
 		};
-	ClientConfig.newElectionUrl[i] = serverinfos.pServerUrlBases[i] + '/newelection.php';
+	ClientConfig.newElectionUrl[i] = serverinfos.pServerUrlBases[i] + 'newelection';
 }
 
 ClientConfig.tkeys = serverinfos.tkeys;
@@ -38,40 +43,15 @@ server1url = ClientConfig.serverList[0].baseUrl;
 var server1urlParts = URI.getParts(server1url);
 server2url = ClientConfig.serverList[1].baseUrl;
 
-//ClientConfig.newElectionUrl    = new Array(	server1url +'newelection.php', server2url +'newelection.php');
 ClientConfig.electionConfigUrl = server1url + 'getelectionconfig';
 ClientConfig.storeVoteUrl      = serverinfos.tServerStoreVoteUrls[0]; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
 ClientConfig.getResultUrl      = server1url + 'getresult'; //?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 
-
+// TODO make anonymize a config in backend/config
 ClientConfig.anonymizerUrl = 'http://anonymouse.org/cgi-bin/anon-www_de.cgi/'; // used to change the ip and to strip browser infos / with trailing slash
 ClientConfig.voteClientUrl = server2url + 'getclient';
 
-
-
-//configs for OAuth 2.0 Servers
-var redirectUriTMP = [];
-redirectUriTMP[ClientConfig.serverList[0].name] = server1url + 'modules-auth/oauth/callback';
-redirectUriTMP[ClientConfig.serverList[1].name] = server2url + 'modules-auth/oauth/callback'; //https://84.246.124.167/backend//modules-auth/oauth/callback.php
-
-var clientIdTMP = [];
-clientIdTMP[ClientConfig.serverList[0].name] = 'vvvote';
-clientIdTMP[ClientConfig.serverList[1].name] = 'vvvote2';
-
-
-var oAuth2ConfigBEOBayern = {
-		serverId: 		'BEOBayern', // This is used in the backend to identify the oauth server
-		serverDesc: 	'Basisentscheid Online der Piraten (Bayerischer Testserver)',
-		authorizeUri: 	'https://beoauth.piratenpartei-bayern.de/oauth2/authorize/?', // must end with ?
-		loginUri:		'https://beoauth.piratenpartei-bayern.de/',
-		scope: 			'member unique mail',
-		redirectUri: 	redirectUriTMP,
-		clientId: 		clientIdTMP
-};
-
-ClientConfig.oAuth2Config = {
-		'BEOBayern': oAuth2ConfigBEOBayern
-};
+ClientConfig.oAuth2Config = serverinfos.authModules.oAuth2;
 
 ClientConfig.getServerInfoByName = function (servername) {
 	var slist = ClientConfig.serverList;

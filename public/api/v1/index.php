@@ -4,9 +4,22 @@ $pathToBackend = '../../../backend/';
 require_once $pathToBackend . 'tools/loadconfig.php';
 chdir ( __DIR__ );
 
-// redirect to https
-$cmd = trim($_SERVER ['PATH_INFO'], '/');
+// get the command (=endpoint, e.g. 'getclient', 'newelection' etc.)
+// it can be just $_SERVER ['PATH_INFO'] but some strange apache servers do not support correctly rewriting
+// The work around is: use the query string instead and let it start with '/'. The first component will contain
+// the command.
+if (array_key_exists('PATH_INFO', $_SERVER ))	$cmd = trim($_SERVER ['PATH_INFO'], '/');
+	else {
+		$qs = $_SERVER['QUERY_STRING'];
+		if (substr_compare($qs, '/', 0, 1) === 0) {
+			if (strpos($qs, '&') !== false)  $cmd = preg_replace('/^\\/(.*)&(.*)$/i', '$1', $qs);
+			else $cmd = substr($qs, 1);
+		} else 
+		$cmd = '';
+		
+	}
 
+// redirect to https
 if (   ($cmd !== 'storevote') 
 		&& (empty ( $_SERVER ['HTTPS'] ) || $_SERVER ['HTTPS'] === 'off')
 		&& (substr_compare($pServerUrlBases[$serverNo -1], 'https://', 0, 8, true) === 0) ) {
