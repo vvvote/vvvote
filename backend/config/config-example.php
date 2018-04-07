@@ -148,8 +148,7 @@ Das Wahlteam'
 						// name them [hostname.domain].pem (replacing "[hostname.domain]" with the target host.
 						'verifyCertificate' => true 
 				),
-				) 
-		)
+			) 
 		// If you use the default dirs, nothing needs to be changed here.
 		// It can be absolut (URL allowed) or relativ to api/v1/index.php 
 		// defaults to '../../webclient/';

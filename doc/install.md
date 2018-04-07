@@ -90,7 +90,8 @@ Configure the webclient
 
 in directory webclient/config, copy the example config to config.js, e.g. by
 
-	cp config-example.js config.js
+	 cd backend/webclient-sources/config
+	 cp config-example.js config.js
 
 If do not have very special needs, nothing needs to be changed in this config. The client automatically incorperates the config from the server.
 

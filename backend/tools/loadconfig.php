@@ -65,8 +65,8 @@ $ApiPrefix = 'api/v1/';
 foreach ( $config ['pServerUrlBases'] as $i => $curUrl ) {
 	$urltmp0 = trim ( $curUrl, '/' ) . '/';
 	$urltmp = parse_url ( $urltmp0 );
-	if (! isset ( $urltmp ['port'] ) || ($urltmp ['port'] == 0)) {
-		switch ($urltmp ['c']) {
+	if (! isset ( $urltmp ['port'] ) || ($urltmp ['port'] == 0 || empty($urltmp ['port']))) {
+		switch ($urltmp ['scheme']) {
 			case 'http' :
 				$urltmp ['port'] = 80;
 				break;
