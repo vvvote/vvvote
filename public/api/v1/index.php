@@ -12,7 +12,7 @@ if (array_key_exists('PATH_INFO', $_SERVER ))	$cmd = trim($_SERVER ['PATH_INFO']
 	else {
 		$qs = $_SERVER['QUERY_STRING'];
 		if (substr_compare($qs, '/', 0, 1) === 0) {
-			if (strpos($qs, '&') !== false)  $cmd = preg_replace('/^\\/(.*)&(.*)$/i', '$1', $qs);
+			if (strpos($qs, '&') !== false)  $cmd = substr($qs, 1, strpos($qs, '&') -1);
 			else $cmd = substr($qs, 1);
 		} else 
 		$cmd = '';
