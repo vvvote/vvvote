@@ -98,6 +98,12 @@ if (isset ( $config ['linkToHostingOrganisation'] )) {
 	$linkToHostingOrganisation = $config ['linkToHostingOrganisation'];
 }
 
+$aboutUrl = '';
+if (isset ( $config ['aboutUrl'] )) {
+	$aboutUrl = $config ['aboutUrl'];
+}
+
+
 $webclientUrlbase = '../../webclient/'; // relativ to api/v1/index.php or absolute, with trailing slash, URL allowed
 if (isset ( $config ['webclientUrlbase'] ))
 	$webclientUrlbase = rtrim($config ['webclientUrlbase'], '/') . '/';

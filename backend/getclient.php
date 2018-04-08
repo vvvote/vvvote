@@ -311,16 +311,21 @@ echo <<<EOT
 	<div class="footer_wraper">
 				<div class="container">
 					<div class="row">
-						<div class="col-md-12">
-							<div class="copyright">
-<div class="logo_foot" style="width: 30px;display: inline-block;vertical-align: middle;">						
+						<div class="col-md-2 text-center">
+							<div class="copyright" > 
+									<span><a href="$aboutUrl" target="_blank">Impressum</a></span>
+							</div>
+						</div>
+						<div class="col-md-2 col-sm-push-7">
+							<div class="copyright text-center"">
+								<div class="logo_foot" style="width: 30px;display: inline-block;vertical-align: middle;">						
 EOT;
 
 readfile($pathToClientSource . 'logo_auto.svg');
 
 echo <<<EOT
-</div>
-						<span>powered by <a href="https://www.vvvote.de/">VVVote</a></span>
+								</div>
+							<span>powered by <a href="https://www.vvvote.de/">VVVote</a></span>
 							</div>
 						</div>
 					</div>
