@@ -113,7 +113,7 @@ fieldset.optionFieldSet {
   position: relative;
 }
 #idstepstitle {
-  font-size: 27px;
+  font-size: 25px;
 }
 .votingQuestionsTable .evenTableRow:nth-child(3) button, .votingQuestionsTable .unevenTableRow:nth-child(3) button {
   position: relative;
