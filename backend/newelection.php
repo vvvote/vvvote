@@ -80,11 +80,12 @@ try {
 					
 					foreach ($electionconfigFromDB['questions'] as $qno => $question) {
 							// unset($question['blinderData']); // compare without on the server generated blinder data
-						if ($question['questionID']                   !== $electionconfig['questions'][$qno]['questionID'])      WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
-						if ($question['questionWording']              !== $electionconfig['questions'][$qno]['questionWording']) WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
-						if ($question['options']                      !== $electionconfig['questions'][$qno]['options'])         WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
-						if ($question['tallyData']['scheme']          !== $electionconfig['questions'][$qno]['scheme'])          WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
-						if ($question['tallyData']['findWinner']      !== $electionconfig['questions'][$qno]['findWinner'])      WrongRequestException::throwException(2120, 'This election id is already used', $electionId);
+						if ($question['questionID']                   !== $electionconfig['questions'][$qno]['questionID'])      WrongRequestException::throwException(21201, 'This election id is already used', $electionId);
+						if ($question['questionWording']              !== $electionconfig['questions'][$qno]['questionWording']) WrongRequestException::throwException(21202, 'This election id is already used', $electionId);
+						// the following are not present in "publish only tally"
+						if (isset($question['options']) &&                  ($question['options']                 !== $electionconfig['questions'][$qno]['options']   ) ) WrongRequestException::throwException(21203, 'This election id is already used', $electionId);
+						if (isset($question['tallyData']['scheme']) &&      ($question['tallyData']['scheme']     !== $electionconfig['questions'][$qno]['scheme']    ) ) WrongRequestException::throwException(21204, 'This election id is already used', $electionId);
+						if (isset($question['tallyData']['findWinner']) &&  ($question['tallyData']['findWinner'] !== $electionconfig['questions'][$qno]['findWinner']) ) WrongRequestException::throwException(21205, 'This election id is already used', $electionId);
 						if ($serverNo > 1 && isset($electionconfig['questions'][$qno]['blinderData'])) { // isset($question['blinderData']) is true if called from a previous permission server
 							// verify if the blinderData of all previous servers match the saved data
 							foreach ($question['blinderData']['permissionServerKeys'] as $pserver => $key) {
