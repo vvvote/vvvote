@@ -464,7 +464,9 @@ ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
 	}
 	var divSendVote = document.createElement('div');
 	divSendVote.setAttribute('class', 'sendVote');
-	buttonDOM('buttonSendQ'+qNo, 'Stimme senden', 'page.sendVote('+qNo+')', divSendVote, 'sendVoteButton');
+	buttonDOM('buttonSendQ'+qNo, i18n.gettext('Cast vote!'), 'page.sendVote('+qNo+')', divSendVote, 'sendVoteButton');
+	var saveReceiptButton = buttonDOM('buttonSaveReceiptIdQ'+qNo, i18n.gettext('Save voting recceipt'), 'page.saveVotingReceipt(' + qNo +')', divSendVote, 'votingReceiptButton');
+	saveReceiptButton.setAttribute('disabled', 'disabled');
 	divQNode.appendChild(divSendVote);
 	var divQNodeContainer = document.createElement('div');
 	divQNodeContainer.setAttribute('id', 'divVoteQuestionContainer'+qNo);
@@ -587,36 +589,6 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 	 */
 };
 
-ConfigurableTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorageId_) {
-	if (returnEnvelopeLStorageId_ != '') {
-		this.returnEnvelopeLStorageId = returnEnvelopeLStorageId_;
-		this.collapseAllQuestions();
-	}
-	//var configHash = GetElectionConfig.generateConfigHash(this.config);
-	var voteStart = page.getNextVoteTime();
-	var buttonStr = i18n.gettext('Error 238u8');
-	var disable = false;
-	if (voteStart === false) {disable = true;  buttonStr = i18n.gettext('Vote casting is closed'); }
-	if (voteStart === true)  {disable = false; buttonStr = i18n.gettext('Cast vote!'); }
-	if (voteStart instanceof Date) {
-		disable = true;
-		buttonStr = i18n.sprintf(i18n.gettext('Vote casting starts at %s'), formatDate(voteStart));
-		var me = this;
-		executeAt(voteStart, me, me.enableSendVoteButtons);
-	}
-	
-	var tmp = null;
-	try {
-		if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
-			tmp = localStorage.getItem('sentQNo' + this.returnEnvelopeLStorageId);
-			if (tmp != null) this.sentQNo = JSON.parse(tmp);
-		}
-	} catch (e) {console.log('problem accessing local storage ignored: ' + e.toString());} // EDGE causes sometimes a "SCRIPT16389: Unbekannter Fehler." when trying to acces the localstorage. As this is not an important feature, we just ignore it
-	for (var qNo=0; qNo<this.config.questions.length; qNo++) {
-		if (tmp != null && this.sentQNo.indexOf(qNo) >=0) this.disableQuestion(i18n.gettext('Vote accepted'), qNo, false);
-		else                                              this.enDisableSendButton(buttonStr, qNo, disable);
-	}
-};
 
 
 ConfigurableTally.prototype.enableSendVoteButtons = function() {
@@ -810,8 +782,8 @@ ConfigurableTally.prototype.sendVote = function(qNo) {
 	this.vote = this.getInputs(qNo);
 	this.qNo = qNo;
 	var votestr = unicodeToBlackslashU(JSON.stringify(this.vote));
-	var questionID = this.config.questions[qNo].questionID;
-	this.sendVoteData(votestr, questionID);  // sendVoteData is inherited from publish-only-tally
+//	var questionID = this.config.questions[qNo].questionID;
+	this.sendVoteData(votestr, qNo);  // sendVoteData is inherited from publish-only-tally
 };
 
 ConfigurableTally.prototype.handleServerAnswerStoreVoteSuccess = function (data) { // called from handleServerAnswerStoreVote which is inherited from publish-only
@@ -829,22 +801,6 @@ ConfigurableTally.prototype.handleServerAnswerStoreVoteSuccess = function (data)
 	}
 };
 
-/**
- * Disable and change button text of "send vote Button" to "vote accepted"
- */
-
-ConfigurableTally.prototype.enDisableSendButton = function(buttonText, qNo, disable) {
-	var el = document.getElementById('buttonSendQ'+qNo);
-	if (disable) {
-		el.setAttribute('disabled', 'disabled');
-		el.setAttribute('class', 'sendVoteButtonDone');
-	}
-	else         {
-		el.removeAttribute('disabled');
-		el.setAttribute('class', 'sendVoteButton');
-	}
-	el.childNodes[0].nodeValue = buttonText;
-};
 
 /**
  * 

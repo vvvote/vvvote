@@ -328,9 +328,11 @@ BlindedVoterElection.prototype.checkPerm = function() {
 };
 */
 
-
-BlindedVoterElection.prototype.signVote = function (vote, questionID_) {
-	var q = ArrayIndexOf(this.permission, 'questionID', questionID_);
+/**
+ * @param q question number, starting from 0
+ */
+BlindedVoterElection.prototype.signVote = function (vote, q) {
+	// var q = ArrayIndexOf(this.permission, 'questionID', questionID_);
 	var votestr = vote;
 	var privatekeyarray = this.permission[q].keypair.priv;
 	var hash = SHA256(vote);

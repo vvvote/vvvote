@@ -121,8 +121,10 @@ class PublishOnlyTally extends Tally {
 			WrongRequestException::throwException(1104, 'Signature verification failed.', "details: " . $e->__toString() ); ;
 		}
 		// TODO sign the vote and send it back
-		return array('cmd' => 'saveYourCountedVote'); // TODO sent the signed vote back
-	}
+		global $tServerKeys, $tserverkey;
+		$myKey = new Crypt($tServerKeys, $tserverkey);
+		$sig = $myKey->JwsSign($voterReq);
+		return array('cmd' => 'saveYourCountedVote', 'sig' => $sig);
 
 	function getAllVotesEvent($voterReq) {
 		// TODO check if client is allowed to see the election result (e.g. was allowed to vote / did vote himself)

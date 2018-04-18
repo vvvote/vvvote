@@ -30,6 +30,27 @@ function getFrequencies(list) {
 	return freqs;
 }
 
+/**
+ * Compare two JSON objects
+ * @return true if equal all content equals (ignoring the sequence of keys), false otherwise
+ * see https://stackoverflow.com/questions/5467129/sort-javascript-object-by-key
+ * 
+ */
+function jsonEquals(obj1, obj2) {
+	const ordered1 = {};
+	const ordered2 = {};
+	// sort the properties by key name
+	Object.keys(obj1).sort().forEach(function(key) {
+	  ordered1[key] = obj1[key];
+	});	
+	Object.keys(obj2).sort().forEach(function(key) {
+		  ordered2[key] = obj2[key];
+		});	
+	var ret = (JSON.stringify(ordered1) === JSON.stringify(ordered2));
+	return ret;
+};
+
+
 
 /**
  * returns the index in an array of objects which matches
@@ -550,6 +571,7 @@ function buttonDOM(id, label, onclick, addTo, klasse) {
 	var buttonNodeTxt = document.createTextNode(label);
 	buttonNode.appendChild(buttonNodeTxt);
 	addTo.appendChild(buttonNode);
+	return buttonNode;
 }
 
 /*
@@ -755,6 +777,34 @@ function formatDate(date) {
 	} else return date.toString();
 }
 
+
+function base64Url2String(base64str) {
+	// convert base64url to normal base64
+	var base64 = base64str.replace(/\-/g, '+').replace(/_/g, '/');
+	var neededLength = base64.length + (4 - (base64.length % 4)) % 4;
+	while (base64.length < neededLength) {
+		base64 = base64 + '=';
+	}
+	// deocde base64 using native API
+	var decodedStr = atob(base64);
+	return decodedStr;
+}
+
+/**
+ * I guess this only works correctly for 8bit chars
+ * @param str
+ * @returns {Uint8Array}
+ */
+function str2ArrayBuf(str) {
+	var ab = new ArrayBuffer(str.length);
+	var abv = new Uint8Array(ab);
+	for (var i = 0; i<str.length; i++) {
+		abv[i] = str.charCodeAt(i);
+	}
+	return abv;
+}
+
+
 function arrayBuf2Base64Url(ab) {
 	var encUI8A = new Uint8Array(ab);
 	var base64 = btoa(String.fromCharCode.apply(null, encUI8A));
@@ -763,21 +813,9 @@ function arrayBuf2Base64Url(ab) {
 }
 
 function base64Url2ArrayBuf(str) {
-	// convert base64url to normal base64
-	var base64 = str.replace(/\-/g, '+').replace(/_/g, '/');
-	var neededLength = base64.length + (4 - (base64.length % 4)) % 4;
-	while (base64.length < neededLength) {
-		base64 = base64 + '=';
-	}
-	// deocde base64 using native API
-	var decodedStr = atob(base64);
-	
+	decodedStr = base64Url2String(str);
 	// convert string to ArrayBuffer byte by byte
-	var ab = new ArrayBuffer(decodedStr.length);
-	var abv = new Uint8Array(ab);
-	for (var i = 0; i<decodedStr.length; i++) {
-		abv[i] = decodedStr.charCodeAt(i);
-	}
+	var abv = str2ArrayBuf(decodedStr);
 	return abv;
 }
 

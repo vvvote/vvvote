@@ -61,18 +61,17 @@ PublishOnlyTally.prototype.getMainContentFragm = function(fragm, config) {
 	// vote input field
 	var inp = document.createElement('input');
 	inp.setAttribute('type', 'text');
-	inp.setAttribute('id', 'voteInput');
+	inp.setAttribute('id', 'question0Input');
 	fragm.appendChild(inp);
 	
 	// submitt button
-	var btn = document.createElement('input');
-	btn.setAttribute('type', 'submit');
-	btn.setAttribute('value', i18n.gettext('Cast vote!'));
-	btn.setAttribute('id', 'sendvote');
-	//btn.setAttribute('disabled', 'disabled');
-	btn.setAttribute('onclick', 'page.sendVote(event);');
+	var btn = buttonDOM('buttonSendQ0', i18n.gettext('Cast vote!'), 'page.sendVote(event)', fragm, 'sendVoteButton');
 	fragm.appendChild(btn);
 	
+	// save receipt button
+	var saveReceiptButton = buttonDOM('buttonSaveReceiptIdQ0', i18n.gettext('Save voting recceipt'), 'page.saveVotingReceipt(0)', fragm, 'votingReceiptButton');
+	saveReceiptButton.setAttribute('disabled', 'disabled');
+
 	return fragm;
 	
 };
@@ -82,32 +81,117 @@ PublishOnlyTally.prototype.onPermissionLoaded = function() {
 };
 
 PublishOnlyTally.prototype.sendVote = function () {
-	var element = document.getElementById('voteInput');
+	var element = document.getElementById('question0Input');
 	var vote = element.value;
-	this.sendVoteData(vote, 1);
+	this.sendVoteData(vote, 0);
 };
 
-PublishOnlyTally.prototype.sendVoteData = function (vote, questionID_) {
+PublishOnlyTally.prototype.sendVoteData = function (vote, qNo) {
 	var transm = {};
-	transm = this.election.signVote(vote, questionID_);
-	transm.cmd = 'storeVote';
-	var transmstr = JSON.stringify(transm);
-	var me = this;
-	this.te = new TransportEncryption();
-	this.te.encrypt(transmstr, me, me.encryptedCallback, ClientConfig.tkeys[0]);
-//	myXmlSend(ClientConfig.storeVoteUrl, transmstr, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
+	transm = this.election.signVote(vote, qNo);
+	if (! ('myVotesHandler' in this) ) this.myVotesHandler = []; 
+	this.myVotesHandler[qNo] = new PublishOnlyTallySendVoteHandler(this, qNo, 0); // TODO for each tellyserver 1 instance?
+	this.myVotesHandler[qNo].sendVote(transm);
 };
 
-PublishOnlyTally.prototype.encryptedCallback = function(encrypted) {
-	console.log(encrypted);
-	var me = this;
-	myXmlSend(ClientConfig.storeVoteUrl, encrypted, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
+/**
+ * Disable and change button text of "send vote Button" to "vote accepted"
+ */
+
+PublishOnlyTally.prototype.enDisableSendButton = function(buttonText, qNo, disable) {
+	var el = document.getElementById('buttonSendQ'+qNo);
+	if (disable) {
+		el.setAttribute('disabled', 'disabled');
+		el.setAttribute('class', 'sendVoteButtonDone');
+	}
+	else         {
+		el.removeAttribute('disabled');
+		el.setAttribute('class', 'sendVoteButton');
+	}
+	el.childNodes[0].nodeValue = buttonText;
+};
+
+PublishOnlyTally.prototype.disableQuestion = function(buttonText, qNo, selected) {
+	this.enDisableSendButton(i18n.gettext('Vote accepted'), qNo, true);
+	var el = document.getElementById('question' + qNo + 'Input');
+	el.setAttribute('disabled', 'disabled');
+};
+
+PublishOnlyTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorageId_) {
+	if (returnEnvelopeLStorageId_ != '') {
+		this.returnEnvelopeLStorageId = returnEnvelopeLStorageId_;
+		if ('collapseAllQuestions' in this) this.collapseAllQuestions();
+	}
+	//var configHash = GetElectionConfig.generateConfigHash(this.config);
+	var voteStart = page.getNextVoteTime();
+	var buttonStr = i18n.gettext('Error 238u8');
+	var disable = false;
+	if (voteStart === false) {disable = true;  buttonStr = i18n.gettext('Vote casting is closed'); }
+	if (voteStart === true)  {disable = false; buttonStr = i18n.gettext('Cast vote!'); }
+	if (voteStart instanceof Date) {
+		disable = true;
+		buttonStr = i18n.sprintf(i18n.gettext('Vote casting starts at %s'), formatDate(voteStart));
+		var me = this;
+		executeAt(voteStart, me, me.enableSendVoteButtons);
+	}
+	
+	var tmp = null;
+	try {
+		if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
+			tmp = localStorage.getItem('sentQNo' + this.returnEnvelopeLStorageId);
+			if (tmp != null) this.sentQNo = JSON.parse(tmp);
+		}
+	} catch (e) {console.log('problem accessing local storage ignored: ' + e.toString());} // EDGE causes sometimes a "SCRIPT16389: Unbekannter Fehler." when trying to acces the localstorage. As this is not an important feature, we just ignore it
+	for (var qNo=0; qNo<this.config.questions.length; qNo++) {
+		if (tmp != null && this.sentQNo.indexOf(qNo) >=0) this.disableQuestion(i18n.gettext('Vote accepted'), qNo, false);
+		else                                              this.enDisableSendButton(buttonStr, qNo, disable);
+	}
 };
 
 PublishOnlyTally.test = function () {alert('mmm');}; 
 
 
-PublishOnlyTally.prototype.handleServerAnswerStoreVote = function (xml) {
+PublishOnlyTally.prototype.showSaveReceiptButton = function(qNo) {
+	var el = document.getElementById('buttonSaveReceiptIdQ'+qNo);
+	el.removeAttribute('disabled');
+//		el.removeAttribute('display');
+};
+
+
+
+/**
+ * This class sends the vote (encrypts it beforehand) and handles 
+ * the answer (verifies the voting server's signature)
+ * For each question one PublishOnlyTallySendVoteHandler will be used
+ */
+PublishOnlyTallySendVoteHandler = function(parent, qNo, tServerNo) {
+	this.parent = parent; 
+	this.qNo = qNo;
+	this.tServerNo = tServerNo;
+	};
+
+/**
+ * add cmd "storeVote" to the signed vote transm
+ * ecncrypt it (transport encryption)
+ * 
+ */
+PublishOnlyTallySendVoteHandler.prototype.sendVote = function(transm) {
+	this.voteOnly = JSON.parse(JSON.stringify(transm)); //clone object
+	transm.cmd = 'storeVote';
+	var transmstr = JSON.stringify(transm);
+	var me = this;
+	this.te = new TransportEncryption();
+	this.te.encrypt(transmstr, me, me.encryptedCallback, ClientConfig.tkeys[this.tServerNo]);
+};
+
+PublishOnlyTallySendVoteHandler.prototype.encryptedCallback = function(encrypted) {
+	console.log(encrypted);
+	this.sentReqDate = new Date();
+	var me = this;
+	myXmlSend(ClientConfig.storeVoteUrl, encrypted, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
+};
+
+PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVote = function (xml) {
 	try {
 		var data = parseServerAnswer(xml, true);
 		if (typeof(data.cmd) === 'string' && data.cmd === 'error') {
@@ -116,7 +200,6 @@ PublishOnlyTally.prototype.handleServerAnswerStoreVote = function (xml) {
 		} else {
 			var me = this;
 			this.te.decrypt(data, true).then(function (data) {
-				// TODO check voting server sig
 				switch (data.cmd) {
 				case 'saveYourCountedVote': me.handleServerAnswerStoreVoteSuccess(data);
 				break;
@@ -137,11 +220,111 @@ PublishOnlyTally.prototype.handleServerAnswerStoreVote = function (xml) {
 	}
 };
 
-PublishOnlyTally.prototype.handleServerAnswerStoreVoteSuccess = function (data) {
-	Page.loadMainContent(i18n.gettext('Thank you for voting!'));
-	alert(i18n.gettext('Server accepted the vote!'));
+PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = function (data) {
+	this.verifyTServerSig(data.sig.sig, data.sig.signedData, ClientConfig.tkeys[0])
+	.then( function(receivedData) {
+		// alert("sig valid!" + JSON.stringify(receivedData));
+		
+		// verify if the date is correct that the server signed
+		if (! ('iat' in receivedData.decodedSignedContent)) throw new ErrorInServerAnswer(548664, 'Missing date of issue (iat) in voting receipt', JSON.stringify(receivedData.decodedSignedContent));
+		var issuedAtDate = new Date(receivedData.decodedSignedContent.iat).getTime();
+		var now = new Date().getTime(); // TODO: add rounding because issuedAtDate is rounded // TODO first check if is voting phase
+		var issuedAtDatePlausible = (this.sentReqDate.getTime() <= (issuedAtDate +1000)) && (now >= issuedAtDate );
+		if (!issuedAtDatePlausible) alert(i18n.sprintf(i18n.gettext('Acceptance conformation from the server contains an unplausible date: %s, now: %s'), receivedData.decodedSignedContent.iat, now));
+		
+		// verify if the vote is unchanged
+		var toBeSignedData = JSON.parse(JSON.stringify(this.voteOnly)) // clone the object data;
+		toBeSignedData.iat = receivedData.decodedSignedContent.iat
+		if (! ('iss' in receivedData.decodedSignedContent)) throw new ErrorInServerAnswer(7564534, 'Missing issuer (iss) in voting receipt', JSON.stringify(receivedData.decodedSignedContent));
+		toBeSignedData.iss = ClientConfig.tkeys[this.tServerNo].kid;
+		toBeSignedData.cmd = 'storeVote';
+		var equals = jsonEquals(receivedData.decodedSignedContent, toBeSignedData);
+		if (equals !== true) throw new ErrorInServerAnswer(46596, 'Error: The tally server signed something else than my vote. The differences are: ', JSON.stringify(diff));
+		alert(i18n.gettext('Server accepted the vote!'));
+		
+		// save the votingReceipt in the PublishOnlyTally
+		if (! ('votingReceipt ' in this.parent) )               this.parent.votingReceipt = new Array();
+		if (! ('this.qNo'       in this.parent.votingReceipt) ) this.parent.votingReceipt[this.qNo] = {} 
+		this.parent.votingReceipt[this.qNo][ClientConfig.tkeys[this.tServerNo].kid] = receivedData;
+		
+		this.parent.showSaveReceiptButton(this.qNo);
+		this.parent.disableQuestion(i18n.gettext('Vote accepted'), this.qNo, false);
+		// Page.loadMainContent(i18n.gettext('Thank you for voting!'));
+	}.bind(this))
+	.catch (function(err) {
+		console.log(err);
+		alert(i18n.sprintf(i18n.gettext("Error while verifying tally server /%s/ signature: %s"), ClientConfig.tkeys[this.tServerNo].kid, err));
+	}.bind(this));
 };
 
+/*
+ * sig Signatrure as base64Url
+ * DataSigned base64Url encoded signed data
+ * serverkey public key as JWT
+ * @returns Promise
+ */
+PublishOnlyTallySendVoteHandler.prototype.verifyTServerSig = function (sig, DataSigned, serverkey) {
+	return new Promise (function (resolve, reject) {
+		var sigArraBuff        = base64Url2ArrayBuf(sig);
+		// DataSignedArraBuff = base64Url2ArrayBuf(DataSigned);
+		var DataSignedArraBuff = str2ArrayBuf(DataSigned);
+
+		// sigArraBuff        = base64Url2ArrayBuf('k8L9X6hd4U-o2aTA_g0x4N7i5grlMXt0FviWhjjY-4Ja3Ovvko42q8Kt_7k9RC8Z4RNKEqImReqrrX0YB6PCMhmXUDEzbF0TUIZVLUWoieD6zWKOnvVFbM7JvWjCV_2Roc7LUCrRbQmv_GHPbva3XXkr_Exi7q8CL4yzoba0Msg');	
+		// sigArraBuff        = base64Url2ArrayBuf('RoI9o03ENTVeWL_Mi5hcGwLTLcWNGcTlDKkH7KrR16EQ7R7odIXFl_PVwnWkAiH8tr7JqYKXvKR2nViU0m-0AitUYwwPLZeVPz950WjCw3R_oqxc-pb2gz_ahbNwB5daK8hYk9BBLm1SV9GvbBr-OuydK9sjSGtkFe-tR8IYM_E');
+		// DataSignedArraBuff = base64Url2ArrayBuf('KuXsZaDByQhXAFvL37JTAH3LHR_bnUx2I5hbLnPm1w8');
+		// DataSignedArraBuff = base64Url2ArrayBuf('nAQhQS1zrU02DQgG8W9lnlAWYhPvf5ZsSIxpQCYqKXdcMVpUtoxNtDCZ9JBm0vTJTK78JR_CVZSbLLu5bzFspe4lfuYHi3XAd34Vuj1QdV1OcFU4i5GxJ_AIl9UOdjWAu6g2_Ai7T_tzhBSLXi8R4MAlFlQbNNKsruqjnetBrY8');
+
+		//n: sigArraBuff        = base64Url2ArrayBuf('RoI9o03ENTVeWL_Mi5hcGwLTLcWNGcTlDKkH7KrR16EQ7R7odIXFl_PVwnWkAiH8tr7JqYKXvKR2nViU0m-0AitUYwwPLZeVPz950WjCw3R_oqxc-pb2gz_ahbNwB5daK8hYk9BBLm1SV9GvbBr-OuydK9sjSGtkFe-tR8IYM_E');
+
+//		serverkey.n = 'vkmbXn8GyD-gKT4xRlyOtrWK-SC65Sp7W5v-t6py2xJkES6z_UMdMaKn5QlBVmkpSUoOiR7VYTkYtLUbDR-5d4Oyas99DzhM-zX00oJPXdOAYjomvxgLY5YcYZ3NsgyuQG8i9uJ2yAo3JZSQz-tywacahPGEbTMId7o-MQHsnHs';
+//		serverkey.e = 'AQAB';
+
+//		serverkey.d = 'DQ8XNiva0YHbTh_gPo3hoyCJiZFOFL8mlViCa_og-vS2jbpruYmgHwOiHERmXcX2SMtbWblU6xB3qAJjvSLN-4jTkWS3QE9PEQbuAc9gt3aVdI2P2vn9Qolj_nUUQBCxk0yOJqiCOWcs9Js0IqB8TYNLogjVcP5AjnCVyQVH5o0';
+//		serverkey.p = '56gMXSEcBqy5AJOUlfJtNl_CtIJbdeNW-JAD6qWTHmvlw_fmpjOtWdtiidBsNUwjXnOaHj89OftA0f-5y0Qojw';
+//		serverkey.q = '0kiqJIAA9yAlh0LaZ7cRlAyPduHs1Stnpv_h5JNU1m_4T6YBgEdD9YONou1Gk6WihljWUozBgDv2yNxzxSMLVQ';
+
+		serverkey.alg = 'RS256';
+		serverkey.ext = true;
+		var me = this;
+		window.crypto.subtle.importKey('jwk', serverkey, {name: 'RSASSA-PKCS1-v1_5', hash:{name: 'SHA-256'}}, true, ['verify'])
+		.then(function(publickey) {
+			me.serverKeyAPI = publickey;
+			console.log('serverKeyAPI: ' + me.serverKeyAPI);
+			window.crypto.subtle.verify( {name: "RSASSA-PKCS1-v1_5"}, publickey, sigArraBuff, DataSignedArraBuff)
+			.then(function(isvalid){
+				//returns a boolean on whether the signature is valid or not
+				console.log("Tally server signature valid: " + isvalid);
+//				alert("jääär:" + isvalid);
+//				var decodedSignedDataStr = base64Url2String(DataSigned);
+				var decodedSignedData = DataSigned.split('.');
+				if (! (1 in decodedSignedData)) throw new ErrorInServerAnswer(5345985, i18n.gettext('Error: missing the signed data (no dot in the string)'), DataSigned)
+				var decodedSignedContentStr = base64Url2String(decodedSignedData[1]);
+				var decodedSignedContent = JSON.parse(decodedSignedContentStr);
+				if ((isvalid === true) && (decodedSignedContent !== null)) resolve({'decodedSignedContent': decodedSignedContent, 'sig': sig, 'sigBy': serverkey.kid});
+				else reject(isvalid);
+			})
+			.catch(function(err){
+				console.error(err);
+//				alert("oh, no!");
+				reject(err);
+			});
+		});
+	});
+}
+
+
+PublishOnlyTally.prototype.saveVotingReceipt = function(qNo) {
+	var votingReceiptStr = JSON.stringify(this.votingReceipt);
+	this.votingReceiptBlob = new Blob([votingReceiptStr]);
+	var filename = i18n.sprintf(i18n.gettext('Voting receipt %s'), clearForFilename(this.config.electionTitle) + '_' + qNo + '.json');
+	var htmlStr = i18n.gettext('In order to be able to proof that you sent your vote, you can save the voting receipt') +
+	'<form><p><button id="okbuttonid" type="submit" autofocus="autofocus" onclick="removePopup(); saveAs(page.tally.votingReceiptBlob, \'' + filename +'\'); return false;">Ok</button></p></form>';
+	var fragm = html2Fragm(htmlStr);
+	showPopup(fragm);
+	var el = document.getElementById('okbuttonid');
+	el.focus();
+
+};
 
 /********************************************
  * 

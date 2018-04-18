@@ -224,6 +224,11 @@ VotePage.prototype.sendVote = function (event) {
 	this.tally.sendVote(event);
 };
 
+VotePage.prototype.saveVotingReceipt = function (event) {
+	this.tally.saveVotingReceipt(event);
+};
+
+
 VotePage.prototype.isRegPhase = function() {
 	var regStart = new Date("2000-01-01T00:00:00+00:00");
 	if ('RegistrationStartDate' in this.config.authConfig) regStart = new Date(this.config.authConfig.RegistrationStartDate); 
@@ -231,7 +236,7 @@ VotePage.prototype.isRegPhase = function() {
 	if ('RegistrationEndDate' in this.config.authConfig) regEnd = new Date(this.config.authConfig.RegistrationEndDate); 
 	var now = new Date(); //now
 	var regPhase = false;
-	if ( (regStart <= now) && (regEnd >= now) ) regPhase = true;
+	if ( (regStart.getTime() <= now.getTime()) && (regEnd.getTime() >= now.getTime()) ) regPhase = true;
 	return regPhase;
 };
 
@@ -242,7 +247,7 @@ VotePage.prototype.isVotePhase = function() {
 	if ('VotingEnd' in this.config.authConfig) regEnd = new Date(this.config.authConfig.VotingEnd); 
 	var now = new Date(); //now
 	var regPhase = false;
-	if ( (regStart <= now) && (regEnd >= now) ) regPhase = true;
+	if ( (regStart.getTime() <= now.getTime()) && (regEnd.getTime() >= now.getTime()) ) regPhase = true;
 	return regPhase;
 };
 
@@ -250,7 +255,7 @@ VotePage.prototype.isShowResultPhase = function() {
 	var regEnd = new Date(this.config.authConfig.VotingEnd); // "2015-04-12T02:22:00Z");
 	var now = new Date(); //now
 	var regPhase = false;
-	if (regEnd <= now) regPhase = true;
+	if (regEnd.getTime() <= now.getTime()) regPhase = true;
 	return regPhase;
 };
 
@@ -266,7 +271,7 @@ VotePage.prototype.getNextVoteTime = function() {
 	var now = new Date();
 	var endDate = new Date("3000-01-01T00:00:00+00:00"); // use 1.1.3000 as enddate if no enddate is configured
 	if ('VotingEnd' in this.config.authConfig)	endDate = new Date (this.config.authConfig.VotingEnd);
-	if (now >= endDate) return false;
+	if (now.getTime() >= endDate.getTime()) return false;
 	
 	var startDate = new Date("2000-01-01T00:00:00+00:00"); // use 1.1.3000 as startdate if no enddate is configured
 	if ('VotingStart' in this.config.authConfig)	startDate = new Date (this.config.authConfig.VotingStart);
@@ -274,9 +279,9 @@ VotePage.prototype.getNextVoteTime = function() {
 	var endRegDate = new Date("3000-01-01T00:00:00+00:00"); // use 1.1.3000 as enddate if no enddate is configured
 	if ('RegistrationEndDate' in this.config.authConfig)	endRegDate = new Date (this.config.authConfig.RegistrationEndDate);
 	
-	if (startDate > endRegDate) { // if registration phase and voting phase do not overlapp 
-		if (now <  startDate) return startDate; // and voting did not start yet, return votingStartDate
-	    if (now >= startDate)  return true;
+	if (startDate.getTime() > endRegDate.getTime()) { // if registration phase and voting phase do not overlapp 
+		if (now.getTime() <  startDate.getTime()) return startDate; // and voting did not start yet, return votingStartDate
+	    if (now.getTime() >= startDate.getTime())  return true;
 	}
 
 	// Voting and registering phase overlap
@@ -288,8 +293,8 @@ VotePage.prototype.getNextVoteTime = function() {
 		curDelayUntil = new Date(this.config.authConfig.DelayUntil[i]);
 		i++;
 	} while ((curDelayUntil < returnEnvelopeCreationDate) && (i < this.config.authConfig.DelayUntil.length));
-	if (curDelayUntil <=  returnEnvelopeCreationDate) return false; // there is no DelayUntil after returnEnvelopeCreationDate --> no chance to cast the vote 
-	if (curDelayUntil <= now) return true;  // the delay after the returnEnvelpeCreationDate is already fulfilled 
+	if (curDelayUntil.getTime() <= returnEnvelopeCreationDate.getTime()) return false; // there is no DelayUntil after returnEnvelopeCreationDate --> no chance to cast the vote 
+	if (curDelayUntil.getTime() <= now.getTime()) return true;  // the delay after the returnEnvelpeCreationDate is already fulfilled 
 	return curDelayUntil;
 };
 
@@ -304,11 +309,11 @@ VotePage.prototype.getVoteTimeStr = function() {
 	var votingTimeStr = i18n.gettext('Error r83g83');
 	if (startdate === true) {
 		if (enddate === false) votingTimeStr = i18n.gettext('You can cast your vote from now on and without any time limit.');
-		if (enddate >= now) votingTimeStr = i18n.sprintf(i18n.gettext('You can cast your vote from now on until before %s.'), formatDate(enddate) );
+		else if (enddate.getTime() >= now.getTime()) votingTimeStr = i18n.sprintf(i18n.gettext('You can cast your vote from now on until before %s.'), formatDate(enddate) );
 	}
 	if (startdate instanceof Date) votingTimeStr = i18n.sprintf(i18n.gettext('You can cast your vote from %s until before %s.'), formatDate(startdate), formatDate(enddate));
 	if ( !(enddate === false)) {
-		if (startdate === false || enddate <= now)  votingTimeStr = i18n.gettext('It is not possible anymore to cast your vote.');
+		if (startdate === false || enddate.getTime() <= now.getTime())  votingTimeStr = i18n.gettext('It is not possible anymore to cast your vote.');
 	}
 	return votingTimeStr;
 };

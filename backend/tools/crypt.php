@@ -24,7 +24,7 @@ if(count(get_included_files()) < 2) {
 	exit;
 }
 
-chdir(__DIR__); require_once 'exception.php';
+chdir(__DIR__); require_once './exception.php';
 chdir(__DIR__); require_once './../Crypt/AES.php';
 chdir(__DIR__); require_once './tools.php'; /* base64url encoder */
 chdir(__DIR__); require_once './rsaMyExts.php';
@@ -215,6 +215,26 @@ class Crypt {
 		$dec = $this->myPrivateKey['privRsa']->_rsasp1($ptBigInt);
 		$ret = $dec->toBytes();
 		return $ret;
+	}
+	
+	function JwsSign(array $toJson) {
+		$protectedFields = array('alg' => 'PS256', 'typ' => 'JWT');
+		$protectedFieldsStr = json_encode($protectedFields);
+		$protectedFieldsBase64Url = base64url_encode($protectedFieldsStr);
+		$toJson['iss'] = $this->myPrivateKey['serverName'];
+		$toJson['iat'] = date('c', time());
+		$ContentStrToSign = str_replace('\/', '/', json_encode($toJson));
+		$textbase64 = base64url_encode($ContentStrToSign); //json_encode(array('test' => 'ich'))); // $text
+		$toSignStr = $protectedFieldsBase64Url . '.' . $textbase64;
+
+		$this->myPrivateKey['privRsa']->setMGFHash('sha256');
+		$this->myPrivateKey['privRsa']->setHash('sha256');
+		$this->myPrivateKey['privRsa']->setSignatureMode(CRYPT_RSA_SIGNATURE_PKCS1);
+		$sig = base64url_encode($this->myPrivateKey['privRsa']->sign($toSignStr));
+		
+		return array('proctedetFields' => $protectedFields, 'sig' =>$sig, 'signedData' => $toSignStr); //base64url_encode(
+		// https://jwt.io/ allows online verification
+		
 	}
 
 	function getNumServers() {
