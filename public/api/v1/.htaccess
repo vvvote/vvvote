@@ -6,8 +6,8 @@ RewriteOptions MergeBase
 
 # stop rewriting if a file (index.php) exists
 RewriteCond %{REQUEST_FILENAME} !-f
-# RewriteCond %{PATH_INFO} ^$
-# RewriteCond %{IS_SUBREQ} false
+#RewriteCond %{PATH_INFO} ^$
+RewriteCond %{IS_SUBREQ} false
 
 # insert index.php
 RewriteRule ^(.*)$  api/v1/index.php?/$1 [QSA,END]

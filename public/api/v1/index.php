@@ -1,6 +1,6 @@
 <?php
 chdir ( __DIR__ );
-$pathToBackend = '../../../backend/'; 
+$pathToBackend = './../../../backend/'; 
 require_once $pathToBackend . 'tools/loadconfig.php';
 chdir ( __DIR__ );
 
@@ -51,6 +51,7 @@ switch ($cmd) {
 		break;
 	case 'storevote' :
 		require_once $pathToBackend . 'storevote.php';
+		break;
 	case 'getresult' :
 		require_once $pathToBackend . 'getresult.php';
 		break;
