@@ -125,7 +125,7 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 		
 		$crypt_rsa = new Crypt_RSA ();
 		echo "Creating key pair...<br>\r\n";
-		// $keypair = $crypt_rsa->createKey ( $bitlength );
+		$keypair = $crypt_rsa->createKey ( $bitlength );
 		
 		
 		/* taken from ftp://ftp.rsasecurity.com/pub/pkcs/pkcs-1/pkcs-1v2-1-vec.zip
@@ -133,7 +133,7 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 		$e = new Math_BigInteger('010001', 16);
 		$p = new Math_BigInteger('d17f655bf27c8b16d35462c905cc04a26f37e2a67fa9c0ce0dced472394a0df743fe7f929e378efdb368eddff453cf007af6d948e0ade757371f8a711e278f6b', 16);
 		$q = new Math_BigInteger('c6d92b6fee7414d1358ce1546fb62987530b90bd15e0f14963a5e2635adb69347ec0c01b2ab1763fd8ac1a592fb22757463a982425bb97a3a437c5bf86d03f2f', 16);
-		*/
+		
 		// taken from https://csrc.nist.gov/csrc/media/projects/cryptographic-algorithm-validation-program/documents/dss/186-2rsatestvectors.zip
 		$n = new Math_BigInteger('be499b5e7f06c83fa0293e31465c8eb6b58af920bae52a7b5b9bfeb7aa72db1264112eb3fd431d31a2a7e50941566929494a0e891ed5613918b4b51b0d1fb97783b26acf7d0f384cfb35f4d2824f5dd380623a26bf180b63961c619dcdb20cae406f22f6e276c80a37259490cfeb72c1a71a84f1846d330877ba3e3101ec9c7b', 16);
 		$e = new Math_BigInteger('010001', 16);
