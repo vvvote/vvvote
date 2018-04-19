@@ -252,7 +252,7 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = f
 		alert(i18n.gettext('Server accepted the vote!'));
 		
 		// save the votingReceipt in the PublishOnlyTally
-		if (! ('votingReceipt ' in this.parent) )               this.parent.votingReceipt = new Array();
+		if (! ('votingReceipt'  in this.parent) )               this.parent.votingReceipt = new Array();
 		if (! ('this.qNo'       in this.parent.votingReceipt) ) this.parent.votingReceipt[this.qNo] = {}; 
 		this.parent.votingReceipt[this.qNo][ClientConfig.tkeys[this.tServerNo].kid] = receivedData;
 		
