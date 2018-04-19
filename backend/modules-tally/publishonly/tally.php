@@ -125,6 +125,7 @@ class PublishOnlyTally extends Tally {
 		$myKey = new Crypt($tServerKeys, $tserverkey);
 		$sig = $myKey->JwsSign($voterReq);
 		return array('cmd' => 'saveYourCountedVote', 'sig' => $sig);
+	}
 
 	function getAllVotesEvent($voterReq) {
 		// TODO check if client is allowed to see the election result (e.g. was allowed to vote / did vote himself)

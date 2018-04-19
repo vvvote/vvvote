@@ -80,15 +80,24 @@ PublishOnlyTally.prototype.onPermissionLoaded = function() {
 	
 };
 
-PublishOnlyTally.prototype.sendVote = function () {
+/**
+ * returns the vote to be send as a string
+ */
+PublishOnlyTally.prototype.getInputs = function(qNo) {
 	var element = document.getElementById('question0Input');
-	var vote = element.value;
-	this.sendVoteData(vote, 0);
+	var voteStr = element.value;
+	return voteStr;
+}
+
+
+PublishOnlyTally.prototype.sendVote = function (qNo) {
+	var voteStr = this.getInputs(qNo);
+	this.sendVoteData(voteStr, qNo);
 };
 
-PublishOnlyTally.prototype.sendVoteData = function (vote, qNo) {
+PublishOnlyTally.prototype.sendVoteData = function (voteStr, qNo) {
 	var transm = {};
-	transm = this.election.signVote(vote, qNo);
+	transm = this.election.signVote(voteStr, qNo);
 	if (! ('myVotesHandler' in this) ) this.myVotesHandler = []; 
 	this.myVotesHandler[qNo] = new PublishOnlyTallySendVoteHandler(this, qNo, 0); // TODO for each tellyserver 1 instance?
 	this.myVotesHandler[qNo].sendVote(transm);
@@ -244,12 +253,24 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = f
 		
 		// save the votingReceipt in the PublishOnlyTally
 		if (! ('votingReceipt ' in this.parent) )               this.parent.votingReceipt = new Array();
-		if (! ('this.qNo'       in this.parent.votingReceipt) ) this.parent.votingReceipt[this.qNo] = {} 
+		if (! ('this.qNo'       in this.parent.votingReceipt) ) this.parent.votingReceipt[this.qNo] = {}; 
 		this.parent.votingReceipt[this.qNo][ClientConfig.tkeys[this.tServerNo].kid] = receivedData;
 		
 		this.parent.showSaveReceiptButton(this.qNo);
-		this.parent.disableQuestion(i18n.gettext('Vote accepted'), this.qNo, false);
+		this.parent.disableQuestion(i18n.gettext('Vote accepted'), this.qNo, receivedData.decodedSignedContent.vote.vote);
 		// Page.loadMainContent(i18n.gettext('Thank you for voting!'));
+		
+		// save the sent question number in localStorage
+		if (!Array.isArray(this.parent.sentQNo)) this.parent.sentQNo = new Array();
+		this.parent.sentQNo.push(this.qNo);
+		try { // edge sometimes (ca. 20%) causes a SCRIPT16389 unspecified error (which supposedly means "permission denied") when trying to access local storage from a local file
+			if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
+				localStorage.setItem('sentQNo'+ this.parent.returnEnvelopeLStorageId, JSON.stringify(this.parent.sentQNo));
+			}
+		} catch (e) {
+			alert ("Info: Problem accessing localStorage:" + e.toString());
+			console.log('Info: handleServerAnswerStoreVoteSuccess: problem accessing local storage ignored: ' + e.toString());
+		}
 	}.bind(this))
 	.catch (function(err) {
 		console.log(err);

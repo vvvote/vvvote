@@ -777,36 +777,11 @@ ConfigurableTally.buttonStep = function(qNo, forward) {
  * 
  ***********************************************************************/
 
-
-ConfigurableTally.prototype.sendVote = function(qNo) {
-	this.vote = this.getInputs(qNo);
-	this.qNo = qNo;
-	var votestr = unicodeToBlackslashU(JSON.stringify(this.vote));
-//	var questionID = this.config.questions[qNo].questionID;
-	this.sendVoteData(votestr, qNo);  // sendVoteData is inherited from publish-only-tally
-};
-
-ConfigurableTally.prototype.handleServerAnswerStoreVoteSuccess = function (data) { // called from handleServerAnswerStoreVote which is inherited from publish-only
-	alert(i18n.gettext('The server accepted your vote.'));
-	this.disableQuestion(i18n.gettext('Vote accepted'), this.qNo, this.vote);
-	if (!Array.isArray(this.sentQNo)) this.sentQNo = new Array();
-	this.sentQNo.push(this.qNo);
-	try { // edge sometimes (ca. 20%) causes a SCRIPT16389 unspecified error (which supposedly means "permission denied") when trying to access local storage from a local file
-		if (typeof localStorage !== 'undefined') { // Internet Explorer 11 does not support loacalStorage for files loaded from local disk. As this is not an important feature, just disable it if not supported
-			localStorage.setItem('sentQNo'+ this.returnEnvelopeLStorageId, JSON.stringify(this.sentQNo));
-		}
-	} catch (e) {
-		alert ("Info: Problem accessing localStorage:" + e.toString());
-		console.log('Info: handleServerAnswerStoreVoteSuccess: problem accessing local storage ignored: ' + e.toString());
-	}
-};
-
-
 /**
  * 
  * @param qNo
- * @param selected 	the vote array of options (and scheme) to be selected,
- * 					true: do not disable options 
+ * @param selected 	JSON-String of the vote array of options (and scheme) to be selected,
+ * 					true: do not disable options, 
  * 					false: all options will be unselected
  * 					 
  */
@@ -821,7 +796,7 @@ ConfigurableTally.prototype.disableQuestion = function(buttonText, qNo, selected
 //	}]
 //	};
 	this.enDisableSendButton(buttonText, qNo, true);
-
+	if (typeof selected === "string") selected = JSON.parse(selected);
 	// Disable all inputs on all options belonging to the question
 	if (selected !== true) { // if selected === true: do not disable options
 		for (var optionNo=0; optionNo<this.config.questions[qNo].options.length; optionNo++) {
@@ -874,6 +849,9 @@ ConfigurableTally.prototype.disableQuestion = function(buttonText, qNo, selected
 	}
 };
 
+/**
+ * @return JSON encoded string that contains the selected options for qNo
+ */
 ConfigurableTally.prototype.getInputs = function(qNo) {
 	var vote = {//"ballotID":tallyconfig.ballotID,
 //			"questions": [{
@@ -916,22 +894,7 @@ ConfigurableTally.prototype.getInputs = function(qNo) {
 			vote.options[optionNo][schemeIndex] = {"name": curScheme.name, "value": value};
 		}
 	}
-	return vote;
-
-	/*
-	for (var qNo=0; qNo<tallyconfig.questions.length; qNo++) {
-		switch (tallyconfig.questions[qNo].voteSystem.type) {
-		case 'score':
-			divFirstQNode.setAttribute('id', 'FirstStepQ'+qNo);
-			if (tallyconfig.questions[qNo].voteSystem.steps.indexOf('yesNo' >= 0)) {
-				for (var optionNo=0; optionNo<tallyconfig.questions[qNo].options.length; optionNo++) {
-					var optionID = tallyconfig.questions[qNo].options[optionNo].optionID;
-				}
-			}
-		}
-
-	}
-	 */	
+	return unicodeToBlackslashU(JSON.stringify(vote));
 
 };
 
@@ -1041,34 +1004,6 @@ ConfigurableTally.prototype.handleUserClickGetAllVotes = function(questionID) {
 	PublishOnlyTally.requestAllVotes(this.config.electionId, questionID, me, me.handleServerAnswerVerifyCountVotes);
 };
 
-/*
- * this is in the parent publish-only-tally. It calls this.processVerifyCountVotes(answ).
-ConfigurableTally.prototype.handleServerAnswerVerifyCountVotes = function(xml) {
-	try {
-		var answ = parseServerAnswer(xml, true);
-		switch (answ.cmd) {
-		case 'error':
-			alert('Der Server gibt das Abstimmungsergebnis nicht bekannt. Er meldet:\n' + translateServerError(data.errorNo, data.errorTxt));
-			break;
-		case 'verifyCountVotes': 
-			this.processVerifyCountVotes(answ);
-			break;
-		default:
-			throw new ErrorInServerAnswer(2003, 'Error: Expected >verifyCountVotes<', 'Got from server: ' + answ.cmd);
-		break;
-		}
-	} catch (e) {
-		if (e instanceof MyException ) {e.alert();}
-		else if (e instanceof TypeError   ) {
-			var f = new ErrorInServerAnswer(2004, 'Error: unexpected var type', 'details: ' + e.toString());
-			f.alert();
-		} else {
-			var f = new ErrorInServerAnswer(2005, 'Error: some error occured', 'details: ' + e.toString());
-			f.alert();
-		} 
-	};
-};
-*/
 
 ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 	var votesOnly = new Array();
