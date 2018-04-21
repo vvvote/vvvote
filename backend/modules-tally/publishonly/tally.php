@@ -100,7 +100,7 @@ class PublishOnlyTally extends Tally {
 			$votingno   = $voterReq['permission']['signed']['votingno'];
 			$vote       = $voterReq['vote']['vote'];
 		} catch (OutOfBoundsException $e) {
-			WrongRequestException::throwException(1102, 'The request ist missing >electionId< and/or >votingno<', "complete request: " . print_r($voterReq, true));
+			WrongRequestException::throwException(110201, 'The request ist missing >electionId< and/or >votingno<', "complete request: " . print_r($voterReq, true));
 		} catch (OutOfRangeException $e) {
 			WrongRequestException::throwException(1103, 'The request ist missing >electionId< and/or >votingno<', "complete request: " . print_r($voterReq, true));
 		}

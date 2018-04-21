@@ -18,8 +18,8 @@ $config = array (
 		// is encrypted by the Vvvote client using RSA/AES encryption
 		// uncomment, if you need to change it..
 		// This value must be the same on all Vvvote (permission) servers.
-		// defaults to 'tServerStoreVotePorts' => array ( '80' ),
-		// 'tServerStoreVotePorts' => array ('80'),
+		// defaults to 'tServerStoreVotePorts' => array ('80', '80'),
+		// 'tServerStoreVotePorts' => array ('80', '80'),
 		
 		
 		// URL to your organisations's website

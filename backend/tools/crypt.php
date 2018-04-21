@@ -218,7 +218,7 @@ class Crypt {
 	}
 	
 	function JwsSign(array $toJson) {
-		$protectedFields = array('alg' => 'PS256', 'typ' => 'JWT');
+		$protectedFields = array('alg' => 'RS256', 'typ' => 'JWT');
 		$protectedFieldsStr = json_encode($protectedFields);
 		$protectedFieldsBase64Url = base64url_encode($protectedFieldsStr);
 		$toJson['iss'] = $this->myPrivateKey['serverName'];

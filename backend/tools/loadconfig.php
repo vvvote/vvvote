@@ -87,11 +87,12 @@ foreach ( $config ['pServerUrlBases'] as $i => $curUrl ) {
 
 if (isset ( $config ['tServerStoreVotePorts'] ))
 	$tServerStoreVotePorts = $config ['tServerStoreVotePorts'];
-else
-	$tServerStoreVotePorts = Array (
-			'80' 
-	);
-
+else {
+	$tServerStoreVotePorts = array();
+	foreach ($pServerUrlBases as $key => $value) {
+		$tServerStoreVotePorts[$key] = '80';
+	}
+}
 
 $linkToHostingOrganisation = '#';
 if (isset ( $config ['linkToHostingOrganisation'] )) {
@@ -125,10 +126,11 @@ date_default_timezone_set ( 'Europe/Berlin' ); // this is only used to avoid a w
                                             
 // load / set config which is identical for all servers
 
-$urltmp = parse_url ( $pServerUrlBases [0] );
-$tServerStoreVoteUrls = array (
-		'http://' . $urltmp ['host'] . ':' . $tServerStoreVotePorts [0] . $urltmp ['path'] . 'storevote' 
-);
+$tServerStoreVoteUrls = array();
+foreach ( $tServerStoreVotePorts as $key => $value ) {
+	$urltmp = parse_url ( $pServerUrlBases [$key] );
+	$tServerStoreVoteUrls[$key] = 'http://' . $urltmp ['host'] . ':' . $tServerStoreVotePorts [$key] . $urltmp ['path'] . 'storevote';
+}
 
 // number of ballots the servers have to sign 0: first signing server, 1: second signing server...
 // last server always must be set to 1.
@@ -143,7 +145,7 @@ $numVerifyBallots = array (
 );
 $numPSigsRequiered = count ( $numSignBallots ); // this number of sigs from permission servers are requiered in order for a return envelope to be accepted
 $numPServers = $numPSigsRequiered; // number of permission servers
-$numTServers = 1;
+$numTServers = 2;
 
 if (! isset ( $DO_NOT_LOAD_PUB_KEYS )) { // this will be set during key generation
 	chdir(__DIR__); require_once './rsaMyExts.php';
@@ -208,8 +210,7 @@ function loadprivatekey($dir, $typePrefix, $serverNo, array $publickeys) {
 }
 if (! isset ( $DO_NOT_LOAD_PUB_KEYS )) {
 	$pserverkey = loadprivatekey ( $configdir, 'PermissionServer', $serverNo, $pServerKeys );
-	if ($serverNo === 1)
-		$tserverkey = loadprivatekey ( $configdir, 'TallyServer', $serverNo, $tServerKeys ); // TODO use separate numeration for tally and permission servers
+	$tserverkey = loadprivatekey ( $configdir, 'TallyServer', $serverNo, $tServerKeys ); // TODO use separate numeration for tally and permission servers
 }
 
 if (isset ( $config ['oauth2Config'] )) {

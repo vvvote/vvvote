@@ -76,12 +76,10 @@ PublishOnlyTally.prototype.getMainContentFragm = function(fragm, config) {
 	
 };
 
-PublishOnlyTally.prototype.onPermissionLoaded = function() {
-	
-};
 
 /**
  * returns the vote to be send as a string
+ * Overwrite this method in order to implement other voting inputs
  */
 PublishOnlyTally.prototype.getInputs = function(qNo) {
 	var element = document.getElementById('question0Input');
@@ -89,7 +87,10 @@ PublishOnlyTally.prototype.getInputs = function(qNo) {
 	return voteStr;
 }
 
-
+/**
+ * Is called form vote page when the "cast vote" button is pressed
+ * Overwrite getInputs in order to implement other voting inputs
+ */
 PublishOnlyTally.prototype.sendVote = function (qNo) {
 	var voteStr = this.getInputs(qNo);
 	this.sendVoteData(voteStr, qNo);
@@ -98,13 +99,27 @@ PublishOnlyTally.prototype.sendVote = function (qNo) {
 PublishOnlyTally.prototype.sendVoteData = function (voteStr, qNo) {
 	var transm = {};
 	transm = this.election.signVote(voteStr, qNo);
-	if (! ('myVotesHandler' in this) ) this.myVotesHandler = []; 
-	this.myVotesHandler[qNo] = new PublishOnlyTallySendVoteHandler(this, qNo, 0); // TODO for each tellyserver 1 instance?
-	this.myVotesHandler[qNo].sendVote(transm);
+	if (! ('myVotesHandler' in this) ) this.myVotesHandler = [];
+	this.myVotesHandler[qNo]=[];
+	if (! ('storeVotesPromises' in this) ) this.storeVotesPromises = [];
+	this.storeVotesPromises[qNo]=[];
+	for (var i = 0; i < ClientConfig.storeVoteUrls.length; i++) {
+//	var i = 1;
+		this.myVotesHandler[qNo][i] = new PublishOnlyTallySendVoteHandler(this, qNo, i);
+		this.storeVotesPromises[qNo][i] = this.myVotesHandler[qNo][i].sendVote(transm);
+	}
+	Promise.all(this.storeVotesPromises[qNo])
+	.then(function(ret) {
+		alert(i18n.gettext('Server accepted the vote!'));
+	}).catch(function(err) {
+		if (err instanceof MyException) err.alert();
+		else alert(err);
+//		alert("Nö: Bei mindestens 1 Stimmserver gab es einen Fehler.");
+	});
 };
 
 /**
- * Disable and change button text of "send vote Button" to "vote accepted"
+ * Disable and change button text of "send vote Button" to "vote accepted" or "Send your vote after XXX"
  */
 
 PublishOnlyTally.prototype.enDisableSendButton = function(buttonText, qNo, disable) {
@@ -124,6 +139,10 @@ PublishOnlyTally.prototype.disableQuestion = function(buttonText, qNo, selected)
 	this.enDisableSendButton(i18n.gettext('Vote accepted'), qNo, true);
 	var el = document.getElementById('question' + qNo + 'Input');
 	el.setAttribute('disabled', 'disabled');
+};
+
+ConfigurableTally.prototype.enableSendVoteButtons = function() {
+	this.onPermissionLoaded('');
 };
 
 PublishOnlyTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorageId_) {
@@ -184,20 +203,24 @@ PublishOnlyTallySendVoteHandler = function(parent, qNo, tServerNo) {
  * ecncrypt it (transport encryption)
  * 
  */
-PublishOnlyTallySendVoteHandler.prototype.sendVote = function(transm) {
-	this.voteOnly = JSON.parse(JSON.stringify(transm)); //clone object
-	transm.cmd = 'storeVote';
-	var transmstr = JSON.stringify(transm);
-	var me = this;
-	this.te = new TransportEncryption();
-	this.te.encrypt(transmstr, me, me.encryptedCallback, ClientConfig.tkeys[this.tServerNo]);
-};
+	PublishOnlyTallySendVoteHandler.prototype.sendVote = function(transm) {
+		return new Promise(function(resolve, reject) {
+			this.voteOnly = JSON.parse(JSON.stringify(transm)); //clone object
+			transm.cmd = 'storeVote';
+			var transmstr = JSON.stringify(transm);
+			var me = this;
+			this.te = new TransportEncryption();
+			this.te.encrypt(transmstr, me, me.encryptedCallback, ClientConfig.tkeys[this.tServerNo]);
+			this.resolve = resolve;
+			this.reject = reject;
+		}.bind(this));
+	};
 
 PublishOnlyTallySendVoteHandler.prototype.encryptedCallback = function(encrypted) {
 	console.log(encrypted);
 	this.sentReqDate = new Date();
 	var me = this;
-	myXmlSend(ClientConfig.storeVoteUrl, encrypted, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
+	myXmlSend(ClientConfig.storeVoteUrls[me.tServerNo], encrypted, me, me.handleServerAnswerStoreVote, ClientConfig.anonymizerUrl);
 };
 
 PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVote = function (xml) {
@@ -205,32 +228,41 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVote = function
 		var data = parseServerAnswer(xml, true);
 		if (typeof(data.cmd) === 'string' && data.cmd === 'error') {
 			// an encryption error occoured on server side, that is why it sends an unencrypted error message
-			alert(i18n.sprintf(i18n.gettext('The server did not accept the vote. It says:\n%s'), translateServerError(data.errorNo, data.errorTxt)));
+			throw new ServerReturnedAnError(234543, data.errorNo, i18n.gettext('The server did not accept the vote.'), data.errorTxt); 
+//			alert(i18n.sprintf(i18n.gettext('The server did not accept the vote. It says:\n%s'), translateServerError(data.errorNo, data.errorTxt)));
 		} else {
 			var me = this;
-			this.te.decrypt(data, true).then(function (data) {
+			this.te.decrypt(data, true)
+			.then(function (data) {
 				switch (data.cmd) {
-				case 'saveYourCountedVote': me.handleServerAnswerStoreVoteSuccess(data);
-				break;
+				case 'saveYourCountedVote': 
+					me.handleServerAnswerStoreVoteSuccess(data);
+					break;
 				case 'error':
-					alert(i18n.sprintf(i18n.gettext('The server did not accept the vote. It says:\n%s'), translateServerError(data.errorNo, data.errorTxt)));
+					throw new ServerReturnedAnError(234543, data.errorNo, i18n.sprintf(i18n.gettext('The server >%s< did not accept the vote.'), xml.responseURL), i18n.gettext('It says:\n')+ data.errorTxt);
+//					alert(i18n.sprintf(i18n.gettext('The server >%s< did not accept the vote. It says:\n%s'), xml.responseURL, translateServerError(data.errorNo, data.errorTxt)));
+//					me.reject("abc");
 					break;
 				default:
 					throw new ErrorInServerAnswer(2002, i18n.gettext('Error: Expected >saveYourCountedVote<'), i18n.sprintf(i18n.gettext('Got from server: %s'),data.cmd));
 				break;
 				}
 			}).catch(function(e) {
-				alert(i18n.sprintf(i18n.gettext('decryption of server answer failed: %s'), e.toString()));
+//				if (e instanceof MyException) e.alert();
+//				else alert(i18n.sprintf(i18n.gettext('decryption of server answer failed: %s'), e.toString()));
+				me.reject(e);
 			});
 		};
 	} catch (e) {
-		if (e instanceof MyException ) {e.alert();}
-		else {throw e;}
+//		if (e instanceof MyException ) {e.alert();}
+//		else {throw e;}
+		console.log('handleServerAnswerStoreVote: ' + e);
+		throw e;
 	}
 };
 
 PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = function (data) {
-	this.verifyTServerSig(data.sig.sig, data.sig.signedData, ClientConfig.tkeys[0])
+	this.verifyTServerSig(data.sig.sig, data.sig.signedData, ClientConfig.tkeys[this.tServerNo])
 	.then( function(receivedData) {
 		// alert("sig valid!" + JSON.stringify(receivedData));
 		
@@ -249,7 +281,7 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = f
 		toBeSignedData.cmd = 'storeVote';
 		var equals = jsonEquals(receivedData.decodedSignedContent, toBeSignedData);
 		if (equals !== true) throw new ErrorInServerAnswer(46596, 'Error: The tally server signed something else than my vote. The differences are: ', JSON.stringify(diff));
-		alert(i18n.gettext('Server accepted the vote!'));
+//		alert(i18n.gettext('Server accepted the vote!'));
 		
 		// save the votingReceipt in the PublishOnlyTally
 		if (! ('votingReceipt'  in this.parent) )               this.parent.votingReceipt = new Array();
@@ -271,10 +303,13 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = f
 			alert ("Info: Problem accessing localStorage:" + e.toString());
 			console.log('Info: handleServerAnswerStoreVoteSuccess: problem accessing local storage ignored: ' + e.toString());
 		}
+		this.resolve();
 	}.bind(this))
 	.catch (function(err) {
 		console.log(err);
-		alert(i18n.sprintf(i18n.gettext("Error while verifying tally server /%s/ signature: %s"), ClientConfig.tkeys[this.tServerNo].kid, err));
+		throw new ErrorInServerAnswer(34554, i18n.sprintf(i18n.gettext("Error while verifying tally server /%s/ signature: %s"), ClientConfig.tkeys[this.tServerNo].kid, err),'');
+//		alert(i18n.sprintf(i18n.gettext("Error while verifying tally server /%s/ signature: %s"), ClientConfig.tkeys[this.tServerNo].kid, err));
+		this.reject();
 	}.bind(this));
 };
 

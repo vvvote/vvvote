@@ -87,7 +87,8 @@ function myXmlSend(url, data, callbackObject, callbackFunction, proxy) {
 		alert(i18n.gettext('There is an error in the configuration. Please inform the administrator. (error no.: 875765: URL not defined or not of type string)'));
 		return;
 	} 
-	myXmlSend_(url, data, callbackObject, callbackFunction, proxy, 'POST', true);
+	var sender = new myXmlSend_(url, data, callbackObject, callbackFunction, proxy, 'POST', true);
+	sender.send();
 }
 
 /**
@@ -104,8 +105,40 @@ function httpPostDownload(url, callbackObject, callbackFunction, log, proxy) {
 		alert(i18n.gettext('There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)')); // Ein Fehler in den Einstellungen ist aufgetreten. Bitte informieren Sie den Wahlverantwortlichen (Fehlernr.: 875766: URL nicht definiert oder kein String)');
 		return;
 	}
-	myXmlSend_(url, null, callbackObject, callbackFunction, proxy, 'POST', log);
+	var sender = new myXmlSend_(url, null, callbackObject, callbackFunction, proxy, 'POST', log);
+	sender.send();
 }
+/**
+ * Holds an array of myXmlSend_ instances with connection error
+ * If the first error occured, all others will go into this array and
+ * automatically step-by-step retried after the first was solved.  
+ */
+myXmlSend_Array  = new Array();
+
+function retryXmlSend_() {
+	//var curErrorXmlSender = myXmlSend_Array[stackNo];
+	//if (curErrorXmlSender !== myXmlSend_Array.pop()) alert('Hier stimmt was nicht!');
+	var curErrorXmlSender = myXmlSend_Array.pop();
+	curErrorXmlSender.send();
+};
+
+myXmlSend_ = function(url, data, callbackObject, callbackFunction, proxy, method, log) {
+	this.url = url;
+	this.data = data;
+	this.callbackObject = callbackObject;
+	this.callbackFunction = callbackFunction;
+	this.proxy = proxy;
+	this.method = method;
+	this.log = log;
+	unhidePopup();
+};
+
+myXmlSend_.prototype.onLoadCallback =  function(xml2) {
+	if (myXmlSend_Array.length > 0) retryXmlSend_();
+	var me = this;
+	me.callbackFunction.call(me.callbackObject, xml2, me.url); 
+};
+
 
 
 /**
@@ -118,19 +151,10 @@ function httpPostDownload(url, callbackObject, callbackFunction, log, proxy) {
  * @param log boolean weather the data transfer should be logged by a userlog call
  */
 
-function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, log) {
-	if (url !== null) { // if url == null: an error occoured and retry was pressed
-		myXmlSend_.url = url;
-		myXmlSend_.data = data;
-		myXmlSend_.callbackObject = callbackObject;
-		myXmlSend_.callbackFunction = callbackFunction;
-		myXmlSend_.proxy = proxy;
-		myXmlSend_.method = method;
-		myXmlSend_.log = log;
-		unhidePopup();
-	}
+myXmlSend_.prototype.send = function () {
+	var me = this;
 	var xml2 = new XMLHttpRequest();
-	xml2.onload = function() { myXmlSend_.callbackFunction.call(myXmlSend_.callbackObject, xml2, myXmlSend_.url); };
+	xml2.onload = function() { me.onLoadCallback(xml2); };
 	xml2.onerror = function(e) {
 		// var t;
 		// if (e instanceof Event) t = e.target.statusText;
@@ -147,14 +171,22 @@ function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, 
 		/*		  if (xml2.status == Components.results.NS_ERROR_UNKNOWN_HOST) {
 		   alert("DNS error: " +  this.channel.status);
 	     }
-		 */		
+		 */	
+		var me = this;
+		myXmlSend_Array.push(me);
+		if ((myXmlSend_Array.length) > 1) return; // wait for a call back until the previous error is solved 
 		var errorDiv = document.getElementById("errorDiv");
 		//window.frames['diagnosisIFrame'].document.location.href = url;
-		var tmp   = '<div id="error"><h1>Es gab einen Fehler bei einer Verbindung zu einem Server.</h1>';
+		var tmp   = '<div id="error"><h1>' + i18n.gettext('An error occured while connecting to a server') + '</h1>'; // Es gab einen Fehler bei einer Verbindung zu einem Server.
 		var testurl;
-		if (myXmlSend_.url.indexOf('?') > 0)	testurl = myXmlSend_.url + '&connectioncheck';
-		else                                	testurl = myXmlSend_.url + '?connectioncheck';
-		tmp = tmp + '<ul><li>Klicken Sie <a href="' + testurl + '" target="_blank">auf diesen Link, um die Verbindung zum Server manuell zu testen.</a> Der Link wird in einem neuen Fenster geöffnet.</li> <li>Beheben Sie das Problem,</li> <li>schließen Sie das neue Fenster und </li><li>klicken anschließend auf <button id="retry" name="retry" onclick="myXmlSend_(null, null, null, null)">erneut versuchen</button></li></ul></div>';
+		if (me.url.indexOf('?') > 0)	testurl = me.url + '&connectioncheck';
+		else                        	testurl = me.url + '?connectioncheck';
+//		tmp = tmp + '<ul><li>' + i18n.sprintf(i18n.gettext('Klicken Sie %s auf diesen Link, um die Verbindung zum Server manuell zu testen.</a> Der Link wird in einem neuen Fenster geöffnet.</li> <li>Beheben Sie das Problem,</li> <li>schließen Sie das neue Fenster und </li><li>klicken anschließend auf <button id="retry" name="retry" onclick="myXmlSend_(null, null, null, null)">erneut versuchen</button></li></ul></div>'), '<a href="' + testurl + '" target="_blank">');
+		tmp = tmp + '<ul><li>' + i18n.sprintf(i18n.gettext('Click %s this link, in order to test the connection manually.</a>' +
+				'The link will be opened in a new window.</li> ' +
+				'<li>Solve the problem,</li> <li>close the window and </li>' +
+				'<li>click afterwards on %s try again</button>'), '<a href="' + testurl + '" target="_blank">', '<button id="retry" name="retry" onclick="retryXmlSend_()">') + 
+				'</li></ul></div>';
 		tmp = tmp + '';
 		errorDiv.innerHTML = tmp;
 		// alert(errorDiv.innerHTML);
@@ -178,23 +210,23 @@ function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, 
 				alert('Es ist ein Fehler beim Aufbau einer Verbindung aufgetreten. Um den genauen Fehler anzuzeigen, wurde versucht, die Verbindung in einem neuen Fenster zu öffnen. Bitte lassen Sie das Pop-up-Fenster zu.');
 			}
 		} */
-	};
+	}.bind(this);
 	try {
-		if ( (url !== null) && myXmlSend_.proxy && (myXmlSend_.proxy.length > 0) ) {
+		if ( (me.url !== null) && me.proxy && (me.proxy.length > 0) ) {
 //			var urlparts = URI.getParts(url);
-			myXmlSend_.url = myXmlSend_.proxy + url; // urlparts.pathname + urlparts.search +urlparts.hash;
+			me.url = me.proxy + url; // urlparts.pathname + urlparts.search +urlparts.hash;
 		}
-		xml2.open(myXmlSend_.method, myXmlSend_.url, true);
-		if (myXmlSend_.method == 'GET') xml2.setRequestHeader("If-Modified-Since", "Sat, 01 Jan 2005 00:00:00 GMT"); // if using GET the browser is generally allowed to cache the answer. But we want to make sure to get always the latest version
+		xml2.open(me.method, me.url, true);
+		if (me.method == 'GET') xml2.setRequestHeader("If-Modified-Since", "Sat, 01 Jan 2005 00:00:00 GMT"); // if using GET the browser is generally allowed to cache the answer. But we want to make sure to get always the latest version
 		/* unfortunately this does not work because setting requestHeader Host is prohibited for security reasons
 		if (myXmlSend_.proxy && myXmlSend_.proxy.length > 0) {
 			var urlparts = URI.getParts(url);
 			var realhost = urlparts.host;
 			xml2.setRequestHeader('Host', realhost);
 		} */
-		if ((myXmlSend_.data === null) || typeof myXmlSend_.data === 'undefined')	xml2.send();
-		else 																		xml2.send(myXmlSend_.data);
-		if (myXmlSend_.log) userlog("\r\n\r\n--> gesendet an Server " + myXmlSend_.url + ': ' + myXmlSend_.data + "\r\n\r\n");
+		if ((me.data === null) || typeof me.data === 'undefined')	xml2.send();
+		else 														xml2.send(me.data);
+		if (me.log) userlog("\r\n\r\n--> gesendet an Server " + me.url + ': ' + me.data + "\r\n\r\n");
 		var errorDiv = document.getElementById("errorDiv");
 		// var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
 		errorDiv.style.display = "none";
@@ -205,7 +237,7 @@ function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, 
 		// alert('Error trying to connect to ' + myXmlSend_.url + '\n' + e.toString());
 		xml2.onerror(e);
 	}
-}
+};
 
 
 //myXmlSend.myRetry = function() {myXmlSend(url, data, callbackObject, callbackFunction);};
@@ -213,7 +245,7 @@ function myXmlSend_(url, data, callbackObject, callbackFunction, proxy, method, 
 function parseServerAnswer(xml, jsonDecode) {
 	if (xml.status != 200) { httpError(xml); }
 	try {
-		userlog("\n<--- empfangen:\n" + xml.responseText);
+		userlog("\n<--- " + i18n.gettext('Received from: ') + xml.responseURL + "\n" + xml.responseText);
 		var regex = /----vvvote----\n(.*)\n----vvvote----\n/g;
 		var tmp = regex.exec(xml.responseText);
 		if (tmp != null && 1 in  tmp)	tmp = tmp[1]; // found ----vvvote---- marker

@@ -590,11 +590,6 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 };
 
 
-
-ConfigurableTally.prototype.enableSendVoteButtons = function() {
-	this.onPermissionLoaded('');
-};
-
 ConfigurableTally.prototype.collapseAllQuestions = function() {
 	for (var qNo=0; qNo<this.config.questions.length; qNo++) {
 		var el = document.getElementById('divVoteQuestion'+qNo);
@@ -850,8 +845,9 @@ ConfigurableTally.prototype.disableQuestion = function(buttonText, qNo, selected
 };
 
 /**
+ * Gets called from PublishOnlyTally to send the vote
  * @return JSON encoded string that contains the selected options for qNo
- */
+ **/
 ConfigurableTally.prototype.getInputs = function(qNo) {
 	var vote = {//"ballotID":tallyconfig.ballotID,
 //			"questions": [{

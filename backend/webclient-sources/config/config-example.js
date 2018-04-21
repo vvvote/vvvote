@@ -44,7 +44,7 @@ var server1urlParts = URI.getParts(server1url);
 server2url = ClientConfig.serverList[1].baseUrl;
 
 ClientConfig.electionConfigUrl = server1url + 'getelectionconfig';
-ClientConfig.storeVoteUrl      = serverinfos.tServerStoreVoteUrls[0]; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
+ClientConfig.storeVoteUrls      = serverinfos.tServerStoreVoteUrls; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
 ClientConfig.getResultUrl      = server1url + 'getresult'; //?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 
 // TODO make anonymize a config in backend/config
