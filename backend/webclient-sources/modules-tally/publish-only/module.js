@@ -142,7 +142,7 @@ PublishOnlyTally.prototype.disableQuestion = function(buttonText, qNo, selected)
 	el.setAttribute('disabled', 'disabled');
 };
 
-ConfigurableTally.prototype.enableSendVoteButtons = function() {
+PublishOnlyTally.prototype.enableSendVoteButtons = function() {
 	this.onPermissionLoaded('');
 };
 
