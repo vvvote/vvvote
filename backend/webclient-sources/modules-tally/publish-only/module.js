@@ -396,7 +396,7 @@ information that is also shown in JSON clear text.');
 
 	// convert public tally server keys into the pem format
 	var publickeys = '/**\r\n';
-	convertkeyPromises = [];
+	var convertkeyPromises = [];
 	for (var i = 0; i < ClientConfig.tkeys.length; i++) {
 		var curkey = ClientConfig.tkeys[i];
 		convertkeyPromises[i] = jwk2pemPromise(curkey);
