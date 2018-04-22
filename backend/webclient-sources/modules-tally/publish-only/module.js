@@ -347,7 +347,7 @@ PublishOnlyTallySendVoteHandler.prototype.verifyTServerSig = function (sig, Data
 		.then(function(publickey) {
 			me.serverKeyAPI = publickey;
 			console.log('serverKeyAPI: ' + me.serverKeyAPI);
-			window.crypto.subtle.verify( {name: "RSASSA-PKCS1-v1_5"}, publickey, sigArraBuff, DataSignedArraBuff)
+			window.crypto.subtle.verify( {name: "RSASSA-PKCS1-v1_5", hash:{name: 'SHA-256'}}, publickey, sigArraBuff, DataSignedArraBuff)
 			.then(function(isvalid){
 				//returns a boolean on whether the signature is valid or not
 				console.log("Tally server signature valid: " + isvalid);
