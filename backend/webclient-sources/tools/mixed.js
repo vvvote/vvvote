@@ -212,9 +212,9 @@ myXmlSend_.prototype.send = function () {
 		} */
 	}.bind(this);
 	try {
-		if ( (me.url !== null) && me.proxy && (me.proxy.length > 0) ) {
+		if ( (me.url !== null) && me.proxy && (me.proxy.length > 0) && (! me.url.startsWith(me.proxy)) ) {
 //			var urlparts = URI.getParts(url);
-			me.url = me.proxy + url; // urlparts.pathname + urlparts.search +urlparts.hash;
+			me.url = me.proxy + me.url; // urlparts.pathname + urlparts.search +urlparts.hash;
 		}
 		xml2.open(me.method, me.url, true);
 		if (me.method == 'GET') xml2.setRequestHeader("If-Modified-Since", "Sat, 01 Jan 2005 00:00:00 GMT"); // if using GET the browser is generally allowed to cache the answer. But we want to make sure to get always the latest version
