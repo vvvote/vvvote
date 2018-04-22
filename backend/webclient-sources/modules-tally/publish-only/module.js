@@ -108,9 +108,10 @@ PublishOnlyTally.prototype.sendVoteData = function (voteStr, qNo) {
 		this.myVotesHandler[qNo][i] = new PublishOnlyTallySendVoteHandler(this, qNo, i);
 		this.storeVotesPromises[qNo][i] = this.myVotesHandler[qNo][i].sendVote(transm);
 	}
+	// TODO: raise an error only if no tally server accepted the vote
 	Promise.all(this.storeVotesPromises[qNo])
 	.then(function(ret) {
-		alert(i18n.gettext('Server accepted the vote!'));
+		alert(i18n.gettext('Tally servers accepted the vote!'));
 	}).catch(function(err) {
 		if (err instanceof MyException) err.alert();
 		else alert(err);
@@ -316,7 +317,7 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = f
 /*
  * sig Signatrure as base64Url
  * DataSigned base64Url encoded signed data
- * serverkey public key as JWT
+ * serverkey public key as JWK
  * @returns Promise
  */
 PublishOnlyTallySendVoteHandler.prototype.verifyTServerSig = function (sig, DataSigned, serverkey) {
@@ -350,14 +351,27 @@ PublishOnlyTallySendVoteHandler.prototype.verifyTServerSig = function (sig, Data
 			.then(function(isvalid){
 				//returns a boolean on whether the signature is valid or not
 				console.log("Tally server signature valid: " + isvalid);
+				if (isvalid !== true) throw new ErrorInServerAnser(3463456, i18n.sprintf(i18n.gettext('The signature from server >%s< does not match the signed vote'), serverkey.kid),'');
 //				alert("jääär:" + isvalid);
 //				var decodedSignedDataStr = base64Url2String(DataSigned);
+				
+				// decode JWT and generate compatible JWT
 				var decodedSignedData = DataSigned.split('.');
 				if (! (1 in decodedSignedData)) throw new ErrorInServerAnswer(5345985, i18n.gettext('Error: missing the signed data (no dot in the string)'), DataSigned)
 				var decodedSignedContentStr = base64Url2String(decodedSignedData[1]);
 				var decodedSignedContent = JSON.parse(decodedSignedContentStr);
-				if ((isvalid === true) && (decodedSignedContent !== null)) resolve({'decodedSignedContent': decodedSignedContent, 'sig': sig, 'sigBy': serverkey.kid});
-				else reject(isvalid);
+				// JSON.parse throws itself if (decodedSignedContent === null) throw new ErrorInServerAnser(3463457, i18n.sprintf(i18n.gettext('Error: The second part of the signature from >%s< cannot be JSON decoded'), serverkey.kid), 'Got: ' + decodedSignedContentStr);
+//				
+				var jwt = DataSigned + '.' + sig;
+				
+				// generate RSA Public key in PEM Format to be included in the file that proves the casting of the vote
+				window.crypto.subtle.exportKey('spki', me.serverKeyAPI)
+				.then(function (spkikey){
+					publickeyPEM = spkiToPEM(spkikey);
+					resolve({'decodedSignedContent': decodedSignedContent, 'sig': sig, 'sigBy': serverkey.kid, 'JWT': jwt, 'publicKeyPEM': publickeyPEM});
+				})
+//				if ((isvalid === true) && (decodedSignedContent !== null)) resolve({'decodedSignedContent': decodedSignedContent, 'sig': sig, 'sigBy': serverkey.kid, 'JWT': jwt});
+//				else reject(isvalid);
 			})
 			.catch(function(err){
 				console.error(err);
@@ -370,16 +384,41 @@ PublishOnlyTallySendVoteHandler.prototype.verifyTServerSig = function (sig, Data
 
 
 PublishOnlyTally.prototype.saveVotingReceipt = function(qNo) {
-	var votingReceiptStr = JSON.stringify(this.votingReceipt);
-	this.votingReceiptBlob = new Blob([votingReceiptStr]);
-	var filename = i18n.sprintf(i18n.gettext('Voting receipt %s'), clearForFilename(this.config.electionTitle) + '_' + qNo + '.json');
-	var htmlStr = i18n.gettext('In order to be able to proof that you sent your vote, you can save the voting receipt') +
-	'<form><p><button id="okbuttonid" type="submit" autofocus="autofocus" onclick="removePopup(); saveAs(page.tally.votingReceiptBlob, \'' + filename +'\'); return false;">Ok</button></p></form>';
-	var fragm = html2Fragm(htmlStr);
-	showPopup(fragm);
-	var el = document.getElementById('okbuttonid');
-	el.focus();
+	var explanation = i18n.gettext(
+'This file can be used in order to proof that a tallying server\r\n\
+did receive the vote. The server\'s signature proofs it. The \r\n\
+signature is here in the standard JWT format which can be \r\n\
+verified by according services, e.g. https://jwt.io/ \r\n\
+Just copy the value of "JWT" into the field "Encoded" and the \r\n\
+according public key from below in the field "VERIFY SIGNATURE"\r\n\
+on the before mentioned website. The JWT contains all the \r\n\
+information that is also shown in JSON clear text.');
 
+	// convert public tally server keys into the pem format
+	var publickeys = '/**\r\n';
+	convertkeyPromises = [];
+	for (var i = 0; i < ClientConfig.tkeys.length; i++) {
+		var curkey = ClientConfig.tkeys[i];
+		convertkeyPromises[i] = jwk2pemPromise(curkey);
+	}
+	Promise.all(convertkeyPromises)
+	.then(function (pemkeys) {
+		for (var i = 0; i < ClientConfig.tkeys.length; i++) {
+			var curkey = ClientConfig.tkeys[i];
+			publickeys = publickeys + '\r\npublic key for >' + curkey.kid + '<:\r\n'+ pemkeys[i] + '\r\n';
+		}
+		publickeys = publickeys + '**/\r\n';
+		var votingReceiptStr = '/**\r\n' + explanation + '\r\n**/\r\n' + publickeys + JSON.stringify(this.votingReceipt,null,'\t');
+
+		this.votingReceiptBlob = new Blob([votingReceiptStr]);
+		var filename = i18n.sprintf(i18n.gettext('Voting receipt %s'), clearForFilename(this.config.electionTitle) + '_' + qNo + '.json');
+		var htmlStr = i18n.gettext('In order to be able to proof that you sent your vote, you can save the voting receipt') +
+		'<form><p><button id="okbuttonid" type="submit" autofocus="autofocus" onclick="removePopup(); saveAs(page.tally.votingReceiptBlob, \'' + filename +'\'); return false;">Ok</button></p></form>';
+		var fragm = html2Fragm(htmlStr);
+		showPopup(fragm);
+		var el = document.getElementById('okbuttonid');
+		el.focus();
+	}.bind(this));
 };
 
 /********************************************

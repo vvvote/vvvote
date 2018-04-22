@@ -836,10 +836,14 @@ function str2ArrayBuf(str) {
 	return abv;
 }
 
-
-function arrayBuf2Base64Url(ab) {
+function arrayBuf2Base64(ab) {
 	var encUI8A = new Uint8Array(ab);
 	var base64 = btoa(String.fromCharCode.apply(null, encUI8A));
+	return base64;
+}
+
+function arrayBuf2Base64Url(ab) {
+	var base64 = arrayBuf2Base64(ab);
 	var base64Url = base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 	return base64Url;
 }
