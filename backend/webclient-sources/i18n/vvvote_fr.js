@@ -32,16 +32,16 @@ translations['fr'] =
             "La configuration de vote ne peut être chargé à partir de l'URL fournie"
          ],
          "Error: The config does not contain the questions": [
-            ""
+            "Erreur : La configuration ne contient pas les questions."
          ],
          "Error: The config does not contain the blinder Data": [
-            ""
+            "Erreur : La configuration ne contient pas les données du blinder."
          ],
          "Error: The config does not contain the permission server keys": [
-            ""
+            "Erreur : La configuration ne contient pas les clés du serveur de permissions."
          ],
          "Error: The config does not contain the permission server key": [
-            ""
+            "Erreur : La configuration ne contient pas la clé de serveur de permissions."
          ],
          "Voting link: ": [
             "Lien de la votation: "
@@ -131,7 +131,7 @@ translations['fr'] =
             "Créer le certificat de vote"
          ],
          "Configuration error: serverId >%s< is asked for, but not configured": [
-            ""
+            "Erreur de configuration : serverId > %s < est demandé, mais n'est pas configuré."
          ],
          "Step %s: ": [
             "Etape %s"
@@ -242,10 +242,10 @@ translations['fr'] =
             "Erreur vérification d'une signature:\nLe nombre de signatures sur le certificat de vote n'est pas correcte. \nNombre requis: %d, nombre dans ce certificat de vote: %d"
          ],
          "The vote is not for this election (Election IDs do not match).": [
-            ""
+            "Le vote n'est pas pour cette élection (les cartes d'électeur ne correspondent pas)."
          ],
          "The vote is not for this election (Question ID not found in election configuration).": [
-            ""
+            "Le vote n'est pas pour cette élection (L'ID de la question ne figure pas dans la configuration de l'élection)."
          ],
          "The signature by the permission server >%s< for the voting key is correct. This means, the server has confirmed that the according voter is entitled to vote.": [
             "La signature par le serveur d'autorisation >%s< pour la clé de vote est correcte. Cela signifie, le serveur a confirmé que l'électeur a le droit de voter."
@@ -487,10 +487,10 @@ translations['fr'] =
             "Ouvrir une nouvelle votation"
          ],
          "Waiting for the servers": [
-            ""
+            "En attente des serveurs"
          ],
          "The hash obtained from the server does not match the hash from another server. The server is trying to cheat you. Aborted.": [
-            ""
+            "Le hachage obtenu du serveur ne correspond pas au hachage d'un autre serveur. Le serveur essaie de vous tromper. Avorté."
          ],
          "Save the link and distribute it to all eligable people. ": [
             "Enregistrez ce lien et distribuez-le à toutes les personnes admissibles."
@@ -502,7 +502,7 @@ translations['fr'] =
             "Le serveur indique une erreur:\n"
          ],
          "Unknown command from Server: \n": [
-            ""
+            "Commande inconnue du serveur :\n"
          ],
          "Online Voting:<br> anonymous and traceable": [
             "Vote en ligne:<br> anonymes et traçable"
@@ -520,10 +520,10 @@ translations['fr'] =
             "Afficher les explications et informations techniques"
          ],
          "There is an error in the configuration. Please inform the administrator. (error no.: 875765: URL not defined or not of type string)": [
-            ""
+            "Il y a une erreur dans la configuration. Veuillez en informer l'administrateur. (n° d'erreur : 875765 : URL non définie ou non de type chaîne de caractères)"
          ],
          "There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)": [
-            ""
+            "Il y a une erreur dans la configuration. Veuillez en informer l'administrateur. (n° d'erreur : 875766 : URL non définie ou non de type chaîne de caractères)"
          ],
          "2<sup>nd</sup> Authorize": [
             "2<sup>e</sup> Autoriser"
