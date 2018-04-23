@@ -9,7 +9,7 @@ you need to:
 
 Setting it up
 -------------
-cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
+cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\backend\webclient-sources
 tx init
 
 Strings Changed in Source Code
@@ -19,24 +19,24 @@ open vvvote.pot on poEdit
 click on "Catalogue" and "update from sourcecode"
 save the updated catalogue.
 # (2) push the changes to Transiflex
-cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
+cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote\backend\webclient-sources
 tx push -s
 
 
 Get Changes of Source Strings from Transflex
 --------------------------------------------
-cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
+cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\backend\webclient-sources
 tx pull -a
 tx pull -l en_US
 
 Push Changes in l10n
 --------------------
-cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
+cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\backend\webclient-sources
 tx push -t -l de
 
 Integrate l10n into source
 --------------------------
-cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\webclient
+cd C:\Users\r\Documents\Eclipse_Web_dev\vvvote2\backend\webclient-sources
 updateI18njs.bat
 
 upgrade the transifex tx client 
