@@ -543,6 +543,9 @@ translations['fr'] =
          "Show explanations and technical information": [
             "Afficher les explications et informations techniques"
          ],
+         "About": [
+            ""
+         ],
          "There is an error in the configuration. Please inform the administrator. (error no.: 875765: URL not defined or not of type string)": [
             "Il y a une erreur dans la configuration. Veuillez en informer l'administrateur. (n° d'erreur : 875765 : URL non définie ou non de type chaîne de caractères)"
          ],

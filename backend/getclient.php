@@ -314,7 +314,7 @@ echo <<<EOT
 					<div class="row">
 						<div class="col-md-2 text-center">
 							<div class="copyright" > 
-									<span><a href="$aboutUrl" target="_blank">Impressum</a></span>
+									<span><a id="aboutUrlId" href="$aboutUrl" target="_blank">About</a></span>
 							</div>
 						</div>
 						<div class="col-md-2 col-sm-push-7">

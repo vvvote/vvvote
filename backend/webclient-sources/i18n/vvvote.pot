@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-04-23 19:24+0200\n"
+"POT-Creation-Date: 2018-04-23 20:45+0200\n"
 "PO-Revision-Date: 2016-01-01 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -952,6 +952,10 @@ msgstr ""
 
 #: page.js:18
 msgid "Show explanations and technical information"
+msgstr ""
+
+#: page.js:19
+msgid "About"
 msgstr ""
 
 #: tools/mixed.js:87

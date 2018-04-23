@@ -16,6 +16,7 @@ Page.prototype.setLanguage = function() {
 	this.menu[3] = i18n.gettext('Fetch result');
 	this.stepstitle = i18n.gettext("That's how");
 	this.techinfocheckboxlabel = i18n.gettext('Show explanations and technical information');
+	this.aboutLinkText = i18n.gettext('About');
 };
 
 
@@ -26,6 +27,7 @@ Page.prototype.display = function() {
 	document.getElementById('fetchresult').textContent     = this.menu[3];
 	document.getElementById('idtechinfocheckbox').textContent = this.techinfocheckboxlabel;
 	document.getElementById('idstepstitle').textContent = this.stepstitle;
+	document.getElementById('aboutUrlId').textContent = this.aboutLinkText;
 	this.showSteps();
 	Page.loadMainContent(this.mainContent);
 	this.setStep(1);
