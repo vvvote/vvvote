@@ -284,7 +284,7 @@ translations['de'] =
             "Stimme senden!"
          ],
          "Save voting recceipt": [
-            "Stimmabgabebelegt speichern"
+            "Stimmabgabebeleg speichern"
          ],
          "Motion text": [
             "Antragstext"
@@ -442,7 +442,7 @@ translations['de'] =
             "Fehler: Die unterschriebenen Daten fehlen (kein Punkt in der Zeichenkette)"
          ],
          "This file can be used in order to proof that a tallying server\r\ndid receive the vote. The server's signature proofs it. The \r\nsignature is here in the standard JWT format which can be \r\nverified by according services, e.g. https://jwt.io/ \r\nJust copy the value of \"JWT\" into the field \"Encoded\" and the \r\naccording public key from below in the field \"VERIFY SIGNATURE\"\r\non the before mentioned website. The JWT contains all the \r\ninformation that is also shown in JSON clear text.": [
-            "Diese Datei kann verwendet werden, um zu beweisen, dass ein \nStimmserver die Stimme erhalten hat. Die Unterschrift des Server\nbeweist es. Die Unterschrift ist hier im JWT-Format, so dass sie\nvon einem entsprechenden Dienst geprüft werden kann, z.B. \nmit Hilfe von https://jwt.io/\nDazu wird der Wert von \"JWT\" in das Feld \"Encoded\" und der \nentsprechende öffentliche Schlüssel (public key) im folgenden\nAbschnitt in das Feld \"VERIFY SIGNATURE\" in der auf der\ngenannten Website eingefügt. Das JWT enthält alle Informationen,\ndie auch in dem JSON unten im Klartext angezeigt werden."
+            "Diese Datei kann verwendet werden, um zu beweisen, dass ein \nStimmserver die Stimme erhalten hat. Die Unterschrift des Servers\nbeweist es. Die Unterschrift ist hier im JWT-Format, so dass sie\nvon einem entsprechenden Dienst geprüft werden kann, z.B. \nmit Hilfe von https://jwt.io/\nDazu wird der Wert von \"JWT\" in das Feld \"Encoded\" und der \nentsprechende öffentliche Schlüssel (public key) im folgenden\nAbschnitt in das Feld \"VERIFY SIGNATURE\" auf der\ngenannten Website eingefügt. Das JWT enthält alle Informationen,\ndie auch in dem JSON unten im Klartext angezeigt werden."
          ],
          "Voting receipt %s": [
             "Stimmabgabebeleg %s"
@@ -556,7 +556,7 @@ translations['de'] =
             "Beim Verbindungsaufbau zu einem Server ist ein Fehler aufgetreten"
          ],
          "Click %s this link, in order to test the connection manually.</a>The link will be opened in a new window.</li> <li>Solve the problem,</li> <li>close the window and </li><li>click afterwards on %s try again</button>": [
-            "Klicken Sie %sauf diesen Link, um die Verbindung manuell zu testen. </a>Der Link öffnet sich in einem neuen Fenster</li><li>Lösen Sie das Problem</li><li>Schließen Sie das Fenster und</li><li>Klicken Sie anschließend auf %snoch mal versuchen</button>"
+            "Klicken Sie %sauf diesen Link, um die Verbindung manuell zu testen. </a>Der Link öffnet sich in einem neuen Fenster</li><li>Lösen Sie das Problem</li><li>Schließen Sie das Fenster und</li><li>Klicken Sie anschließend auf %serneut versuchen</button>"
          ],
          "Received from: ": [
             "Empfangen von: "
