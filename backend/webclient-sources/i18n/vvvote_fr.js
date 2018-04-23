@@ -9,6 +9,9 @@ translations['fr'] =
             "plural_forms": "nplurals=2; plural=(n > 1);",
             "lang": "fr"
          },
+         "There is an error in the server configuration. The server did not deliver the server infos. api/./getserverinfos says %s": [
+            ""
+         ],
          "Voting server": [
             "serveur de votation"
          ],
@@ -277,6 +280,12 @@ translations['fr'] =
          "Client does not support voting scheme >%s<": [
             "Le client ne prend pas en charge ce système de vote >%s<"
          ],
+         "Cast vote!": [
+            "Envoyer le vote!"
+         ],
+         "Save voting recceipt": [
+            ""
+         ],
          "Motion text": [
             "Texte de la motion"
          ],
@@ -289,24 +298,6 @@ translations['fr'] =
          ],
          "Reasons": [
             "Justification"
-         ],
-         "Error 238u8": [
-            "Erreur 238u8"
-         ],
-         "Vote casting is closed": [
-            "la collection des vote est terminée"
-         ],
-         "Cast vote!": [
-            "Envoyer le vote!"
-         ],
-         "Vote casting starts at %s": [
-            "La collection de vote commence à %s"
-         ],
-         "Vote accepted": [
-            "Vote accepté"
-         ],
-         "The server accepted your vote.": [
-            "Le serveur a accepté votre vote."
          ],
          "<p>You cannot fetch the result as long as vote casting is possible.</p>": [
             "<p>Vous pouvez aller chercher le résultat de la votation qu'après la phase de votation est terminée.</p>"
@@ -411,20 +402,53 @@ translations['fr'] =
          "Question to be voted on": [
             "Question sur la quelle il faut voter"
          ],
-         "The server did not accept the vote. It says:\n%s": [
-            "Le serveur n'a pas accepté le vote. Il répond:\n%s"
+         "Tally servers accepted the vote!": [
+            ""
+         ],
+         "Vote accepted": [
+            "Vote accepté"
+         ],
+         "Error 238u8": [
+            "Erreur 238u8"
+         ],
+         "Vote casting is closed": [
+            "la collection des vote est terminée"
+         ],
+         "Vote casting starts at %s": [
+            "La collection de vote commence à %s"
+         ],
+         "The server did not accept the vote.": [
+            ""
+         ],
+         "The server >%s< did not accept the vote.": [
+            ""
+         ],
+         "It says:\n": [
+            ""
          ],
          "Error: Expected >saveYourCountedVote<": [
             "Erreur: Attendu >saveYourCountedVote<"
          ],
-         "decryption of server answer failed: %s": [
-            "Le décryptage de la réponse du serveur ne fonctionnait pas: %s"
+         "Acceptance conformation from the server contains an unplausible date: %s, now: %s": [
+            ""
          ],
-         "Thank you for voting!": [
-            "Merci d'avoir voté"
+         "Error while verifying tally server /%s/ signature: %s": [
+            ""
          ],
-         "Server accepted the vote!": [
-            "Le serveur a accepté le vote."
+         "The signature from server >%s< does not match the signed vote": [
+            ""
+         ],
+         "Error: missing the signed data (no dot in the string)": [
+            ""
+         ],
+         "This file can be used in order to proof that a tallying server\r\ndid receive the vote. The server's signature proofs it. The \r\nsignature is here in the standard JWT format which can be \r\nverified by according services, e.g. https://jwt.io/ \r\nJust copy the value of \"JWT\" into the field \"Encoded\" and the \r\naccording public key from below in the field \"VERIFY SIGNATURE\"\r\non the before mentioned website. The JWT contains all the \r\ninformation that is also shown in JSON clear text.": [
+            ""
+         ],
+         "Voting receipt %s": [
+            ""
+         ],
+         "In order to be able to proof that you sent your vote, you can save the voting receipt": [
+            ""
          ],
          "<p>As long as it is possible to cast votes, it is not possible to get the voting result.</p>": [
             "<p>Pendant la phase ou on peut deposer les votes, il n'est pas possible de voir les résultats de la votation</p>"
@@ -524,6 +548,15 @@ translations['fr'] =
          ],
          "There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)": [
             "Il y a une erreur dans la configuration. Veuillez en informer l'administrateur. (n° d'erreur : 875766 : URL non définie ou non de type chaîne de caractères)"
+         ],
+         "An error occured while connecting to a server": [
+            ""
+         ],
+         "Click %s this link, in order to test the connection manually.</a>The link will be opened in a new window.</li> <li>Solve the problem,</li> <li>close the window and </li><li>click afterwards on %s try again</button>": [
+            ""
+         ],
+         "Received from: ": [
+            ""
          ],
          "2<sup>nd</sup> Authorize": [
             "2<sup>e</sup> Autoriser"

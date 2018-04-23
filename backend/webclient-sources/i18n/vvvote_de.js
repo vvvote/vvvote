@@ -9,6 +9,9 @@ translations['de'] =
             "plural_forms": "nplurals=2; plural=(n != 1);",
             "lang": "de"
          },
+         "There is an error in the server configuration. The server did not deliver the server infos. api/./getserverinfos says %s": [
+            "In der Serverkonfiguration ist ein Fehler. Der Server hat die server informationen nicht geliefert. api/./getserverinfos liefert %s"
+         ],
          "Voting server": [
             "Abstimmserver"
          ],
@@ -277,6 +280,12 @@ translations['de'] =
          "Client does not support voting scheme >%s<": [
             "Dieser Client unterstützt das Abstimmschema >%s< nicht"
          ],
+         "Cast vote!": [
+            "Stimme senden!"
+         ],
+         "Save voting recceipt": [
+            "Stimmabgabebelegt speichern"
+         ],
          "Motion text": [
             "Antragstext"
          ],
@@ -289,24 +298,6 @@ translations['de'] =
          ],
          "Reasons": [
             "Begründung"
-         ],
-         "Error 238u8": [
-            "Fehler 238u8"
-         ],
-         "Vote casting is closed": [
-            "Stimmabgabe nicht mehr möglich"
-         ],
-         "Cast vote!": [
-            "Stimme senden!"
-         ],
-         "Vote casting starts at %s": [
-            "Stimme senden ab %s möglich"
-         ],
-         "Vote accepted": [
-            "Stimme akzeptiert"
-         ],
-         "The server accepted your vote.": [
-            "Der Server hat Ihre Stimme akzeptiert."
          ],
          "<p>You cannot fetch the result as long as vote casting is possible.</p>": [
             "<p>Das Ergebnis kann nicht abgerufen werden, so lange Stimmen abgegeben werden können.</p>"
@@ -411,20 +402,53 @@ translations['de'] =
          "Question to be voted on": [
             "Frage, über die abgestimmt werden soll"
          ],
-         "The server did not accept the vote. It says:\n%s": [
-            "Der Server hat die Stimme nicht akzeptiert. Er meldet:\n%s"
+         "Tally servers accepted the vote!": [
+            "Die Stimmserver haben die Stimme akzeptiert."
+         ],
+         "Vote accepted": [
+            "Stimme akzeptiert"
+         ],
+         "Error 238u8": [
+            "Fehler 238u8"
+         ],
+         "Vote casting is closed": [
+            "Stimmabgabe nicht mehr möglich"
+         ],
+         "Vote casting starts at %s": [
+            "Stimme senden ab %s möglich"
+         ],
+         "The server did not accept the vote.": [
+            "Der Server hat die Stimme nicht akzeptiert."
+         ],
+         "The server >%s< did not accept the vote.": [
+            "Der Server >%s< hat die Stimme nicht akzeptiert."
+         ],
+         "It says:\n": [
+            "Grund:\n"
          ],
          "Error: Expected >saveYourCountedVote<": [
             "Fehler: erwartete >saveYourCountedVote< vom Server"
          ],
-         "decryption of server answer failed: %s": [
-            "Entschlüsselung der Serverantwort ist fehlgeschlagen: %s"
+         "Acceptance conformation from the server contains an unplausible date: %s, now: %s": [
+            "Der Stimmabgabebeleg vom Server enthält ein unplausibles Datum: %s, jetzt: %s"
          ],
-         "Thank you for voting!": [
-            "Vielen Dank f&uuml;r Ihre Stimme!"
+         "Error while verifying tally server /%s/ signature: %s": [
+            "Fehler bei der Überprüfung der Signatur vom Stimmserver >%s<:%s"
          ],
-         "Server accepted the vote!": [
-            "Stimme wurde vom Server akzeptiert!"
+         "The signature from server >%s< does not match the signed vote": [
+            "Fehler: Die Signatur des Servers >%s< passt nicht zu der Stimme."
+         ],
+         "Error: missing the signed data (no dot in the string)": [
+            "Fehler: Die unterschriebenen Daten fehlen (kein Punkt in der Zeichenkette)"
+         ],
+         "This file can be used in order to proof that a tallying server\r\ndid receive the vote. The server's signature proofs it. The \r\nsignature is here in the standard JWT format which can be \r\nverified by according services, e.g. https://jwt.io/ \r\nJust copy the value of \"JWT\" into the field \"Encoded\" and the \r\naccording public key from below in the field \"VERIFY SIGNATURE\"\r\non the before mentioned website. The JWT contains all the \r\ninformation that is also shown in JSON clear text.": [
+            "Diese Datei kann verwendet werden, um zu beweisen, dass ein \nStimmserver die Stimme erhalten hat. Die Unterschrift des Server\nbeweist es. Die Unterschrift ist hier im JWT-Format, so dass sie\nvon einem entsprechenden Dienst geprüft werden kann, z.B. \nmit Hilfe von https://jwt.io/\nDazu wird der Wert von \"JWT\" in das Feld \"Encoded\" und der \nentsprechende öffentliche Schlüssel (public key) im folgenden\nAbschnitt in das Feld \"VERIFY SIGNATURE\" in der auf der\ngenannten Website eingefügt. Das JWT enthält alle Informationen,\ndie auch in dem JSON unten im Klartext angezeigt werden."
+         ],
+         "Voting receipt %s": [
+            "Stimmabgabebeleg %s"
+         ],
+         "In order to be able to proof that you sent your vote, you can save the voting receipt": [
+            "Um später beweisen zu können, dass Sie Ihre Stimme abgegeben haben, können Sie den Stimmabgabebeleg speichern"
          ],
          "<p>As long as it is possible to cast votes, it is not possible to get the voting result.</p>": [
             "<p>Solange Stimmen abgegeben werden können, kann das Wahlergebnis nicht abgerufen werden.</p>"
@@ -524,6 +548,15 @@ translations['de'] =
          ],
          "There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)": [
             "Die Konfiguration enthält einen Fehler. Bitte informieren Sie den Administrator (Fehlernr. 875766 URL not defined or not of type string)"
+         ],
+         "An error occured while connecting to a server": [
+            "Beim Verbindungsaufbau zu einem Server ist ein Fehler aufgetreten"
+         ],
+         "Click %s this link, in order to test the connection manually.</a>The link will be opened in a new window.</li> <li>Solve the problem,</li> <li>close the window and </li><li>click afterwards on %s try again</button>": [
+            "Klicken Sie %sauf diesen Link, um die Verbindung manuell zu testen. </a>Der Link öffnet sich in einem neuen Fenster</li><li>Lösen Sie das Problem</li><li>Schließen Sie das Fenster und</li><li>Klicken Sie anschließend auf %snoch mal versuchen</button>"
+         ],
+         "Received from: ": [
+            "Empfangen von: "
          ],
          "2<sup>nd</sup> Authorize": [
             "2. Autorisieren"

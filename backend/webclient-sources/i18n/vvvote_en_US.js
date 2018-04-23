@@ -9,6 +9,9 @@ translations['en_US'] =
             "plural_forms": "nplurals=2; plural=(n != 1);",
             "lang": "en_US"
          },
+         "There is an error in the server configuration. The server did not deliver the server infos. api/./getserverinfos says %s": [
+            "There is an error in the server configuration. The server did not deliver the server infos. api/./getserverinfos says %s"
+         ],
          "Voting server": [
             "Voting server"
          ],
@@ -277,6 +280,12 @@ translations['en_US'] =
          "Client does not support voting scheme >%s<": [
             "Client does not support voting scheme >%s<"
          ],
+         "Cast vote!": [
+            "Cast vote!"
+         ],
+         "Save voting recceipt": [
+            "Save voting recceipt"
+         ],
          "Motion text": [
             "Motion text"
          ],
@@ -289,24 +298,6 @@ translations['en_US'] =
          ],
          "Reasons": [
             "Reasons"
-         ],
-         "Error 238u8": [
-            "Error 238u8"
-         ],
-         "Vote casting is closed": [
-            "Vote casting is closed"
-         ],
-         "Cast vote!": [
-            "Cast vote!"
-         ],
-         "Vote casting starts at %s": [
-            "Vote casting starts at %s"
-         ],
-         "Vote accepted": [
-            "Vote accepted"
-         ],
-         "The server accepted your vote.": [
-            "The server accepted your vote."
          ],
          "<p>You cannot fetch the result as long as vote casting is possible.</p>": [
             "<p>You cannot fetch the result as long as vote casting is possible.</p>"
@@ -411,20 +402,53 @@ translations['en_US'] =
          "Question to be voted on": [
             "Question to be voted on"
          ],
-         "The server did not accept the vote. It says:\n%s": [
-            "The server did not accept the vote. It says:\n%s"
+         "Tally servers accepted the vote!": [
+            "Tally servers accepted the vote!"
+         ],
+         "Vote accepted": [
+            "Vote accepted"
+         ],
+         "Error 238u8": [
+            "Error 238u8"
+         ],
+         "Vote casting is closed": [
+            "Vote casting is closed"
+         ],
+         "Vote casting starts at %s": [
+            "Vote casting starts at %s"
+         ],
+         "The server did not accept the vote.": [
+            "The server did not accept the vote."
+         ],
+         "The server >%s< did not accept the vote.": [
+            "The server >%s< did not accept the vote."
+         ],
+         "It says:\n": [
+            "It says:\n"
          ],
          "Error: Expected >saveYourCountedVote<": [
             "Error: Expected >saveYourCountedVote<"
          ],
-         "decryption of server answer failed: %s": [
-            "decryption of server answer failed: %s"
+         "Acceptance conformation from the server contains an unplausible date: %s, now: %s": [
+            "Acceptance conformation from the server contains an unplausible date: %s, now: %s"
          ],
-         "Thank you for voting!": [
-            "Thank you for voting!"
+         "Error while verifying tally server /%s/ signature: %s": [
+            "Error while verifying tally server /%s/ signature: %s"
          ],
-         "Server accepted the vote!": [
-            "Server accepted the vote!"
+         "The signature from server >%s< does not match the signed vote": [
+            "The signature from server >%s< does not match the signed vote"
+         ],
+         "Error: missing the signed data (no dot in the string)": [
+            "Error: missing the signed data (no dot in the string)"
+         ],
+         "This file can be used in order to proof that a tallying server\r\ndid receive the vote. The server's signature proofs it. The \r\nsignature is here in the standard JWT format which can be \r\nverified by according services, e.g. https://jwt.io/ \r\nJust copy the value of \"JWT\" into the field \"Encoded\" and the \r\naccording public key from below in the field \"VERIFY SIGNATURE\"\r\non the before mentioned website. The JWT contains all the \r\ninformation that is also shown in JSON clear text.": [
+            "This file can be used in order to proof that a tallying server\r\ndid receive the vote. The server's signature proofs it. The \r\nsignature is here in the standard JWT format which can be \r\nverified by according services, e.g. https://jwt.io/ \r\nJust copy the value of \"JWT\" into the field \"Encoded\" and the \r\naccording public key from below in the field \"VERIFY SIGNATURE\"\r\non the before mentioned website. The JWT contains all the \r\ninformation that is also shown in JSON clear text."
+         ],
+         "Voting receipt %s": [
+            "Voting receipt %s"
+         ],
+         "In order to be able to proof that you sent your vote, you can save the voting receipt": [
+            "In order to be able to proof that you sent your vote, you can save the voting receipt"
          ],
          "<p>As long as it is possible to cast votes, it is not possible to get the voting result.</p>": [
             "<p>As long as it is possible to cast votes, it is not possible to get the voting result.</p>"
@@ -524,6 +548,15 @@ translations['en_US'] =
          ],
          "There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)": [
             "There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)"
+         ],
+         "An error occured while connecting to a server": [
+            "An error occured while connecting to a server"
+         ],
+         "Click %s this link, in order to test the connection manually.</a>The link will be opened in a new window.</li> <li>Solve the problem,</li> <li>close the window and </li><li>click afterwards on %s try again</button>": [
+            "Click %s this link, in order to test the connection manually.</a>The link will be opened in a new window.</li> <li>Solve the problem,</li> <li>close the window and </li><li>click afterwards on %s try again</button>"
+         ],
+         "Received from: ": [
+            "Received from: "
          ],
          "2<sup>nd</sup> Authorize": [
             "2<sup>nd</sup> Authorize"
