@@ -61,11 +61,12 @@ On server 1 cd into the backend-dir and start the key generation (it can take a 
 
 The first line creates the key pair for the permission server, the second line creates the key pair for the role as tallying server.
 
-Server 2 acts as permission server only. That is why we do not need to create one key pair for the tallying server role.
+Server 2 acts also acts as permission and tallying server. That is why create another two key pairs.
 On server 2 also cd into the backend-dir and also start the key generation for the permission server by
 
 	cd backend/admin
 	php -f admin.php createKeypair p 2
+	php -f admin.php createKeypair t 2
 
 
 ### Distribute Server Keys
@@ -77,12 +78,15 @@ This generates four files:
 	backend/config/voting-keys/PermissionServer1.publickey.pem
 	backend/config/voting-keys/TallyServer1.privatekey.pem.php
 	backend/config/voting-keys/TallyServer1.publickey.pem
-Copy (somehow) the "backend/config/voting-keys/PermissionServer1.publickey.pem" and backend/config/voting-keys/TallyServer1.publickey.pem to server 2 into the same directory. These key files are public - you can email them unencrypted.
+Copy (somehow) the "backend/config/voting-keys/PermissionServer1.publickey.pem" and 
+"backend/config/voting-keys/TallyServer1.publickey.pem" to server 2 into the same directory. These key files 
+are public - you can email them unencrypted.
 
 On Server 2:
 
-Copy (somehow) the "backend/config/voting-keys/PermissionServer2.publickey.pem" to server 1 into the same directory. This key file is public - you can email it unencrypted.
-
+Copy (somehow) the "backend/config/voting-keys/PermissionServer2.publickey.pem" and 
+"backend/config/voting-keys/TallyServer2.publickey.pem" to server 1 into the same directory. 
+These key files are public - you can email them unencrypted.
 
 
 Configure the webclient
@@ -93,7 +97,7 @@ in directory webclient/config, copy the example config to config.js, e.g. by
 	 cd backend/webclient-sources/config
 	 cp config-example.js config.js
 
-If do not have very special needs, nothing needs to be changed in this config. The client automatically incorperates the config from the server.
+If do not have very special needs (e.g. changing the anonymizer service URL), nothing needs to be changed in this config. The client automatically incorperates the config from the server.
 
 
 Configure the web server
@@ -103,13 +107,15 @@ e.g. for Apache:
 	
 	DocumentRoot "/var/www/vvvote/public"
 	
-e.g. for Ngnix:
+e.g. for Ngnix in the "server {"-section:
 
-	
+	root /var/www/vvvote/public;
+	index index.php index.html;
 
 Vvote relies on the webserver's ability to rewrite the URI.
 For Apache, the needed .htaccess file is included, so you do not need to configure anything exempt allowing/enabling the rewrite engine.
-On some apache servers, you will have to tell wich URL correspondes to this folder in the filesystem in order to make URL rewriting work. You can do it by the following command:
+On some apache servers, you will have to tell which URL correspondes to this folder in the filesystem in order to make URL rewriting work. 
+You can do it by the following command (if you are serving vvvote from /):
 
 	cd public
 	echo "RewriteBase /" >.htaccess
@@ -123,11 +129,12 @@ Additional, rewritig requires that FollowSymlinks is allowed. Usually it is allo
 For ngnix you can use the following configuration example:
 
 	location /vvvote/ { 
+		try_files  $uri $uri/
 		if (!-e $request_filename){ 
-			rewrite ^/vvvote/api/v([0-9.]*)/(.*)$ /vvvote/api/v$1/index.php/$2 break; 
+			rewrite ^/vvvote/api/v([0-9.]*)/(.*)$ /vvvote/api/v$1/index.php/$2; 
 		} 
 	}
-Adjust the two occurances of 'vvvote/' to your needs. If you are serving vvvote from /, just delete 'vvote/'.
+Adjust the three occurances of 'vvvote/' to your needs. If you are serving vvvote from /, just delete 'vvote/'.
 
 
 Configure TLS / SSL 
@@ -161,13 +168,15 @@ Vvvote automatically redirects to https (if the server's URL start with 'https')
 Thats It!
 =========
 point your browser to 
-$yourBaseUrl/webclient/
+$yourBaseUrl/
 
 Customisation
 =============
 Use your own logo
 -----------------
-Resize your organisation's logo to 47x51 points. You can easily do so using the free software inkscape. Place the logo of your organisation in 'backend/config/logo_brand_47x51.svg' (resp. the config dir). Recreate the index2.html file afterwards (see chapter 'Speed Optimisation').
+Resize your organisation's logo to 47x51 points. You can easily do so using the free software inkscape. 
+Place the logo of your organisation in 'backend/config/logo\_brand\_47x51.svg' (resp. the config dir). 
+Recreate the index2.html file afterwards (see chapter 'Speed Optimisation').
 
 Change 'linkToHostingOrganisation' in config.php to link to your organisation on a click on the logo.
 
@@ -180,14 +189,17 @@ The webclient consists of several files. You can speed up page loading by puttin
 	php -f getclient.php >index2.html
 	cp index.html ../public/webclient/index2.html
 
-In /public/webclient/ there is an 'index.php' which will cause an automatic redirect from http to https and to 'index2.html', if available. In case that there is no 'index2.html' file, it will call api/v1/getclient on each request. 
+In /public/webclient/ there is an 'index.php' which will cause an automatic redirect from http to https 
+and to 'index2.html', if available. In case that there is no 'index2.html' file, it will call 
+api/v1/getclient on each request. 
 
-The webclient will then consist of only one html file. This file contains the server URLs and their public keys. This means, you need to redo the above stated command if a __server config or a public key has changed__.
+The webclient will then consist of only one html file. This file contains the server URLs and their public 
+keys. This means, you need to redo the above stated command if a __server config or a public key has changed__.
 This index2.html can be served from everywhere since it already contains all necessary configuration.
 
 You can publish a fingerprint of this file in order to allow your voters to verify that they __got an unchanged web client__. The command
 
-	 sha256sum _index2.html
+	 sha256sum index2.html
 
 will give you the SHA256 checksum of the client, including the server public keys which you can publish. We recommend to do this only if you put the client into one file since only then the server's public key will be contained in the index2.html.
 
