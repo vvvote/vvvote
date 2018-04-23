@@ -65,7 +65,7 @@ PublishOnlyTally.prototype.getMainContentFragm = function(fragm, config) {
 	fragm.appendChild(inp);
 	
 	// submitt button
-	var btn = buttonDOM('buttonSendQ0', i18n.gettext('Cast vote!'), 'page.sendVote(event)', fragm, 'sendVoteButton');
+	var btn = buttonDOM('buttonSendQ0', i18n.gettext('Cast vote!'), 'page.sendVote(0)', fragm, 'sendVoteButton');
 	fragm.appendChild(btn);
 	
 	// save receipt button
