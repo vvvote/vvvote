@@ -429,7 +429,7 @@ translations['fr'] =
          "Error: Expected >saveYourCountedVote<": [
             "Erreur: Attendu >saveYourCountedVote<"
          ],
-         "Acceptance conformation from the server contains an unplausible date: %s, now: %s": [
+         "Information: The server's (%s) clock time in the voting receipt (%s) deviates from the clock time of your device (%s)": [
             ""
          ],
          "Error while verifying tally server /%s/ signature: %s": [

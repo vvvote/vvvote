@@ -10,7 +10,7 @@ translations['de'] =
             "lang": "de"
          },
          "There is an error in the server configuration. The server did not deliver the server infos. api/./getserverinfos says %s": [
-            "In der Serverkonfiguration ist ein Fehler. Der Server hat die server informationen nicht geliefert. api/./getserverinfos liefert %s"
+            "In der Serverkonfiguration ist ein Fehler. Der Server hat die Serverinformationen nicht geliefert. api/./getserverinfos liefert %s"
          ],
          "Voting server": [
             "Abstimmserver"
@@ -71,7 +71,7 @@ translations['de'] =
             "Die Abstimmung erfordert das Autorisierungsmodul >%s<, das durch diesen Client nicht unterstützt wird.\nVerwenden Sie einen kompatiblen Client"
          ],
          "Your web browser %s %is not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge.": [
-            "Ihr Browser %s %s wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 34, Chrome ab Version 38 (nicht auf Android) oder Edge (nicht auf Android)."
+            "Ihr Browser %s %i wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 34, Chrome ab Version 38 (nicht auf Android) oder Edge (nicht auf Android)."
          ],
          "Check of credentials failed. You are not in the list of allowed voters for this voting or secret not accepted.": [
             "Fehler bei der Überprüfung der Anmeldeinformationen. Sie sind nicht in der Liste der Stimmberechtigten oder die Zugangsdaten sind falsch oder Sie haben dem Server nicht erlaubt, Ihre Stimmberechtigung zu prüfen."
@@ -429,8 +429,8 @@ translations['de'] =
          "Error: Expected >saveYourCountedVote<": [
             "Fehler: erwartete >saveYourCountedVote< vom Server"
          ],
-         "Acceptance conformation from the server contains an unplausible date: %s, now: %s": [
-            "Der Stimmabgabebeleg vom Server enthält ein unplausibles Datum: %s, jetzt: %s"
+         "Information: The server's (%s) clock time in the voting receipt (%s) deviates from the clock time of your device (%s)": [
+            "Information: Die Uhrzeit des Servers >%s< in der Stimmabgabebestätigung (%s) weicht von der Uhrzeit auf Ihrem Gerät (%s) ab."
          ],
          "Error while verifying tally server /%s/ signature: %s": [
             "Fehler bei der Überprüfung der Signatur vom Stimmserver >%s<:%s"

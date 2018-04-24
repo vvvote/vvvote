@@ -266,18 +266,19 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = f
 	this.verifyTServerSig(data.sig.sig, data.sig.signedData, ClientConfig.tkeys[this.tServerNo])
 	.then( function(receivedData) {
 		// alert("sig valid!" + JSON.stringify(receivedData));
-		
+
+		if (! ('iss' in receivedData.decodedSignedContent)) throw new ErrorInServerAnswer(7564534, 'Error in voting receipt: Missing issuer (iss) in voting receipt', JSON.stringify(receivedData.decodedSignedContent));
+
 		// verify if the date is correct that the server signed
-		if (! ('iat' in receivedData.decodedSignedContent)) throw new ErrorInServerAnswer(548664, 'Missing date of issue (iat) in voting receipt', JSON.stringify(receivedData.decodedSignedContent));
+		if (! ('iat' in receivedData.decodedSignedContent)) throw new ErrorInServerAnswer(548664, 'Error in voting receipt: Missing date of issue (iat) in voting receipt', JSON.stringify(receivedData.decodedSignedContent));
 		var issuedAtDate = new Date(receivedData.decodedSignedContent.iat).getTime();
 		var now = new Date(); 
 		var issuedAtDatePlausible = (this.sentReqDate.getTime() <= (issuedAtDate + 10 * 60000)) && ((now.getTime() + 10 * 60000) >= issuedAtDate ); // accept +/- 10 minutes clock difference 
-		if (!issuedAtDatePlausible) alert(i18n.sprintf(i18n.gettext('Acceptance conformation from the server contains an unplausible date: %s, now: %s'), receivedData.decodedSignedContent.iat, now));
+		if (!issuedAtDatePlausible) alert(i18n.sprintf(i18n.gettext("Information: The server's (%s) clock time in the voting receipt (%s) deviates from the clock time of your device (%s)"), receivedData.decodedSignedContent.iss, receivedData.decodedSignedContent.iat, now));
 		
 		// verify if the vote is unchanged
 		var toBeSignedData = JSON.parse(JSON.stringify(this.voteOnly)) // clone the object data;
 		toBeSignedData.iat = receivedData.decodedSignedContent.iat
-		if (! ('iss' in receivedData.decodedSignedContent)) throw new ErrorInServerAnswer(7564534, 'Missing issuer (iss) in voting receipt', JSON.stringify(receivedData.decodedSignedContent));
 		toBeSignedData.iss = ClientConfig.tkeys[this.tServerNo].kid;
 		toBeSignedData.cmd = 'storeVote';
 		var equals = jsonEquals(receivedData.decodedSignedContent, toBeSignedData);

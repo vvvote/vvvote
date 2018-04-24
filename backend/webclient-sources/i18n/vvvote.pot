@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-04-23 20:45+0200\n"
+"POT-Creation-Date: 2018-04-24 17:50+0200\n"
 "PO-Revision-Date: 2016-01-01 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -583,7 +583,7 @@ msgstr ""
 
 #: modules-tally/configurable-tally/module.js:952
 #: modules-tally/publish-only/module.js:248
-#: modules-tally/publish-only/module.js:475
+#: modules-tally/publish-only/module.js:476
 #, javascript-format
 msgid "Got from server: %s"
 msgstr ""
@@ -646,7 +646,7 @@ msgid "Scheme not supported"
 msgstr ""
 
 #: modules-tally/configurable-tally/module.js:1044
-#: modules-tally/publish-only/module.js:500
+#: modules-tally/publish-only/module.js:501
 msgid "Voting number"
 msgstr ""
 
@@ -684,12 +684,12 @@ msgid "Abst."
 msgstr ""
 
 #: modules-tally/configurable-tally/module.js:1125
-#: modules-tally/publish-only/module.js:518
+#: modules-tally/publish-only/module.js:519
 msgid " - my vote"
 msgstr ""
 
 #: modules-tally/configurable-tally/module.js:1129
-#: modules-tally/publish-only/module.js:522
+#: modules-tally/publish-only/module.js:523
 msgid "Verify signatures!"
 msgstr ""
 
@@ -736,7 +736,7 @@ msgstr ""
 
 #: modules-tally/publish-only/module.js:140
 #: modules-tally/publish-only/module.js:175
-#: modules-tally/publish-only/module.js:293
+#: modules-tally/publish-only/module.js:294
 msgid "Vote accepted"
 msgstr ""
 
@@ -770,28 +770,28 @@ msgstr ""
 msgid "Error: Expected >saveYourCountedVote<"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:275
+#: modules-tally/publish-only/module.js:277
 #, javascript-format
 msgid ""
-"Acceptance conformation from the server contains an unplausible date: %s, "
-"now: %s"
+"Information: The server's (%s) clock time in the voting receipt (%s) "
+"deviates from the clock time of your device (%s)"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:311
+#: modules-tally/publish-only/module.js:312
 #, javascript-format
 msgid "Error while verifying tally server /%s/ signature: %s"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:354
+#: modules-tally/publish-only/module.js:355
 #, javascript-format
 msgid "The signature from server >%s< does not match the signed vote"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:360
+#: modules-tally/publish-only/module.js:361
 msgid "Error: missing the signed data (no dot in the string)"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:388
+#: modules-tally/publish-only/module.js:389
 msgid ""
 "This file can be used in order to proof that a tallying server\r\n"
 "did receive the vote. The server's signature proofs it. The \r\n"
@@ -803,58 +803,58 @@ msgid ""
 "information that is also shown in JSON clear text."
 msgstr ""
 
-#: modules-tally/publish-only/module.js:414
+#: modules-tally/publish-only/module.js:415
 #, javascript-format
 msgid "Voting receipt %s"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:415
+#: modules-tally/publish-only/module.js:416
 msgid ""
 "In order to be able to proof that you sent your vote, you can save the "
 "voting receipt"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:440
+#: modules-tally/publish-only/module.js:441
 msgid ""
 "<p>As long as it is possible to cast votes, it is not possible to get the "
 "voting result.</p>"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:469
+#: modules-tally/publish-only/module.js:470
 #, javascript-format
 msgid ""
 "The server does not reveal the result. It answers:\n"
 " %s"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:475
+#: modules-tally/publish-only/module.js:476
 msgid "Error: Expected >verifyCountVotes<"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:481
+#: modules-tally/publish-only/module.js:482
 msgid "Error: unexpected var type"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:481
-#: modules-tally/publish-only/module.js:484
+#: modules-tally/publish-only/module.js:482
+#: modules-tally/publish-only/module.js:485
 #, javascript-format
 msgid "details: %s"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:484
+#: modules-tally/publish-only/module.js:485
 msgid "Error: some error occured"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:499
+#: modules-tally/publish-only/module.js:500
 msgctxt "List_of_Votes"
 msgid "Vote"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:537
+#: modules-tally/publish-only/module.js:538
 msgid "Number of Votes"
 msgstr ""
 
-#: modules-tally/publish-only/module.js:539
+#: modules-tally/publish-only/module.js:540
 msgid "Total"
 msgstr ""
 
