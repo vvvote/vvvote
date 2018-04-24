@@ -270,8 +270,8 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = f
 		// verify if the date is correct that the server signed
 		if (! ('iat' in receivedData.decodedSignedContent)) throw new ErrorInServerAnswer(548664, 'Missing date of issue (iat) in voting receipt', JSON.stringify(receivedData.decodedSignedContent));
 		var issuedAtDate = new Date(receivedData.decodedSignedContent.iat).getTime();
-		var now = new Date().getTime(); // TODO: add rounding because issuedAtDate is rounded // TODO first check if is voting phase
-		var issuedAtDatePlausible = (this.sentReqDate.getTime() <= (issuedAtDate +1000)) && (now >= issuedAtDate );
+		var now = new Date(); 
+		var issuedAtDatePlausible = (this.sentReqDate.getTime() <= (issuedAtDate + 10 * 60000)) && ((now.getTime() + 10 * 60000) >= issuedAtDate ); // accept +/- 10 minutes clock difference 
 		if (!issuedAtDatePlausible) alert(i18n.sprintf(i18n.gettext('Acceptance conformation from the server contains an unplausible date: %s, now: %s'), receivedData.decodedSignedContent.iat, now));
 		
 		// verify if the vote is unchanged
