@@ -49,7 +49,7 @@ Putting these things togehter, we get the following protocol:
 
 ```sequence
 Note right of Voter: subroutine: "Generate Return Envelop" \ngenerates \n - a RSA key pair and \n - a corresponding blinding factor\n - blinded hashes of the public part of the RSA key pair
-Voter->Server_1: (1) I am Bob, my password is <secret>,\n the blinded hash of the public key I generated is [] - 'pickBallots'
+Voter->Server_1: (1) I am Bob, my password is <secret>,\n the blinded hash of the public key I generated is [] - 'signBallots'
 
 Note left of Server_1: - verify password,\n - is first request for a ballot?
 Note left of Server_1: sign the blinded hash\n BlindServer_1Sig={Sign blindedHash}
