@@ -52,15 +52,16 @@ Note right of Voter: subroutine: "Generate Return Envelop" \ngenerates \n - a RS
 Voter->Server_1: (1) I am Bob, my password is <secret>,\n the blinded hash of the public key I generated is [] - 'signBallots'
 
 Note left of Server_1: - verify password,\n - is first request for a ballot?
-Note left of Server_1: sign the blinded hash\n BlindServer_1Sig={Sign blindedHash}
-Server_1->Voter: (4) BlindServer_1Sig - 'reqSigsNextpServer'
+Note left of Server_1: sign the blinded hash\n BlindServer_1Sig=Sign blindedHash
+Server_1->Voter: (2) BlindServer_1Sig - 'reqSigsNextpServer'
 
 Note right of Voter: Verify if the BlindServer_1Sig is correct
+Voter->Server_2: (3) I am Bob, my password is <secret>,\n the blinded hash of the public key I generated is [] - 'signBallots'
 
 Note left of Server_2: - verify password,\n - is first request for a ballot at this server?
-Note left of Server_2: sign the blinded hash: BlindServer_2Sig = Sign blindedHash
+Note left of Server_2: sign the blinded hash: \nBlindServer_2Sig = Sign blindedHash
 
-Server_2->Voter: (8) BlindedServer_2Sig - 'savePermission'
+Server_2->Voter: (4) BlindedServer_2Sig - 'savePermission'
 Note right of Voter: - Server_1Sig = unblind BlindServer_1Sig\n - Server_2Sig = unblind BlindServer_2Sig
 Note right of Voter: Save(private key, public key, Server_1Sig, Server_2Sig) = returnEnvelope
 ```
@@ -77,7 +78,7 @@ Server->Voter: serverSigned(signedVote)
 Note right of Voter: save serverSigned(signedVote)
 ```
 The Data-Package which contains the vote is sent through an anonymizing service which anonymizes the senders IP-Adress and removes the browsers fingerprint. This is done, because in this way the counting server cannot use the voter's ip address or his browser's finderprint to try a matching to information about the voter's location or other information which the admin might know from elsewhere about one voter's ip adress or his browser's fingerprint. If you did not change it, anonymouse.org is used for that purpose.
-The content is encrypted for transportation using the public RSA key of the tally server
+The content is encrypted for transportation using the public RSA key of the tally server so that the anonymizing service cannot read the vote.
 
 
 # Routine to Prepare Return Envelops in the Client 
