@@ -38,7 +38,7 @@
 			  || (browsName.indexOf('IE')       >= 0)
 			  || (browsName.indexOf('EDGE')     >= 0)
 		   ) ) {
-			showPopup(html2Fragm(i18n.sprintf(i18n.gettext('Your web browser %s %is not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. Do not use iPad or iPhone (iOS)'), browsName, browser.major)));
+			showPopup(html2Fragm(i18n.sprintf(i18n.gettext('Your web browser %s %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. Do not use iPad or iPhone (iOS)'), browsName, browser.major)));
 		} else { // check browser version
 			if (   (browsName.indexOf('SAFARI')   >=0 ) // safari 5: everything is working but (a) saving the return envelope and (b) webCrypto is supported from 8 (according to https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto) 
 				|| (browsName.indexOf('FIREFOX')  >= 0 && browser.major < 34) // 21 is enough for all but webcrypto API which is supported from 34 onwards		
@@ -49,7 +49,7 @@
 				|| (browsName.indexOf('EDGE')     >= 0 && browser.major < 12)	// Edge is working completely
 				|| (os === 'IOS') // on iPad and iPhone (iOS) no browser can save the return envelope as download
 			   ) {
-				showPopup(html2Fragm(i18n.sprintf(i18n.gettext('Your web browser %s %is on %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. iPad and iPhone (iOS) does not work at all. MacOS works.'), browsName, browser.major, os)));
+				showPopup(html2Fragm(i18n.sprintf(i18n.gettext('Your web browser %s %s is on %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. iPad and iPhone (iOS) does not work at all. MacOS works.'), browsName, browser.major, os)));
 			}
 		}
 	}
