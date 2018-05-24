@@ -47,7 +47,7 @@
 				|| (browsName.indexOf('OPERA')    >= 0 && browser.major < 34) // 11 was enough wothout WebCrypto, in 34 the webCrypto is working		
 				|| (browsName.indexOf('IE')       >= 0 && browser.major < 12)	// in IE 11 everything is working but webcrypto API. 	
 				|| (browsName.indexOf('EDGE')     >= 0 && browser.major < 12)	// Edge is working completely
-				|| (os.name === 'iOS') // on iPad and iPhone (iOS) no browser can save the return envelope as download
+				|| (os === 'IOS') // on iPad and iPhone (iOS) no browser can save the return envelope as download
 			   ) {
 				showPopup(html2Fragm(i18n.sprintf(i18n.gettext('Your web browser %s %is on %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. iPad and iPhone (iOS) does not work at all. MacOS works.'), browsName, browser.major, os)));
 			}
