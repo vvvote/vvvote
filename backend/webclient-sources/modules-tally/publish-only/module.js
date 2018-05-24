@@ -177,7 +177,7 @@ PublishOnlyTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorageI
 	}
 };
 
-PublishOnlyTally.test = function () {alert('mmm');}; 
+PublishOnlyTally.test = function () { /* alert('mmm'); */}; 
 
 
 PublishOnlyTally.prototype.showSaveReceiptButton = function(qNo) {
