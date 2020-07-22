@@ -54,11 +54,80 @@ $config = array (
 		// You can use an oAuth2 server or external tokens in order to check the users for egibility
 		// Vvvote can handle several auth servers - just add another array in the 
 		// 'oauthConfig' resp. 'externalTokenConfig' array.
-		// The "cmrcx-Basisentscheid" uses external-token-auth, whereas the ekklesia ID-Server uses oAuth2.
+		// The "cmrcx-Basisentscheid" uses external-token-auth, whereas the ekklesia ID-Server uses oAuth2. 
+		// For oAuth2, types "ekklesia" and "keycloak" are supported.
 		
 		// In case you are using oAuth2, fill in the following section
 		// Vvvote can handle several auth servers - just add another array.
-		'oauthConfig' => array (
+		'oauth2Config' => array (
+				array (
+						
+						// This is arbitrary, must be unique and is set in the new election request in order to 
+						// request this auth config
+						// It must match the according value in the portal configuration
+						'serverId' => 'KeyCloakTest',
+						
+						// Short server description: Shown in webclient
+						'serverDesc' 	=>	'SSO der Partei Deutschland (Testserver)',
+						
+						// OAuth2 client-ID needed for authentication at the OAuth2 server
+						// The client Ids of all vvvote servers are needed here, because the webclient need to 
+						// know them all. This server picks his own based on $serverNo
+						// Vvvote uses "authorization_bearer" as method and the standard flow. Maybe you have to set this option in
+						// the oAuth2 server config resp. vvvote account there.
+						'client_ids' => array('vvvote_demo1', 'vvvote_demo2'),
+						
+						// OAuth2 client secret needed for authentication at the OAuth2 server
+						'client_secret' => 'your_client_secret',
+						
+						// Hint for the configuration of the oAuh2 server:
+						// Most oAuth2 servers require that you provide a callback-URL in order to make the authorization work.
+						// This URL will be: [pServerUrlBase of this server] + '/api/v1/modules-auth/oauth/callback.php', e.g. https://demo.vvvote.de/api/v1/modules-auth/oauth2/callback
+						
+						// For oAuth2 server, currently "ekklesia" and "keycloak" are supported.
+						// Type "ekklesia" uses a long list of endpoints, see loadconfig.php for details.
+						// Type "keycloak" uses the following endpoints: 
+						// * "/token/" (in order to obtain the access_token), 
+						// * "userinfo" (in order to obtain all relevant userinfo [claims: "eligible": true/false, "roles": array, "verified": true/false]
+						// membership and voter lists are currently not supported by the kycloak server.
+						// roles is an array of hirachical departments a user is a member of (e.g. ["KV Düsseldorf", "LV NRW", "Deutschland"])
+						// default scopes requested: "eligible user_roles verified" but you can set different scopes just here set 'scope'
+						'type' => 'keycloak',
+						
+						// You must use SSL/TLS here as the oAuth2 security relies on it.
+						// In order to do so:
+						// Copy the certificate (.pem)-file in backend/config and name it <serverId>.pem (you can easily use a webbrowser to obtain that file).
+						// Make sure the .pem file contains the complete certificate chain to the root certifitace. You can easily concat them.
+						// On linux, you can use the following command (replacing [hostname.domain] acordingly twice(!) and [serverId]:
+						// echo "" | openssl s_client -connect [hostname.domain]:443 -servername [hostname.domain] -prexit 2>/dev/null | sed -n -e '/BEGIN\ CERTIFICATE/,/END\ CERTIFICATE/ p' >[serverId.pem]
+						
+						// The oaut2 URL before the /oaut2/ part, e.g. https://beoauth.piratenpartei-bayern.de/
+						// keycloak: get this info from client --> installation
+						'oauth_url' =>      'https://keycloak.test.ekklesiademocracy.org/auth/realms/test/protocol/openid-connect/',
+
+						// The ressources URL including the version part, e.g. https://beoauth.piratenpartei-bayern.de/api/v1/
+						// keycloak get this info from: /auth/realms/{realm}/.well-known/openid-configuration, eg. https://keycloak.test.ekklesiademocracy.org/auth/realms/test/.well-known/openid-configuration
+						'ressources_url' => 'https://keycloak.test.ekklesiademocracy.org/auth/realms/test/protocol/openid-connect/', 
+						                                                                       
+						// *mail sending is yet to be implemented in keycloak*
+						// this is used by the oAuth ressource for the sendmail_endp and determines which sender 
+						// will be used for the mail
+						'mail_identity' => 'voting',
+						
+						// wheather the mail should be signed by the oAuh2 ressource server
+						'mail_sign_it' => true,
+						
+						// Subject and content of the mail to be send to the user who generated a voting certificate.
+						// $electionId will be replaced by the electionId in subject and body
+						'mail_content_subject' => 'Wahlschein erstellt',
+						'mail_content_body' => 'Hallo!
+
+Sie haben für die Abstimmung >$electionId< einen Wahlschein erstellt.
+Falls dies nicht zutreffen sollte, wenden Sie sich bitte umgehend an einen Abstimmungsverantwortlichen.
+
+Freundliche Grüße
+Das Wahlteam' 
+				), 
 				array (
 						
 						// This is arbitrary, must be unique and is set in the new election request in order to 
@@ -80,7 +149,7 @@ $config = array (
 						'client_secret' => "your_client_secret",
 						
 						// Hint for the configuration of the oAuh2 server:
-						// Some oAuh2 servers require that you provide a callback-URL in order to make the authorization work.
+						// Most oAuth2 servers require that you provide a callback-URL in order to make the authorization work.
 						// This URL will be: [pServerUrlBase of this server] + '/modules-auth/oauth/callback.php'
 						
 						// type of oAuh2 server, currently only "ekklesia" is supported
