@@ -39,7 +39,7 @@ function loadElectionModules($httpRawPostData, $electionIdPlace) {
 	$reqdecoded = json_decode($httpRawPostData, true);
 	if ($reqdecoded == null) 						WrongRequestException::throwException(7040, 'Data in JSON format expected'         	, 'got: ' . $HTTP_RAW_POST_DATA);
 	//	if (! isset($electionIdPlace($reqdecoded))) 	WrongRequestException::throwException(7010, 'Election id missing in client request'	, $httpRawPostData);
-	if (! is_string($electionIdPlace($reqdecoded))) WrongRequestException::throwException(7050, 'Election id must be a string'			, 'got: ' . print_r($reqdecoded['electionId'], true));
+	if (! is_string($electionIdPlace($reqdecoded))) WrongRequestException::throwException(7050, 'Election id must be a string'			, 'got: ' . var_export($reqdecoded['electionId'], true));
 	// load election config from database by election id
 	$completeElectionId = $electionIdPlace($reqdecoded);
 	$splittedElectionId = json_decode($completeElectionId, true);

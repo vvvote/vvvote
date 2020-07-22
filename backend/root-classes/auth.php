@@ -61,7 +61,7 @@ abstract class Auth {
 				$errnoAdd = 4;
 				break;
 			default:
-				InternalServerError::throwException(47563523, 'checkcredentials: not supported phase', print_r($phase, true));
+				InternalServerError::throwException(47563523, 'checkcredentials: not supported phase', var_export($phase, true));
 				break;
 		}
 		if (isset($this->authConfig[$starttag])) $startdate = strtotime($this->authConfig[$starttag]);
@@ -134,34 +134,34 @@ abstract class Auth {
 		$now = time();
 		if (isset($req["RegistrationStartDate"])) {
 			$regStartDate = strtotime($req["RegistrationStartDate"]);
-			if ($regStartDate === false) WrongRequestException::throwException(12010, '/RegistrationStartDate/ is set but could not be paresed'     , "request received: \n" . print_r($req, true));
-			if (strtotime('+11 years', $now) < $regStartDate || strtotime('-11 years', $now) > $regStartDate) WrongRequestException::throwException(12011, '/RegistrationStartDate/ is more than 10 years away from now which is not supported'     , "request received: \n" . print_r($req, true)); // check if date is plausible	
+			if ($regStartDate === false) WrongRequestException::throwException(12010, '/RegistrationStartDate/ is set but could not be paresed'     , "request received: \n" . var_export($req, true));
+			if (strtotime('+11 years', $now) < $regStartDate || strtotime('-11 years', $now) > $regStartDate) WrongRequestException::throwException(12011, '/RegistrationStartDate/ is more than 10 years away from now which is not supported'     , "request received: \n" . var_export($req, true)); // check if date is plausible	
 			$authconfig['RegistrationStartDate'] = date('c', $regStartDate);
 		}
 		if (isset($req["RegistrationEndDate"])) {
 			$regEndDate = strtotime($req["RegistrationEndDate"]);
-			if ($regEndDate === false) WrongRequestException::throwException(12012, '/RegistrationEndDate/ is set but could not be paresed'     , "request received: \n" . print_r($req, true));
-			if (strtotime('+11 years', $now) < $regEndDate || strtotime('-11 years', $now) > $regEndDate) WrongRequestException::throwException(12013, '/RegistrationEndDate/ is more than 10 years away from now which is not supported'     , "request received: \n" . print_r($req, true)); // check if date is plausible	
+			if ($regEndDate === false) WrongRequestException::throwException(12012, '/RegistrationEndDate/ is set but could not be paresed'     , "request received: \n" . var_export($req, true));
+			if (strtotime('+11 years', $now) < $regEndDate || strtotime('-11 years', $now) > $regEndDate) WrongRequestException::throwException(12013, '/RegistrationEndDate/ is more than 10 years away from now which is not supported'     , "request received: \n" . var_export($req, true)); // check if date is plausible	
 			$authconfig['RegistrationEndDate'] = date('c', $regEndDate);
 		}
 		if (isset($req["VotingStart"])) {
 			$regEndDate = strtotime($req["VotingStart"]);
-			if ($regEndDate === false) WrongRequestException::throwException(12014, '/VotingStart/ is set but could not be paresed'     , "request received: \n" . print_r($req, true));
-			if (strtotime('+11 years', $now) < $regEndDate || strtotime('-11 years', $now) > $regEndDate) WrongRequestException::throwException(12015, '/VotingStart/ is more than 10 years away from now which is not supported'     , "request received: \n" . print_r($req, true)); // check if date is plausible	
+			if ($regEndDate === false) WrongRequestException::throwException(12014, '/VotingStart/ is set but could not be paresed'     , "request received: \n" . var_export($req, true));
+			if (strtotime('+11 years', $now) < $regEndDate || strtotime('-11 years', $now) > $regEndDate) WrongRequestException::throwException(12015, '/VotingStart/ is more than 10 years away from now which is not supported'     , "request received: \n" . var_export($req, true)); // check if date is plausible	
 			$authconfig['VotingStart'] = date('c', $regEndDate);
 		}
 		if (isset($req["VotingEnd"])) {
 			$regEndDate = strtotime($req["VotingEnd"]);
-			if ($regEndDate === false) WrongRequestException::throwException(12016, '/VotingEnd/ is set but could not be paresed'     , "request received: \n" . print_r($req, true));
-			if (strtotime('+11 years', $now) < $regEndDate || strtotime('-11 years', $now) > $regEndDate) WrongRequestException::throwException(12017, '/VotingEnd/ is more than 10 years away from now which is not supported'     , "request received: \n" . print_r($req, true)); // check if date is plausible	
+			if ($regEndDate === false) WrongRequestException::throwException(12016, '/VotingEnd/ is set but could not be paresed'     , "request received: \n" . var_export($req, true));
+			if (strtotime('+11 years', $now) < $regEndDate || strtotime('-11 years', $now) > $regEndDate) WrongRequestException::throwException(12017, '/VotingEnd/ is more than 10 years away from now which is not supported'     , "request received: \n" . var_export($req, true)); // check if date is plausible	
 			$authconfig['VotingEnd'] = date('c', $regEndDate);
 		}
 		if (isset($req["DelayUntil"])) {
-			if (! is_array($req["DelayUntil"])) WrongRequestException::throwException(12021, 'if DelayUntil is set, it must be an array', print_r($req['DelayUntil'], true));
+			if (! is_array($req["DelayUntil"])) WrongRequestException::throwException(12021, 'if DelayUntil is set, it must be an array', var_export($req['DelayUntil'], true));
 			foreach ($req["DelayUntil"] as $i => $datumStr) {
 				$datum = strtotime($datumStr);
-				if ($datum === false) WrongRequestException::throwException(12022, "DelayUntil date number $i could not be paresed" , "request received: \n" . print_r($req['DelayUntil'], true));
-				if (strtotime('+11 years', $now) < $datum || strtotime('-11 years', $now) > $datum) WrongRequestException::throwException(12023, "DelayUntil date number $i is more than 10 years away from now which is not supported"     , "request received: \n" . print_r($req['DelayUntil'], true)); // check if date is plausible	
+				if ($datum === false) WrongRequestException::throwException(12022, "DelayUntil date number $i could not be paresed" , "request received: \n" . var_export($req['DelayUntil'], true));
+				if (strtotime('+11 years', $now) < $datum || strtotime('-11 years', $now) > $datum) WrongRequestException::throwException(12023, "DelayUntil date number $i is more than 10 years away from now which is not supported"     , "request received: \n" . var_export($req['DelayUntil'], true)); // check if date is plausible	
 			}
 			$authconfig['DelayUntil'] = $req["DelayUntil"]; 
 		}

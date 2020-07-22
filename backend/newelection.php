@@ -125,7 +125,7 @@ try {
 			$tallym = LoadModules::loadTally($electionconfig['tally'], $blinder);
 			$newconfig['tally'] = constant(get_class($tallym) . '::name');
 
-			if ( (! isset($electionconfig["questions"])) || (! is_array($electionconfig["questions"]))) WrongRequestException::throwException(2146, 'Request must contain an array of questions', print_r($electionconfig, true));
+			if ( (! isset($electionconfig["questions"])) || (! is_array($electionconfig["questions"]))) WrongRequestException::throwException(2146, 'Request must contain an array of questions', var_export($electionconfig, true));
 			foreach ($electionconfig['questions'] as $i => $question) {
 				$completeElectionId = json_encode(array ('mainElectionId' => $electionId,  'subElectionId' => $question['questionID']));
 				$subBlinderConf = $blinder->handleNewElectionReq($completeElectionId, (isset($question['blinderData'])?$question['blinderData']:array()));
@@ -150,8 +150,8 @@ try {
 					$certfile = realpath(dirname(__FILE__) . '/config/tls-certificates/' . $host . '.pem');
 				}
 				$configWithAllKeys = httpPost($url, $electionconfig, $certfile, true);
-				if ($configWithAllKeys === false) InternalServerError::throwException(8734632, 'Next permission server returned an error', 'Server URL which returned an error: >' . $url ."<\n returned error:\n" . print_r($configWithAllKeys, true));
-				if (isset($configWithAllKeys['cmd'])  && $configWithAllKeys['cmd'] === 'error') InternalServerError::throwException(8734633, 'Next permission server returned an error', 'Server URL which returned an error: >' . $url ."<\n returned error:\n" .print_r($configWithAllKeys, true));
+				if ($configWithAllKeys === false) InternalServerError::throwException(8734632, 'Next permission server returned an error', 'Server URL which returned an error: >' . $url ."<\n returned error:\n" . var_export($configWithAllKeys, true));
+				if (isset($configWithAllKeys['cmd'])  && $configWithAllKeys['cmd'] === 'error') InternalServerError::throwException(8734633, 'Next permission server returned an error', 'Server URL which returned an error: >' . $url ."<\n returned error:\n" .var_export($configWithAllKeys, true));
 				if (! isset($configWithAllKeys['questions'])) InternalServerError::throwException(8734634, 'Error creating a new election: a permission server returned a config without questions. Server URL delivering wrong config: ' . $url, ''); 
 				if (! is_array($configWithAllKeys['questions'])) InternalServerError::throwException(8734635, 'Error creating a new election: a permission server returned a config without questions not as array. Server URL delivering wrong config: ' . $url, ''); 
 				foreach ($configWithAllKeys['questions'] as $qNo => $question ) {
@@ -164,11 +164,11 @@ try {
 							if (!    isset($question['blinderData']['permissionServerKeys'][$publickey['name']]) ) InternalServerError::throwException(8734638, 'Error creating a new election: a permission server returned a config without blinderData for previous permission servers. Server URL delivering wrong config: ' . $url, ''); 
 							if (! is_array($question['blinderData']['permissionServerKeys'][$publickey['name']]) ) InternalServerError::throwException(8734639, 'Error creating a new election: a permission server returned a config with blinderData for previous permission servers not as array. Server URL delivering wrong config: ' . $url, ''); 
 							if (           $question['blinderData']['permissionServerKeys'][$publickey['name']] !== $newconfig['questions'][$qNo]['blinderData']['permissionServerKeys'][$publickey['name']])
-								InternalServerError::throwException(8734656, 'Error creating a new election: a permission server changed the keys of an other permission server (most likely reason: Second try to create an election. Retry using a new electionId) on quesion no. ' . $qNo, 'expected: ' . print_r($newconfig['questions'][$qNo]['blinderData']['permissionServerKeys'][$publickey['name']], true) . ',\r\n received: ' . print_r($question['blinderData']['permissionServerKeys'][$publickey['name']], true)); 
+								InternalServerError::throwException(8734656, 'Error creating a new election: a permission server changed the keys of an other permission server (most likely reason: Second try to create an election. Retry using a new electionId) on quesion no. ' . $qNo, 'expected: ' . var_export($newconfig['questions'][$qNo]['blinderData']['permissionServerKeys'][$publickey['name']], true) . ',\r\n received: ' . var_export($question['blinderData']['permissionServerKeys'][$publickey['name']], true)); 
 						} else { // verify if the newly obtained keys are signed correctly
 							$completeElectionId = json_encode(array ('mainElectionId' => $electionId,  'subElectionId' => $question['questionID']));
 							$ok = $blinder->verifyPermissionServerKey($publickey['name'], $question['blinderData']['permissionServerKeys'][$publickey['name']], $completeElectionId);
-							if ($ok !== true) InternalServerError::throwException(8734657, 'Error creating a new election: a permission server delivered not valid keys on quesion no. ' . $qNo, 'expected: ' . print_r($newconfig['questions'][$qNo]['blinderData'][$publickey['name']], true) . ',\r\n received: ' . $question['blinderData'][$publickey['name']]);
+							if ($ok !== true) InternalServerError::throwException(8734657, 'Error creating a new election: a permission server delivered not valid keys on quesion no. ' . $qNo, 'expected: ' . var_export($newconfig['questions'][$qNo]['blinderData'][$publickey['name']], true) . ',\r\n received: ' . $question['blinderData'][$publickey['name']]);
 						}
 					}
 					$newconfig['questions'][$qNo]['blinderData'] = $question['blinderData'];

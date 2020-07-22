@@ -496,11 +496,11 @@ class Client
             $json_decode = json_decode($result, true);
         }
         curl_close($ch);
-
         return array(
             'result' => (null === $json_decode) ? $result : $json_decode,
             'code' => $http_code,
-            'content_type' => $content_type
+            'content_type' => $content_type,
+        	'raw' => $result  // only for debugging purpose
         );
     }
 

@@ -53,17 +53,35 @@ class OAuth2 extends Auth {
 	 */
 	function checkCredentials($credentials, $electionId, $phase) {
 		global $oauthConfig; // TODO move this to __construct?
+
+		// check date
+		$inDateRange = parent::checkCredentials($credentials, $electionId, $phase); //checks the phase time frame
+		if ($inDateRange !== true) return false;
+		
 		// load necessary data
 		  //$configHash = $this->electionsDB->electionIdToConfigHash($electionId);
 		$oAuthServerId = $this->db->getOAuthServerIdByElectionId($electionId); // $Ids['serverId'] und $Ids['listId']
 
 		// verify transaction credentials
-		$webclientAuthFromDb = $this->db->loadAuthData($electionId, hash('sha256', $credentials['identifier'])); // TODO error handling $webclientAuthFromDb empty // TODO error handling if not set (or not string)
-		if (count($webclientAuthFromDb) < 1) return false; // $credentials['identifier'] not found / wrong 
-		if (! isset($webclientAuthFromDb['auid'])) return false; // did not log in in OAuth2 / BEO server
+		if (! array_key_exists('identifier', $credentials ) ){
+			WrongRequestException::throwException(100070, 'Missing the field >identifier< in your request.', 'Credentials you sent: >' . var_export($credentials, true) . '<');
+			return false; // $credentials['identifier'] not found / wrong
+		}
+		if (! is_string($credentials['identifier'] ) ){
+			WrongRequestException::throwException(100069, 'The field >identifier< in your request must be of type string.', 'Credentials you sent: >' . var_export($credentials, true) . '<');
+			return false; // $credentials['identifier'] not found / wrong
+		}
 		
-		$inDateRange = parent::checkCredentials($credentials, $electionId, $phase); //checks the phase time frame
-		if ($inDateRange !== true) return false;
+		$webclientAuthFromDb = $this->db->loadAuthData($electionId, hash('sha256', $credentials['identifier']));
+		if (count($webclientAuthFromDb) < 1) {
+			WrongRequestException::throwException(100067, 'No authentication data found in my database. The identifier you sent not found. Possible cause: You did not autorize Vvvote to get the data from the oAuth2 server.', 'Credentials you sent: >' . var_export($credentials, true) . '<, electionID: >' . var_export($electionId, true) . '<');
+			return false; // $credentials['identifier'] not found / wrong 
+		}
+		if (! isset($webclientAuthFromDb['auid'])) {
+			WrongRequestException::throwException(100068, 'The authentication data found in my database is incomplete. It does not contain the auid/sub. Possible cause: You did not autorize Vvvote to get the data from the oAuth2 server.', 'Credentials you sent: >' . var_export($credentials, true) . '<, electionID: >' . var_export($electionId, true) . '<');
+			return false; // did not log in in OAuth2 / BEO server
+		}
+		
 		
 		// $authInfos = $this->db->loadAuthData($configHash, $Ids['serverId'], $credentials['identifier']);
 		// connect to OAuth2 server
@@ -74,7 +92,6 @@ class OAuth2 extends Auth {
 		
 		if (!isset($eligCrit)) WrongRequestException::throwException(12100, 'internal server error: authModule: OAuth2 could not load the config', 'electionId: ' . $electionId);
 		
-		// TODO check date
 
 		// is not a fake/test/admin/dummy account
 		if ($eligCrit['verified'] === false) $isVerified = true; // test not requiered
@@ -117,7 +134,7 @@ class OAuth2 extends Auth {
 	function getVoterId($credentials, $electionId) {
 		// $configHash = $this->electionsDB->electionIdToConfigHash($electionId);
 		$authData = $this->db->loadAuthData($electionId, hash('sha256', $credentials['identifier']));
-		if (count($authData) == 0 || $authData === false) WrongRequestException::throwException(12000, 'Voter not found. Please login in into OAuth2 server and allow access to this server.', print_r($credentials, true) .  print_r($electionId, true));
+		if (count($authData) == 0 || $authData === false) WrongRequestException::throwException(12000, 'Voter not found. Please login in into OAuth2 server and allow access to this server.', var_export($credentials, true) .  var_export($electionId, true));
 		return $authData['auid'];
 	}
 
@@ -173,14 +190,14 @@ class OAuth2 extends Auth {
 	function handleNewElectionReq($electionId, $req) {
 		$authconfig = parent::handleNewElectionReq($electionId, $req);
 		
-		if ( (! isset($req["serverId"]     )) || (! is_string($req['serverId']     )) ) WrongRequestException::throwException(12006, 'Missing /serverId/ in election config'     , "request received: \n" . print_r($req, true));
-		if ( (! isset($req["listId"]       )) || (! is_string($req['listId']       )) ) WrongRequestException::throwException(12001, 'Missing /listId/ in election config'       , "request received: \n" . print_r($req, true));
-		if ( (! isset($req["nested_groups"])) || (! is_array( $req['nested_groups'])) ) WrongRequestException::throwException(12002, 'Missing /nested_groups/ in election config', "request received: \n" . print_r($req, true));
-		if ( (! isset($req["verified"]     )) || (! is_bool(  $req['verified']     )) ) WrongRequestException::throwException(12003, 'Missing /verified/ in election config'     , "request received: \n" . print_r($req, true));
-		if ( (! isset($req["eligible"]     )) || (! is_bool(  $req['eligible']     )) ) WrongRequestException::throwException(12004, 'Missing /eligible/ in election config'     , "request received: \n" . print_r($req, true));
-		if ( (! isset($electionId          )) || (! is_string($electionId          )) ) WrongRequestException::throwException(12005, '/ElectionId/ not set or of wrong type'     , "request received: \n" . print_r($req, true));
+		if ( (! isset($req["serverId"]     )) || (! is_string($req['serverId']     )) ) WrongRequestException::throwException(12006, 'Missing /serverId/ in election config'     , "request received: \n" . var_export($req, true));
+		if ( (! isset($req["listId"]       )) || (! is_string($req['listId']       )) ) WrongRequestException::throwException(12001, 'Missing /listId/ in election config'       , "request received: \n" . var_export($req, true));
+		if ( (! isset($req["nested_groups"])) || (! is_array( $req['nested_groups'])) ) WrongRequestException::throwException(12002, 'Missing /nested_groups/ in election config', "request received: \n" . var_export($req, true));
+		if ( (! isset($req["verified"]     )) || (! is_bool(  $req['verified']     )) ) WrongRequestException::throwException(12003, 'Missing /verified/ in election config'     , "request received: \n" . var_export($req, true));
+		if ( (! isset($req["eligible"]     )) || (! is_bool(  $req['eligible']     )) ) WrongRequestException::throwException(12004, 'Missing /eligible/ in election config'     , "request received: \n" . var_export($req, true));
+		if ( (! isset($electionId          )) || (! is_string($electionId          )) ) WrongRequestException::throwException(12005, '/ElectionId/ not set or of wrong type'     , "request received: \n" . var_export($req, true));
 		global $oauthConfig;
-		if ( find_in_subarray($oauthConfig, 'serverId', $req['serverId']) === false)    WrongRequestException::throwException(12007, 'Server configuration for OAuth2-serverId not found' , "request received: \n" . print_r($req, true));
+		if ( find_in_subarray($oauthConfig, 'serverId', $req['serverId']) === false)    WrongRequestException::throwException(12007, 'Server configuration for OAuth2-serverId not found' , "request received: \n" . var_export($req, true));
 		$authconfig['serverId']      = $req['serverId'];
 		$authconfig['listId']        = $req["listId"];
 		$authconfig['nested_groups'] = $req["nested_groups"];
@@ -190,7 +207,7 @@ class OAuth2 extends Auth {
 		// TODO don't save any data until everything is completed (no error occured in the further steps)
 		// TODO don't save any public config data in separate data base - just use the config
 		$ok = $this->newElection($electionId, $req['serverId'], $authconfig); // TODO think about taking serverId always from election-config
-		if (! $ok) InternalServerError::throwException(12020, 'Internal server error: error saving election auth information', "request received: \n" . print_r($req, true));
+		if (! $ok) InternalServerError::throwException(12020, 'Internal server error: error saving election auth information', "request received: \n" . var_export($req, true));
 		return $authconfig;
 	}
 	

@@ -73,7 +73,7 @@ function httpPost($url, array $fieldsToJson, $verifyCertfile=false, $contentType
 	if ($contentTypeTextPlain) 	$curl_options[CURLOPT_HTTPHEADER] = array('Content-type: text/plain');
 		
 	if ($verifyCertfile) {
-		if (@file_get_contents($verifyCertfile) === false) InternalServerError::throwException(6754534, 'Internal server configuration error: Could not read chain of SSL-certificates', 'Looking for file ' . print_r($verifyCertfile), true);
+		if (@file_get_contents($verifyCertfile) === false) InternalServerError::throwException(6754534, 'Internal server configuration error: Could not read chain of SSL-certificates', 'Looking for file ' . var_export($verifyCertfile), true);
 		$path_to_certificate = $verifyCertfile;
 		$curl_options[CURLOPT_SSL_VERIFYHOST] = 2; /* 2: check the common name and that it matches the HOST name */
 		$curl_options[CURLOPT_CAINFO] = $path_to_certificate;
@@ -86,7 +86,7 @@ function httpPost($url, array $fieldsToJson, $verifyCertfile=false, $contentType
 	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE );
 	$content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE );
 	if ($resultStr === false)	$errorText = curl_error($ch );
-	else                    	$errorText = print_r ( $http_code, true );
+	else                    	$errorText = var_export ( $http_code, true );
 	curl_close( $ch );
 	if ($http_code != 200) {
 		InternalServerError::throwException ( 31868, 'Error connecting to the external URL. Please inform the server administrator', "URL: >${url}<" . "\r\n Got HTTP status / curl-error: " . $errorText );

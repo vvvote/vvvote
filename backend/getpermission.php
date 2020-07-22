@@ -18,10 +18,10 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 // header("Access-Control-Allow-Origin: http://www2.webhod.ra", false);
 
 // echo ":: data received via GET ::\n\n";
-// print_r($_GET);
+// var_export($_GET);
 
 // echo "\n\n:: Data received via POST ::\n\n";
-// print_r($_POST);
+// var_export($_POST);
 
 // echo "\n\n:: Data received as \"raw\" (text/plain encoding) ::\n\n";
 
@@ -47,6 +47,6 @@ if ($HTTP_RAW_POST_DATA !== false) {
 }
 
 // echo "\n\n:: Files received ::\n\n";
-// print_r($_FILES);
+// var_export($_FILES);
 
 ?>

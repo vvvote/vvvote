@@ -36,7 +36,7 @@ class DbOAuth2 extends DbBase {
 			  	array('name' => 'displayname'    , 'digits' => '100', 'json' => false), /* colunm definition */
 			  		//array('name' => 'public_id'      , 'digits' => '100', 'json' => false), /* colunm definition */
 			  	array('name' => 'auid'           , 'digits' => '100', 'json' => false), /* colunm definition */
-			  	array('name' => 'authInfos'      , 'digits' => '1000','json' => true),
+			  	array('name' => 'authInfos'      , 'digits' => '5000','json' => true),
 			  	array('name' => 'startTime'      , 'digits' => '100', 'json' => false),
 			  	array('name' => 'firstUse'       , 'digits' => '1'  , 'json' => false)
 			  )

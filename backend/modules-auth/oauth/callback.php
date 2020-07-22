@@ -103,7 +103,7 @@ if (!isset($_GET['code'])) {
 		die();
 	} else {
 		//	print "<br>$oauthdata";
-		//	print_r($oauthdata);
+		//	var_export($oauthdata);
 		$serverId     = str_replace('\äoieg089uthiut', '.', $state[0]);
 		$electionhash = str_replace('\äoieg089uthiut', '.', $state[1]);
 		$tmpsecret    = $state[2]; // this is a hex string, no escaping requiered
@@ -118,12 +118,12 @@ if (!isset($_GET['code'])) {
 
 
 		//	print "<br><br>\ncurConfig: ";
-		//	print_r($curConfig);
+		//	var_export($curConfig);
 		$client = new nsOAuth2\Client($curOAuth2Config['client_id'], $curOAuth2Config['client_secret']);
 		$params = array('code' => $_GET['code'], 'redirect_uri' => $curOAuth2Config['redirect_uri']);
 		$response = $client->getAccessToken($curOAuth2Config['token_endp'], 'authorization_code', $params);
 		//	print "<br><br>\nresponse: ";
-		//	print_r($response);
+		//	var_export($response);
 		//	parse_str($response['result'], $info);
 		if (isset($response['error']) || $response['code'] != '200') {
 			// TODO better error message: e.g. 401 = client_secret falsch
@@ -136,31 +136,35 @@ if (!isset($_GET['code'])) {
 			$techinfos = '';
 			if ($response['code'] === 401) $techinfos = '<br>The Vvvote server\'s client secret is likely wrong';
 			$techinfos = $techinfos . '<br>client secret: >' . $curOAuth2Config['client_secret'] . '<' .
-			'<br>received error from oAuth2 server: >' . print_r($response, true) . '<' .
+			'<br>received error from oAuth2 server: >' . var_export($response, true) . '<' .
 			'<br>client_id: >' . 	$curOAuth2Config['client_id'] . '<' .
 			'<br>client_secret: ' . '[secret]' .  
 			'<br>code: >' . 		$_GET['code'] . '<' .
 			'<br>redirect_uri: >' . $curOAuth2Config['redirect_uri'] . '<' .
 			'<br>token_endp: >' . 	$curOAuth2Config['token_endp'] . '<' .
-			'<br>params: >' . print_r($params, true) . '<' .
-			'<br>response: >' . print_r($response, true) . '<';
+			'<br>params: >' . var_export($params, true) . '<' .
+			'<br>response: >' . var_export($response, true) . '<';
 			printTechInfos($techinfos);		
 			die();
 		}
-		// print_r($response);
+		// var_export($response);
 		$tokeninfos = $response['result'];
 		//	print "<br><br>\info: ";
-		// print_r($tokeninfos);
+		// var_export($tokeninfos);
 		$client->setAccessToken($tokeninfos);
 		$now =  new DateTime('now');
 		
 		$fetcher = new FetchFromOAuth2Server($serverIndex, $tokeninfos);
-		$auid        = $fetcher->fetchAuid(); // TODO error handling 404 --> $auid = empty
-		if ($auid        === false) print "Fehler: auid konnte nicht geholt werden";
-//		$userProfile = $fetcher->fetchUserProilfe(); // TODO error handling 404 --> $userProfile = empty
-//		if ($userProfile === false) print "Fehler: UserProfile konnte nicht geholt werden";
-//		$username  = $userProfile['username'];
+		try {
+			$auid = $fetcher->fetchAuid();
+		} catch (InternalServerError $e) {
+			printTitle('VVVote: Login erfolgreich', 'Autorisierung dieser Anwendung erfolgreich.');
+			print "Fehler: auid/sub konnte nicht geholt werden";
+			printTechInfos($e);
+			die();
+		}
 		
+	
 		
 		global $dbInfos;
 		$oAuthDb = new DbOAuth2($dbInfos);
@@ -213,16 +217,16 @@ if (!isset($_GET['code'])) {
 		/*
 		 $membership = $client->fetch($curOAuth2Config['get_membership_endp'], Array(), Client::HTTP_METHOD_POST);
 		print "<br><br>\nresponse 2: ";
-		print_r($membership);
+		var_export($membership);
 
 
 		$userprofile = $client->fetch('https://beoauth.piratenpartei-bayern.de/api/self/profile/', $params, Client::HTTP_METHOD_POST);
 		print "<br><br>\nresponse 3: ";
-		print_r($userprofile);
+		var_export($userprofile);
 		$listId = 'd94b915b-db13-4264-890c-0780692e4998';
 		$mayvote = $client->fetch($curOAuth2Config['is_in_voter_list_endp'] . $listId .'/', Array(), Client::HTTP_METHOD_POST);
 		print "<br><br>\may vote: ";
-		print_r($mayvote);
+		var_export($mayvote);
 		$mayvoteBoolean = ($mayvote['result']['list'] === $listId && $mayvote['result'] == 1);
 
 
@@ -243,7 +247,7 @@ if (!isset($_GET['code'])) {
 
 		print "<h1>Ergebnisse</h1>";
 		print '<br>auid: ' . $membership['result']['auid'];
-		print '<br>Access Token: ' . print_r($tokeninfos, true);
+		print '<br>Access Token: ' . var_export($tokeninfos, true);
 		print "<br>BEO-Username: " . $userprofile['result']['username'];
 		print '<br>Election config hash: ' . $electionhash;
 		print '<br>temp secret: ' . $tmpsecret;

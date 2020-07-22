@@ -76,10 +76,10 @@ class SharedPasswAuth extends Auth {
 				gettype($electionId) == 'string' && gettype($req['sharedPassw']) == 'string') 
 		{
 			$ok = $this->newElection($electionId, $req['sharedPassw']);
-			if (! $ok) InternalServerError::throwException(2710, 'Internal server error: error saving election auth information', "request received: \n" . print_r($req, true));
+			if (! $ok) InternalServerError::throwException(2710, 'Internal server error: error saving election auth information', "request received: \n" . var_export($req, true));
 			return $authConfig;
 		} else {
-			WrongRequestException::throwException(2000, 'ElectionId or shared password not set or of wrong type', "request received: \n" . print_r($req, true));
+			WrongRequestException::throwException(2000, 'ElectionId or shared password not set or of wrong type', "request received: \n" . var_export($req, true));
 		}
 	}
 

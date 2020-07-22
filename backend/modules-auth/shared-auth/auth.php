@@ -120,7 +120,7 @@ class SharedAuth extends Auth {
  * }
  */
 	function handleNewElectionReq($electionId, $req) {
-		if ( (! isset($req["auth"]     )) || (! is_string($req['auth']     )) ) WrongRequestException::throwException(30001, 'Missing /auth/ in election config'       , "request received: \n" . print_r($req, true));
+		if ( (! isset($req["auth"]     )) || (! is_string($req['auth']     )) ) WrongRequestException::throwException(30001, 'Missing /auth/ in election config'       , "request received: \n" . var_export($req, true));
 		$subAuth = $req["auth"];
 		$authConfig = $this->newElection($electionId, $subAuth, $req['authData']);
 		return $authConfig;

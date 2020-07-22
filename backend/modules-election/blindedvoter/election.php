@@ -63,7 +63,7 @@ class BlindedVoter extends Blinder {
 			foreach ($blinderData ['permissionServerKeys'] as $psname => $signedkey) {
 				$ok = $this->verifyPermissionServerKey($psname, $signedkey, $electionId);
 				if ($ok !== true)
-					InternalServerError::throwException(8747856, 'Verification of election key failed', print_r($signedkey, true));
+					InternalServerError::throwException(8747856, 'Verification of election key failed', var_export($signedkey, true));
 			}
 		} else {
 			$blinderData['permissionServerKeys'] = array ();
@@ -101,7 +101,7 @@ class BlindedVoter extends Blinder {
 	
 	function verifyPermissionServerKey($pservername, $signedKey, $electionId) {
 		global $serverNo, $pServerKeys;
-		if ( ! is_string($pservername) ) InternalServerError::throwException(8747850, '$pservername must be a string', 'Got: >' . print_r($pservername, true). '<');
+		if ( ! is_string($pservername) ) InternalServerError::throwException(8747850, '$pservername must be a string', 'Got: >' . var_export($pservername, true). '<');
 		$tmp = explode('.', $signedKey['key']['kid'], 2);
 		$pservername2 = $tmp[0];
 		if ($pservername2 === $signedKey['key']['kid']) InternalServerError::throwException(8747851, '<kid> must contain one >.<', 'Got this kid: >' . $signedKey['key']['kid'] . '<');
@@ -112,9 +112,9 @@ class BlindedVoter extends Blinder {
 		$crypt_rsa = $this->getCrypt();
 		$base64urldec = base64url_decode($signedKey['sig']);
 		$ok = $crypt_rsa->loadKey($pServerKeys[$i]);
-		if ($ok !== true) InternalServerError::throwException(8747854, 'Failed to load long-term permission server key', 'key: >' . print_r($pServerKeys[$i], true) . '<');
+		if ($ok !== true) InternalServerError::throwException(8747854, 'Failed to load long-term permission server key', 'key: >' . var_export($pServerKeys[$i], true) . '<');
 		$verify = $crypt_rsa->verify(json_encode($signedKey['key']), $base64urldec);
-		if ($verify !== true) InternalServerError::throwException(8747855, 'Verification of permission server keys failed', 'long-term key: >' . print_r($pServerKeys[$i], true) . '<', ', election key >' . print_r($signedKey, true) . '<');
+		if ($verify !== true) InternalServerError::throwException(8747855, 'Verification of permission server keys failed', 'long-term key: >' . var_export($pServerKeys[$i], true) . '<', ', election key >' . var_export($signedKey, true) . '<');
 		return $verify;
 	}
 
@@ -138,11 +138,11 @@ class BlindedVoter extends Blinder {
 	}
 
 	function isPermitted($credentials, $electionID_, $threadId) {
-		// TODO save req in log-database and check if first req
+		// Hint: save req in log-database and check if first req --> not neccessary because the signed ballots are saved
 		// TODO check if correct number of ballots was sent
 		$inlist = $this->isInVoterList($credentials, $electionID_);
 		if ($inlist !== true) {
-			WrongRequestException::throwException(1, "Error: check of credentials failed. You are not in the list of allowed voters for this election or secret not accepted", 'isPermitted: credentials ' . print_r($credentials, true));
+			WrongRequestException::throwException(1, "Error: check of credentials failed. You are not in the list of allowed voters for this election or secret not accepted", 'isPermitted: credentials ' . var_export($credentials, true));
 		}
 
 		if ($this->electionId !== $electionID_) {
@@ -181,7 +181,7 @@ class BlindedVoter extends Blinder {
 	}
 
 	function pickBallotsEvent($voterReq) {
-		if (! isset($voterReq['credentials'])) WrongRequestException::throwException(436, 'Request does not contain credentials', print_r($voterReq, true));
+		if (! isset($voterReq['credentials'])) WrongRequestException::throwException(436, 'Request does not contain credentials', var_export($voterReq, true));
 		$permitted = $this->isPermitted($voterReq['credentials'], $this->electionId, 1); // $voterReq['voterId'], $voterReq['secret'], $voterReq['electionId'], 1); // @TODO substitude ThreadId for 1
 		$voterId = $this->auth->getVoterId($voterReq['credentials'], $this->electionId);
 		// TODO check if this is the first req for picking ballots
@@ -286,7 +286,7 @@ class BlindedVoter extends Blinder {
 			$privKey = $this->db->loadPrivateKey($completeElectionId);
 			global $serverNo, $pServerKeys;
 			$privKey['serverName'] = $pServerKeys[$serverNo -1]['name'];
-			// print_r($privKey);
+			// var_export($privKey);
 			$crypt = new Crypt(array(), $privKey);
 			$ballots = array();
 			for ($i=0; $i<count($picked); $i++) {
@@ -311,20 +311,20 @@ class BlindedVoter extends Blinder {
 	function signBallotsEvent($voterReq) {
 		// in pickBallots-mode: check credentials? It is not necassary because providing the correct unblinding factors show that the Client is the one who sent the pickBallots-Request and back then the credentials have been verified. 
 		// check credentials
-		if (! isset($voterReq['credentials'])) WrongRequestException::throwException(436, 'Request does not contain credentials', print_r($voterReq, true));
+		if (! isset($voterReq['credentials'])) WrongRequestException::throwException(436, 'Request does not contain credentials', var_export($voterReq, true));
 		$permitted = $this->isPermitted($voterReq['credentials'], $this->electionId, 1); // $voterReq['voterId'], $voterReq['secret'], $voterReq['electionId'], 1); // @TODO substitude ThreadId for 1
 		$voterId = $this->auth->getVoterId($voterReq['credentials'], $this->electionId);
 		
 		// load the blinded Hashes from cmd 'pickBallots'
-		$voterId = $this->auth->getVoterId($voterReq['credentials'], $voterReq['electionId']);
+		$voterId = $this->auth->getVoterId($voterReq['credentials'], $voterReq['electionId']); // TODO: this is nearly a duplication of the line above and gives the same result --> remove?
 		$isFirstRequestSig = $this->db->isFirstReqForSign($voterReq['electionId'], $voterId);
 		if (! ($isFirstRequestSig === true)) {
-			WrongRequestException::throwException(301, 'Error: This server already signed a return envelop for you', "voterId: " . print_r($voterId, true));
+			WrongRequestException::throwException(301, 'Error: This server already signed a return envelop for you', "voterId: " . var_export($voterId, true));
 		}
 	/*
 		$blindedHashesFromDB = $this->db->loadBlindedHashes($this->electionId, $voterId);
 		if (count($blindedHashesFromDB) < 1) {
-			WrongRequestException::throwException(302, 'Error: Sign request without request for disclosing ballots', "All requested ballots: " . print_r($blindedHashesFromDB, true));
+			WrongRequestException::throwException(302, 'Error: Sign request without request for disclosing ballots', "All requested ballots: " . var_export($blindedHashesFromDB, true));
 		}
 		$blindedHashesFromDB = $blindedHashesFromDB[0]['blindedHashes'];
 
@@ -389,22 +389,22 @@ class BlindedVoter extends Blinder {
 		// verify if the correct number of ballots was sent: if (count($voterReq["ballots"]) != $this->numVerifyBallots) { WrongRequestException::throwException('not the correct number of ballots sent'); }
 		$tmpret = array();
 		if ($voterReq['electionId'] != $this->electionId) 	WrongRequestException::throwException(210, 'Error: electionID is wrong', "expected electionID: $this->electionId, received electionID in ballot $i: " . $voterReq['ballots'][$i]['electionId']);
-		if ( (      ! isset($voterReq['questions'])) || (! is_array($voterReq['questions'])) ) WrongRequestException::throwException(223, "Error: questions must be set and an array", print_r($voterReq, true));
+		if ( (      ! isset($voterReq['questions'])) || (! is_array($voterReq['questions'])) ) WrongRequestException::throwException(223, "Error: questions must be set and an array", var_export($voterReq, true));
 		for ($q=0; $q<count($voterReq['questions']); $q++) {
 			if (         (!isset($voterReq["questions"][$q]['questionID'])) || 
 			(! ( is_int($voterReq["questions"][$q]['questionID'] ) ||  is_string($voterReq["questions"][$q]['questionID']) ) )   ) WrongRequestException::throwException(227, 'Error: verifyBallots(): missing questionID or it is not of type int', $q);
 			$qno = find_in_subarray($voterReq["questions"], 'questionID', $blindedHashesFromDB['blindedHashes']['questions'][$q]['questionID']);
 			if ($qno === false) WrongRequestException::throwException(237, 'Error: All questions must be disclosed', 'Number in question array for which no questionID was found in voterrequest: ' . $q);
-			if ( (! isset($voterReq['questions'][$q]['ballots'])) || (! is_array($voterReq['questions'][$q]['ballots'])) ) WrongRequestException::throwException(224, "/questions[].['ballots']/ must be set and of type array", print_r($voterReq, true));
+			if ( (! isset($voterReq['questions'][$q]['ballots'])) || (! is_array($voterReq['questions'][$q]['ballots'])) ) WrongRequestException::throwException(224, "/questions[].['ballots']/ must be set and of type array", var_export($voterReq, true));
 			foreach ($blindedHashesFromDB['requestedBallots']['questions'][$q]['picked'] as $p) {
 				$i = find_in_subarray($voterReq['questions'][$q]['ballots'], 'ballotno', $p); 
 				if ($i === false) WrongRequestException::throwException(211, "A picked Ballot was not sent", "verifyBallots: not sent ballot: $p");
 				$curVoterBallot = $voterReq["questions"][$qno]["ballots"][$i];
 				
-				if ( (!isset($curVoterBallot['unblindf'])  || (!is_string($curVoterBallot['unblindf']))) ) 	WrongRequestException::throwException(225, 'Error: /unblindf/ must be set and of type /string/', print_r($curVoterBallot, true));
+				if ( (!isset($curVoterBallot['unblindf'])  || (!is_string($curVoterBallot['unblindf']))) ) 	WrongRequestException::throwException(225, 'Error: /unblindf/ must be set and of type /string/', var_export($curVoterBallot, true));
 				// verify if the sent ballot was requested
 			//	$kw = array_search($curVoterBallot['ballotno'], $blindedHashesFromDB['requestedBallots']['questions'][$q]['picked']);
-			//	if ($kw === false) WrongRequestException::throwException(211, "A Ballot was sent for verification purpose that was not requested", "verifyBallots: not requested ballot: " . $voterReq['ballots'][$i]['ballotno'] . "requested ballots: " . print_r($blindedHashesFromDB['requestedBallots'], true));
+			//	if ($kw === false) WrongRequestException::throwException(211, "A Ballot was sent for verification purpose that was not requested", "verifyBallots: not requested ballot: " . $voterReq['ballots'][$i]['ballotno'] . "requested ballots: " . var_export($blindedHashesFromDB['requestedBallots'], true));
 			//	$requestedballots['sent'][$kw] = true;
 			//	}
 				// verify hash
@@ -413,8 +413,8 @@ class BlindedVoter extends Blinder {
 				$blindedHashFromDatabase    = $blindedHashesFromDB['blindedHashes']['questions'][$q]['ballots'][$curVoterBallot['ballotno']]['blindedHash'];
 				$unblindf                   = $curVoterBallot['unblindf'];
 				$privKey = $this->db->loadPrivateKey($completeElectionId);
-				// print_r($privKey);
-				// print_r($this->electionId);
+				// var_export($privKey);
+				// var_export($this->electionId);
 				$privKey['serverName'] = '';
 				$crypt = new Crypt(array(), $privKey);
 				$hashOk = $crypt->verifyBlindedHash($str, $unblindf, $blindedHashFromDatabase);
@@ -465,7 +465,7 @@ class BlindedVoter extends Blinder {
 	 */
 	function verifyPermission($vote) {
 		if (! isset($vote['permission']['sigs']) ) {
-			WrongRequestException::throwException(400, "Error: permission does not have a signature from a permission server", "verifyPermission: complete vote: " . print_r($vote, true));
+			WrongRequestException::throwException(400, "Error: permission does not have a signature from a permission server", "verifyPermission: complete vote: " . var_export($vote, true));
 			return false;
 		}
 		if (count($vote['permission']['sigs']) < $this->numSigsRequiered) {
@@ -495,7 +495,7 @@ class BlindedVoter extends Blinder {
 			}
 			$result = array();
 			//	print "voterReq\n";
-			//	print_r($voterReq);
+			//	var_export($voterReq);
 			// $this.verifysyntax($result);
 			// $this.verifyuser($voterReq['voterid'], $voterReq['secret']);
 			// get state the user is in for the selected election

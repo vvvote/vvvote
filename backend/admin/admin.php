@@ -60,7 +60,7 @@ if ((isset($_GET['checkCredentials' ])) || (isset($_POST['checkCredentials' ])))
 	$dbauth = new DbAuth($dbInfos);
 	$ok = $dbauth->checkCredentials('wahl1', 'pakki', 'pakki');
   	print "<br>\n ok? ";
-  	print_r($ok);
+  	var_export($ok);
 }
 
 */
@@ -166,12 +166,12 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 				'exp' => base64url_encode ( $crypt_rsa->exponent->toBytes () ) 
 		);
 		// 'kid' => $thisServerName);
-		// print_r($crypt_rsa->modulus);
+		// var_export($crypt_rsa->modulus);
 		echo "public key:<br>\r\n";
 		echo ' n:   ' . base64url_encode ( $crypt_rsa->modulus->toBytes () ) . "<br>\r\n";
 		echo ' k:   ' . $crypt_rsa->k . "<br>\r\n";
 		echo ' exp: ' . base64url_encode ( $crypt_rsa->exponent->toBytes () );
-		// print_r($crypt_rsa->exponent);
+		// var_export($crypt_rsa->exponent);
 		echo "<br>\r\n";
 		$pubkeystr = str_replace ( '\/', '/', json_encode ( $pubkey ) );
 		$filename = "$configdir/voting-keys/${thisServerName}.publickey.pem";

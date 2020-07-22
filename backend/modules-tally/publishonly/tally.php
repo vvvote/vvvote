@@ -100,9 +100,9 @@ class PublishOnlyTally extends Tally {
 			$votingno   = $voterReq['permission']['signed']['votingno'];
 			$vote       = $voterReq['vote']['vote'];
 		} catch (OutOfBoundsException $e) {
-			WrongRequestException::throwException(110201, 'The request ist missing >electionId< and/or >votingno<', "complete request: " . print_r($voterReq, true));
+			WrongRequestException::throwException(110201, 'The request ist missing >electionId< and/or >votingno<', "complete request: " . var_export($voterReq, true));
 		} catch (OutOfRangeException $e) {
-			WrongRequestException::throwException(1103, 'The request ist missing >electionId< and/or >votingno<', "complete request: " . print_r($voterReq, true));
+			WrongRequestException::throwException(1103, 'The request ist missing >electionId< and/or >votingno<', "complete request: " . var_export($voterReq, true));
 		}
 		
 		$isVotingPhase = $this->blinder->auth->checkphase('voting'); // throws a WrongRequestException if not in voting phase
@@ -115,7 +115,7 @@ class PublishOnlyTally extends Tally {
 		try {
 			$ok = $this->sigsOk($voterReq);
 			if ($ok) {
-				$this->store($electionId, $votingno, $vote, $voterReq);
+		//		$this->store($electionId, $votingno, $vote, $voterReq);
 			} else WrongRequestException::throwException(1104, 'Signature verification failed.', ''); ;
 		} catch (Exception $e) {
 			WrongRequestException::throwException(1104, 'Signature verification failed.', "details: " . $e->__toString() ); ;
@@ -151,7 +151,7 @@ class PublishOnlyTally extends Tally {
 	function handleTallyReq($voterReq) {
 			$result = array();
 			//	print "voterReq\n";
-			//	print_r($voterReq);
+			//	var_export($voterReq);
 			// $this.verifysyntax($result);
 			switch ($voterReq['cmd']) {
 				case 'storeVote':

@@ -66,7 +66,7 @@ class ExternalTokenAuth extends Auth {
 		global $externalTokenConfig;
 		If ( isset($this->authConfig['configId']) ) {
 			$i = find_in_subarray($externalTokenConfig, 'configId', $this->authConfig['configId']);
-			if ($i === false)  WrongRequestException::throwException(38573, 'externalTokenAuth: configId not found in server config', print_r($this->authConfig['configId'], true));
+			if ($i === false)  WrongRequestException::throwException(38573, 'externalTokenAuth: configId not found in server config', var_export($this->authConfig['configId'], true));
 			return $externalTokenConfig[$i];
 		} else return false;
 	}
@@ -97,7 +97,7 @@ class ExternalTokenAuth extends Auth {
 		);
 		
 		$result = $this->httpPost($url, $fieldsToJson, $verifyCert);
-//		print_r($result);
+//		var_export($result);
 		if ( isset($result['allowed']) && ($result['allowed'] === true) ) return true;
 		return false;
 	}
@@ -123,18 +123,18 @@ class ExternalTokenAuth extends Auth {
 	 */
 	function handleNewElectionReq($electionId, $req) {
 		$ret = parent::handleNewElectionReq($electionId, $req);
-		if (! isset($electionId))              WrongRequestException::throwException(2340, 'ElectionId not set', "request received: \n" . print_r($req, true));
-		if (gettype($electionId) != 'string' ) WrongRequestException::throwException(2345, 'ElectionId is not of type /string/', "request received: \n" . print_r($req, true));
+		if (! isset($electionId))              WrongRequestException::throwException(2340, 'ElectionId not set', "request received: \n" . var_export($req, true));
+		if (gettype($electionId) != 'string' ) WrongRequestException::throwException(2345, 'ElectionId is not of type /string/', "request received: \n" . var_export($req, true));
 		if (isset($req['configId']) && gettype($req['configId']) == 'string') {
 			$ret['configId'] = $req['configId'];
 			return $ret;
 		} else {
 			if (isset($req['checkTokenUrl']) && gettype($req['checkTokenUrl']) == 'string')	{
 				$ok = $this->newElection($electionId, $req['checkTokenUrl']);
-				if (! $ok) InternalServerError::throwException(2710, 'Internal server error: error saving election auth information', "request received: \n" . print_r($req, true));
+				if (! $ok) InternalServerError::throwException(2710, 'Internal server error: error saving election auth information', "request received: \n" . var_export($req, true));
 				return $ret;
 			} else {
-				WrongRequestException::throwException(2350, 'neither chekTokenUrl nor configId is set', "request received: \n" . print_r($req, true));
+				WrongRequestException::throwException(2350, 'neither chekTokenUrl nor configId is set', "request received: \n" . var_export($req, true));
 			}
 		}
 	}

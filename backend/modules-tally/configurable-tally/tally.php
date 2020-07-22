@@ -55,9 +55,9 @@ class ConfigurableTally extends PublishOnlyTally {
 					if (is_array($voterReq['questionID'] ) ) $questionIds   = $voterReq['questionID']; // an array of questions requested
 					else                                     $questionIds[] = $voterReq['questionID']; // just a single question requested
 					foreach ($questionIds as $questionId) {
-						if (! (is_int($questionId) || is_string($questionId))) WrongRequestException::throwException(85657, 'The questionID must be an int, a string or an array of integers resp. strings', print_r($voterReq, true));
+						if (! (is_int($questionId) || is_string($questionId))) WrongRequestException::throwException(85657, 'The questionID must be an int, a string or an array of integers resp. strings', var_export($voterReq, true));
 						$key = find_in_subarray($this->elConfig['questions'], 'questionID', $questionId);
-						if ($key === false) WrongRequestException::throwException(85658, 'The questionID you requested does not exist', print_r($questionId, true));
+						if ($key === false) WrongRequestException::throwException(85658, 'The questionID you requested does not exist', var_export($questionId, true));
 						$questions[] = $this->elConfig['questions'][$key];
 					}
 				}	else	$questions   = $this->elConfig['questions']; // return the result statistics for all questions

@@ -164,9 +164,9 @@ OAuth2.getNewElectionData = function (serverId) {
 	var ret = {};
 	ret.auth = 'oAuth2'; 
 	ret.authData = { 
-			"nested_groups": [],
+			"nested_groups": ["KV Düsseldorf"],
 			"verified": false,
-			"eligible": false,
+			"eligible": true,
 			"RegistrationStartDate": "2014-01-27T21:20:00Z",
 			"RegistrationEndDate":   "2020-10-10T21:20:00Z"
 			};

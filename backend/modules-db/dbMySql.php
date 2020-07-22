@@ -153,15 +153,15 @@ class DbMySql { // TODO dbBase
 	 */
 	// TODO this method should be moved into dbBase or later into an admin-module
 	function importVoterListFromArray($voterlist) {
-		print_r($voterlist);
+		var_export($voterlist);
 		$tname = $this->prefix . 'credentials';
 		$sql  = "insert into $tname (electionId, voterId, credentials) values (:electionId, :voterId, :secret)";
 		$stmt = $this->connection->prepare($sql);
 		foreach ($voterlist as $voter) {
 			$stmt->execute($voter);
 			//	print "<br>\n";
-			//	print_r($voter);
-			//	print_r($stmt->errorInfo());
+			//	var_export($voter);
+			//	var_export($stmt->errorInfo());
 				
 		}
 	}
@@ -175,7 +175,7 @@ class DbMySql { // TODO dbBase
 			$tablename = $this->prefix . $table;
 			$sql = "DELETE FROM $tablename";
 			$this->connection->exec($sql);
-			// print_r($this->connection->errorInfo());
+			// var_export($this->connection->errorInfo());
 		}
 	}
 /*

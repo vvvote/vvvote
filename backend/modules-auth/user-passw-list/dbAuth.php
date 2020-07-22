@@ -29,15 +29,15 @@ class DbAuth extends DbBase {
 	 * @param array $voterlist[number]['electionId']['voterID']['secret']
 	 */
 	function importVoterListFromArray($voterlist) { // TODO make a method in dbBase to import an array
-		print_r($voterlist);
+		var_export($voterlist);
 		$tname = $this->prefix . 'up_credentials';
 		$sql  = "insert into $tname (electionId, voterId, up_credentials) values (:electionId, :voterId, :secret)";
 		$stmt = $this->connection->prepare($sql);
 		foreach ($voterlist as $voter) {
 			$stmt->execute($voter);
 			//	print "<br>\n";
-			//	print_r($voter);
-			//	print_r($stmt->errorInfo());
+			//	var_export($voter);
+			//	var_export($stmt->errorInfo());
 				
 		}
 	}

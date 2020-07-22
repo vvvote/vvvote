@@ -52,7 +52,7 @@ if ($config === null) {
 	user_error ( "Could not decode the given config file >$configFilepath<.", E_USER_ERROR );
 	die ();
 }
-// print_r($config);
+// var_export($config);
 
 $debug = false;
 if (isset ( $config ['debug'] ))
@@ -226,30 +226,52 @@ if (isset ( $config ['oauth2Config'] )) {
 		if (! array_key_exists('mail_content_body',    $curOauthConfig)) InternalServerError::throwException(346554, 'missing >mail_content_body< in oAuth2 config', '');
 		if (! array_key_exists('serverDesc',           $curOauthConfig)) InternalServerError::throwException(346556, 'missing >serverDesc< in oAuth2 config', '');
 		
-		if (! array_key_exists('scope',        $curOauthConfig) ) $curOauthConfig['scope']        = 'member unique mail';
 		if (! array_key_exists('type',         $curOauthConfig) ) $curOauthConfig['type']         = 'ekklesia';
 		if (! array_key_exists('mail_sign_it', $curOauthConfig) ) $curOauthConfig['mail_sign_it'] = false;
 		
 		$oauthUrlTrimmed = rtrim ( $curOauthConfig ['oauth_url'], '/' );
 		$resUrlTrimmed =  rtrim ( $curOauthConfig ['ressources_url'], '/' );
 				
-		$curOauthConfig ['authorization_endp'] =  $oauthUrlTrimmed . '/oauth2/authorize/';
-		$curOauthConfig ['token_endp'] = $oauthUrlTrimmed . '/oauth2/token/';
-		$curOauthConfig ['get_profile_endp'] =  $resUrlTrimmed . '/user/profile/';
-		$curOauthConfig ['is_in_voter_list_endp'] = $resUrlTrimmed . '/user/listmember/';
-		$curOauthConfig ['get_membership_endp'] = $resUrlTrimmed . '/user/membership/';
-		$curOauthConfig ['get_auid_endp'] = $resUrlTrimmed . '/user/auid/';
-		$curOauthConfig ['sendmail_endp'] = $resUrlTrimmed . '/user/mails/';
-		$curOauthConfig ['client_id'] = $curOauthConfig ['client_ids'][$serverNo - 1];
-		// the following only needed for the webclient provided throu getserverinfos.php
-		$curOauthConfig ['authorize_url'] = $oauthUrlTrimmed . '/oauth2/authorize/?'; // must end with ?
-		$curOauthConfig ['login_url'] = $oauthUrlTrimmed . '/';
-		for ($i = 0; $i < count($pServerUrlBases); $i++) {
-			$curOauthConfig ['redirectUris'][$pServerKeys[$i]['name']] = rtrim ($pServerUrlBases[$i],'/') . '/modules-auth/oauth2/callback';
-			$curOauthConfig ['clientIds']   [$pServerKeys[$i]['name']] = $curOauthConfig['client_ids'][$i];
+		switch ($curOauthConfig['type']) {
+			case "ekklesia":
+				if (! array_key_exists('scope',        $curOauthConfig) ) $curOauthConfig['scope']        = 'member unique mail';
+				$curOauthConfig ['token_endp'] = $oauthUrlTrimmed . '/oauth2/token/';
+//not used at the moment				$curOauthConfig ['get_profile_endp'] =  $resUrlTrimmed . '/user/profile/';
+				$curOauthConfig ['is_in_voter_list_endp'] = $resUrlTrimmed . '/user/listmember/';
+				$curOauthConfig ['get_membership_endp'] = $resUrlTrimmed . '/user/membership/';
+				$curOauthConfig ['get_auid_endp'] = $resUrlTrimmed . '/user/auid/';
+				$curOauthConfig ['sendmail_endp'] = $resUrlTrimmed . '/user/mails/';
+				$curOauthConfig ['client_id'] = $curOauthConfig ['client_ids'][$serverNo - 1];
+				// the following only needed for the webclient provided throu getserverinfos.php
+				$curOauthConfig ['authorize_url'] = $oauthUrlTrimmed . '/oauth2/authorize/?'; // must end with ?
+				$curOauthConfig ['login_url'] = $oauthUrlTrimmed . '/';
+				for ($i = 0; $i < count($pServerUrlBases); $i++) {
+					$curOauthConfig ['redirectUris'][$pServerKeys[$i]['name']] = rtrim ($pServerUrlBases[$i],'/') . '/modules-auth/oauth2/callback';
+					$curOauthConfig ['clientIds']   [$pServerKeys[$i]['name']] = $curOauthConfig['client_ids'][$i];
+				}
+				$curOauthConfig ['redirect_uri'] = $curOauthConfig ['redirectUris'][$pServerKeys[$serverNo -1]['name']];
+				$oauthConfig[$curOauthConfig['serverId']] = $curOauthConfig;
+				break;
+			case "keycloak":
+				if (! array_key_exists('scope', $curOauthConfig) ) $curOauthConfig['scope'] = 'eligible user_roles verified';
+				$curOauthConfig ['token_endp'] = $oauthUrlTrimmed . '/token/'; // umgestellt
+//not used at the moment				$curOauthConfig ['get_profile_endp'] =  $resUrlTrimmed . '/userinfo/';
+// not supported by keycloak at the moment				$curOauthConfig ['is_in_voter_list_endp'] = $resUrlTrimmed . '/user/listmember/';
+				$curOauthConfig ['get_membership_endp'] = $resUrlTrimmed . '/userinfo';
+				$curOauthConfig ['get_auid_endp'] = $resUrlTrimmed . '/userinfo';
+				$curOauthConfig ['sendmail_endp'] = $resUrlTrimmed . '/user/mails/'; // not yet implemented in keycloak server
+				$curOauthConfig ['client_id'] = $curOauthConfig ['client_ids'][$serverNo - 1];
+				// the following only needed for the webclient provided throu getserverinfos.php
+				$curOauthConfig ['authorize_url'] = $oauthUrlTrimmed . '/auth?'; // must end with ? // umgestellt
+				$curOauthConfig ['login_url'] = $oauthUrlTrimmed . '/';
+				for ($i = 0; $i < count($pServerUrlBases); $i++) {
+					$curOauthConfig ['redirectUris'][$pServerKeys[$i]['name']] = rtrim ($pServerUrlBases[$i],'/') . '/modules-auth/oauth2/callback';
+					$curOauthConfig ['clientIds']   [$pServerKeys[$i]['name']] = $curOauthConfig['client_ids'][$i];
+				}
+				$curOauthConfig ['redirect_uri'] = $curOauthConfig ['redirectUris'][$pServerKeys[$serverNo -1]['name']];
+				$oauthConfig[$curOauthConfig['serverId']] = $curOauthConfig;
+				break;
 		}
-		$curOauthConfig ['redirect_uri'] = $curOauthConfig ['redirectUris'][$pServerKeys[$serverNo -1]['name']];
-		$oauthConfig[$curOauthConfig['serverId']] = $curOauthConfig;
 	}
 }
 

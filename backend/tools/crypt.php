@@ -59,7 +59,7 @@ class Crypt {
 		if ($this->keyFormat === self::KEY_TYPE_JWK) {
 			if (isset($this->serverKeys[$servername]) )	
 				$pubkey = $this->serverKeys[$servername]['key'];
-			else WrongRequestException::throwException(87634675, 'key not found', 'looking for the key from server >' . $servername . '<' . ', looking in: ' . print_r($this->serverKeys, true));
+			else WrongRequestException::throwException(87634675, 'key not found', 'looking for the key from server >' . $servername . '<' . ', looking in: ' . var_export($this->serverKeys, true));
 		} else {
 			foreach ($this->serverKeys as $num => $s) {
 				if ($s['name'] == $servername) {
@@ -98,7 +98,7 @@ class Crypt {
 		if ($hashBI->equals($verify)) {
 			return true;
 		}
-		WrongRequestException::throwException(1001, "Error: signature verifcation failed", "verifySig: given hash: $hash, calculated hash: " . $verify->toHex() . print_r($keyformat, true));
+		WrongRequestException::throwException(1001, "Error: signature verifcation failed", "verifySig: given hash: $hash, calculated hash: " . $verify->toHex() . var_export($keyformat, true));
 	}
 
 	
@@ -254,8 +254,8 @@ class Crypt {
 	 */
 	function decryptRsaAes($json) {
 		$message = json_decode($json, true);
-		if ( ($message == null) || (! isset($message['iv'])) || (! isset($message['wrappedKey'])) || (! isset($message['encrypted'])) ) WrongRequestException::throwException(874367,'crypt: >wrappedKey<, >iv<, >encrypted< must be set', print_r($json)); 	
-		if ( (! is_string($message['iv'])) || (! is_string($message['wrappedKey'])) || (! is_string($message['encrypted'])) ) WrongRequestException::throwException(874368,'crypt: wrappedKey, iv, encrypted must be strings', print_r($json));
+		if ( ($message == null) || (! isset($message['iv'])) || (! isset($message['wrappedKey'])) || (! isset($message['encrypted'])) ) WrongRequestException::throwException(874367,'crypt: >wrappedKey<, >iv<, >encrypted< must be set', var_export($json)); 	
+		if ( (! is_string($message['iv'])) || (! is_string($message['wrappedKey'])) || (! is_string($message['encrypted'])) ) WrongRequestException::throwException(874368,'crypt: wrappedKey, iv, encrypted must be strings', var_export($json));
 		
 		$aeskey = $this->unwrapKey($message['wrappedKey']);
 		// echo base64url_encode($aeskey);
