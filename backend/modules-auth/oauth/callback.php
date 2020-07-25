@@ -46,7 +46,7 @@ print '
 		';
 
 function printTitle($headertitle, $h1) {
-	global $pathwebclient;
+//	global $pathwebclient; not needed anymore
 	print "<title>$headertitle</title>";
 	print '</head><body>';
 	echo '
@@ -126,7 +126,7 @@ if (!isset($_GET['code'])) {
 		//	var_export($response);
 		//	parse_str($response['result'], $info);
 		if (isset($response['error']) || $response['code'] != '200') {
-			// TODO better error message: e.g. 401 = client_secret falsch
+			// TODO better error message: other than 401 = client_secret falsch
 			printTitle('VVVote: Login fehlgeschlagen', 'Autorisierung dieser Anwendung fehlgeschlagen.');
 			print 'M&ouml;gliche Ursachen:<br>';
 			print '<ul>

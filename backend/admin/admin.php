@@ -66,22 +66,31 @@ if ((isset($_GET['checkCredentials' ])) || (isset($_POST['checkCredentials' ])))
 */
 
 if (count($argv) == 1) {
-	echo 'Administrate / Setup vvvote. 
+	echo 'Administrate / setup vvvote. 
 php -f admin.php <command>
-Supported commands: createKeyPair
+Supported commands: createKeyPair, DeleteDatabaseContent
 call php -f admin.php <command> in order to get help for the command.';
 }
 
 if ( /* (isset($_GET['DeleteDatabaseContent' ])) || ( isset($_POST['DeleteDatabaseContent' ])) || */ (PHP_SAPI === 'cli' && isset($argv[1]) &&  $argv[1] === 'DeleteDatabaseContent')) {
-	$DO_NOT_LOAD_PUB_KEYS = true; // interpreted from loadconfig.php
-	chdir(__DIR__); require_once '../tools/loadconfig.php';
-//	require_once '../config/conf-thisserver.php'; // TODO this is required for database access but if the server's key is not generated cause an error
-	chdir(__DIR__); require_once '../tools/dbelections.php';
-	$db = new DbBlindedVoter($dbInfos);
-	$ok = $db->resetDb();
-	$db = new DbElections($dbInfos);
-	$ok = $db->resetDb();
-	print "<br>\n Deleted the content of the database";
+	if ( (count ( $argv ) !== 3) || ($argv [2] !== 'yes' )  ) {
+		echo "This command will delete all data in the database. \r\nDO NOT DO THIS while a voting is running as all information will be lost.\r\n";
+		echo 'usage: php -f admin.php DeleteDatabaseContent yes';
+		var_export($argv);
+		exit (1);
+	}
+	if ( $argv[2] === 'yes') {
+		$DO_NOT_LOAD_PUB_KEYS = true; // interpreted from loadconfig.php
+		chdir ( __DIR__ );
+		require_once '../tools/loadconfig.php';
+		chdir ( __DIR__ );
+		require_once '../tools/dbelections.php';
+		$db = new DbBlindedVoter ( $dbInfos );
+		$ok = $db->resetDb ();
+		$db = new DbElections ( $dbInfos );
+		$ok = $db->resetDb ();
+		print "<br>\n Deleted the content of the database";
+	}
 }
 
 if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  || */ (isset ( $argv [1] ) && (strcasecmp ( $argv [1], 'createKeyPair' ) === 0))) {
@@ -109,11 +118,11 @@ if ( /*(isset($_GET['createKeypair' ])) || (isset($_POST['createKeypair' ]))  ||
 					exit ( 1 );
 			}
 		}
-		if (isset ( $argv [3] )) {
-			if (is_numeric ( $argv [3] ))
-				$thisServerName = $type . $argv [3];
+		if (isset ( $argv[3] )) {
+			if (is_numeric ( $argv[3] ))
+				$thisServerName = $type . $argv[3];
 			else
-				$thisServerName = $argv [3];
+				$thisServerName = $argv[3];
 		}
 		
 		if (isset ($argv[4]) ) {

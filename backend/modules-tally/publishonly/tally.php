@@ -115,12 +115,12 @@ class PublishOnlyTally extends Tally {
 		try {
 			$ok = $this->sigsOk($voterReq);
 			if ($ok) {
-		//		$this->store($electionId, $votingno, $vote, $voterReq);
+				$this->store($electionId, $votingno, $vote, $voterReq);
 			} else WrongRequestException::throwException(1104, 'Signature verification failed.', ''); ;
 		} catch (Exception $e) {
 			WrongRequestException::throwException(1104, 'Signature verification failed.', "details: " . $e->__toString() ); ;
 		}
-		// TODO sign the vote and send it back
+		// sign the vote and send it back
 		global $tServerKeys, $tserverkey;
 		$myKey = new Crypt($tServerKeys, $tserverkey);
 		$sig = $myKey->JwsSign($voterReq);

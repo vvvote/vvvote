@@ -50,21 +50,29 @@ OAuth2.waitForOAuthServer = function(oauthAutorize, step) {
     		w.postMessage(true, '*'); // send a message to the new window so that it will get a reference to this window
       }, 1000);
     OAuth2.subStep = step;
-    OAuth2.showDoneButton('loginOauth2Txt2s' + step);
+//    OAuth2.showDoneButton('loginOauth2Txt2s' + step); // did not do anything (anymore) 
 };
 
 
 OAuth2.loggedIn = function(ev) {
 	clearInterval(OAuth2.timer);
 	setSubStep(OAuth2.subStep +1);
+	// alert('jjjj');
+	setTimeout(function() { 
+		var el = document.getElementById('login2'); //  + OAuth2.subStep + 1
+		alert(el); 
+		el.click(); 
+		}, 500);
 };
 
 window.addEventListener("message", OAuth2.loggedIn, false);
 
+/*
 OAuth2.showDoneButton = function(id) {
 	var el = document.getElementById(id);
 	el.style.display = '';
 };
+*/
 
 OAuth2.getMainContent = function(conf) {
 	var serverId = conf.authConfig.serverId;
@@ -112,7 +120,8 @@ OAuth2.getMainContent = function(conf) {
 		var clientId = ClientConfig.oAuth2Config[conf.authConfig.serverId].clientIds[permissionServerId];
 		OAuth2.random[clientId] = bigInt2str(randBigInt(200,0), 62);
 		var oauthAutorize = ClientConfig.oAuth2Config[serverId].authorizeUri + 
-		'scope=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].scope) +
+		'prompt=' + ( (step == 1) ? 'login' : 'none') +
+		'&scope=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].scope) +
 		'&state=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].serverId.replace('.', '\\.') + '.' + elelctionId.replace('.', '\\.') + '.' + SHA256(OAuth2.random[clientId])) + 
 		'&redirect_uri=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].redirectUris[permissionServerId]) + 
 		'&response_type=code' +

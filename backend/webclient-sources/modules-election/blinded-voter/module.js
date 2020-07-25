@@ -36,7 +36,12 @@ BlindedVoterElection.prototype.switchAction = function (result) {
 		var errortext = translateServerError(result.errorNo, result.errorText);
 		alert(i18n.sprintf(i18n.gettext('%s has rejected your request (error no  %d):\n %s'), servername, result.errorNo, errortext));
 		switch (result.errorNo) {
-		case 1: /* authorization failed */
+		case 1: /* authorization failed in general*/
+		case 100067: /* No authentication data found in vvvote server's database */
+		case 100068: /* In the server's database auid/sub is missing */
+		case 100069: /* The field >identifier< in the request to the vvvote server must be of type string */
+		case 100070: /* Missing the field >identifier< in request from the vvvote client. */
+		case 12100:  /* auth module could not load the auth config */
 			page.onAuthFailed(this.permObtainer.getCurServer());
 			break;
 		default:

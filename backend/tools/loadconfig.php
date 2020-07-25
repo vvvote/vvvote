@@ -262,7 +262,7 @@ if (isset ( $config ['oauth2Config'] )) {
 				$curOauthConfig ['sendmail_endp'] = $resUrlTrimmed . '/user/mails/'; // not yet implemented in keycloak server
 				$curOauthConfig ['client_id'] = $curOauthConfig ['client_ids'][$serverNo - 1];
 				// the following only needed for the webclient provided throu getserverinfos.php
-				$curOauthConfig ['authorize_url'] = $oauthUrlTrimmed . '/auth?'; // must end with ? // umgestellt
+				$curOauthConfig ['authorize_url'] = $oauthUrlTrimmed . '/auth?'; // must end with ? or & // umgestellt
 				$curOauthConfig ['login_url'] = $oauthUrlTrimmed . '/';
 				for ($i = 0; $i < count($pServerUrlBases); $i++) {
 					$curOauthConfig ['redirectUris'][$pServerKeys[$i]['name']] = rtrim ($pServerUrlBases[$i],'/') . '/modules-auth/oauth2/callback';
