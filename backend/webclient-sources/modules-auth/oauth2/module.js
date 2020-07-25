@@ -57,12 +57,13 @@ OAuth2.waitForOAuthServer = function(oauthAutorize, step) {
 OAuth2.loggedIn = function(ev) {
 	clearInterval(OAuth2.timer);
 	setSubStep(OAuth2.subStep +1);
-	// alert('jjjj');
+/* automatically clicking the next permission server autorization button works, but all browsers block the new window - so this does not work
 	setTimeout(function() { 
 		var el = document.getElementById('login2'); //  + OAuth2.subStep + 1
 		alert(el); 
 		el.click(); 
 		}, 500);
+*/
 };
 
 window.addEventListener("message", OAuth2.loggedIn, false);
