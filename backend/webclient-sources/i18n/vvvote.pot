@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-04-24 17:50+0200\n"
+"POT-Creation-Date: 2020-08-26 21:26+0200\n"
 "PO-Revision-Date: 2016-01-01 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -116,84 +116,104 @@ msgid ""
 "Use a compatible client."
 msgstr ""
 
-#: index.js:41 index.js:51 index.js:67
+#: index.js:41
+#, javascript-format
+msgid ""
+"Your web browser %s %s not supported. Please use FireFox at least version "
+"34, Chrome at least version 38 (except on Android) or Edge. Do not use iPad "
+"or iPhone (iOS)"
+msgstr ""
+
+#: index.js:52
+#, javascript-format
+msgid ""
+"Your web browser %s %s is on %s not supported. Please use FireFox at least "
+"version 34, Chrome at least version 38 (except on Android) or Edge. iPad "
+"and iPhone (iOS) does not work at all. MacOS works."
+msgstr ""
+
+#: index.js:68
 msgid ""
 "Your web browser %s %is not supported. Please use FireFox at least version "
 "34, Chrome at least version 38 (except on Android) or Edge."
 msgstr ""
 
-#: listoferrors.js:39
+#: listoferrors.js:40
 msgid ""
 "Check of credentials failed. You are not in the list of allowed voters for "
 "this voting or secret not accepted."
 msgstr ""
 
-#: listoferrors.js:40
+#: listoferrors.js:41
 msgid "Cheating: Your computer sent a wrong name of voting."
 msgstr ""
 
-#: listoferrors.js:41
+#: listoferrors.js:42
 msgid "The phase of creating voting certificates is yet to begin."
 msgstr ""
 
-#: listoferrors.js:42
+#: listoferrors.js:43
 msgid "The phase of creating voting certificates has already ended."
 msgstr ""
 
-#: listoferrors.js:43
+#: listoferrors.js:44
 msgid "The phase of casting votes is yet to begin."
 msgstr ""
 
-#: listoferrors.js:44
+#: listoferrors.js:45
 msgid "The phase of casting votes has already ended."
 msgstr ""
 
-#: listoferrors.js:45
+#: listoferrors.js:46
 msgid ""
 "You can fetch the result of the voting only after the phase of casting "
 "votes has ended."
 msgstr ""
 
-#: listoferrors.js:46
+#: listoferrors.js:47
 msgid "You cannot fetch the voting result anymore."
 msgstr ""
 
-#: listoferrors.js:47
+#: listoferrors.js:48
 msgid "Now is not the phase of casting votes."
 msgstr ""
 
-#: listoferrors.js:48
+#: listoferrors.js:49
 msgid ""
 "The server already confirmed a voting certificate for this voting for you. "
 "For every eligible voter, only one voting certificate will be confirmed "
 "(that means digitally signed by the server)."
 msgstr ""
 
-#: listoferrors.js:49
+#: listoferrors.js:50
 msgid "You already have cast a vote for this voting."
 msgstr ""
 
-#: listoferrors.js:50
+#: listoferrors.js:51
 msgid "The name of the voting is already in use."
 msgstr ""
 
-#: listoferrors.js:51
+#: listoferrors.js:52
 msgid ""
 "The voting does not exist on the server. Most likely the voting link is "
 "wrong. Please correct it and try again."
 msgstr ""
 
-#: listoferrors.js:52
+#: listoferrors.js:53
 msgid ""
 "A voting with the requested name does not exist on the server. Use the "
 "voting link directly."
 msgstr ""
 
-#: listoferrors.js:53
+#: listoferrors.js:54
 msgid ""
 "You did not allow this server to check your eligibility at the identity "
 "server. Please allow this server to checkt your eligibility at the identity "
 "server and try again."
+msgstr ""
+
+#: listoferrors.js:55
+msgid "The session is not valid, most likely it expired or you logged out."
 msgstr ""
 
 #: modules-auth/external-token/module.js:35
@@ -202,53 +222,57 @@ msgid ""
 "verified by this token.<br>"
 msgstr ""
 
-#: modules-auth/oauth2/module.js:76
+#: modules-auth/oauth2/module.js:92
 msgid "Steps: "
 msgstr ""
 
-#: modules-auth/oauth2/module.js:81
+#: modules-auth/oauth2/module.js:97
 msgid "Authorize voting server"
 msgstr ""
 
-#: modules-auth/oauth2/module.js:84
+#: modules-auth/oauth2/module.js:100
 msgid "Authorize checking server"
 msgstr ""
 
-#: modules-auth/oauth2/module.js:87
+#: modules-auth/oauth2/module.js:103
 msgid "Create voting certificate"
 msgstr ""
 
-#: modules-auth/oauth2/module.js:108
+#: modules-auth/oauth2/module.js:124
 #, javascript-format
 msgid "Configuration error: serverId >%s< is asked for, but not configured"
 msgstr ""
 
-#: modules-auth/oauth2/module.js:125
+#: modules-auth/oauth2/module.js:142
 #, javascript-format
 msgid "Step %s: "
 msgstr ""
 
-#: modules-auth/oauth2/module.js:127
+#: modules-auth/oauth2/module.js:144
 #, javascript-format
 msgid "Authorize %s"
 msgstr ""
 
-#: modules-auth/oauth2/module.js:131
+#: modules-auth/oauth2/module.js:148
 msgid "Authorization succeeded"
 msgstr ""
 
-#: modules-auth/oauth2/module.js:139
+#: modules-auth/oauth2/module.js:152 modules-auth/oauth2/module.js:164
+msgid "Log out"
+msgstr ""
+
+#: modules-auth/oauth2/module.js:159
 msgid "Name me publicly as "
 msgstr ""
 
-#: modules-auth/oauth2/module.js:153
+#: modules-auth/oauth2/module.js:183
 msgid ""
 "Using the an identity server (which is specifical designed to work with "
 "vvvote), a list of eligible voters is created on the identity server for "
 "each voting date. Enter the ID of this list.<br>"
 msgstr ""
 
-#: modules-auth/oauth2/module.js:155
+#: modules-auth/oauth2/module.js:185
 msgid "ID of the list of eligible voters"
 msgstr ""
 
@@ -323,34 +347,34 @@ msgid ""
 " %s"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:49
+#: modules-election/blinded-voter/module.js:54
 #, javascript-format
 msgid ""
 "Client found error:\n"
 " %s"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:63
+#: modules-election/blinded-voter/module.js:68
 #, javascript-format
 msgid "handleXmlAnswer(): Internal program error, got unknown action: %s"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:119
+#: modules-election/blinded-voter/module.js:124
 #, javascript-format
 msgid "Voting certificate %s"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:120
+#: modules-election/blinded-voter/module.js:125
 msgid ""
 "In order to be able to cast your vote, you have to save your voting "
 "certificate on your device now"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:158
+#: modules-election/blinded-voter/module.js:163
 msgid "Creating voting certificate"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:174
+#: modules-election/blinded-voter/module.js:179
 msgid ""
 "<ul><li>You will get voting certificae in the form of a webpage file as "
 "result of this step.</li><li>Please remember where you saved it.</"
@@ -359,7 +383,7 @@ msgid ""
 "of the voting.</li></ul>"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:185
+#: modules-election/blinded-voter/module.js:190
 msgid ""
 "<p><h2>Technical information</h2>The voting certificate is digitally signed "
 "by at least two servers. This signatures makes the certificate valid for "
@@ -383,15 +407,15 @@ msgid ""
 "server's signatures and the ballot is called >voting certificate<.</p>"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:209
+#: modules-election/blinded-voter/module.js:214
 msgid "Please load the voter certification file"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:214
+#: modules-election/blinded-voter/module.js:219
 msgid "Search"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:227
+#: modules-election/blinded-voter/module.js:232
 #, javascript-format
 msgid ""
 "<h2>Voting certificate generated.</h2><p id=\"didSaveButtonsId\">Did you "
@@ -412,30 +436,30 @@ msgid ""
 "can find out who sent the vote.</li><li>%s</li></ul></p>"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:273
+#: modules-election/blinded-voter/module.js:278
 msgid "Error: voting certificate data not found"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:275
+#: modules-election/blinded-voter/module.js:280
 msgid "Error: voting certificate data could not be read: JSON decode failed"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:291
+#: modules-election/blinded-voter/module.js:296
 msgid "The voter certificate is not consistent"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:395
+#: modules-election/blinded-voter/module.js:400
 msgid ""
 "The signature on the vote is correct. This means that the vote is unchanged."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:397
+#: modules-election/blinded-voter/module.js:402
 msgid ""
 "The signature on the vote is not correct. This means that the vote is "
 "changed or the key does not match."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:407
+#: modules-election/blinded-voter/module.js:412
 #, javascript-format
 msgid ""
 "Error verifying a signature:\n"
@@ -443,17 +467,17 @@ msgid ""
 "Required number: %d, number in this voting certificate: %d"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:411
+#: modules-election/blinded-voter/module.js:416
 msgid "The vote is not for this election (Election IDs do not match)."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:415
+#: modules-election/blinded-voter/module.js:420
 msgid ""
 "The vote is not for this election (Question ID not found in election "
 "configuration)."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:426
+#: modules-election/blinded-voter/module.js:431
 #, javascript-format
 msgid ""
 "The signature by the permission server >%s< for the voting key is correct. "
@@ -461,7 +485,7 @@ msgid ""
 "to vote."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:428
+#: modules-election/blinded-voter/module.js:433
 #, javascript-format
 msgid ""
 "The signature by permission server >%s< for the voting key is not correct. "
@@ -469,14 +493,14 @@ msgid ""
 "persons responsible for the voting"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:431
+#: modules-election/blinded-voter/module.js:436
 #, javascript-format
 msgid ""
 "Error verifying the signature:\n"
 "%s"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:482
+#: modules-election/blinded-voter/module.js:487
 #, javascript-format
 msgid ""
 "For voter >%s< the server >%s< returns a different order of signatures than "

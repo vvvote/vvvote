@@ -36,8 +36,9 @@ function setSubStep(ss) {
 		if (i > ss) el2.className ='todo-step';
 	}
 	el = document.getElementById("substepL");
-	if (ss == numSteps) { // show "generate voting permission"-button on last step
-		el.style.display="";    
+	if (ss == numSteps) { 
+		el.style.display=""; // show "generate voting permission"-button on last step
+		// OAuth2.showLogOutLink(true, 'L');
 	} else {
 		el.style.display="none";    
 	}
@@ -50,6 +51,7 @@ OAuth2.waitForOAuthServer = function(oauthAutorize, step) {
     		w.postMessage(true, '*'); // send a message to the new window so that it will get a reference to this window
       }, 1000);
     OAuth2.subStep = step;
+    OAuth2.showLogOutLink(true, 1);
 //    OAuth2.showDoneButton('loginOauth2Txt2s' + step); // did not do anything (anymore) 
 };
 
@@ -57,6 +59,7 @@ OAuth2.waitForOAuthServer = function(oauthAutorize, step) {
 OAuth2.loggedIn = function(ev) {
 	clearInterval(OAuth2.timer);
 	setSubStep(OAuth2.subStep +1);
+	OAuth2.showLogOutLink(false, 1);
 /* automatically clicking the next permission server autorization button works, but all browsers block the new window - so this does not work
 	setTimeout(function() { 
 		var el = document.getElementById('login2'); //  + OAuth2.subStep + 1
@@ -80,7 +83,11 @@ OAuth2.getMainContent = function(conf) {
 	
 	var elelctionId = conf.electionId;
 	var step = 1;
+	var serverUsageNoteLang = i18n.options.locale_data.messages[""].lang;
+	// if the requested language is not available, use the first one
+	if (ClientConfig.oAuth2Config[serverId].serverUsageNote[serverUsageNoteLang] == undefined) serverUsageNoteLang = Object.keys(ClientConfig.oAuth2Config[serverId].serverUsageNote)[0];
 	var mc = 
+		ClientConfig.oAuth2Config[serverId].serverUsageNote[serverUsageNoteLang] + 
 		'<ol class="substep-progress">' +
 		'<span class="stepshead">' + i18n.gettext('Steps: ') + '</span>' +
 /*		'<li class="active-step" id="ss1">' +
@@ -141,6 +148,9 @@ OAuth2.getMainContent = function(conf) {
 		'<span id="loginOauth2Txt2s'+step+'" style="display:none"><button onclick="setSubStep(' +(step+1) +')">' + i18n.gettext('Authorization succeeded') + '</button></span>'+
 		'<br>' +
 		'</div>';
+		if (step == 1 )	mc = mc + '<div id="log_out1" class="log_out"' + 'style="display:none;"' + '>' +
+		'								<a target="_blank" href="' + ClientConfig.oAuth2Config[serverId].logoutUrl + '">' + i18n.gettext('Log out') + '</a> ' +
+		'						   </div>';
 		step++;
 	}
 		
@@ -149,8 +159,18 @@ OAuth2.getMainContent = function(conf) {
 	'						<label for="displayname" style="display:none">' + i18n.gettext('Name me publicly as ') + '</label> ' +
 	'						     <input name="displayname" id="displayname" value="" type="hidden"></td>' + 
 	'</div>';
+	mc = mc +
+	'<div id="log_outL" class="log_outL"' + 'style="display:none;"' + '>' +
+	'						<a target="_blank" href="' + ClientConfig.oAuth2Config[serverId].logoutUrl + '">' + i18n.gettext('Log out') + '</a> ' +
+	'</div>';
 	return mc;
 }; 
+
+OAuth2.showLogOutLink = function(show, step) {
+	var el  = document.getElementById("log_out" + step);
+	if (show) 	el.style.display="";
+	else el.style.display="none";
+};
 
 OAuth2.getConfigObtainedHtml = function () {
 	var ret = ''; // shared password: Teilen Sie den Wahlberechtigten außerdem das Wahlpasswort mit.

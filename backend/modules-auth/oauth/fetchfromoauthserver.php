@@ -87,7 +87,7 @@ class FetchFromOAuth2Server {
 				break;
 			case 'keycloak':
 			default:
-				if (! (isset($ret['result']['member']) ) ) InternalServerError::MyExceptionData(8734680, 'isMember: OAuth2 server answer does not contain the expected field >member<', ", received: >" . var_export($ret['result'] . '<', true) ); // requested info not received
+				if (! (isset($ret['result']['member']) ) ) InternalServerError::MyExceptionData(8734680, 'isMember: OAuth2 server does not suppor the field >member<', ", received: >" . var_export($ret['result'] . '<', true) ); // requested info not received
 				$ret = $entitledStatus['member'];
 		}
 		if ($ret !== true) WrongRequestException::throwException(10002, "For this voting your existance must be a member. The oAuth2 server either said 'you are not a member' or did not include this information", 'The oAuth2 server sent this information about you: >' . var_export($entitledStatus, true) .'<');
@@ -149,13 +149,38 @@ class FetchFromOAuth2Server {
 	
 	
 	function sendConfirmMail($electionId) {
+		$senderField = 'identity';
+		if ($this->curOAuth2Config['type'] === 'keycloak') {
+			$memberInfo = $this->fetch($this->curOAuth2Config['get_membership_endp']);
+			if (! array_key_exists('notify_recipient_info', $memberInfo['result']) ) WrongRequestException::throwException(8754875, "sendConfirmMail: Missing the field >notify_recipient_info< in the answer from the oAuth2 server.", 'The oAuth2 server sent this information about you: >' . var_export($memberInfo, true) .'<');
+			$senderField = 'sender';
+		}
 		$content = str_replace('$electionId', $electionId, $this->curOAuth2Config['mail_content_body']);
-		$msg = json_encode(array(
-				'identity' => $this->curOAuth2Config['mail_identity'],
- 				'sign'     => $this->curOAuth2Config['mail_sign_it'],
-				'content'  => $content
-						));
-		$msgId = $this->post($this->curOAuth2Config['sendmail_endp'], $msg); // this could be the easiest way to implement Basic auth: this->curOAuth2Config['client_id'] . ':' . $this->curOAuth2Config['client_secret'] . '@' .
+		$msgArray = array(
+				'subject'     => $this->curOAuth2Config['mail_content_subject'],
+				'content'     => $content,
+ 				'sign'        => $this->curOAuth2Config['mail_sign_it']
+		);
+		if (array_key_exists('mail_identity', $this->curOAuth2Config) )	$msgArray[$senderField] = $this->curOAuth2Config['mail_identity'];
+		if ($this->curOAuth2Config['type'] === 'keycloak') {
+			// keycloak resp. notify server
+			$msgArray['recipient_info'] = $memberInfo['result']['notify_recipient_info'];
+			$msg = json_encode($msgArray);
+//			var_export($msg);
+			$msgId = $this->client->executeRequest(
+					$this->curOAuth2Config['notify_url'], 
+					$msg, 
+					nsOAuth2\Client::HTTP_METHOD_POST, 
+					array(  'Content-Type'  => 'application/json', 
+							'Authorization' => 'Basic ' . base64_encode($this->curOAuth2Config['notify_client_id'] . ':' . $this->curOAuth2Config['notify_client_secret'])), 
+					nsOAuth2\Client::HTTP_FORM_CONTENT_TYPE_APPLICATION
+				);
+//			var_export($msgId);
+		} else {
+			// ekklesia ID-Server
+			$msg = json_encode($msgArray);
+			$msgId = $this->post($this->curOAuth2Config['sendmail_endp'], $msg); 
+		}
 		// var_export($msgId); // for debugging
 		//if ($msgId['code'] != 200) return false; // 404: imidiate fatal error, e.g. template missing, variable missing, key for signature missing
 		if (! isset($msgId['result']['status'])) return false;
@@ -165,8 +190,11 @@ class FetchFromOAuth2Server {
 	
 	function fetch($endpoint) {
 		$ret = $this->client->fetch($endpoint, Array(), nsOAuth2\Client::HTTP_METHOD_GET);
-		if ($ret['code'] != 200) InternalServerError::MyExceptionData(8734675, "http-error while fetching infos from OAuth2 server, expected http status 200 (401 = invalid token (session expired?), 403 = not allowed [scope not requested], 404 = URL wrong endpoint in my oAuth2 config)", "received: >" . $ret['code'] . '< from URL >' . $endpoint . '<') ; // 403 - Berechtigung dafür nicht erteilt (entsprechender scope fehlt), 404: URL falsch in config
-		if (! is_array($ret['result'])) InternalServerError::MyExceptionData(8734676, "fetch: OAuth2 server answer could not be JSON decoded",  'received: >' . $ret['result'] . '<'); // requested info not received
+		if ($ret['code'] === 401) InternalServerError::MyExceptionData(8734672, "http-error >401 invalid token< while fetching infos from OAuth2 server, expected http status 200. Most likely caused by session expiry or you logged out.", "received: >" . $ret['code'] . '< from URL >' . $endpoint . '<') ; 
+		if ($ret['code'] === 403) InternalServerError::MyExceptionData(8734673, "http-error >403 not allowed< while fetching infos from OAuth2 server, expected http status 200. This happens e.g. there is a problem with the scope. This is a configuration error to be solved by the admins.", "received: >" . $ret['code'] . '< from URL >' . $endpoint . '<') ; 
+		if ($ret['code'] === 404) InternalServerError::MyExceptionData(8734674, "http-error >404 not found< while fetching infos from OAuth2 server, expected http status 200. This happens e.g. if the URL in the config is wrong usually to be solved by the admins.", "received: >" . $ret['code'] . '< from URL >' . $endpoint . '<') ; 
+		if ($ret['code'] !== 200) InternalServerError::MyExceptionData(8734670, "http-error while fetching infos from OAuth2 server, expected http status 200 (401 = invalid token (session expired?), 403 = not allowed [scope not requested], 404 = URL wrong endpoint in my oAuth2 config)", "received: >" . $ret['code'] . '< from URL >' . $endpoint . '<') ; // 403 - Berechtigung dafür nicht erteilt (entsprechender scope fehlt), 404: URL falsch in config
+		if (! is_array($ret['result'])) InternalServerError::MyExceptionData(8734676, "fetch: OAuth2 server answer could not be JSON decoded",  'received: >' . var_export($ret['result'], true) . '<'); // requested info not received
 		return $ret;
 	}
 	

@@ -70,6 +70,12 @@ translations['en_US'] =
          "The voting requieres authorisation module >%s< which is not supported by this client.\nUse a compatible client.": [
             "The voting requieres authorisation module >%s< which is not supported by this client.\nUse a compatible client."
          ],
+         "Your web browser %s %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. Do not use iPad or iPhone (iOS)": [
+            "Your web browser %s %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. Do not use iPad or iPhone (iOS)"
+         ],
+         "Your web browser %s %s is on %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. iPad and iPhone (iOS) does not work at all. MacOS works.": [
+            "Your web browser %s %s is on %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. iPad and iPhone (iOS) does not work at all. MacOS works."
+         ],
          "Your web browser %s %is not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge.": [
             "Your web browser %s %is not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge."
          ],
@@ -118,6 +124,9 @@ translations['en_US'] =
          "You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again.": [
             "You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again."
          ],
+         "The session is not valid, most likely it expired or you logged out.": [
+            "The session is not valid, most likely it expired or you logged out."
+         ],
          "The voters will be identified by a token and the eligibility will be verified by this token.<br>": [
             "The voters will be identified by a token and the eligibility will be verified by this token.<br>"
          ],
@@ -144,6 +153,9 @@ translations['en_US'] =
          ],
          "Authorization succeeded": [
             "Authorization succeeded"
+         ],
+         "Log out": [
+            "Log out"
          ],
          "Name me publicly as ": [
             "Name me publicly as "

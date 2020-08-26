@@ -2,7 +2,7 @@ What you need
 =============
 You need:
 
-* 2 webservers (e.g. apache or ngnix / lighthttp v 1.4 can cause problems: it does not support the http-header "Expect: 100-continue-header" which cURL uses. --> no problem if you are not integrating vvvote into a system which automatically creates new elections and send them to vvvote using cURL below is also a work-around provided)
+* 2 webservers (e.g. apache [preferred] or ngnix / lighthttp v 1.4 can cause problems: it does not support the http-header "Expect: 100-continue-header" which cURL uses. --> no problem if you are not integrating vvvote into a system which automatically creates new elections and send them to vvvote using cURL below is also a work-around provided)
 * a mysql server on each server
 * php version 5.3 at least, and the following php extentions (all of them are automatically included in most distributions, but if you want to compile yourself, you need to know):
  * pdo-mysql
@@ -36,7 +36,8 @@ Edit the config.php on both servers:
 * adjust 'serverNo' (to 1 for the first and to 2 for the second server)
 * adjust 'dbinfos' 
 * depending on which authorisation mechanism you want to use 
- * adjust 'oauthConfig': You must adjust 'client_ids', 'client_secret', 'redirect_uris', 'oauth_url' and 'ressources_url'
+ * adjust 'oauthConfig': You must adjust 'type', 'client_ids', 'client_secret', 'redirect_uris', 'oauth_url' and 'ressources_url'. 
+	In case you are using keycloak as oAuth2 server, additionally edit 'notify_client_id', 'notify_client_secret', 'notify_url'
  * adjust the 'externalTokenConfig'. You must adjust: 'configId', 'checkerUrl' and 'verifierPassw'. 
 For details see the comments in the config-example.php
 
@@ -45,8 +46,6 @@ In order to do so, set the environment variable 'VVVOTE_CONFIG_DIR' to point to 
 In Apache, you can do this by adding the following line in the virtual host configuration:
 
 	SetEnv VVVOTE_CONFIG_DIR "/etc/vvvote/config"
-
-When everything works __do not forget__ to set 'debug' to false in order to make sure that no sensitive data is sended to the clients.
 
 ## Generate and Distribute Server Keys
 Each server uses its own voting key. Therefore we need to generate a key on each server and distribute their public part to the other server.
@@ -61,7 +60,7 @@ On server 1 cd into the backend-dir and start the key generation (it can take a 
 
 The first line creates the key pair for the permission server, the second line creates the key pair for the role as tallying server.
 
-Server 2 acts also acts as permission and tallying server. That is why create another two key pairs.
+Server 2 acts also acts as permission and tallying server. That is why we create another two key pairs.
 On server 2 also cd into the backend-dir and also start the key generation for the permission server by
 
 	cd backend/admin
@@ -145,7 +144,7 @@ If you are running / forcing the clients to connect via https (TLS) which is rec
 
 (1) Place the Complete Certificate Chain of all other Servers in config/tls-certificates
 ----------------------------------------------------------------------------------------
-Vvvote servers needs to communicate with one another. That's why they need the complete certificate chain of the other vvvote servers. Furthermore the certifications chains of the authorisation servers (if any) are needed. There is a script doing this automatically:
+Vvvote servers needs to communicate with one another. That's why they need the complete certificate chain of the other vvvote servers. Furthermore the certifications chains of the authorisation and notify servers (if any) are needed. There is a script doing this automatically:
 
 	cd backend/admin
 	php -f retrieve-tls-chains.php
@@ -170,12 +169,18 @@ Thats It!
 point your browser to 
 $yourBaseUrl/
 
+
+Important
+=========
+If everything works, set "debug" to false in the configs to make sure that no confidential data will be send to the users.
+
+
 Customisation
 =============
 Use your own logo
 -----------------
 Resize your organisation's logo to 47x51 points. You can easily do so using the free software inkscape. 
-Place the logo of your organisation in 'backend/config/logo\_brand\_47x51.svg' (resp. the config dir). 
+Place the logo of your organisation in 'backend/config/logo\_brand\_47x51.svg' (resp. your config dir). 
 Recreate the index2.html file afterwards (see chapter 'Speed Optimisation').
 
 Change 'linkToHostingOrganisation' in config.php to link to your organisation on a click on the logo.

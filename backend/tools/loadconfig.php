@@ -221,7 +221,6 @@ if (isset ( $config ['oauth2Config'] )) {
 		if (! array_key_exists('client_ids',           $curOauthConfig)) InternalServerError::throwException(346550, 'missing >clientIds< in oAuth2 config', '');
 		if (! is_array($curOauthConfig['client_ids'])                  ) InternalServerError::throwException(346555, '>clientIds< in oAuth2 must be an array', '');
 		if (! array_key_exists('client_secret',        $curOauthConfig)) InternalServerError::throwException(346551, 'missing >client_secret< in oAuth2 config', '');
-		if (! array_key_exists('mail_identity',        $curOauthConfig)) InternalServerError::throwException(346552, 'missing >mail_identity< in oAuth2 config', '');
 		if (! array_key_exists('mail_content_subject', $curOauthConfig)) InternalServerError::throwException(346553, 'missing >mail_content_subject< in oAuth2 config', '');
 		if (! array_key_exists('mail_content_body',    $curOauthConfig)) InternalServerError::throwException(346554, 'missing >mail_content_body< in oAuth2 config', '');
 		if (! array_key_exists('serverDesc',           $curOauthConfig)) InternalServerError::throwException(346556, 'missing >serverDesc< in oAuth2 config', '');
@@ -235,6 +234,7 @@ if (isset ( $config ['oauth2Config'] )) {
 		switch ($curOauthConfig['type']) {
 			case "ekklesia":
 				if (! array_key_exists('scope',        $curOauthConfig) ) $curOauthConfig['scope']        = 'member unique mail';
+				if (! array_key_exists('mail_identity',        $curOauthConfig)) InternalServerError::throwException(346552, 'missing >mail_identity< in oAuth2 config', '');
 				$curOauthConfig ['token_endp'] = $oauthUrlTrimmed . '/oauth2/token/';
 //not used at the moment				$curOauthConfig ['get_profile_endp'] =  $resUrlTrimmed . '/user/profile/';
 				$curOauthConfig ['is_in_voter_list_endp'] = $resUrlTrimmed . '/user/listmember/';
@@ -253,13 +253,13 @@ if (isset ( $config ['oauth2Config'] )) {
 				$oauthConfig[$curOauthConfig['serverId']] = $curOauthConfig;
 				break;
 			case "keycloak":
-				if (! array_key_exists('scope', $curOauthConfig) ) $curOauthConfig['scope'] = 'eligible user_roles verified';
+				if (! array_key_exists('scope', $curOauthConfig) ) $curOauthConfig['scope'] = 'eligible user_roles verified ekklesia_notify';
 				$curOauthConfig ['token_endp'] = $oauthUrlTrimmed . '/token/'; // umgestellt
 //not used at the moment				$curOauthConfig ['get_profile_endp'] =  $resUrlTrimmed . '/userinfo/';
 // not supported by keycloak at the moment				$curOauthConfig ['is_in_voter_list_endp'] = $resUrlTrimmed . '/user/listmember/';
 				$curOauthConfig ['get_membership_endp'] = $resUrlTrimmed . '/userinfo';
 				$curOauthConfig ['get_auid_endp'] = $resUrlTrimmed . '/userinfo';
-				$curOauthConfig ['sendmail_endp'] = $resUrlTrimmed . '/user/mails/'; // not yet implemented in keycloak server
+//				$curOauthConfig ['sendmail_endp'] = $resUrlTrimmed . '/user/mails/'; // not yet implemented in keycloak server
 				$curOauthConfig ['client_id'] = $curOauthConfig ['client_ids'][$serverNo - 1];
 				// the following only needed for the webclient provided throu getserverinfos.php
 				$curOauthConfig ['authorize_url'] = $oauthUrlTrimmed . '/auth?'; // must end with ? or & // umgestellt
@@ -269,6 +269,10 @@ if (isset ( $config ['oauth2Config'] )) {
 					$curOauthConfig ['clientIds']   [$pServerKeys[$i]['name']] = $curOauthConfig['client_ids'][$i];
 				}
 				$curOauthConfig ['redirect_uri'] = $curOauthConfig ['redirectUris'][$pServerKeys[$serverNo -1]['name']];
+				$curOauthConfig ['logout_url'] = $oauthUrlTrimmed . '/logout?redirect_uri=' . urlencode($curOauthConfig ['redirect_uri'] . '?logged_out');
+				if ( array_key_exists('serverUsageNote', $curOauthConfig) )
+					 $curOauthConfig['server_usage_note'] = $curOauthConfig['serverUsageNote'];
+				else $curOauthConfig['server_usage_note'] = array('en_US' => '');
 				$oauthConfig[$curOauthConfig['serverId']] = $curOauthConfig;
 				break;
 		}

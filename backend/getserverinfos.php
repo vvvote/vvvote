@@ -35,14 +35,16 @@ try {
 	if (isset ( $oauthConfig )) {
 		foreach ( $oauthConfig as $curConfig ) {
 			$oauth = array (
-					'serverId' => $curConfig ['serverId'],
-					'serverDesc' => $curConfig ['serverDesc'],
-					'authorizeUri' => $curConfig ['authorize_url'],
-					'loginUri' => $curConfig ['login_url'],
-					'scope' => $curConfig ['scope'],
-					'redirectUris' => $curConfig ['redirectUris'],
-					'clientIds' => $curConfig ['clientIds'] 
+					'serverId'        => $curConfig ['serverId'],
+					'serverDesc'      => $curConfig ['serverDesc'],
+					'authorizeUri'    => $curConfig ['authorize_url'],
+					'loginUri'        => $curConfig ['login_url'],
+					'scope'           => $curConfig ['scope'],
+					'redirectUris'    => $curConfig ['redirectUris'],
+					'clientIds'       => $curConfig ['clientIds']
 			);
+			if (array_key_exists('server_usage_note', $curConfig)) $oauth['serverUsageNote'] = $curConfig['server_usage_note'];
+			if (array_key_exists('logout_url'       , $curConfig)) $oauth['logoutUrl']       = $curConfig['logout_url'];
 			$oauthConfigs [$curConfig ['serverId']] = $oauth;
 		}
 	}

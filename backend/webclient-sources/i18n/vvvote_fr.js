@@ -10,7 +10,7 @@ translations['fr'] =
             "lang": "fr"
          },
          "There is an error in the server configuration. The server did not deliver the server infos. api/./getserverinfos says %s": [
-            ""
+            "Il y a une erreur dans la configuration de serveur. Le serveur n'a pas fourni les infos du serveur. api/./getserverinfos dit  %s"
          ],
          "Voting server": [
             "serveur de votation"
@@ -70,6 +70,12 @@ translations['fr'] =
          "The voting requieres authorisation module >%s< which is not supported by this client.\nUse a compatible client.": [
             "Le vote exige le module d'autorisation  >%s< qui n'est pas pris en charge par ce client.\nUtilisez un client compatible."
          ],
+         "Your web browser %s %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. Do not use iPad or iPhone (iOS)": [
+            "Votre navigateur web %s %s n'est pas pris en charge. Veuillez utiliser FireFox au moins la version 34, Chrome au moins la version 38 (sauf sur Android) ou Edge. N'utilisez pas l'iPad ou l'iPhone (iOS), l'ordinateur Apple (MacOS) fonctionne."
+         ],
+         "Your web browser %s %s is on %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. iPad and iPhone (iOS) does not work at all. MacOS works.": [
+            "Votre navigateur web %s %s est sur %s et n'est pas pris en charge. Veuillez utiliser FireFox au moins la version 34, Chrome (sauf sur Android) au moins la version 38 ou Edge. iPad et iPhone (iOS) ne fonctionnent pas du tout. MacOS (ordinateur Apple) fonctionne."
+         ],
          "Your web browser %s %is not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge.": [
             "Votre navigateur web %s %s n'est pas compatible avec ce système de vote. S'il vous plaît utilisez FireFox au moins la version 34, Chrome au moins la version 38 (sauf sur Android) ou Edge (sauf sur Android)."
          ],
@@ -118,6 +124,9 @@ translations['fr'] =
          "You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again.": [
             "Vous n'avez pas permis à ce serveur de vérifier votre admissibilité au serveur d'identité. S'il vous plaît permettez à ce serveur de vérifier votre admissibilité au niveau du serveur d'identité et essayer à nouveau."
          ],
+         "The session is not valid, most likely it expired or you logged out.": [
+            "Le code de session interne n'est pas valide, il a très probablement expiré ou vous vous êtes déconnecté. Connectez-vous à nouveau."
+         ],
          "The voters will be identified by a token and the eligibility will be verified by this token.<br>": [
             "Les électeurs seront identifiés par un jeton et l'éligibilité sera vérifié par ce jeton."
          ],
@@ -144,6 +153,9 @@ translations['fr'] =
          ],
          "Authorization succeeded": [
             "L'autorisation a réussi"
+         ],
+         "Log out": [
+            "se déconnecter"
          ],
          "Name me publicly as ": [
             "Nommez-moi publiquement"
@@ -284,7 +296,7 @@ translations['fr'] =
             "Envoyer le vote!"
          ],
          "Save voting recceipt": [
-            ""
+            "Sauvegarder le reçu de vote"
          ],
          "Motion text": [
             "Texte de la motion"
@@ -403,7 +415,7 @@ translations['fr'] =
             "Question sur la quelle il faut voter"
          ],
          "Tally servers accepted the vote!": [
-            ""
+            "Les serveurs de Tally ont accepté le vote !"
          ],
          "Vote accepted": [
             "Vote accepté"
@@ -418,37 +430,37 @@ translations['fr'] =
             "La collection de vote commence à %s"
          ],
          "The server did not accept the vote.": [
-            ""
+            "Le serveur n'a pas accepté le vote. "
          ],
          "The server >%s< did not accept the vote.": [
-            ""
+            "Le serveur >%s< n'a pas accepté le vote. "
          ],
          "It says:\n": [
-            ""
+            "Il dit: \n"
          ],
          "Error: Expected >saveYourCountedVote<": [
             "Erreur: Attendu >saveYourCountedVote<"
          ],
          "Information: The server's (%s) clock time in the voting receipt (%s) deviates from the clock time of your device (%s)": [
-            ""
+            "Information : L'heure d'horloge du serveur (%s) dans le reçu de vote (%s) diffère de l'heure d'horloge de votre appareil (%s)"
          ],
          "Error while verifying tally server /%s/ signature: %s": [
-            ""
+            "Erreur lors de la vérification de la signature /%s/ du serveur de comptage : %s"
          ],
          "The signature from server >%s< does not match the signed vote": [
-            ""
+            "La signature du serveur >%s< ne correspond pas au vote signé"
          ],
          "Error: missing the signed data (no dot in the string)": [
-            ""
+            "Erreur : il manque les données signées (pas de point dans la chaîne)"
          ],
          "This file can be used in order to proof that a tallying server\r\ndid receive the vote. The server's signature proofs it. The \r\nsignature is here in the standard JWT format which can be \r\nverified by according services, e.g. https://jwt.io/ \r\nJust copy the value of \"JWT\" into the field \"Encoded\" and the \r\naccording public key from below in the field \"VERIFY SIGNATURE\"\r\non the before mentioned website. The JWT contains all the \r\ninformation that is also shown in JSON clear text.": [
-            ""
+            "Ce fichier peut être utilisé pour prouver qu'un serveur de pointage\na reçu le vote. La signature du serveur le prouve. Le \nest ici dans le format standard JWT qui peut être \nvérifié par les services compétents, par ex. https://jwt.io/ \nCopiez simplement la valeur de \"JWT\" dans le champ \"Encodé\" et la balise \nselon clé publique par le bas dans le champ \"VERIFIER SIGNATURE\".\nsur le site web mentionné ci-dessus. Le JWT contient tous les éléments suivants \ndes informations qui sont également affichées en texte clair JSON."
          ],
          "Voting receipt %s": [
-            ""
+            "Reçu de vote %s"
          ],
          "In order to be able to proof that you sent your vote, you can save the voting receipt": [
-            ""
+            "Afin de pouvoir prouver que vous avez envoyé votre vote, vous pouvez enregistrer le reçu de vote."
          ],
          "<p>As long as it is possible to cast votes, it is not possible to get the voting result.</p>": [
             "<p>Pendant la phase ou on peut deposer les votes, il n'est pas possible de voir les résultats de la votation</p>"
@@ -544,7 +556,7 @@ translations['fr'] =
             "Afficher les explications et informations techniques"
          ],
          "About": [
-            ""
+            "A propos de"
          ],
          "There is an error in the configuration. Please inform the administrator. (error no.: 875765: URL not defined or not of type string)": [
             "Il y a une erreur dans la configuration. Veuillez en informer l'administrateur. (n° d'erreur : 875765 : URL non définie ou non de type chaîne de caractères)"
@@ -553,13 +565,13 @@ translations['fr'] =
             "Il y a une erreur dans la configuration. Veuillez en informer l'administrateur. (n° d'erreur : 875766 : URL non définie ou non de type chaîne de caractères)"
          ],
          "An error occured while connecting to a server": [
-            ""
+            "Une erreur s'est produite lors de la connexion à un serveur"
          ],
          "Click %s this link, in order to test the connection manually.</a>The link will be opened in a new window.</li> <li>Solve the problem,</li> <li>close the window and </li><li>click afterwards on %s try again</button>": [
-            ""
+            "Cliquez %ssur ce lien, afin de tester la connexion manuellement, </a>le lien s'ouvrira dans une nouvelle fenêtre.</li> <li>Résolvez le problème,</li><li> fermez la fenêtre </li> et <li>cliquez ensuite sur %sessayer à nouveau.</button>"
          ],
          "Received from: ": [
-            ""
+            "Reçu de : "
          ],
          "2<sup>nd</sup> Authorize": [
             "2<sup>e</sup> Autoriser"

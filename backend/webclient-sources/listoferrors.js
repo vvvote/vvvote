@@ -33,7 +33,8 @@ function translateServerError(errorNo, errorTxt) {
 				"2120": "The name of the voting is already in use.",
 				"4000": "The voting does not exist on the server. Most likely the voting link is wrong. Please correct it and try again.", // confighash nicht gefunden
 				"6000": "A voting with the requested name does not exist on the server. Use the voting link directly.", // electionId nicht gefunden
-				"12000": "You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again."
+				"12000": "You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again.",
+				"8734672": "The session is not valid, most likely it expired or you logged out."
 			},
 			"local": {
 				"1": i18n.gettext("Check of credentials failed. You are not in the list of allowed voters for this voting or secret not accepted."),
@@ -50,7 +51,8 @@ function translateServerError(errorNo, errorTxt) {
 				"2120": i18n.gettext("The name of the voting is already in use."),
 				"4000": i18n.gettext("The voting does not exist on the server. Most likely the voting link is wrong. Please correct it and try again."), // confighash nicht gefunden
 				"6000": i18n.gettext("A voting with the requested name does not exist on the server. Use the voting link directly."), // electionId nicht gefunden
-				"12000": i18n.gettext("You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again.")
+				"12000": i18n.gettext("You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again."),
+				"8734672": i18n.gettext("The session is not valid, most likely it expired or you logged out.")
 				
 			}
 	};

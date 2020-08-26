@@ -79,6 +79,7 @@ if (isset ( $oauthConfig )) {
 		addHost ( $curConfig, 'get_membership_endp', 'oAuthConfig >' . $id . '<' );
 		addHost ( $curConfig, 'get_auid_endp', 'oAuthConfig >' . $id . '<' );
 		addHost ( $curConfig, 'sendmail_endp', 'oAuthConfig >' . $id . '<' );
+		if (array_key_exists('notify_url', $curConfig)) addHost ( $curConfig, 'notify_url', 'oAuthConfig >' . $id . '<' );
 	}
 }
 

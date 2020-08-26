@@ -344,7 +344,16 @@ class BlindedVoter extends Blinder {
 			$ret['cmd'] = 'savePermission';
 			// up to now it is only used for tally.js to show who requested a Wahlschein
 			// maybe it should be used to avoid multi-threading problems
-			$this->auth->onPermissionSend($this->electionId, $voterId);
+			try {
+				ob_start(); // suppress any output, making sure that the Wahlschein will be delivered
+				$this->auth->onPermissionSend($this->electionId, $voterId);
+				ob_end_clean(); // suppress any output, making sure that the Wahlschein will be delivered
+			} catch (\Exception $e) { // after the signing the ballot, an error must not stopping the delivery of the signed ballot as a another one will not be signed 
+				// TODO Log the error
+				$ret['warn'] = array('errNo' => 487598, 'errorTxt' => 'An error occured while trying to send the notification message to the voter.');
+				global $debug;
+				if ($debug) $ret['warn']['data'] = $e;
+			}
 		} else {
 			$ret['cmd'] = 'reqSigsNextpServer';
 		}

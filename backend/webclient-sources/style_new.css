@@ -12912,13 +12912,13 @@ div#auth.auth_doc #substep1 label, div#auth.auth_doc #substep2 label, div#auth.a
   display: none;
 }
 div#auth.auth_doc #substep1 #login1{
-    top: 42px;
+    top: 58px;
 }
 div#auth.auth_doc #substep2 #login2{
-    top: 141px;
+    top: 157px;
 }
 div#auth.auth_doc #substep3 #login3{
-    top: 242px;
+    top: 258px;
 }
 /*div#auth.auth_doc #substepL #reqPermiss{
     top: 242px;

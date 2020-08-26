@@ -81,13 +81,17 @@ function printTechInfos($techinfos) {
 						
 	echo '</body>';
 }
-
+if (isset($_GET['logged_out'])) {
+	printTitle('VVVote: Log out erfolgreich', 'Sie sind nicht (mehr) am Autorisierungsserver eingeloggt.');
+	printTechInfos('Nach dem Ausloggen vom oAuth2-Server wurden Sie zurückgeleitet auf diese Seite.');
+	die();	
+}
 
 
 if (!isset($_GET['code'])) {
 	// TODO better error handling / better text
 	printTitle('VVVote: Error', 'Keine Autorisierungsdaten &uuml;bermittelt. Login fehlgeschlagen.');
-	printTechInfos('URL-request-parameter >code< not set');
+	printTechInfos('URL-request-parameter >code< not set. <br> You might see the causing error in the URL of this page.');
 	die();
 } else {
 	if (!isset($_GET['state'])) {

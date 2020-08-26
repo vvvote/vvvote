@@ -70,6 +70,12 @@ translations['de'] =
          "The voting requieres authorisation module >%s< which is not supported by this client.\nUse a compatible client.": [
             "Die Abstimmung erfordert das Autorisierungsmodul >%s<, das durch diesen Client nicht unterstützt wird.\nVerwenden Sie einen kompatiblen Client"
          ],
+         "Your web browser %s %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. Do not use iPad or iPhone (iOS)": [
+            "Ihr Webbrowser %s %s wird nicht unterstützt. Bitte verwenden Sie Firefox ab Version 34, Chrome (außer auf Android) ab Version 38 oder Edge. Geräte mit iOS (iPad und iPhone) funktionieren nicht, Apple-Computer (MacOS) funktioniert."
+         ],
+         "Your web browser %s %s is on %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. iPad and iPhone (iOS) does not work at all. MacOS works.": [
+            "Ihr Webbrowser %s %s wird auf %s nicht unterstützt. Bitte verwenden Sie Firefox ab Version 34, Chrome (außer auf Android) ab Version 38 oder Edge. Geräte mit iOS (iPad und iPhone) funktionieren nicht, Apple-Computer (MacOS) funktioniert."
+         ],
          "Your web browser %s %is not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge.": [
             "Ihr Browser %s %i wird nicht unterstützt. Bitte verwenden Sie FireFox ab Version 34, Chrome ab Version 38 (nicht auf Android) oder Edge (nicht auf Android)."
          ],
@@ -118,6 +124,9 @@ translations['de'] =
          "You did not allow this server to check your eligibility at the identity server. Please allow this server to checkt your eligibility at the identity server and try again.": [
             "Sie haben diesem Server keine Erlaubnis erteilt, Ihre Stimmberechtigung beim Identitätsserver zu prüfen. Erlauben Sie den Zugriff auf den Identitätsserver und versuchen Sie es erneut."
          ],
+         "The session is not valid, most likely it expired or you logged out.": [
+            "Der interne Sitzungscode ist ungültig, wahrscheinlich ist er abgelaufen oder Sie haben sich ausgeloggt. Loggen Sie sich erneut ein."
+         ],
          "The voters will be identified by a token and the eligibility will be verified by this token.<br>": [
             "Die W&auml;hler werden über ein Token identifiziert und die Wahlberechtigung gepr&uuml;ft.<br>"
          ],
@@ -144,6 +153,9 @@ translations['de'] =
          ],
          "Authorization succeeded": [
             "Autorisierung war erfolgreich"
+         ],
+         "Log out": [
+            "Ausloggen"
          ],
          "Name me publicly as ": [
             "Mich &ouml;ffentlich anzeigen als"
