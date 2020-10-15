@@ -65,7 +65,7 @@ SharedPasswAuth.getNewElectionData = function (serverId) {
 	var enddatedate = new Date(enddate);
 	ret.authData = {
 			"RegistrationStartDate": "2014-01-27T21:20:00Z",  // period, in which return envelop generation is allowed
-	        "RegistrationEndDate":   "2020-10-10T21:20:00Z",
+	        "RegistrationEndDate":   "2040-10-10T21:20:00Z",
 	        "VotingStart": startdate.toISOString(),  
 	        "VotingEnd" :  enddatedate.toISOString(),  
 	        "DelayUntil":   DelayUntilStr
