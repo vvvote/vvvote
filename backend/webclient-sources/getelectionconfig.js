@@ -109,7 +109,7 @@ GetElectionConfig.prototype = {
 										        // throw new ErrorInServerAnswer(1080, i18n.gettext("The voting configuration obtained from the server does not match the checksum. The server is trying to cheat you. Aborted."), this.url);
                                                                                 } catch (e) {
                                                                                 console.log(e);
-                                                                                alert("An error occured: " + e);
+                                                                                aalert.openTextOk("An error occured: " + e);
                                                                                 }
 									}
 									

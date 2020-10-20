@@ -4,7 +4,7 @@
  * Example usage: 
  *  *  throw new ErrorInServerAnswer(1, 'short description without any vars from server', 'long description containg the relevant variabels');
  *  *  try { } catch (e) {
-		if (e instanceof ErrorInServerAnswer) alert('catched: ' + e.text);
+		if (e instanceof ErrorInServerAnswer) aalert.openTextOk('catched: ' + e.text);
 		else throw e;
 	    }
  *  
@@ -24,7 +24,7 @@ MyException.prototype.getMessage = function() {
 };
 
 MyException.prototype.alert = function() {
-	alert(this.getMessage());
+	aalert.openTextOk(this.getMessage());
 };
 
 /**

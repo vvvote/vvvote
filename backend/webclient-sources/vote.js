@@ -61,7 +61,7 @@ VotePage.prototype.gotElectionConfig = function (config) {
 	// this was for debugging: this.getNextVoteTime("2015-04-13T12:41:00+02:00");
 	// TODO if we have phases that do not overlap care about these:
 	if (this.isRegPhase()) config.phase = 'generatePermissions'; 
-	else alert(i18n.gettext('It is not possible anymore to create a voting certificate')); 
+	else aalert.openTextOk(i18n.gettext('It is not possible anymore to create a voting certificate')); 
 	switch (config.phase) {
 	case 'generatePermissions':
 		this.startStep2(config);
@@ -82,7 +82,7 @@ VotePage.prototype.startStep2 = function (config) {
 		this.blinder = new BlindedVoterElection(config);
 		break;
 	default:
-		alert(i18n.sprintf(i18n.gettext('The voting requires blinding module >%s< which is not supported by this client.\nUse a compatible client.'), config.blinding));
+		aalert.openTextOk(i18n.sprintf(i18n.gettext('The voting requires blinding module >%s< which is not supported by this client.\nUse a compatible client.'), config.blinding));
 	break;			
 	}
 	
@@ -115,7 +115,7 @@ VotePage.prototype.startStep2 = function (config) {
 		this.authModule = new ExternalTokenAuth(); 
 		break;
 	default:
-		alert(i18n.sprintf(i18n.gettext('The voting requires authorisation module >%s< which is not supported by this client.\nUse a compatible client.'), config.auth));
+		aalert.openTextOk(i18n.sprintf(i18n.gettext('The voting requires authorisation module >%s< which is not supported by this client.\nUse a compatible client.'), config.auth));
 	}
 	var showGenerateButton = '""';
 	if (this.authModule.hasSubSteps) showGenerateButton = '"display:none;"';
@@ -166,7 +166,7 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEn
 			this.tally = new ConfigurableTally(this.blinder, config);
 			break;
 		default:
-			alert(i18n.sprintf(i18n.gettext('Voting mode >%s< is not supported by this client'), config.tally));
+			aalert.openTextOk(i18n.sprintf(i18n.gettext('Voting mode >%s< is not supported by this client'), config.tally));
 		}
 		var fragm = document.createDocumentFragment(); 
 
@@ -197,7 +197,7 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEn
 		this.setStep(3);
 
 	} else {
-		alert(i18n.gettext('The voting certificate is not valid')); // TODO provide a more detailed error message
+		aalert.openTextOk(i18n.gettext('The voting certificate is not valid')); // TODO provide a more detailed error message
 	}
 	
 	// check if working as return envelope and directly opend or saved (only needed for firefox)
@@ -220,7 +220,7 @@ VotePage.prototype.onPermLoaded = function(permok, blindingobj, config, returnEn
 };
 
 VotePage.prototype.sendVote = function (event) {
-	// alert('jetzt wird die Stimme gesendet');
+	// aalert.openTextOk('jetzt wird die Stimme gesendet');
 	this.tally.sendVote(event);
 };
 

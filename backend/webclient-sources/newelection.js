@@ -60,7 +60,7 @@ NewElectionPage.prototype.setLanguage = function() {
 
 
 	var testHtmlml = 
-		'<br><br><button onclick="var r = secureRandom(16); var parser = new UAParser(); var browser = parser.getBrowser(); alert(\'brws maj:\' + browser.major + \', brws.name: \' + browser.name + \', browser.version: \' + browser.version + \', os: \' + parser.getOS().name + \', r: \' + r.toString(16)); PublishOnlyTally.test();">Test</button>';
+		'<br><br><button onclick="var r = secureRandom(16); var parser = new UAParser(); var browser = parser.getBrowser(); aalert.openTextOk(\'test\', \'brws maj:\' + browser.major + \', brws.name: \' + browser.name + \', browser.version: \' + browser.version + \', os: \' + parser.getOS().name + \', r: \' + r.toString(16)); PublishOnlyTally.test();">Test</button>';
 	var test2Htmlml = 
 		'<a href="https://addons.mozilla.org/firefox/downloads/latest/325576/addon-325576-latest.xpi?src=search" data-hash="sha256:96e26869e85c9fb40202078eae55218b477957ced6cfb997b07523ec2a99ffb6">Zu FireFox hinzuf&uuml;gen</a>';
 	this.mainContent = newElectionHtmlPre + OauthHtml + newElectionHtmlPost + testHtmlml; // test2Htmlml; // newElectionHtmlPre and newElectionHtmlPost defined in index.html as heredoc replacement
@@ -79,7 +79,7 @@ NewElectionPage.prototype.setAuthMethod = function(method, authServerId) {
 	case 'OAuth2':		    this.authModule = OAuth2; this.authServerId = authServerId;	break;
 	case 'sharedAuth':	    this.authModule = SharedAuth;      	break;
 	case 'externalToken':   this.authModule = ExternalTokenAuth;break;
-	default:		alert('Program error 8769867'); 			break;
+	default:		aalert.openTextOk('Program error 8769867'); break;
 	}
 	var html = this.authModule.getNewElectionHtml(authServerId);
 	var el = document.getElementById('authInputs');
@@ -165,16 +165,16 @@ NewElectionPage.prototype.handleNewElectionAnswer = function(xml) {
 		case 'error': // TODO in case the errors is reported not from the first server: handle it somehow: (remove election from all previous servers?)
 			removePopup();
 			var msg = translateServerError(data.errorNo, data.errorTxt);
-			alert(i18n.gettext("Server reports error: \n") + msg);
+			aalert.openTextOk(i18n.gettext("Server reports error: \n") + msg);
 			break;
 		default:
 			removePopup();
-			alert(i18n.gettext("Unknown command from Server: \n") + data.cmd);
+			aalert.openTextOk(i18n.gettext("Unknown command from Server: \n") + data.cmd);
 			break;
 		}
 	}catch (e) {
 		removePopup();
-		alert('Answer from Server does not match the expected format (JSON decode error)');
+		aalert.openTextOk('Answer from Server does not match the expected format (JSON decode error)');
 	}
 
 };

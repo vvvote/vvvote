@@ -13,11 +13,11 @@ ClientConfig.serverList     = new Array();
 ClientConfig.newElectionUrl = new Array();
 
 if (serverinfos.cmd === 'serverError' ) {
-	alert(i18n.sprintf(i18n.gettext("There is an error in the server configuration. The server did not deliver the server infos. api/./getserverinfos says %s"), serverinfos.errorDesc));
+	aalert.openTextOk(i18n.sprintf(i18n.gettext("There is an error in the server configuration. The server did not deliver the server infos. api/./getserverinfos says %s"), serverinfos.errorDesc));
 }
 
 for (var i=0; i<serverinfos.pServerUrlBases.length; i++) {
-	if (serverinfos.pkeys[i].kty !== 'RSA') alert('Error in server infos: only RSA is a supported by this client');
+	if (serverinfos.pkeys[i].kty !== 'RSA') aalert.openTextOk('Error in server infos: only RSA is a supported by this client');
 	ClientConfig.serverList[i] = {
 			'name':    serverinfos.pkeys[i].kid,
 			'i': i,

@@ -73,6 +73,7 @@ $includeJsFiles = Array(
 		'listoferrors.js',
 		'tools/ua-parser.js',
 
+		'tools/aalert.js',
 		'tools/jed.js',
 		'i18n/vvvote_de.js',
 		'i18n/vvvote_en_US.js',
