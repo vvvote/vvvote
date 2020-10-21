@@ -85,7 +85,7 @@ function getAuthModuleStatic(config) {
 	case 'oAuth2':        a = OAuth2;            break;
 	case 'externalToken': a = ExternalTokenAuth; break;
 	default:
-		alert(i18n.sprintf(i18n.gettext("The voting requieres authorisation module >%s< which is not supported by this client.\nUse a compatible client."), config.auth));
+		aalert.openTextOk(i18n.sprintf(i18n.gettext("The voting requieres authorisation module >%s< which is not supported by this client.\nUse a compatible client."), config.auth));
 	}
 	return a;
 }

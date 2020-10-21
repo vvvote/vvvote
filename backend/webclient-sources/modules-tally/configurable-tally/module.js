@@ -455,7 +455,7 @@ ConfigurableTally.getDOM1Election = function(tallyconfig, qNo, fragm) {
 				}
 				break;
 			default: 
-				alert(i18n.sprintf(i18n.gettext('Client does not support voting scheme >%s<'), curScheme.name));
+				aalert.openTextOk(i18n.sprintf(i18n.gettext('Client does not support voting scheme >%s<'), curScheme.name));
 			}
 			optionFieldSet.setAttribute('class', 'optionFieldSet');
 			optionFieldSet.appendChild(fieldSetNode);
@@ -575,7 +575,7 @@ ConfigurableTally.getOptionTextFragm = function(curOption, qNo, optionNo) {
 			mc = mc + '</table>';
 			break;
 		default: 
-			alert('Client unterstützt das Abstimmsystem >' + tallyconfig.voteSystem.type + '< nicht');
+			aalert.openTextOk('Client unterstützt das Abstimmsystem >' + tallyconfig.voteSystem.type + '< nicht');
 		}
 		if (qNo>0) {
 			mc = mc + '<button id="buttonPrevQ'+qNo+'" onclick="ConfigurableTally.showQuestion(' +(qNo-1)+')">Vorhergehende Frage</button>';
@@ -956,7 +956,7 @@ ConfigurableTally.prototype.handleServerAnswerShowWinners = function (xml) {
 	} catch (e) {
 		// TODO if (e instanceof ErrorInServerAnswer)
 		if (e instanceof MyException)	e.alert();
-		else alert(i18n.sprintf(i18n.gettext('Something did not work: %s'), e.toString())); 
+		else aalert.openTextOk(i18n.sprintf(i18n.gettext('Something did not work: %s'), e.toString())); 
 	}
 };
 
@@ -1038,7 +1038,7 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 			case 'score':   htmlcode = htmlcode + '<th>' + i18n.gettext('Score')  + '</th>'; break;
 			case 'pickOne': htmlcode = htmlcode + '<th>' + i18n.gettext('Picked') + '</th>'; break;
 			default: 	    htmlcode = htmlcode + '<th>' + i18n.gettext('Scheme not supported')  + '</th>'; 
-						  //alert(i18n.gettext('Error 875498z54: scheme not supported'));
+						  //aalert.openTextOk(i18n.gettext('Error 875498z54: scheme not supported'));
 			};
 		}
 		htmlcode = htmlcode + '<th>' + i18n.gettext('Voting number') + '</th><th>' + i18n.gettext('Verify!') + '</th></thead>';

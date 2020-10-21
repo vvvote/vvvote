@@ -84,7 +84,7 @@ function sendThroughProxy() {
  */
 function myXmlSend(url, data, callbackObject, callbackFunction, proxy) {
 	if (typeof url !== 'string') { // typeof returns 'undefined' if url is not set
-		alert(i18n.gettext('There is an error in the configuration. Please inform the administrator. (error no.: 875765: URL not defined or not of type string)'));
+		aalert.openTextOk(i18n.gettext('There is an error in the configuration. Please inform the administrator. (error no.: 875765: URL not defined or not of type string)'));
 		return;
 	} 
 	var sender = new myXmlSend_(url, data, callbackObject, callbackFunction, proxy, 'POST', true);
@@ -102,7 +102,7 @@ function myXmlSend(url, data, callbackObject, callbackFunction, proxy) {
  */
 function httpPostDownload(url, callbackObject, callbackFunction, log, proxy) {
 	if (typeof url !== 'string') { // typeof returns 'undefined' if url is not set
-		alert(i18n.gettext('There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)')); // Ein Fehler in den Einstellungen ist aufgetreten. Bitte informieren Sie den Wahlverantwortlichen (Fehlernr.: 875766: URL nicht definiert oder kein String)');
+		aalert.openTextOk(i18n.gettext('There is an error in the configuration. Please inform the administrator. (error no.: 875766: URL not defined or not of type string)')); // Ein Fehler in den Einstellungen ist aufgetreten. Bitte informieren Sie den Wahlverantwortlichen (Fehlernr.: 875766: URL nicht definiert oder kein String)');
 		return;
 	}
 	var sender = new myXmlSend_(url, null, callbackObject, callbackFunction, proxy, 'POST', log);
@@ -117,7 +117,7 @@ myXmlSend_Array  = new Array();
 
 function retryXmlSend_() {
 	//var curErrorXmlSender = myXmlSend_Array[stackNo];
-	//if (curErrorXmlSender !== myXmlSend_Array.pop()) alert('Hier stimmt was nicht!');
+	//if (curErrorXmlSender !== myXmlSend_Array.pop()) aalert.openTextOk('Hier stimmt was nicht!');
 	var curErrorXmlSender = myXmlSend_Array.pop();
 	curErrorXmlSender.send();
 };
@@ -159,7 +159,7 @@ myXmlSend_.prototype.send = function () {
 		// var t;
 		// if (e instanceof Event) t = e.target.statusText;
 		// else                    t = e.toString;
-		// alert("error: (" + xml2.status + ") "+ xml2.statusText + "e: " + t);
+		// aalert.openTextOk("error: (" + xml2.status + ") "+ xml2.statusText + "e: " + t);
 		// this occures when
 		// * certificate of https is not valid
 		// * in chrome: protocol unknown
@@ -169,7 +169,7 @@ myXmlSend_.prototype.send = function () {
 		// + "\n" + 'click <a href="' + url +'" here</a>');};
 
 		/*		  if (xml2.status == Components.results.NS_ERROR_UNKNOWN_HOST) {
-		   alert("DNS error: " +  this.channel.status);
+		   aalert.openTextOk("DNS error: " +  this.channel.status);
 	     }
 		 */	
 		var me = this;
@@ -189,7 +189,7 @@ myXmlSend_.prototype.send = function () {
 				'</li></ul></div>';
 		tmp = tmp + '';
 		errorDiv.innerHTML = tmp;
-		// alert(errorDiv.innerHTML);
+		// aalert.openTextOk(errorDiv.innerHTML);
 		errorDiv.style.display = ""; // this causes the div to be displayed (set to "none" to hide it)
 		// setTimeout(window.scrollTo(0, 0), 1000); //wait till rendering is done
 		window.scrollTo(0, 0);
@@ -201,13 +201,13 @@ myXmlSend_.prototype.send = function () {
 		//diagnosisIFrame.innerHtml = '<iframe  srcdoc="<h1>TITEL</h1>" width="100%" height="80%">Your Browser does not support IFrames</iframe>';
 		/*		var diagnosisWindow = window.open(myXmlSend_.url, "Diagnosis Window", "width=600,height=600,scrollbars=yes");
 		diagnosisWindow.onLoad = function() { // funktioniert nicht, weil diagnosisWindow = null, wenn der Popup-blocker aktiv ist
-			alert("jetz hat's geklappt");
+			aalert.openTextOk("jetz hat's geklappt");
 		};
 		 */	/*try {
 			diagnosisWindow.focus();
 		} catch (e) {
 			if (e instanceof TypeError) { // Pop-Up-Window blocked
-				alert('Es ist ein Fehler beim Aufbau einer Verbindung aufgetreten. Um den genauen Fehler anzuzeigen, wurde versucht, die Verbindung in einem neuen Fenster zu öffnen. Bitte lassen Sie das Pop-up-Fenster zu.');
+				aalert.openTextOk('Es ist ein Fehler beim Aufbau einer Verbindung aufgetreten. Um den genauen Fehler anzuzeigen, wurde versucht, die Verbindung in einem neuen Fenster zu öffnen. Bitte lassen Sie das Pop-up-Fenster zu.');
 			}
 		} */
 	}.bind(this);
@@ -234,7 +234,7 @@ myXmlSend_.prototype.send = function () {
 	} catch (e) { // this is thrown from ff if xml2.open fails because of a non existent protocol (like http oder https)
 		// chrome calls xml2.onerror in this case
 		// an old IE throws this for "permission dinied"
-		// alert('Error trying to connect to ' + myXmlSend_.url + '\n' + e.toString());
+		// aalert.openTextOk('Error trying to connect to ' + myXmlSend_.url + '\n' + e.toString());
 		xml2.onerror(e);
 	}
 };
@@ -256,7 +256,7 @@ function parseServerAnswer(xml, jsonDecode) {
 		return data;
 	} catch (e) {
 		// defined in exception.js
-//		alert("ErrorInServerAnswer 2001, 'Error: could not JSON decode the server answer', 'Got from server: '" + xml.responseText);
+//		aalert.openTextOk("ErrorInServerAnswer 2001, 'Error: could not JSON decode the server answer', 'Got from server: '" + xml.responseText);
 		throw new ErrorInServerAnswer(2001, 'Error: could not JSON decode the server answer', 'Got from server: ' + xml.responseText);
 		// 		return Object({'action':'clientError', 'errorText': "could not JSON decode: (" + e + ") \n" + dataString});
 
@@ -265,7 +265,7 @@ function parseServerAnswer(xml, jsonDecode) {
 
 function httpError(xml) {
 	userlog("\n<--- empfangen Fehler " + xml.status + ": " + xml.statusText);
-	alert("ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (" + xml.status + ") " + xml.statusText);
+	aalert.openTextOk("ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (" + xml.status + ") " + xml.statusText);
 	throw new ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (' + xml.status + ') ' + xml.statusText);
 }
 

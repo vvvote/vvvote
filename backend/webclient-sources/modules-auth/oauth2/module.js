@@ -63,7 +63,7 @@ OAuth2.loggedIn = function(ev) {
 /* automatically clicking the next permission server autorization button works, but all browsers block the new window - so this does not work
 	setTimeout(function() { 
 		var el = document.getElementById('login2'); //  + OAuth2.subStep + 1
-		alert(el); 
+		aalert.openTextOk(el); 
 		el.click(); 
 		}, 500);
 */
@@ -121,7 +121,7 @@ OAuth2.getMainContent = function(conf) {
 		'<br>';
 //	step++;
 	if (! ClientConfig.oAuth2Config[serverId]) {
-		alert(i18n.sprintf(i18n.gettext("Configuration error: serverId >%s< is asked for, but not configured"), serverId)); 
+		aalert.openTextOk(i18n.sprintf(i18n.gettext("Configuration error: serverId >%s< is asked for, but not configured"), serverId)); 
 	}
 	var slist = ClientConfig.serverList;
 	for ( var permissionServerId in ClientConfig.oAuth2Config[serverId].clientIds) {

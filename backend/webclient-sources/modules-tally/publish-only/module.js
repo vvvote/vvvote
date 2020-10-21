@@ -111,11 +111,11 @@ PublishOnlyTally.prototype.sendVoteData = function (voteStr, qNo) {
 	// TODO: raise an error only if no tally server accepted the vote
 	Promise.all(this.storeVotesPromises[qNo])
 	.then(function(ret) {
-		alert(i18n.gettext('Tally servers accepted the vote!'));
+		aalert.openTextOk(i18n.gettext('Tally servers accepted the vote!'));
 	}).catch(function(err) {
 		if (err instanceof MyException) err.alert();
-		else alert(err);
-//		alert("Nö: Bei mindestens 1 Stimmserver gab es einen Fehler.");
+		else aalert.openTextOk(err);
+//		aalert.openTextOk("Nö: Bei mindestens 1 Stimmserver gab es einen Fehler.");
 	});
 };
 
@@ -177,7 +177,7 @@ PublishOnlyTally.prototype.onPermissionLoaded = function(returnEnvelopeLStorageI
 	}
 };
 
-PublishOnlyTally.test = function () { /* alert('mmm'); */}; 
+PublishOnlyTally.test = function () { /* aalert.openTextOk('mmm'); */}; 
 
 
 PublishOnlyTally.prototype.showSaveReceiptButton = function(qNo) {
@@ -230,7 +230,7 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVote = function
 		if (typeof(data.cmd) === 'string' && data.cmd === 'error') {
 			// an encryption error occoured on server side, that is why it sends an unencrypted error message
 			throw new ServerReturnedAnError(234543, data.errorNo, i18n.gettext('The server did not accept the vote.'), data.errorTxt); 
-//			alert(i18n.sprintf(i18n.gettext('The server did not accept the vote. It says:\n%s'), translateServerError(data.errorNo, data.errorTxt)));
+//			aalert.openTextOk(i18n.sprintf(i18n.gettext('The server did not accept the vote. It says:\n%s'), translateServerError(data.errorNo, data.errorTxt)));
 		} else {
 			var me = this;
 			this.te.decrypt(data, true)
@@ -241,7 +241,7 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVote = function
 					break;
 				case 'error':
 					throw new ServerReturnedAnError(234543, data.errorNo, i18n.sprintf(i18n.gettext('The server >%s< did not accept the vote.'), xml.responseURL), i18n.gettext('It says:\n')+ data.errorTxt);
-//					alert(i18n.sprintf(i18n.gettext('The server >%s< did not accept the vote. It says:\n%s'), xml.responseURL, translateServerError(data.errorNo, data.errorTxt)));
+//					aalert.openTextOk(i18n.sprintf(i18n.gettext('The server >%s< did not accept the vote. It says:\n%s'), xml.responseURL, translateServerError(data.errorNo, data.errorTxt)));
 //					me.reject("abc");
 					break;
 				default:
@@ -250,7 +250,7 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVote = function
 				}
 			}).catch(function(e) {
 //				if (e instanceof MyException) e.alert();
-//				else alert(i18n.sprintf(i18n.gettext('decryption of server answer failed: %s'), e.toString()));
+//				else aalert.openTextOk(i18n.sprintf(i18n.gettext('decryption of server answer failed: %s'), e.toString()));
 				me.reject(e);
 			});
 		};
@@ -265,7 +265,7 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVote = function
 PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = function (data) {
 	this.verifyTServerSig(data.sig.sig, data.sig.signedData, ClientConfig.tkeys[this.tServerNo])
 	.then( function(receivedData) {
-		// alert("sig valid!" + JSON.stringify(receivedData));
+		// aalert.openTextOk("sig valid!" + JSON.stringify(receivedData));
 
 		if (! ('iss' in receivedData.decodedSignedContent)) throw new ErrorInServerAnswer(7564534, 'Error in voting receipt: Missing issuer (iss) in voting receipt', JSON.stringify(receivedData.decodedSignedContent));
 
@@ -274,7 +274,7 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = f
 		var issuedAtDate = new Date(receivedData.decodedSignedContent.iat).getTime();
 		var now = new Date(); 
 		var issuedAtDatePlausible = (this.sentReqDate.getTime() <= (issuedAtDate + 10 * 60000)) && ((now.getTime() + 10 * 60000) >= issuedAtDate ); // accept +/- 10 minutes clock difference 
-		if (!issuedAtDatePlausible) alert(i18n.sprintf(i18n.gettext("Information: The server's (%s) clock time in the voting receipt (%s) deviates from the clock time of your device (%s)"), receivedData.decodedSignedContent.iss, receivedData.decodedSignedContent.iat, now));
+		if (!issuedAtDatePlausible) aalert.openTextOk(i18n.sprintf(i18n.gettext("Information: The server's (%s) clock time in the voting receipt (%s) deviates from the clock time of your device (%s)"), receivedData.decodedSignedContent.iss, receivedData.decodedSignedContent.iat, now));
 		
 		// verify if the vote is unchanged
 		var toBeSignedData = JSON.parse(JSON.stringify(this.voteOnly)) // clone the object data;
@@ -283,7 +283,7 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = f
 		toBeSignedData.cmd = 'storeVote';
 		var equals = jsonEquals(receivedData.decodedSignedContent, toBeSignedData);
 		if (equals !== true) throw new ErrorInServerAnswer(46596, 'Error: The tally server signed something else than my vote. The differences are: ', JSON.stringify(diff));
-//		alert(i18n.gettext('Server accepted the vote!'));
+//		aalert.openTextOk(i18n.gettext('Server accepted the vote!'));
 		
 		// save the votingReceipt in the PublishOnlyTally
 		if (! ('votingReceipt'  in this.parent) )               this.parent.votingReceipt = new Array();
@@ -310,7 +310,7 @@ PublishOnlyTallySendVoteHandler.prototype.handleServerAnswerStoreVoteSuccess = f
 	.catch (function(err) {
 		console.log(err);
 		throw new ErrorInServerAnswer(34554, i18n.sprintf(i18n.gettext("Error while verifying tally server /%s/ signature: %s"), ClientConfig.tkeys[this.tServerNo].kid, err),'');
-//		alert(i18n.sprintf(i18n.gettext("Error while verifying tally server /%s/ signature: %s"), ClientConfig.tkeys[this.tServerNo].kid, err));
+//		aalert.openTextOk(i18n.sprintf(i18n.gettext("Error while verifying tally server /%s/ signature: %s"), ClientConfig.tkeys[this.tServerNo].kid, err));
 		this.reject();
 	}.bind(this));
 };
@@ -353,7 +353,7 @@ PublishOnlyTallySendVoteHandler.prototype.verifyTServerSig = function (sig, Data
 				//returns a boolean on whether the signature is valid or not
 				console.log("Tally server signature valid: " + isvalid);
 				if (isvalid !== true) throw new ErrorInServerAnser(3463456, i18n.sprintf(i18n.gettext('The signature from server >%s< does not match the signed vote'), serverkey.kid),'');
-//				alert("jääär:" + isvalid);
+//				aalert.openTextOk("jääär:" + isvalid);
 //				var decodedSignedDataStr = base64Url2String(DataSigned);
 				
 				// decode JWT and generate compatible JWT
@@ -376,7 +376,7 @@ PublishOnlyTallySendVoteHandler.prototype.verifyTServerSig = function (sig, Data
 			})
 			.catch(function(err){
 				console.error(err);
-//				alert("oh, no!");
+//				aalert.openTextOk("oh, no!");
 				reject(err);
 			});
 		});
@@ -467,7 +467,7 @@ PublishOnlyTally.prototype.handleServerAnswerVerifyCountVotes = function (xml) {
 		var answ = parseServerAnswer(xml, true);
 		switch (answ.cmd) {
 		case 'error':
-			alert(i18n.sprintf(i18n.gettext('The server does not reveal the result. It answers:\n %s'), translateServerError(answ.errorNo, answ.errorTxt)));
+			aalert.openTextOk(i18n.sprintf(i18n.gettext('The server does not reveal the result. It answers:\n %s'), translateServerError(answ.errorNo, answ.errorTxt)));
 			break;
 		case 'verifyCountVotes': 
 			this.processVerifyCountVotes(answ);
