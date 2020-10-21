@@ -393,23 +393,24 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 	// rsa.setPublic(bigInt2str(pubkey.n, 16), bigInt2str(pubkey.exp, 16));
 	var voteitself = vote.vote.vote;
 	var sig = vote.vote.sig;
+	var alertstr = "";
 	try {
 		// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
 		var sigOk = rsaVerifySig(voteitself, sig, pubkey);
 		if (sigOk) {
-			aalert.openTextOk(i18n.gettext('The signature on the vote is correct. This means that the vote is unchanged.'));
+			alertstr = i18n.gettext('The signature on the vote is correct. This means that the vote is unchanged.');
 		} else {
-			aalert.openTextOk(i18n.gettext('The signature on the vote is not correct. This means that the vote is changed or the key does not match.'));
+			alertstr = i18n.gettext('The signature on the vote is not correct. This means that the vote is changed or the key does not match.');
 		}
 	} catch (e) {
-		aalert.openTextOk("Error verifying the signature:\n" + e);
+		alertstr = "Error verifying the signature:\n" + e;
 	}
 
 	var transm = BlindedVoterPermObtainer.addBallothash(vote.permission.signed);
 	var sig, serverinfo, pubkey, sigOk, slist;
 	slist = ClientConfig.serverList;
 	if (vote.permission.sigs.length != slist.length) {
-		aalert.openTextOk(i18n.sprintf(i18n.gettext("Error verifying a signature:\nThe number of signatures on the voting certificate is not correct. \nRequired number: %d, number in this voting certificate: %d"), slist.length, vote.permission.sigs.length));
+		alertstr = alertstr + "\n" + i18n.sprintf(i18n.gettext("Error verifying a signature:\nThe number of signatures on the voting certificate is not correct. \nRequired number: %d, number in this voting certificate: %d"), slist.length, vote.permission.sigs.length);
 	}
 	var completElectionIdStr = vote.permission.signed.electionId;
 	var completElectionId = JSON.parse(completElectionIdStr);
@@ -417,7 +418,7 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 	else {
 		var qid = completElectionId.subElectionId;
 		var qno = ArrayIndexOf(this.config.questions, 'questionID', qid);
-		if (qno < 0) alert (i18n.gettext('The vote is not for this election (Question ID not found in election configuration).'));
+		if (qno < 0) alertstr = alertstr + "\n" + i18n.gettext('The vote is not for this election (Question ID not found in election configuration).');
 		else {
 			for (var i=0; i <vote.permission.sigs.length; i++) {
 				try {
@@ -428,16 +429,17 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 					// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
 					sigOk = rsaVerifySig(transm.str, sig.sig, pubkey);
 					if (sigOk) {
-						aalert.openTextOk(i18n.sprintf(i18n.gettext('The signature by the permission server >%s< for the voting key is correct. This means, the server has confirmed that the according voter is entitled to vote.'), sig.sigBy));
+						alertstr = alertstr + "\n" + (i18n.sprintf(i18n.gettext('The signature by the permission server >%s< for the voting key is correct. This means, the server has confirmed that the according voter is entitled to vote.'), sig.sigBy));
 					} else {
-						aalert.openTextOk(i18n.sprintf(i18n.gettext('The signature by permission server >%s< for the voting key is not correct. Either the configuration is wrong or there is a fraud. Please inform the persons responsible for the voting'), sig.sigBy)); 
+						alertstr = alertstr + "\n" + (i18n.sprintf(i18n.gettext('The signature by permission server >%s< for the voting key is not correct. Either the configuration is wrong or there is a fraud. Please inform the persons responsible for the voting'), sig.sigBy)); 
 					}
 				} catch (e) {
-					aalert.openTextOk(i18n.sprintf(i18n.gettext("Error verifying the signature:\n%s"), e.toString()));
+					alertstr = alertstr + "\n" + (i18n.sprintf(i18n.gettext("Error verifying the signature:\n%s"), e.toString()));
 				}
 			}
 		}
 	}
+	aalert.openTextOk(alertstr);
 };
 
 BlindedVoterElection.prototype.getAllPermissedBallots = function () {
