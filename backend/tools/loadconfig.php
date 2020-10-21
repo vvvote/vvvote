@@ -25,14 +25,17 @@ if (! isset ( $configFilepath )) {
 		die ();
 	}
 	
-	// config filename: try "config-[hostname]_[port].php", "config-[hostname].php" and 'config.php'
+	// config filename: try "config-[hostname]_[port].php", "config-[hostname].php", "config_[port].php" and 'config.php'
 	if (array_key_exists ( 'HTTP_HOST', $_SERVER ) && array_key_exists ( 'SERVER_PORT', $_SERVER )) {
 		$hostfn = preg_replace ( '/(.*)\:[0-9]*/', '${1}', $_SERVER ['HTTP_HOST'] ); // apache (sometimes) appends the port to the hostname if it is not the default port 80 or 443 --> remove that
 		$configFilename = 'config-' . $hostfn . '_' . $_SERVER ['SERVER_PORT'] . '.php'; // try hostname with port
 		if (! is_file ( $configdir . '/' . $configFilename )) {
 			$configFilename = 'config-' . $hostfn . '.php'; // try hostname without port
 			if (! is_file ( $configdir . '/' . $configFilename )) {
-				$configFilename = 'config.php';
+				$configFilename = 'config_' . $_SERVER ['SERVER_PORT'] . '.php'; // try only port
+				if (! is_file ( $configdir . '/' . $configFilename )) {
+					$configFilename = 'config.php';
+				}
 			}
 		}
 	} else {
