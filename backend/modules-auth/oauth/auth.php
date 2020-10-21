@@ -107,7 +107,14 @@ class OAuth2 extends Auth {
 			if ($isEntitled !== true) return false;
 		}
 
-		// check if in list of allowed voters
+		// Is the voter registered for voting offline (external)? then he is not allowed to vot online.
+		if ($eligCrit['external_voting'] === false) $isOnlineVoter = true; // test not requiered
+		else {
+			$isOnlineVoter = $this->oAuthConnection->isOnlineVoter();
+			if ($isOnlineVoter !== true) return false;
+		}
+		
+		 // check if in list of allowed voters
 		if (isset($eligCrit['listId']) ) {  
 			if ($eligCrit['listId'] === '') $isInVoterList = true; // test not requiered
 			else {
@@ -126,7 +133,7 @@ class OAuth2 extends Auth {
 		// load auid, username, public_id auth-infos, already_used by electionId, tmp-secret
 		// $displayname = $this->oAuthConnection->fetchAuid();
 		// return auid and public_id if everthing is ok.
-		if ( ($isInVoterList === true) && ($isVerified === true) && ($isEntitled === true) && ($isInVoterList === true) && ($isInGroup === true))
+		if ( ($isInVoterList === true) && ($isVerified === true) && ($isEntitled === true) && ($isOnlineVoter === true) && ($isInVoterList === true) && ($isInGroup === true))
 				return true;
 		else 	return false;
 	}
@@ -190,20 +197,22 @@ class OAuth2 extends Auth {
 	function handleNewElectionReq($electionId, $req) {
 		$authconfig = parent::handleNewElectionReq($electionId, $req);
 		
-		if ( (! isset($req["serverId"]     )) || (! is_string($req['serverId']     )) ) WrongRequestException::throwException(12006, 'Missing /serverId/ in election config'     , "request received: \n" . var_export($req, true));
-		if ( (! isset($req["listId"]       )) || (! is_string($req['listId']       )) ) WrongRequestException::throwException(12001, 'Missing /listId/ in election config'       , "request received: \n" . var_export($req, true));
-		if ( (! isset($req["nested_groups"])) || (! is_array( $req['nested_groups'])) ) WrongRequestException::throwException(12002, 'Missing /nested_groups/ in election config', "request received: \n" . var_export($req, true));
-		if ( (! isset($req["verified"]     )) || (! is_bool(  $req['verified']     )) ) WrongRequestException::throwException(12003, 'Missing /verified/ in election config'     , "request received: \n" . var_export($req, true));
-		if ( (! isset($req["eligible"]     )) || (! is_bool(  $req['eligible']     )) ) WrongRequestException::throwException(12004, 'Missing /eligible/ in election config'     , "request received: \n" . var_export($req, true));
-		if ( (! isset($electionId          )) || (! is_string($electionId          )) ) WrongRequestException::throwException(12005, '/ElectionId/ not set or of wrong type'     , "request received: \n" . var_export($req, true));
+		if ( (! isset($req["serverId"]        )) || (! is_string($req['serverId']       )) ) WrongRequestException::throwException(12006, 'Missing /serverId/ in election config'       , "request received: \n" . var_export($req, true));
+		if ( (! isset($req["listId"]          )) || (! is_string($req['listId']         )) ) WrongRequestException::throwException(12001, 'Missing /listId/ in election config'         , "request received: \n" . var_export($req, true));
+		if ( (! isset($req["nested_groups"]   )) || (! is_array( $req['nested_groups']  )) ) WrongRequestException::throwException(12002, 'Missing /nested_groups/ in election config'  , "request received: \n" . var_export($req, true));
+		if ( (! isset($req["verified"]        )) || (! is_bool(  $req['verified']       )) ) WrongRequestException::throwException(12003, 'Missing /verified/ in election config'       , "request received: \n" . var_export($req, true));
+		if ( (! isset($req["eligible"]        )) || (! is_bool(  $req['eligible']       )) ) WrongRequestException::throwException(12004, 'Missing /eligible/ in election config'       , "request received: \n" . var_export($req, true));
+		if ( (! isset($req["external_voting"] )) || (! is_bool(  $req['external_voting'])) ) WrongRequestException::throwException(12008, 'Missing /external_voting/ in election config', "request received: \n" . var_export($req, true));
+		if ( (! isset($electionId             )) || (! is_string($electionId            )) ) WrongRequestException::throwException(12005, '/ElectionId/ not set or of wrong type'       , "request received: \n" . var_export($req, true));
 		global $oauthConfig;
-		if ( find_in_subarray($oauthConfig, 'serverId', $req['serverId']) === false)    WrongRequestException::throwException(12007, 'Server configuration for OAuth2-serverId not found' , "request received: \n" . var_export($req, true));
-		$authconfig['serverId']      = $req['serverId'];
-		$authconfig['listId']        = $req["listId"];
-		$authconfig['nested_groups'] = $req["nested_groups"];
-		$authconfig['verified']      = $req["verified"];
-		$authconfig['eligible']      = $req["eligible"];
-
+		if ( find_in_subarray($oauthConfig, 'serverId', $req['serverId']) === false)    WrongRequestException::throwException(12007, 'Server configuration for OAuth2-serverId not found', "request received: \n" . var_export($req, true));
+		$authconfig['serverId']        = $req['serverId'];
+		$authconfig['listId']          = $req["listId"];
+		$authconfig['nested_groups']   = $req["nested_groups"];
+		$authconfig['verified']        = $req["verified"];
+		$authconfig['eligible']        = $req["eligible"];
+		$authconfig['external_voting'] = $req["external_voting"];
+		
 		// TODO don't save any data until everything is completed (no error occured in the further steps)
 		// TODO don't save any public config data in separate data base - just use the config
 		$ok = $this->newElection($electionId, $req['serverId'], $authconfig); // TODO think about taking serverId always from election-config

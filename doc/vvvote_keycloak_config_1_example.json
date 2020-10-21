@@ -53,7 +53,8 @@
         "eligible",
         "ekklesia_notify",
         "verified",
-        "user_roles"
+        "user_roles",
+        "external_voting"
     ],
     "optionalClientScopes": [],
     "access": {

@@ -102,8 +102,8 @@ $config = array (
 						// (in keycloak: "clients" -> "edit" -> "settings" -> "Consent Required" must be off 
 						// for the second Vvvote server because no interaction is allowed). 
 						
-						// default scopes requested for keycloak: "eligible user_roles verified" but you can set different scopes by uncommenting the following line
-						//'scope' => 'eligible user_roles verified ekklesia_notify',
+						// default scopes requested for keycloak: "eligible user_roles verified ekklesia_notify external_voting" but you can set different scopes by uncommenting the following line
+						//'scope' => 'eligible user_roles verified ekklesia_notify external_voting',
 						
 						// You must use SSL/TLS here as the oAuth2 security relies on it.
 						// In order to do so:

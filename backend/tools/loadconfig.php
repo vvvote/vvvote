@@ -256,7 +256,7 @@ if (isset ( $config ['oauth2Config'] )) {
 				$oauthConfig[$curOauthConfig['serverId']] = $curOauthConfig;
 				break;
 			case "keycloak":
-				if (! array_key_exists('scope', $curOauthConfig) ) $curOauthConfig['scope'] = 'eligible user_roles verified ekklesia_notify';
+				if (! array_key_exists('scope', $curOauthConfig) ) $curOauthConfig['scope'] = 'eligible user_roles verified ekklesia_notify external_voting';
 				$curOauthConfig ['token_endp'] = $oauthUrlTrimmed . '/token/'; // umgestellt
 //not used at the moment				$curOauthConfig ['get_profile_endp'] =  $resUrlTrimmed . '/userinfo/';
 // not supported by keycloak at the moment				$curOauthConfig ['is_in_voter_list_endp'] = $resUrlTrimmed . '/user/listmember/';

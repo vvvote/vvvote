@@ -79,42 +79,64 @@ class FetchFromOAuth2Server {
 	 */
 	function isMember() {
 		$ret = false;
-		$entitledStatus = $this->fetchMemberShipInfo();
+		$status = $this->fetchMemberShipInfo();
 		switch ($this->curOAuth2Config['type']) {
 			case 'ekklesia':
-				if (! (isset($ret['result']['type']) ) ) InternalServerError::MyExceptionData(8734679, 'isMember: OAuth2 server answer does not contain the expected field >type<', ", received: >" . var_export($ret['result'] . '<', true) ); // requested info not received
-				$ret = ( ($entitledStatus['type'] === 'eligible member') || ($entitledStatus['type'] === 'plain member') );
+				if (! (isset($status['type']) ) ) InternalServerError::MyExceptionData(8734679, 'isMember: OAuth2 server answer does not contain the expected field >type<', ", received: >" . var_export($status, true) . '<'); // requested info not received
+				$ret = ( ($status['type'] === 'eligible member') || ($status['type'] === 'plain member') );
 				break;
 			case 'keycloak':
 			default:
-				if (! (isset($ret['result']['member']) ) ) InternalServerError::MyExceptionData(8734680, 'isMember: OAuth2 server does not suppor the field >member<', ", received: >" . var_export($ret['result'] . '<', true) ); // requested info not received
-				$ret = $entitledStatus['member'];
+				if (! (isset($status['member']) ) ) InternalServerError::MyExceptionData(8734680, 'isMember: OAuth2 server does not suppor the field >member<', ", received: >" . var_export($status, true) . '<'); // requested info not received
+				$ret = $status['member'];
 		}
-		if ($ret !== true) WrongRequestException::throwException(10002, "For this voting your existance must be a member. The oAuth2 server either said 'you are not a member' or did not include this information", 'The oAuth2 server sent this information about you: >' . var_export($entitledStatus, true) .'<');
+		if ($ret !== true) WrongRequestException::throwException(10002, "For this voting your existance must be a member. The oAuth2 server either said 'you are not a member' or did not include this information", 'The oAuth2 server sent this information about you: >' . var_export($status, true) .'<');
 		return $ret;
 	}
 	
 	/**
-	 * stimmberechtigt?
+	 * entitled to vote? (stimmberechtigt?)
 	 */
 	function isEntitled() {
 		$ret = false;
-		$entitledStatus = $this->fetchMemberShipInfo();
+		$status = $this->fetchMemberShipInfo();
 			switch ($this->curOAuth2Config['type']) {
 			case 'ekklesia':
-				if (! (isset($entitledStatus['type']) ) ) InternalServerError::MyExceptionData(8734681, 'isEntitled: OAuth2 server answer does not contain the expected field >type<', ", received: >" . var_export($entitledStatus, true) . '<'); // requested info not received
-				$ret = ($entitledStatus['type'] === 'eligible member');
+				if (! (isset($status['type']) ) ) InternalServerError::MyExceptionData(8734681, 'isEntitled: OAuth2 server answer does not contain the expected field >type<', ", received: >" . var_export($status, true) . '<'); // requested info not received
+				$ret = ($status['type'] === 'eligible member');
 				break;
 			case 'keycloak':
 			default:
-				if (! (isset($entitledStatus['eligible']) ) ) InternalServerError::MyExceptionData(8734682, 'isEntitled: OAuth2 server answer does not contain the expected field >eligible<', ", received: >" . var_export($entitledStatus, true) . '<' ); // requested info not received
-				$ret = $entitledStatus['eligible'];
+				if (! (isset($status['eligible']) ) ) InternalServerError::MyExceptionData(8734682, 'isEntitled: OAuth2 server answer does not contain the expected field >eligible<', ", received: >" . var_export($status, true) . '<' ); // requested info not received
+				$ret = $status['eligible'];
 		}
-		if ($ret !== true) WrongRequestException::throwException(10001, "For this voting you must be entitled to vote. The oAuth2 server either said 'you are not entitled/eligible' or did not include this information", 'The oAuth2 server sent this information about you: >' . var_export($entitledStatus, true) .'<');
+		if ($ret !== true) WrongRequestException::throwException(10001, "For this voting you must be entitled to vote. The oAuth2 server either said 'you are not entitled/eligible' or did not include this information", 'The oAuth2 server sent this information about you: >' . var_export($status, true) .'<');
 		return $ret;
 	}
 
-
+	
+	/**
+	 * returns false, if the voter has requested offline voting for himself
+	 */
+	function isOnlineVoter() {
+		$ret = false;
+		$status = $this->fetchMemberShipInfo();
+		switch ($this->curOAuth2Config['type']) {
+			case 'ekklesia':
+				if (! (isset($status['type']) ) ) InternalServerError::MyExceptionData(8734683, 'isOnlineVoter: OAuth2 server answer does not contain the expected field >type<', ", received: >" . var_export($status, true) . '<'); // requested info not received
+				$ret = ($status['type'] === 'offline member');
+				break;
+			case 'keycloak':
+			default:
+				if (! (isset($status['external_voting']) ) ) InternalServerError::MyExceptionData(8734684, 'isOnlineVoter: OAuth2 server answer does not contain the expected field >external_voting<', ", received: >" . var_export($status, true) . '<' ); // requested info not received
+				if ($status['external_voting'] === false ) $ret = true;
+				else                                       $ret = false;
+		}
+		if ($ret !== true) WrongRequestException::throwException(10006, "The oAuth2 server said that you requested offline voting. That is why you cannot vote online.", 'The oAuth2 server sent this information about you: >' . var_export($status, true) .'<');
+		return $ret;
+	}
+	
+	
 	/**
 	 * gehört der entsprechenden Parteigliederung an?
 	 * belongs to the division of the party which conducts the voting 
