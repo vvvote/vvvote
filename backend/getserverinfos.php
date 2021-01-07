@@ -8,6 +8,7 @@
 chdir(__DIR__);
 
 try {
+    $DO_NOT_LOAD_PRIV_KEYS = TRUE;
 	chdir(__DIR__); require_once './tools/loadconfig.php'; // needed for $numPServers and $pServerUrlBases and $oauthConfig
 	
 	for($i = 0; $i < $numPServers; $i ++) {

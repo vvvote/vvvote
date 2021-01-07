@@ -211,7 +211,7 @@ function loadprivatekey($dir, $typePrefix, $serverNo, array $publickeys) {
 		InternalServerError::throwException ( 656662, 'Internal server configuration error: .publickey.pem does not match the .privatekey.pem.php', 'for >' . $serverkey ['serverName'] . '<, private key file >' . $privatekeyfilename . '<.' );
 	return $serverkey;
 }
-if (! isset ( $DO_NOT_LOAD_PUB_KEYS )) {
+if ( (! isset ( $DO_NOT_LOAD_PUB_KEYS )) && (! isset($DO_NOT_LOAD_PRIV_KEYS)) ) {
 	$pserverkey = loadprivatekey ( $configdir, 'PermissionServer', $serverNo, $pServerKeys );
 	$tserverkey = loadprivatekey ( $configdir, 'TallyServer', $serverNo, $tServerKeys ); // TODO use separate numeration for tally and permission servers
 }
