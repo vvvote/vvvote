@@ -17,6 +17,8 @@ Page.prototype.setLanguage = function() {
 	this.stepstitle = i18n.gettext("That's how");
 	this.techinfocheckboxlabel = i18n.gettext('Show explanations and technical information');
 	this.aboutLinkText = i18n.gettext('About');
+	this.privacyStatementText = i18n.gettext('Privacy statement');
+	this.privacyStatementLink = 'javascript:aalert.openTextOk(privacy_statement[i18n.options.locale_data.messages[""].lang])';
 };
 
 
@@ -28,6 +30,8 @@ Page.prototype.display = function() {
 	document.getElementById('idtechinfocheckbox').textContent = this.techinfocheckboxlabel;
 	document.getElementById('idstepstitle').textContent = this.stepstitle;
 	document.getElementById('aboutUrlId').textContent = this.aboutLinkText;
+	document.getElementById('privacyStatementId').textContent = this.privacyStatementText;
+	document.getElementById('privacyStatementId').href = this.privacyStatementLink;
 	this.showSteps();
 	Page.loadMainContent(this.mainContent);
 	this.setStep(1);

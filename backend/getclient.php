@@ -59,7 +59,20 @@ if (array_key_exists ( 'cmd', $serverinfos ) && ($serverinfos['cmd'] === 'server
 	return 1;
 }
 
-$includeJsFiles = Array(
+$includeJsFiles = Array();
+
+$available_lang_ids = ['de', 'en_US', 'fr']; // If you add a language, add its ID here. The expected filename is "vvvote_{id}.js".
+foreach ($available_lang_ids  as $lang_id) {
+	$langfile = 'i18n/vvvote_' . $lang_id . '.js';
+	array_push($includeJsFiles, $langfile);
+}
+
+
+$includeJsFiles = array_merge($includeJsFiles, Array(
+		'tools/jed.js',
+		'tools/i18n.js',
+		'tools/aalert.js',
+		
 		'tools/BigInt.js',
 		'tools/rsa.js',
 		'tools/sha256.js',
@@ -73,12 +86,6 @@ $includeJsFiles = Array(
 		'listoferrors.js',
 		'tools/ua-parser.js',
 
-		'tools/aalert.js',
-		'tools/jed.js',
-		'i18n/vvvote_de.js',
-		'i18n/vvvote_en_US.js',
-		'i18n/vvvote_fr.js',
-		'tools/i18n.js',
 
 		'config/config.js',
 		'getelectionconfig.js',
@@ -116,7 +123,7 @@ $includeJsFiles = Array(
 
 		'tools/jsrsasign-master/rsasign-1.2.js',
 		/* Crypto-tool Ende */
-);
+));
 
 $includeCssFiles = Array('standard.css', 'substeps.css', 'working-animation.css', 'style_new.css', 'style_doc.css');
 
@@ -139,6 +146,15 @@ foreach ($includeJsFiles as $f) {
 	echo "\r\n";
 }
 
+echo "var privacy_statement = [];\r\n"; 
+foreach ($available_lang_ids as $lang_id) {
+	// use default privacy statement if not available in the requested language
+	if (file_exists(__DIR__ . '/config/privacy_statement_' . $lang_id . '.html')) 
+		 $fn = __DIR__ . '/config/privacy_statement_' . $lang_id . '.html';
+	else $fn = __DIR__ . '/config/privacy_statement.html';
+	$ps = file_get_contents($fn);
+	echo 'privacy_statement["' . $lang_id .'"] = ' . json_encode($ps) . ";\r\n"; 
+}
 		
 // print placeholder for JSON permission file
 echo "\n//placeholder for permission file\n";
@@ -318,7 +334,12 @@ echo <<<EOT
 									<span><a id="aboutUrlId" href="$aboutUrl" target="_blank">About</a></span>
 							</div>
 						</div>
-						<div class="col-md-2 col-sm-push-7">
+						<div class="col-md-2 text-center">
+							<div class="copyright" > 
+									<span><a id="privacyStatementId" href="$aboutUrl">Privacy statement</a></span>
+							</div>
+						</div>
+						<div class="col-md-2 col-sm-push-5">
 							<div class="copyright text-center"">
 								<div class="logo_foot" style="width: 30px;display: inline-block;vertical-align: middle;">						
 EOT;
