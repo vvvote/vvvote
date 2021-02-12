@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-08-26 21:26+0200\n"
+"POT-Creation-Date: 2021-02-12 23:34+0100\n"
 "PO-Revision-Date: 2016-01-01 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -448,18 +448,18 @@ msgstr ""
 msgid "The voter certificate is not consistent"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:400
+#: modules-election/blinded-voter/module.js:401
 msgid ""
 "The signature on the vote is correct. This means that the vote is unchanged."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:402
+#: modules-election/blinded-voter/module.js:403
 msgid ""
 "The signature on the vote is not correct. This means that the vote is "
 "changed or the key does not match."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:412
+#: modules-election/blinded-voter/module.js:413
 #, javascript-format
 msgid ""
 "Error verifying a signature:\n"
@@ -467,17 +467,17 @@ msgid ""
 "Required number: %d, number in this voting certificate: %d"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:416
+#: modules-election/blinded-voter/module.js:417
 msgid "The vote is not for this election (Election IDs do not match)."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:420
+#: modules-election/blinded-voter/module.js:421
 msgid ""
 "The vote is not for this election (Question ID not found in election "
 "configuration)."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:431
+#: modules-election/blinded-voter/module.js:432
 #, javascript-format
 msgid ""
 "The signature by the permission server >%s< for the voting key is correct. "
@@ -485,7 +485,7 @@ msgid ""
 "to vote."
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:433
+#: modules-election/blinded-voter/module.js:434
 #, javascript-format
 msgid ""
 "The signature by permission server >%s< for the voting key is not correct. "
@@ -493,14 +493,14 @@ msgid ""
 "persons responsible for the voting"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:436
+#: modules-election/blinded-voter/module.js:437
 #, javascript-format
 msgid ""
 "Error verifying the signature:\n"
 "%s"
 msgstr ""
 
-#: modules-election/blinded-voter/module.js:487
+#: modules-election/blinded-voter/module.js:489
 #, javascript-format
 msgid ""
 "For voter >%s< the server >%s< returns a different order of signatures than "
@@ -980,6 +980,14 @@ msgstr ""
 
 #: page.js:19
 msgid "About"
+msgstr ""
+
+#: page.js:20
+msgid "Privacy statement"
+msgstr ""
+
+#: tools/aalert.js:9
+msgid "Ok"
 msgstr ""
 
 #: tools/mixed.js:87
