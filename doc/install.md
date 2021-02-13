@@ -87,6 +87,14 @@ Copy (somehow) the "backend/config/voting-keys/PermissionServer2.publickey.pem" 
 "backend/config/voting-keys/TallyServer2.publickey.pem" to server 1 into the same directory. 
 These key files are public - you can email them unencrypted.
 
+## Privacy Statements
+Replace the dummy privacy statements in the config folder with correct ones from your organisation. It is 
+localised - so you can add statements in the languages you need, the webclient will automatically show 
+the one that matches the selected language. If no matching language file is found, the en_US variant will 
+be shown. The localisation code must match the code used in getclient.php and in the 
+vvvote\backend\webclient-sources\i18n.
+The .txt files must be utf8-encoded.
+
 
 Configure the webclient
 =======================

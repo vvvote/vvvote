@@ -14,16 +14,39 @@ authModule can be "sharedPassw" or "oAuth2"
 
 
 	{
-		"authModule": "sharedPassw",
+		"auth": "sharedPassw",
 		"authData": {
-			"sharedPassw": "123"
+			"RegistrationStartDate": "2014-01-27T21:20:00Z",
+			"RegistrationEndDate": "2030-10-10T21:20:00Z",
+			"VotingStart": "2020-10-15T15:51:37.236Z",
+			"VotingEnd": "2020-10-15T18:15:37.236Z",
+			"DelayUntil": ["Thu, 15 Oct 2020 15:51:37 GMT", "2020-10-15T15:56:37.236Z", "2020-10-15T16:01:37.236Z", "2020-10-15T16:06:37.236Z", "2020-10-15T16:11:37.236Z", "2020-10-15T16:16:37.236Z", "2020-10-15T16:21:37.236Z", "2020-10-15T16:26:37.236Z", "2020-10-15T16:31:37.236Z", "2020-10-15T16:36:37.236Z", "2020-10-15T16:41:37.236Z", "2020-10-15T16:46:37.236Z", "2020-10-15T16:51:37.236Z", "2020-10-15T16:56:37.236Z", "2020-10-15T17:01:37.236Z", "2020-10-15T17:06:37.236Z", "2020-10-15T17:11:37.236Z", "2020-10-15T17:16:37.236Z", "2020-10-15T17:21:37.236Z", "2020-10-15T17:26:37.236Z", "2020-10-15T17:31:37.236Z", "2020-10-15T17:36:37.236Z", "2020-10-15T17:41:37.236Z", "2020-10-15T17:46:37.236Z", "2020-10-15T17:51:37.236Z", "2020-10-15T17:56:37.236Z", "2020-10-15T18:01:37.236Z", "2020-10-15T18:06:37.236Z", "2020-10-15T18:11:37.236Z", "2020-10-15T18:16:37.236Z"],
+			"sharedPassw": "voting secret"
 		},
-		"electionId": "tt123"
+		"tally": "publishOnly",
+		"questions": [{
+				"questionID": 1,
+				"questionWording": "Enter the time of day the basketball court should be closed."
+			}
+		],
+	"electionId": "Clsoing Time of Basketball Court"
 	}
 
 Explanation
-"sharedPasswd": Password that the voters need to know in order to be allowed to vote
+"auth": can be set to "sharedPasswd", "externalToken", "oAuth2", "userPassw". 
+	"oAuth2": An OAuth2 server is requiered. The user will be redirected there to login.
+	"sharedPasswd": Password that the voters need to know in order to be allowed to vote
+	"externalToken": The user will be asked for a token. A server is required that verifies it (https://github.com/basisentscheid/basisentscheid can do that)
+"RegistrationStartDate": date when the phase 1 "obtaining return envelopes" starts
+"RegistrationEndDate": date when the phase 1 "obtaining return envelopes" ends
 "electionId": Name of the election which is displayed to the user. It must be unique.
+optional "electionTitle": If provided, this will be shown to the user instead of the electionId 
+"DelayUntil": list of dates (will be interpreted by strtotime() in php). Only relevant if registration phase and voting phase overlap. The client will prohibit sending the vote after the generation of the return envelope until the next date given in the list is reached. This is meant to prevent that the server's administrator can recovery the voter's identity by the time intercorrelation between return envelope generation and receiving the vote.  
+"tally": can currently set to "publishOnly" and "configurableTally".
+	"publishOnly": The voters can enter an arbitrary string which will be displayed in the result page.
+	"configurableTally": Multiple choice, single choice, "yes-no", "yes-no-abstention" etc. can be used
+"Questions:" A list of questions (motions), containing an id, and the questition the voters shall answer.
+ 
 
 Answer, if everything is ok:
 
@@ -46,7 +69,7 @@ or, in case of an error, for example:
 	{
 		"authModule": "oAuth2",
 		"authData": {
-			"nested_groups": [2],
+			"nested_groups": ["KV Düsseldorf"],
 			"verified": true,
 			"eligible": true,
 			"RegistrationStartDate": "2014-01-27T21:20:00Z",
@@ -58,13 +81,11 @@ or, in case of an error, for example:
 	}
 
 Explanation
-"RegistrationStartDate": date when the phase 1 "obtaining return envelopes" starts
-"RegistrationEndDate": date when the phase 1 "obtaining return envelopes" ends
-"serverId": Id of the OAuth2 to be used. Currently only "BEOBayern" is supported
+"serverId": Id of the OAuth2 to be used. On serverside several OAuth2 servers can be configured.
 "nested_groups": list of groups which are allowed to take part in the election (e.g. the id of devisions of a party). If empty no restriction is applied
 "verified": if true: only verified users are allowed to vote
 "eligible": if true: only users who are marked as eligible are allowed to vote (this can be used for adding restrictions from the statue of a party, e.g. did the user pay his membership fee?)
-"listId": if set, the user must be a member of the given listId in order to be allowed to vote
+"listId": if set, the user must be a member of the given listId in order to be allowed to vote (This can be used for example to restrict the allowed voters to a certain working group). The according OAuth2 server must provide this information in order to work.
 
 
 # Phase 1: Obtain Return Envelope
@@ -81,7 +102,7 @@ Shared Password:
 		"auth": "sharedPassw",
 		"authConfig": [],
 		"blinding": "blindedVoter",
-		"telly": "publishOnly",
+		"tally": "publishOnly",
 		"cmd": "loadElectionConfig"
 	}
 
@@ -90,18 +111,18 @@ OAuth2-BEO:
 
 	{
 		"electionId": "tt1231",
-	"auth": "oAuth2",
-	"authConfig": {
-		"serverId": "BEOBayern",
-		"listId": "123",
-		"nested_groups": [2],
-		"verified": true,
-		"eligible": true,
-		"RegistrationStartDate": "2014-01-27T21:20:00+00:00",
-		"RegistrationEndDate": "2014-10-10T21:20:00+00:00"
-	},
+		"auth": "oAuth2",
+		"authConfig": {
+			"serverId": "BEOBayern",
+			"listId": "123",
+			"nested_groups": [2],
+			"verified": true,
+			"eligible": true,
+			"RegistrationStartDate": "2014-01-27T21:20:00+00:00",
+			"RegistrationEndDate": "2014-10-10T21:20:00+00:00"
+		},
 	"blinding": "blindedVoter",
-	"telly": "publishOnly",
+	"tally": "publishOnly",
 	"cmd": "loadElectionConfig"
 	}
 
@@ -307,7 +328,7 @@ Answer, if everything is ok:
 			}
 		},
 		"vote": {
-			"vote": "daf�r",
+			"vote": "dafür",
 			"sig": "A5D2EC4DD1633EE198AD29A319B3CAAA8A1F30EB00CBB421D3773A9A2C4C1287F26F455"
 		},
 		"cmd": "storeVote"
