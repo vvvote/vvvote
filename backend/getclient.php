@@ -149,9 +149,9 @@ foreach ($includeJsFiles as $f) {
 echo "var privacy_statement = [];\r\n"; 
 foreach ($available_lang_ids as $lang_id) {
 	// use default privacy statement if not available in the requested language
-	if (file_exists(__DIR__ . '/config/privacy_statement_' . $lang_id . '.txt')) 
-		 $fn = __DIR__ . '/config/privacy_statement_' . $lang_id . '.txt';
-	else $fn = __DIR__ . '/config/privacy_statement.html';
+    if (file_exists(dirname($configFilepath) . '/privacy_statement_' . $lang_id . '.txt')) 
+             $fn = dirname($configFilepath) . '/privacy_statement_' . $lang_id . '.txt';
+        else $fn = dirname($configFilepath) . '/privacy_statement.txt';
 	$ps = file_get_contents($fn);
 	echo 'privacy_statement["' . $lang_id .'"] = ' . json_encode($ps) . ";\r\n"; 
 }
