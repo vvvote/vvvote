@@ -96,6 +96,40 @@ vvvote\backend\webclient-sources\i18n.
 The .txt files must be utf8-encoded.
 
 
+## Configure Keycloak and Vvvote
+You can use the Keycloak server in order to authenticate voters. Install the Keycloak server according to their
+manual.
+For configuring Vvvote, copy or modify the example oauth2config for keycloak contained in the config-example.php.
+Then:
+1. In the Keycloak admin web console, select "clients", click "create" and "select file". 
+2. Select "vvvote_keycloak_config_1_example.json" in the "doc" dir of vvvote.
+3. Set "Client ID" to the value you provide in oauth2config in first place of the the array "client_ids".
+4. "Client Protocol" must stay at "openid-connect". 
+5. Set the "Root URL" so that it points to where /api/... can be appended to reach the vvvote-api.
+6. click on "save".
+7. Click on the tab "Credentials" and copy the content of the "Secret" field to the vvvote oauth2config in the 
+field "client_secret".
+8. Select the tab "Mappers", click on "sub-protocol-mapper" and make sure that a salt is set. Otherwise, users which try to login during voting, will get a 500 internal server error from the Keycloak server when the technical information is shown.
+
+For the second vvvote server do the same but 
+1. select the file "vvvote_keycloak_config_2_example.json" and 
+2. in the Keycloak admin web console set the "Client ID" to the value you provide in the second place of the array "client_ids" in the vvvote oauth2 config.
+
+### What are the differences between the two Keycloak config files for Vvvote?
+The two Vvvote Keycloak config files are mostly the same but differ in the login setting: The first config is set 
+so that the user will always be required to provide login credentials (even when the session is still active)
+in order to make sure that only people who have access to the credentials can create a voting certificate (Wahlschein).
+The second config is set to never ask for credentials - just for convinience: do not require the user to enter
+the credentials twice. 
+
+## Configure Vvvote for Notification Server
+Vvvote can use a notification server to send an information to the user that a voting certificate 
+(Wahlschein) was generated using his account. The https://github.com/edemocracy/ekklesia-notify is 
+used for this purpose. Set the values "notify_client_id", "notify_client_secret", and "notify_url" 
+according to the account on the notification server. The notify_url must end with '/freeform_message'.
+
+
+
 Configure the webclient
 =======================
 
