@@ -342,10 +342,10 @@ class BlindedVoter extends Blinder {
 		$tmp = array('voterId' => $voterId, 'signedBallots' => $signedBallots);
 		if (count($ret['questions'][0]['ballots'][0]['sigs']) >= $this->crypt->getNumServers() ) {
 			$ret['cmd'] = 'savePermission';
-			// up to now it is only used for tally.js to show who requested a Wahlschein
+			// up to now it is only used for tally.js to show who requested a voting certificate (Wahlschein)
 			// maybe it should be used to avoid multi-threading problems
 			try {
-				ob_start(); // suppress any output, making sure that the Wahlschein will be delivered
+				ob_start(); // suppress any output, making sure that the voting certificate (Wahlschein) will be delivered
 				$this->auth->onPermissionSend($this->electionId, $voterId);
 				ob_end_clean(); // suppress any output, making sure that the Wahlschein will be delivered
 			} catch (\Exception $e) { // after the signing the ballot, an error must not stopping the delivery of the signed ballot as a another one will not be signed 

@@ -63,12 +63,11 @@ class FetchFromOAuth2Server {
 	}
 	
 	/**
-	 * Es wurde überprüft, dass dies eine real existierende Person ist
 	 * It is verified that this user is a real existing person (no fake account)
 	 */
 	function isVerified() {
 		$verifiedStatus = $this->fetchMemberShipInfo();
-		if (! (isset($verifiedStatus['result']['verified']) ) ) InternalServerError::MyExceptionData(8734678, 'isVerified: OAuth2 server answer does not contain the expected field >verified<', ", received: >" . var_export($ret['result'], true)  . '<' ); // requested info not received
+		if (! (isset($verifiedStatus['verified']) ) ) InternalServerError::MyExceptionData(8734678, 'isVerified: OAuth2 server answer does not contain the expected field >verified<', ", received: >" . var_export($verifiedStatus, true)  . '<' ); // requested info not received
 		if ($verifiedStatus['verified'] !== true) WrongRequestException::throwException(10000, "For this voting your existance must be verified. The oAuth2 server either said 'you are not verified' or did not include this information", 'The oAuth2 server sent this information about you: >' . var_export($verifiedStatus, true) .'<');
 		return $verifiedStatus['verified'];
 	}
