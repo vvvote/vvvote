@@ -60,7 +60,7 @@ class PublishOnlyTally extends Tally {
 	 * @param unknown $vote
 	 */
 	function store($electionId, $votingno, $vote, $voterreq) {
-		return $this->db->storeVote($electionId, $votingno, $vote, $voterreq);
+		return $this->db->storeVote($electionId, $votingno, $voterreq);
 	}
 	
 	/*
@@ -136,7 +136,7 @@ class PublishOnlyTally extends Tally {
 
 		// TODO check in election config database if only election admin can see all votes
 		$allvotes = $this->db->getVotes($voterReq['electionId']);
-		$result = $this->db->getResult($voterReq['electionId']);
+		// $result = $this->db->getResult($voterReq['electionId']);
 		/* TODO move this to a new function getResult / EndElection
 		foreach ($allvotes as $vote) {
 			$this->sigsOk($vote);

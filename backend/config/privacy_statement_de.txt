@@ -4,7 +4,7 @@ Vvvote speichert eine Identifizierungsnummer, die es vom zentralen Login-Server 
 dass ein Abstimmender nicht zwei Wahlscheine erstellen kann.
 Das Abstimmen mit dem Wahlschein ist anonym: Der Wahlschein wurde in der Erzeugungsphase vom Endgerät 
 verschlüsselt, bevor er an die Vvvote-Server zur digitalen Unterschrift gesendet wurde. Dadurch können
-die Vvvote-Server die abgegebene Stimme nicht der Identifizeirungsnummer zuordnen. 
+die Vvvote-Server die abgegebene Stimme nicht der Identifizierungsnummer zuordnen. 
 Damit kein böser Admin mit Hilfe der Absender-Ip oder des Browserfingerprints die Zuordnung vornehmen kann, 
 wird die Stimme verschlüsselt über einen Anonymisierungsserver gesendet, der die Absender-IP ändert und 
 den Browserfingerprint entfernt.

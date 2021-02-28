@@ -19,18 +19,18 @@ class DbPublishOnlyTally extends DbBase {
 		array('storedCorrectVotes' /* Table name */ => array(
 				array('name' => 'electionId'        , 'digits' =>   '100', 'json' => false), /* colunm definition */
 				array('name' => 'votingno'          , 'digits' =>  '5000', 'json' => false),
-				array('name' => 'vote'              , 'digits' =>    '50', 'json' => false),
+//				array('name' => 'vote'              , 'digits' =>    '50', 'json' => false),
 				array('name' => 'storedCorrectVotes', 'digits' => '10000', 'json' => true)
 				)
 				);
 		parent::__construct($dbInfos, $dbtables, true);
 	}
 	
-	function  storeVote($electionId, $votingno, $vote, $voterReq) { 
+	function  storeVote($electionId, $votingno, $voterReq) { 
 		return $this->save(array(
 								'electionId'         => $electionId, 
 								'votingno'           => $votingno,
-								'vote'               => $vote,
+//								'vote'               => $vote,
 								'storedCorrectVotes' => $voterReq,
 								), 
 							'storedCorrectVotes');
@@ -56,6 +56,7 @@ class DbPublishOnlyTally extends DbBase {
 	 * @param unknown $electionId
 	 * @return unknown
 	 */
+/*
 	function getResult($electionId) {
 		// TODO better copy all correct votes to a new table
 		// TODO get freqs
@@ -63,5 +64,5 @@ class DbPublishOnlyTally extends DbBase {
 		$got = $this->summarize($where, 'vote', 'count', 'votingno', 'storedCorrectVotes', 'vote');
 		return $got;
 	}
-	
+*/	
 }
