@@ -47,13 +47,22 @@ NewElectionPage.prototype.setLanguage = function() {
 	'--->';
 
 
-
+	var endtime = Date.now() + 15 * 60 * 1000; // in milliseconds
+	var tmp = new Date(endtime);
+	var enddateStr = date2inputDateTime(tmp);  
+	var interval = 5;
 	var newElectionHtmlPost = 
 		'</fieldset>' +
 		'<br>' +
 		'<div id="authInputs">' +
 		'<!--- in this div the different inputs needed for the different auth methods are displayed --->' +
 		'</div>' +
+		'<br>' +
+		'<label for="endDate">' + i18n.gettext('End of voting:') +'</label> ' +
+		'<input name="endDate" id="endDate" value="' + enddateStr + '" type="datetime-local"></td>' + 
+		'<br>' +
+		'<label for="prohibitInterval">' + i18n.gettext('Prohibit voting interval (minutes):') +'</label> ' +
+		'<input name="prohibitInterval" id="prohibitInterval" value="' + interval + '" type="text"></td>' + 
 		'<br>' +
 		'<input type="submit" onclick="page.handleNewElectionButton(); return false;" value="' + i18n.gettext('Create new voting') + '">' +
 		'</form>';		
@@ -98,9 +107,19 @@ NewElectionPage.prototype.setQuestions = function (which) {
 };
 
 NewElectionPage.prototype.handleNewElectionButton = function () {
+	var start = new Date();
+	var element = document.getElementById('prohibitInterval');
+	var interval = element.value * 60 * 1000;
+	var element = document.getElementById('endDate');
+	var enddate = new Date(element.value);
+	
 	var ret = {};
 	// authConfig
-	var tmp = this.authModule.getNewElectionData(this.authServerId);
+	var tmp = this.authModule.getNewElectionData(this.authServerId, start, interval, enddate);
+	if ('errorTxt' in tmp ) {
+		alert(tmp.errorTxt);
+		return;
+	}
 	ret.auth =  tmp.auth;
 	ret.authData = tmp.authData;
 	

@@ -44,30 +44,37 @@ SharedPasswAuth.getNewElectionHtml = function () {
 /**
  * this function must return an Array/Object with .authModule, containing the AuthModuleId
  * and .authData containing an Array/Object with all auth data needed for this module
+ * ret.error
  */
-SharedPasswAuth.getNewElectionData = function (serverId) {
+SharedPasswAuth.getNewElectionData = function (serverId, startdate, intervall, enddate) {
 	var ret = {};
 	ret.auth = 'sharedPassw';
-	var startdate = new Date();
-	var enddate = startdate.getTime() + 0.1 * 86400 * 1000; // in milleseconds
-	var intervall = 5 * 60 * 1000; // in milleseconds
+//	var startdate = new Date();
+//	var enddate = startdate.getTime() + 0.1 * 86400 * 1000; // in milleseconds
+	var enddateNum = enddate.getTime();
+//	var intervall = 5 * 60 * 1000; // in milleseconds
 	var DelayUntil = new Array();
 	var DelayUntilStr = new Array();
 	DelayUntil.push(startdate.getTime());
-	DelayUntilStr.push(startdate.toUTCString());
+	DelayUntilStr.push(startdate.toISOString());
 	var cur = startdate.getTime();
-	while (cur < enddate) {
+	while (cur < enddateNum - intervall) {
 		cur = DelayUntil[DelayUntil.length-1] + intervall;
 		DelayUntil.push(cur);
 		var tmp = new Date(cur);
 		DelayUntilStr.push(tmp.toISOString());
 	}
-	var enddatedate = new Date(enddate);
+	if (DelayUntilStr.length < 2) { // only start date
+		ret.errorTxt = i18n.gettext("Error: There prohibit voting interval is too long: there must be at least one between start and end of voting.");
+		ret.erroNo = 87474395;
+		return ret;
+	}
 	ret.authData = {
 			"RegistrationStartDate": "2014-01-27T21:20:00Z",  // period, in which return envelop generation is allowed
 	        "RegistrationEndDate":   "2030-10-10T21:20:00Z",
+// für später:      "RegistrationEndDate":   DelayUntilStr[DelayUntilStr.length -1],
 	        "VotingStart": startdate.toISOString(),  
-	        "VotingEnd" :  enddatedate.toISOString(),  
+	        "VotingEnd" :  enddate.toISOString(),  
 	        "DelayUntil":   DelayUntilStr
 	};
 	var element = document.getElementById('givenPassword');

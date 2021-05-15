@@ -87,16 +87,6 @@ foreach ( $config ['pServerUrlBases'] as $i => $curUrl ) {
 	$pServerUrlBases [] = $urltmp0 . $ApiPrefix;			
 }
 
-
-if (isset ( $config ['tServerStoreVotePorts'] ))
-	$tServerStoreVotePorts = $config ['tServerStoreVotePorts'];
-else {
-	$tServerStoreVotePorts = array();
-	foreach ($pServerUrlBases as $key => $value) {
-		$tServerStoreVotePorts[$key] = '80';
-	}
-}
-
 $linkToHostingOrganisation = '#';
 if (isset ( $config ['linkToHostingOrganisation'] )) {
 	$linkToHostingOrganisation = $config ['linkToHostingOrganisation'];
@@ -129,11 +119,34 @@ date_default_timezone_set ( 'Europe/Berlin' ); // this is only used to avoid a w
                                             
 // load / set config which is identical for all servers
 
+if (isset ( $config ['tServerStoreVotePorts'] ))
+    $tServerStoreVotePorts = $config ['tServerStoreVotePorts'];
+    else {
+        $tServerStoreVotePorts = array();
+        foreach ($pServerUrlBases as $key => $value) {
+            $tServerStoreVotePorts[$key] = '80';
+        }
+    }
+    
+
+
 $tServerStoreVoteUrls = array();
-foreach ( $tServerStoreVotePorts as $key => $value ) {
+$tmp_tservers = $pServerUrlBases;
+if (isset($config ['tServers'])) $tmp_tservers = $config ['tServers'];
+foreach ( $tmp_tservers as $key => $value ) {
 	$urltmp = parse_url ( $pServerUrlBases [$key] );
-	$tServerStoreVoteUrls[$key] = 'http://' . $urltmp ['host'] . ':' . $tServerStoreVotePorts [$key] . $urltmp ['path'] . 'storevote';
+	$tmp_scheme = 'http';
+	$tmp_host = $urltmp['host'];
+	$tmp_port = '80';
+	$tmp_path = trim($urltmp ['path'], "/");
+	if (isset($tServerStoreVote[$key]['scheme'])) $tmp_scheme = $tServerStoreVote[$key]['scheme'];
+	if (isset($tServerStoreVote[$key]['host']))   $tmp_host   = $tServerStoreVote[$key]['host'];
+	if (isset($tServerStoreVote[$key]['port']))   $tmp_port   = $tServerStoreVote[$key]['port']; 
+	if (isset($tServerStoreVote[$key]['path']))   $tmp_path   = $tServerStoreVote[$key]['path'];
+	$tServerStoreVoteUrls[$key] = $tmp_scheme . '://' . $tmp_host . ':' . $tmp_port . '/' . $tmp_path . '/storevote';
 }
+
+$anonymizerUrl = $config['anonymizerUrl'];
 
 // number of ballots the servers have to sign 0: first signing server, 1: second signing server...
 // last server always must be set to 1.

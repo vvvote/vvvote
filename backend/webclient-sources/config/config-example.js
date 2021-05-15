@@ -47,8 +47,7 @@ ClientConfig.electionConfigUrl = server1url + 'getelectionconfig';
 ClientConfig.storeVoteUrls      = serverinfos.tServerStoreVoteUrls; //do not use https here to enable the anonymizer-server to strip the browser-fingerprint - this is not necessary if all voters would use the tor browser bundle
 ClientConfig.getResultUrl      = server1url + 'getresult'; //?XDEBUG_SESSION_START=ECLIPSE_DBGP&KEY=13727034088813';
 
-// TODO make anonymize a config in backend/config
-ClientConfig.anonymizerUrl = 'http://anonymouse.org/cgi-bin/anon-www_de.cgi/'; // used to change the ip and to strip browser infos / with trailing slash
+ClientConfig.anonymizerUrl = serverinfos.anonymizerUrl; // 'http://anonymouse.org/cgi-bin/anon-www_de.cgi/'; // used to change the ip and to strip browser infos / with trailing slash
 ClientConfig.voteClientUrl = server2url + 'getclient';
 
 ClientConfig.oAuth2Config = serverinfos.authModules.oAuth2;

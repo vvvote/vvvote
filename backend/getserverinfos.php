@@ -54,7 +54,9 @@ try {
 			'pkeys' => $pkeys,
 			'pServerUrlBases' => $pServerUrlBases,
 			'tkeys' => $tkeys,
-			'tServerStoreVoteUrls' => $tServerStoreVoteUrls);
+			'tServerStoreVoteUrls' => $tServerStoreVoteUrls,
+            'anonymizerUrl' => $anonymizerUrl
+	);
 	if (isset($oauthConfigs)) $serverinfos['authModules'] = array ('oAuth2' => $oauthConfigs);
 	else $serverinfos['authModules'] = array ();
 

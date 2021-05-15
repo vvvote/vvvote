@@ -28,10 +28,10 @@ VotePage.prototype.setLanguage = function() {
 	'<p><ul><li>I yet do not have a voting certificate</li>' +
 	'<li>For this voting no voting certificate is needed</li>' +
 	'<li>I do not know wheather a voting vertificate is needed</li></ul>') +
-	GetElectionConfig.getMainContent(i18n.gettext('Fetch voting properties'), 'page', 'VotePage.prototype.gotElectionConfig') + '</p>' + 
-	'<p></p>&nbsp;<p></p>' +
-	'<h3>' + i18n.gettext('I already have a voting certificate') + '</h3>' + 
-	BlindedVoterElection.loadReturnEnvelopeHtml('page.blinder');
+	GetElectionConfig.getMainContent(i18n.gettext('Fetch voting properties'), 'page', 'VotePage.prototype.gotElectionConfig') + '</p>'; 
+//	'<p></p>&nbsp;<p></p>' +
+//	'<h3>' + i18n.gettext('I already have a voting certificate') + '</h3>' + 
+//	BlindedVoterElection.loadReturnEnvelopeHtml('page.blinder');
 	this.title = i18n.gettext('Take part in voting');
 	Page.prototype.setLanguage.call(this); // this updates the steps
 };

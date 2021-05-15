@@ -282,6 +282,17 @@ function int2hex(num, digits) {
 	return ret;
 }
 
+function int2Str(num, digits) {
+	var h = Number(num).toString(10);
+	var ret = ("000000000000000" + h).substr(-digits);
+	return ret;
+}
+
+function date2inputDateTime(date) {
+	ret = date.getFullYear() + '-' + int2Str(date.getMonth()+1, 2) + '-' + int2Str(date.getDate(), 2) + 'T' + int2Str(date.getHours(), 2) + ':' + int2Str(date.getMinutes(), 2);
+	return ret;
+}
+
 /**
  * @param str
  * @returns {String} a string where all not asci characters are encoded to \uXXXX resp. \UXXXXXXXX which is the default behavior of php so we need to do the same here in order to verify the hash
