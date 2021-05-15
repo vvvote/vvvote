@@ -11,16 +11,35 @@ $config = array (
 				'https://localhost:447/vvvote/' 
 		),
 		
-		// TCP-Port of the Vvvote (tally) servers (currently only the first one is used)
-		// Do not use SSL/TLS here. Why? The Vvvote-client uses an anonymizing service for
-		// sending the vote. The anonymizing service strips off the browser's fingerprint
-		// which cannot be done in an SSL/TLS connection. Anyway, the transmitted data itself
-		// is encrypted by the Vvvote client using RSA/AES encryption
-		// uncomment, if you need to change it..
-		// This value must be the same on all Vvvote (permission) servers.
-		// defaults to 'tServerStoreVotePorts' => array ('80', '80'),
-		// 'tServerStoreVotePorts' => array ('80', '80'),
-		
+        // How to reach the Vvvote tally servers.
+        // Do not use SSL/TLS here. Why? The Vvvote-client uses an anonymizing service for
+        // sending the vote. The anonymizing service strips off the browser's fingerprint
+        // which cannot be done in an SSL/TLS connection. Anyway, the transmitted data itself
+        // is encrypted by the Vvvote client using RSA/AES encryption
+        // These values must be the same on all Vvvote (permission) servers.
+        // Defaults to http and port 80 and the same host and path provided by pServerUrlBases.
+        // Uncomment, the part you need to change. Everything else will be taken from the defaults.
+        'tServers' => array(
+            array( // first tally server
+                // 'scheme' => 'http',
+                // 'host' => 'myTally.server.org',
+                // 'port' => '80',
+                // 'path' => '' // path to where /api/v1/storevote can be appended. Leading and trailing slashes will be automatically added if needed
+            ),
+            array( // second tally server
+                // 'scheme' => 'http',
+                // 'host' => 'myTally2.server.org',
+                // 'port' => '80',
+                // 'path' => '' // path to where /api/v1/storevote can be appended. Leading and trailing slashes will be automatically added if needed
+            )
+        ),
+        
+        // Provide an URL that
+        // (a) can just be preprended to the URL that should be called (without any pervious calls / without authorisation)
+        // (b) supports forwarding POST-data
+        // set to '' in order to disable the routing through an anonymizer service
+        'anonymizerUrl' => 'http://anonymouse.org/cgi-bin/anon-www_de.cgi/',
+    
 		
 		// URL to your organisations's website
 		// will be used as link for your organisation's logo
