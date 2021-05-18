@@ -132,17 +132,17 @@ if (isset ( $config ['tServerStoreVotePorts'] ))
 
 $tServerStoreVoteUrls = array();
 $tmp_tservers = $pServerUrlBases;
-if (isset($config['tServersStoreVote'])) $tmp_tservers = $config ['tServersStoreVote'];
+if (isset($config['tServerStoreVoteUrls'])) $tmp_tservers = $config ['tServerStoreVoteUrls'];
 foreach ( $tmp_tservers as $key => $value ) {
 	$urltmp = parse_url ( $pServerUrlBases [$key] );
 	$tmp_scheme = 'http';
 	$tmp_host = $urltmp['host'];
 	$tmp_port = '80';
 	$tmp_path = trim($urltmp ['path'], "/");
-	if (isset($config['tServersStoreVote'][$key]['scheme'])) $tmp_scheme = $config['tServersStoreVote'][$key]['scheme'];
-	if (isset($config['tServersStoreVote'][$key]['host']))   $tmp_host   = $config['tServersStoreVote'][$key]['host'];
-	if (isset($config['tServersStoreVote'][$key]['port']))   $tmp_port   = $config['tServersStoreVote'][$key]['port']; 
-	if (isset($config['tServersStoreVote'][$key]['path']))   $tmp_path   = $config['tServersStoreVote'][$key]['path'];
+	if (isset($config['tServerStoreVoteUrls'][$key]['scheme'])) $tmp_scheme = $config['tServerStoreVoteUrls'][$key]['scheme'];
+	if (isset($config['tServerStoreVoteUrls'][$key]['host']))   $tmp_host   = $config['tServerStoreVoteUrls'][$key]['host'];
+	if (isset($config['tServerStoreVoteUrls'][$key]['port']))   $tmp_port   = $config['tServerStoreVoteUrls'][$key]['port']; 
+	if (isset($config['tServerStoreVoteUrls'][$key]['path']))   $tmp_path   = $config['tServerStoreVoteUrls'][$key]['path'];
 	$tServerStoreVoteUrls[$key] = $tmp_scheme . '://' . $tmp_host . ':' . $tmp_port . '/' . $tmp_path . '/storevote';
 }
 
