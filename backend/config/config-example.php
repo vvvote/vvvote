@@ -19,7 +19,7 @@ $config = array (
         // These values must be the same on all Vvvote (permission) servers.
         // Defaults to http and port 80 and the same host and path provided by pServerUrlBases.
         // Uncomment, the part you need to change. Everything else will be taken from the defaults.
-        'tServers' => array(
+        'tServerStoreVoteUrls' => array(
             array( // first tally server
                 // 'scheme' => 'http',
                 // 'host' => 'myTally.server.org',
