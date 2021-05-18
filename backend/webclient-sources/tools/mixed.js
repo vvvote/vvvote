@@ -816,7 +816,7 @@ function formatDate(date) {
 	// var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 	if (typeof date.toLocaleDateString != undefined) { // safari does not have it
 		var regex = new RegExp("\u200E", 'g'); // InternetExplorer 11 inserts several unicode left-to-right-marks in the time - remove them, otherwise the substring will not return enough chars
-		return date.toLocaleDateString() + ' ' + date.toLocaleTimeString().replace(regex, '').substring(0, 5);
+		return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([i18n.options.locale_data.messages[""].lang.replace('_','-')], { hour:'numeric', minute: 'numeric' }).replace(regex, '');
 	} else return date.toString();
 }
 
