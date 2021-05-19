@@ -119,17 +119,6 @@ date_default_timezone_set ( 'Europe/Berlin' ); // this is only used to avoid a w
                                             
 // load / set config which is identical for all servers
 
-if (isset ( $config ['tServerStoreVotePorts'] ))
-    $tServerStoreVotePorts = $config ['tServerStoreVotePorts'];
-    else {
-        $tServerStoreVotePorts = array();
-        foreach ($pServerUrlBases as $key => $value) {
-            $tServerStoreVotePorts[$key] = '80';
-        }
-    }
-    
-
-
 $tServerStoreVoteUrls = array();
 $tmp_tservers = $pServerUrlBases;
 if (isset($config['tServerStoreVoteUrls'])) $tmp_tservers = $config ['tServerStoreVoteUrls'];
