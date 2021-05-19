@@ -811,12 +811,15 @@ function executeAt(time, obj, method) {
 	setTimeout(function() {method.call(obj);}, time.getTime() - currentTime);
 }
 
-// TODO make it look nicer
 function formatDate(date) {
-	// var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 	if (typeof date.toLocaleDateString != undefined) { // safari does not have it
-		var regex = new RegExp("\u200E", 'g'); // InternetExplorer 11 inserts several unicode left-to-right-marks in the time - remove them, otherwise the substring will not return enough chars
-		return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([i18n.options.locale_data.messages[""].lang.replace('_','-')], { hour:'numeric', minute: 'numeric' }).replace(regex, '');
+		try {
+			var l8n = i18n.options.locale_data.messages[""].lang.replace('_','-');
+			// var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+			return date.toLocaleDateString(l8n, {dateStyle:'long' }) + ' ' + date.toLocaleTimeString([l8n], { hour:'numeric', minute: 'numeric' });
+		} catch (e) {
+			return date.toString();
+		}
 	} else return date.toString();
 }
 
