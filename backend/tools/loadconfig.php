@@ -129,6 +129,7 @@ foreach ( $tmp_tservers as $key => $value ) {
 	$tmp_port = '80';
 	$tmp_path = trim($urltmp ['path'], "/");
 	if (isset($config['tServerStoreVoteUrls'][$key]['scheme'])) $tmp_scheme = $config['tServerStoreVoteUrls'][$key]['scheme'];
+	if ($tmp_scheme === 'https') $tmp_port = '443';
 	if (isset($config['tServerStoreVoteUrls'][$key]['host']))   $tmp_host   = $config['tServerStoreVoteUrls'][$key]['host'];
 	if (isset($config['tServerStoreVoteUrls'][$key]['port']))   $tmp_port   = $config['tServerStoreVoteUrls'][$key]['port']; 
 	if (isset($config['tServerStoreVoteUrls'][$key]['path']))   $tmp_path   = $config['tServerStoreVoteUrls'][$key]['path'];

@@ -233,11 +233,7 @@ class ConfigurableTally extends PublishOnlyTally {
 		usort($potWinner, "cmpSum");
 		*/
 		foreach ($potWinner as $index => $optionID) {
-			$curScoreSum = 0;
-			foreach ($optionsStat[$optionID]['score'] as $selectedSore => $anzahl) {
-				$curScoreSum = $curScoreSum + $selectedSore * $anzahl;
-			}
-			$scoreSum[$index] = $curScoreSum;
+		    $scoreSum[$index] = $optionsStat[$optionID]['score']['sum'];
 		}
 		array_multisort($scoreSum, SORT_DESC, $potWinner);
 		// add all options which have the same maximum sum to the winner array
