@@ -47,7 +47,7 @@ class DbPublishOnlyTally extends DbBase {
 	
 	function getVotes($electionId) {
 		$where = array('electionId' => $electionId);
-		$got = $this->load($where, 'storedCorrectVotes', 'storedCorrectVotes');
+		$got = $this->load($where, 'storedCorrectVotes', 'storedCorrectVotes', 'storedCorrectVotes');
 		return $got;
 	}
 	

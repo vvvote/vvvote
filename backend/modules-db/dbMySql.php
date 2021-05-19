@@ -250,10 +250,11 @@ class DbMySql { // TODO dbBase
 		return $wherestr;
 	}
 	
-	function load($where, $tablename, $colname) {
+	function load($where, $tablename, $colname, $sortcol='') {
 		$wherestr = $this->_makewherestr($where);
 		$tname = $this->prefix . $tablename;
-		$statmnt = $this->connection->prepare("SELECT $colname FROM $tname $wherestr");
+		if ($sortcol=='') $statmnt = $this->connection->prepare("SELECT $colname FROM $tname $wherestr");
+		else              $statmnt = $this->connection->prepare("SELECT $colname FROM $tname $wherestr ORDER BY $sortcol");
 		foreach ($where as $name => $cond) {
 			$statmnt->bindValue(":$name", $cond);
 		}
