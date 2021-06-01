@@ -19,6 +19,7 @@ function formatAsPem(str) {
 }
 function jwk2pemPromise(jwk) {
 	return new Promise (function (resolve, reject) {
+		jwk.alg = 'RS256';
 		window.crypto.subtle.importKey('jwk', jwk, {name: 'RSASSA-PKCS1-v1_5', hash:{name: 'SHA-256'}}, true, ['verify'])
 		.then(function(keyAPI){
 			window.crypto.subtle.exportKey('spki', keyAPI)
