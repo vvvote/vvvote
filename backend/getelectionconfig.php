@@ -13,7 +13,7 @@ chdir(__DIR__); require_once './tools/loadconfig.php';
 chdir(__DIR__); require_once './tools/exception.php';
 chdir(__DIR__); require_once './tools/dbelections.php';
 
-header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
+header('Access-Control-Allow-Origin: *', true); // this allows any cross-site scripting
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept"); // this allows any cross-site scripting (needed for chrome)
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 

@@ -36,14 +36,15 @@ GetElectionConfig.prototype = {
 
 		},
 
-		handleXmlAnswer: function (xml) {
+		handleXmlAnswer: async function (xml) {
 			try {
 				var config = parseServerAnswer(xml, true);
 				if (config.cmd == 'error') throw new ServerReturnedAnError(1010, config.errorNo, config.errorTxt);
 				// verify if the deliverd config matches the requested hash
 				var query = URI.parseURL(this.url); 
 				if (!query || !query.confighash) throw new UserInputError(1000, i18n.gettext("The given voting URL is not in the expected format (missing 'confighash=')."), this.url);
-				if ( !(GetElectionConfig.generateConfigHash(config) === query.confighash)) throw new ErrorInServerAnswer(1080, i18n.gettext("The voting configuration obtained from the server does not match the checksum. The server is trying to cheat you. Aborted."), this.url); 
+				var hash_receivedConfig = await GetElectionConfig.generateConfigHash(config); 
+				if ( !( hash_receivedConfig === query.confighash)) throw new ErrorInServerAnswer(1080, i18n.gettext("The voting configuration obtained from the server does not match the checksum. The server is trying to cheat you. Aborted."), this.url); 
 				// verify sigs on election keys for each permission server
 				this.verifyPermissionServerSigs(config);
 			} catch (e) {
@@ -174,12 +175,12 @@ GetElectionConfig.getMainContent = function(buttontext, gotConfigObject, gotConf
 	return maincontent;
 };
 
-GetElectionConfig.generateConfigHash = function (config) {
+GetElectionConfig.generateConfigHash = async function (config) {
 	var configOnly = JSON.parse(JSON.stringify(config)); 	// make a copy of the original config object 
 	delete configOnly.cmd; // remove the cmd from the config
 	delete configOnly.phase; // remove the phase info from the config
 	var configstr = unicodeToBlackslashU(JSON.stringify(configOnly));
-	var hash = SHA256(configstr);
+	var hash = await SHA256(configstr);
     return hash; 
 };
 

@@ -8,6 +8,8 @@ chdir ( __DIR__ );
 // it can be just $_SERVER ['PATH_INFO'] but some strange apache servers do not support correctly rewriting
 // The work around is: use the query string instead and let it start with '/'. The first component will contain
 // the command.
+// for debugging: echo (print_r($_SERVER, true));
+// phpinfo(INFO_ALL);
 if (array_key_exists('PATH_INFO', $_SERVER ))	$cmd = trim($_SERVER ['PATH_INFO'], '/');
 	else {
 		$qs = $_SERVER['QUERY_STRING'];
@@ -18,20 +20,22 @@ if (array_key_exists('PATH_INFO', $_SERVER ))	$cmd = trim($_SERVER ['PATH_INFO']
 		$cmd = '';
 		
 	}
-
-// redirect to https
+	
+// redirect to https if https is configured and not storevote is called
 if (   ($cmd !== 'storevote') 
 		&& (empty ( $_SERVER ['HTTPS'] ) || $_SERVER ['HTTPS'] === 'off')
 		&& (substr_compare($pServerUrlBases[$serverNo -1], 'https://', 0, 8, true) === 0) ) {
 			$myUrlParsed = parse_url($pServerUrlBases[$serverNo -1] );
 			if ((! array_key_exists('port', $myUrlParsed)) || empty($myUrlParsed['port']) || ($myUrlParsed['port'] === ''))
 					$myUrlParsed['port']= 443;
+	header("Access-Control-Allow-Origin: *", true);
 	header('Location: https://' .$myUrlParsed['host'] . ':' . $myUrlParsed['port'] . $_SERVER['REQUEST_URI'], true, 307);
 	die();
 }
 
 // $path = $_SERVER['REQUEST_URI'];
 // $strpos($path, '/api/v1');
+
 
 switch ($cmd) {
 	case 'getserverinfos' :

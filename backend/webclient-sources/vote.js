@@ -71,7 +71,7 @@ VotePage.prototype.gotElectionConfig = function (config) {
 	}
 };
 
-VotePage.prototype.startStep2 = function (config) {
+VotePage.prototype.startStep2 = async function (config) {
 	var mc = '';
 	var techinfo = '';
 	this.config = config;
@@ -107,7 +107,7 @@ VotePage.prototype.startStep2 = function (config) {
 		this.authModule = new SharedPasswAuth();
 		break;
 	case 'oAuth2':
-		mc = mc + OAuth2.getMainContent(config);
+		mc = mc + await OAuth2.getMainContent(config);
 		this.authModule = new OAuth2(config.authConfig);
 		break;
 	case 'externalToken':

@@ -149,10 +149,10 @@ function RsaEncDec(plaintext, key){
  * @param key valid key
  * @returns
  */
-function rsaVerifySig(plaintext, sig, key) {
+async function rsaVerifySig(plaintext, sig, key) {
 	var sigBi = str2bigInt(sig, 16);
 	var hashFromSigBi = RsaEncDec(sigBi, key);
-	var hash = SHA256(plaintext);
+	var hash = await SHA256(plaintext);
 	var hashBi = str2bigInt(hash, 16);
 	return equals(hashBi, hashFromSigBi);
 }

@@ -53,7 +53,7 @@ BlindedVoterPermObtainer._makeBallotRaw = function(electionId, keypair) {
 	return ballot;
 };
 
-BlindedVoterPermObtainer.addBallothash = function(ballot) {
+BlindedVoterPermObtainer.addBallothash = async function(ballot) {
 	var tmp = new Object();
 	tmp.electionId = ballot.electionId;
 	tmp.votingno   = ballot.votingno;
@@ -64,7 +64,7 @@ BlindedVoterPermObtainer.addBallothash = function(ballot) {
 	}
 	var transm  = new Object();
 	transm.str  = unicodeToBlackslashU(JSON.stringify(tmp)); // unicodeToBlackslashU is necessary because php json_encode uses u\XXXX-notation instead of the direct unicode values. Without this hash verification will fail on server side if umlauts are in the electionId
-	transm.hash = SHA256(transm.str); // returns an hex-encoded string
+	transm.hash = await SHA256(transm.str); // returns an hex-encoded string
 	return transm;
 };
 
@@ -80,7 +80,7 @@ BlindedVoterPermObtainer.addBallothash = function(ballot) {
  * @returns {Object}
  */
 
-BlindedVoterPermObtainer.prototype.makeBallots = function() {
+BlindedVoterPermObtainer.prototype.makeBallots = async function() {
 	document.body.style.cursor = "progress"; // show sand watch as key generation can take a minute
 	for (var q=0; q<this.questions.length; q++){
 		var ballots = new Array();
@@ -88,7 +88,7 @@ BlindedVoterPermObtainer.prototype.makeBallots = function() {
 			var ballot = new Object();
 			ballot.keypair  = RsaKeyGen(256 /*bitSize(this.config.serverList[0].key.n) >> 1 */, 1, str2bigInt('65537', 10, 0)); // attention: the bitsize of all permission servers must be equal
 			ballot.raw      = BlindedVoterPermObtainer._makeBallotRaw(this.questions[q].completeElectionId, ballot.keypair); 
-			ballot.transm   = BlindedVoterPermObtainer.addBallothash(ballot.raw);
+			ballot.transm   = await BlindedVoterPermObtainer.addBallothash(ballot.raw);
 			ballot.ballotno = i;
 			ballot.blindingf = new Array();
 			for (var j=0; j<this.config.serverList.length; j++) { 

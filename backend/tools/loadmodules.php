@@ -37,7 +37,7 @@ function loadElectionModules($httpRawPostData, $electionIdPlace) {
 	global $dbInfos, $numVerifyBallots,	$numSignBallots, $pServerKeys, $numAllBallots, $numPSigsRequiered;
 	$dbElections = new DbElections($dbInfos);
 	$reqdecoded = json_decode($httpRawPostData, true);
-	if ($reqdecoded == null) 						WrongRequestException::throwException(7040, 'Data in JSON format expected'         	, 'got: ' . $HTTP_RAW_POST_DATA);
+	if ($reqdecoded == null) 						WrongRequestException::throwException(7040, 'Data in JSON format expected'         	, 'got: ' . $httpRawPostData);
 	//	if (! isset($electionIdPlace($reqdecoded))) 	WrongRequestException::throwException(7010, 'Election id missing in client request'	, $httpRawPostData);
 	if (! is_string($electionIdPlace($reqdecoded))) WrongRequestException::throwException(7050, 'Election id must be a string'			, 'got: ' . var_export($reqdecoded['electionId'], true));
 	// load election config from database by election id

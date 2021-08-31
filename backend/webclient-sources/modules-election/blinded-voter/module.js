@@ -137,10 +137,10 @@ BlindedVoterElection.prototype.onUserDidSaveReturnEnvelope = function()  {
 	el.setAttribute('style', 'display:none');
 };
 
-BlindedVoterElection.prototype.obtainPermission_ = function()  {
+BlindedVoterElection.prototype.obtainPermission_ = async function()  {
 	if (!this.retry) {
 		this.permObtainer = new BlindedVoterPermObtainer(this.config['electionId'], this.config['questions'], {'obj': this.authModule, 'method': this.authModule.getCredentials}, ClientConfig.BlindedVoter);
-		this.permObtainer.makeBallots();
+		await this.permObtainer.makeBallots();
 		// TODO: save ballots as local file in order to have a backup in case something goes wrong
 	}
 	var send = this.permObtainer.makePermissionReqs();
@@ -149,8 +149,8 @@ BlindedVoterElection.prototype.obtainPermission_ = function()  {
 };
 
 
-BlindedVoterElection.prototype.obtainPermission = function()  {
-	var send = this.obtainPermission_();
+BlindedVoterElection.prototype.obtainPermission = async function()  {
+	var send = await this.obtainPermission_();
 	var url = this.permObtainer.getCurServer().url;
 	var me = this;
 	myXmlSend(url, JSON.stringify(send), me, me.XXhandleXmlAnswer);
@@ -336,11 +336,11 @@ BlindedVoterElection.prototype.checkPerm = function() {
 /**
  * @param q question number, starting from 0
  */
-BlindedVoterElection.prototype.signVote = function (vote, q) {
+BlindedVoterElection.prototype.signVote = async function (vote, q) {
 	// var q = ArrayIndexOf(this.permission, 'questionID', questionID_);
 	var votestr = vote;
 	var privatekeyarray = this.permission[q].keypair.priv;
-	var hash = SHA256(vote);
+	var hash = await SHA256(vote);
 	var hashBi = str2bigInt(hash, 16);
 	var privatekey = arrayStr2key(privatekeyarray);
 	var sigBI = RsaEncDec(hashBi, privatekey);
@@ -385,7 +385,7 @@ BlindedVoterElection.prototype.signVote = function (vote, q) {
 
 
 
-BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
+BlindedVoterElection.prototype.verifyVoteSigs = async function (vote) {
 	// TODO verify that there is no doubled voting no
 	var pubkeystr = vote.permission.signed.votingno;
 	var pubkey = str2key(pubkeystr);
@@ -396,7 +396,7 @@ BlindedVoterElection.prototype.verifyVoteSigs = function (vote) {
 	var alertstr = "";
 	try {
 		// var sigOk = rsa.verifyStringPSS(voteitself, sig, 'sha256', -2);
-		var sigOk = rsaVerifySig(voteitself, sig, pubkey);
+		var sigOk = await rsaVerifySig(voteitself, sig, pubkey);
 		if (sigOk) {
 			alertstr = i18n.gettext('The signature on the vote is correct. This means that the vote is unchanged.');
 		} else {

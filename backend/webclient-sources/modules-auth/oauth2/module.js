@@ -78,7 +78,7 @@ OAuth2.showDoneButton = function(id) {
 };
 */
 
-OAuth2.getMainContent = function(conf) {
+OAuth2.getMainContent = async function(conf) {
 	var serverId = conf.authConfig.serverId;
 	
 	var elelctionId = conf.electionId;
@@ -130,7 +130,7 @@ OAuth2.getMainContent = function(conf) {
 		var oauthAutorize = ClientConfig.oAuth2Config[serverId].authorizeUri + 
 		'prompt=' + ( (step == 1) ? 'login' : 'none') +
 		'&scope=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].scope) +
-		'&state=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].serverId.replace('.', '\\.') + '.' + elelctionId.replace('.', '\\.') + '.' + SHA256(OAuth2.random[clientId])) + 
+		'&state=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].serverId.replace('.', '\\.') + '.' + elelctionId.replace('.', '\\.') + '.' + await SHA256(OAuth2.random[clientId])) + 
 		'&redirect_uri=' + encodeURIComponent(ClientConfig.oAuth2Config[serverId].redirectUris[permissionServerId]) + 
 		'&response_type=code' +
 		'&client_id=' + encodeURIComponent(clientId);

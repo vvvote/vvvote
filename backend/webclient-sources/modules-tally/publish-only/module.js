@@ -96,9 +96,9 @@ PublishOnlyTally.prototype.sendVote = function (qNo) {
 	this.sendVoteData(voteStr, qNo);
 };
 
-PublishOnlyTally.prototype.sendVoteData = function (voteStr, qNo) {
+PublishOnlyTally.prototype.sendVoteData = async function (voteStr, qNo) {
 	var transm = {};
-	transm = this.election.signVote(voteStr, qNo);
+	transm = await this.election.signVote(voteStr, qNo);
 	if (! ('myVotesHandler' in this) ) this.myVotesHandler = [];
 	this.myVotesHandler[qNo]=[];
 	if (! ('storeVotesPromises' in this) ) this.storeVotesPromises = [];
