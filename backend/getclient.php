@@ -75,7 +75,6 @@ $includeJsFiles = array_merge($includeJsFiles, Array(
 		
 		'tools/BigInt.js',
 		'tools/rsa.js',
-		'tools/sha256.js',
 		'tools/webcrypto.js',
 		'tools/filehandling.js',
 		'tools/textencoder.js',

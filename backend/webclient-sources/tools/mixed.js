@@ -869,6 +869,16 @@ function base64Url2ArrayBuf(str) {
 	return abv;
 }
 
+
+async function SHA256(s) {
+	const arrbuf = str2arrayBuf(s);
+	const hash_bin = await window.crypto.subtle.digest('SHA-256',arrbuf);
+	const hashArray = Array.from(new Uint8Array(hash_bin));                     // convert buffer to byte array
+	const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+	return hashHex;
+}
+
+
 /**
  * return the first element of an array (use this function if you do not know what is the first key) 
  * @param p array
