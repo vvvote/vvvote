@@ -4,7 +4,7 @@ $workingDir = getcwd();
 chdir(__DIR__);
 require_once 'connectioncheck.php';  // answers if &connectioncheck is part of the URL and exists
 
-header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
+header('Access-Control-Allow-Origin: *', true); // this allows any cross-site scripting
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, if-modified-since'); // this allows any cross-site scripting (needed for chrome)
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 
@@ -61,7 +61,8 @@ if (array_key_exists ( 'cmd', $serverinfos ) && ($serverinfos['cmd'] === 'server
 
 $includeJsFiles = Array();
 
-$available_lang_ids = ['de', 'en_US', 'fr']; // If you add a language, add its ID here. The expected filename is "vvvote_{id}.js".
+$available_lang_ids =   ['de', 'en_US', 'fr', 'cs']; // If you add a language, add its ID here. The expected filename is "vvvote_{id}.js".
+$available_lang_names = ['De', 'En'   , 'Fr', 'Cs'];
 foreach ($available_lang_ids  as $lang_id) {
 	$langfile = 'i18n/vvvote_' . $lang_id . '.js';
 	array_push($includeJsFiles, $langfile);
@@ -265,9 +266,11 @@ echo <<<EOT
 						</div>
 						<div class="col-md-1">
 							<select id="locale_select" onChange="changeLanguage(this.value)">
-								<option selected="selected" value="de">De</option>
-								<option value="en_US">En</option>
-								<option value="fr">Fr</option>
+EOT;
+foreach ($available_lang_ids  as $i => $lang_id ) {
+    echo '<option value="' . $lang_id . '">' . $available_lang_names[$i] . '</option>';
+}
+echo <<<EOT
 							</select>
 						</div>
 					</div>

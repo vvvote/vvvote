@@ -11,7 +11,7 @@ chdir(__DIR__); require_once './tools/exception.php';
 chdir(__DIR__); require_once './tools/loadmodules.php';
 chdir(__DIR__); require_once './tools/getcmd.php';
 
-header('Access-Control-Allow-Origin: *', false); // this allows any cross-site scripting
+header('Access-Control-Allow-Origin: *', true); // this allows any cross-site scripting
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 

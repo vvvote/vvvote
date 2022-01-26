@@ -142,14 +142,15 @@ $config = array (
 
 						// Data usage note shown in the client before redirecting to the keycloak server
 						// Array of language codes as defined in webclient-sources/i18n/vvvote_*.js: there the 'lang' field,
-						// currently supported: 'de', 'en_US', 'fr'.
+						// currently supported: 'de', 'en_US', 'fr', 'cs'.
 						// If the user chooses a language for which no string is given here, the content of the
 						// first element of the array will be displayed.
 						// The Text may not exceed 1 line, the layout may be corrupted otherwiese.
 						'serverUsageNote' => array(
 								'en_US' => 'To verify your entitlement to vote, the servers of the federal party are used.',
 								'de'    => 'Zur Prüfung Ihrer Stimmberechtigung werden die Systeme der Bundespartei verwendet.',
-								'fr'    => 'Les systèmes du parti fédéral sont utilisés pour vérifier votre droit de vote.'
+								'fr'    => 'Les systèmes du parti fédéral sont utilisés pour vérifier votre droit de vote.',
+		                        'cs'    => 'Federální stranické systémy slouží ke kontrole vašeho volebního práva.'
 						),
 						
 						// Authorization data for the notify server (using http basic authentication)
