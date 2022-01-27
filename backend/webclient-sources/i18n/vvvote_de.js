@@ -23,7 +23,7 @@ translations['de'] =
             "Fehlernummer:"
          ],
          "Please enter a valid voting link. Valid voting links start with \"http://\" oder \"https://\".": [
-            "Bitte geben Sie einen gültigen Wahl-Link ein. Gültige Wahl-Links beginnen mit 'http://' oder 'https://'"
+            "Bitte geben Sie einen gültigen Abstimmungslink ein. Gültige Abstimmungslinks beginnen mit 'http://' oder 'https://'"
          ],
          "The given voting URL is not in the expected format (missing '?' or 'confighash=' resp. 'electionUrl=')": [
             "Der angebene Abstimmungslink ist nicht im erwarteten Format (\"?\" oder \"confighash=\" oder \"electionUrl=\" fehlt)."
@@ -131,7 +131,7 @@ translations['de'] =
             "Der interne Sitzungscode ist ungültig, wahrscheinlich ist er abgelaufen oder Sie haben sich ausgeloggt. Loggen Sie sich erneut ein."
          ],
          "The voters will be identified by a token and the eligibility will be verified by this token.<br>": [
-            "Die W&auml;hler werden über ein Token identifiziert und die Wahlberechtigung gepr&uuml;ft.<br>"
+            "Die W&auml;hler werden über ein Token identifiziert und die Stimmberechtigung gepr&uuml;ft.<br>"
          ],
          "Steps: ": [
             "Schritte: "
@@ -272,7 +272,7 @@ translations['de'] =
             "Die Unterschrift von Stimmberechtigungsserver >%s< für den Abstimmungsschlüssel ist korrekt, d.h. der Server hat bestätigt, dass der zugehörige Wähler stimmberechtigt ist."
          ],
          "The signature by permission server >%s< for the voting key is not correct. Either the configuration is wrong or there is a fraud. Please inform the persons responsible for the voting": [
-            "Die Unterschrift von Stimmberechtigungsserver >%s< für den Abstimmungsschlüssel ist nicht korrekt. Es liegt entweder eine falsche Konfiguration oder ein Betrugsversuch vor. Bitte die Wahlverantwortlichen informieren."
+            "Die Unterschrift von Stimmberechtigungsserver >%s< für den Abstimmungsschlüssel ist nicht korrekt. Es liegt entweder eine falsche Konfiguration oder ein Betrugsversuch vor. Bitte die Abstimmungsverantwortlichen informieren."
          ],
          "Error verifying the signature:\n%s": [
             "Fehler beim Überprüfen der Signatur:\n%s"
@@ -472,7 +472,7 @@ translations['de'] =
             "Um später beweisen zu können, dass Sie Ihre Stimme abgegeben haben, können Sie den Stimmabgabebeleg speichern"
          ],
          "<p>As long as it is possible to cast votes, it is not possible to get the voting result.</p>": [
-            "<p>Solange Stimmen abgegeben werden können, kann das Wahlergebnis nicht abgerufen werden.</p>"
+            "<p>Solange Stimmen abgegeben werden können, kann das Abstimmungsergebnis nicht abgerufen werden.</p>"
          ],
          "The server does not reveal the result. It answers:\n %s": [
             "Der Server gibt das Abstimmungsergebnis nicht bekannt. Er meldet:\n%s"
@@ -583,7 +583,7 @@ translations['de'] =
             "Datenschutzerklärung"
          ],
          "Powered by": [
-            "Software:"
+            "Betrieben mit"
          ],
          "Log:": [
             "Protokoll:"
@@ -622,10 +622,10 @@ translations['de'] =
             "Abstimmungslink eingeben"
          ],
          "<p><ul><li>I yet do not have a voting certificate</li><li>For this voting no voting certificate is needed</li><li>I do not know wheather a voting vertificate is needed</li></ul>": [
-            "<p><ul><li>Ich habe noch keinen Wahlschein</li><li>f&uuml;r die Wahl wird kein Wahlschein ben&ouml;tigt</li><li>Ich wei&szlig; nicht, ob f&uuml;r die Wahl ein Wahlschein ben&ouml;tigt wird</li></ul>"
+            "<p><ul><li>Ich habe noch keinen Wahlschein</li><li>f&uuml;r die Abstimmung wird kein Wahlschein ben&ouml;tigt</li><li>Ich wei&szlig; nicht, ob f&uuml;r die Wahl ein Wahlschein ben&ouml;tigt wird</li></ul>"
          ],
          "Fetch voting properties": [
-            "Wahlunterlagen holen"
+            "Abstimmungsunterlagen holen"
          ],
          "Take part in voting": [
             "An Abstimmung teilnehmen"
