@@ -20,7 +20,7 @@ translations['de'] =
             "Kontrollserver %d"
          ],
          "Error number:": [
-            ""
+            "Fehlernummer:"
          ],
          "Please enter a valid voting link. Valid voting links start with \"http://\" oder \"https://\".": [
             "Bitte geben Sie einen gültigen Wahl-Link ein. Gültige Wahl-Links beginnen mit 'http://' oder 'https://'"
