@@ -19,6 +19,9 @@ translations['fr'] =
             "Vérification de serveur",
             "Vérification de serveur %d"
          ],
+         "Error number:": [
+            ""
+         ],
          "Please enter a valid voting link. Valid voting links start with \"http://\" oder \"https://\".": [
             "S'il vous plaît entrer un lien de vote valide. Un liens de vote valide commence par \"http: //\" ou \"https: //\"."
          ],
@@ -180,6 +183,9 @@ translations['fr'] =
          ],
          "Voting password": [
             "Mot de passe de la votation"
+         ],
+         "Error: The prohibit voting interval is too long: it must be shorter then the duration between start and end of voting.": [
+            ""
          ],
          "Verification of server signature failed. Aborted.": [
             "Vérification de la signature du serveur a échoué. Avorté"
@@ -414,6 +420,9 @@ translations['fr'] =
          "Question to be voted on": [
             "Question sur la quelle il faut voter"
          ],
+         "Who shell become the coordinator of the working group?": [
+            ""
+         ],
          "Tally servers accepted the vote!": [
             "Les serveurs de Tally ont accepté le vote !"
          ],
@@ -516,11 +525,23 @@ translations['fr'] =
          "Upload a list of usernames and passwords": [
             "Ajouter une liste de noms d'utilisateur et de mots de passe"
          ],
+         "End of voting at": [
+            ""
+         ],
+         "Interval duration during which the vote is prevented from being sent, in minutes from the start of voting:": [
+            ""
+         ],
          "Create new voting": [
             "Créer une nouvelle votation"
          ],
          "Open a new voting": [
             "Ouvrir une nouvelle votation"
+         ],
+         "Error: No authenithication method set": [
+            ""
+         ],
+         "Error: No voting method set": [
+            ""
          ],
          "Waiting for the servers": [
             "En attente des serveurs"
@@ -561,6 +582,12 @@ translations['fr'] =
          "Privacy statement": [
             "Politique de confidentialité"
          ],
+         "Powered by": [
+            ""
+         ],
+         "Log:": [
+            ""
+         ],
          "Ok": [
             ""
          ],
@@ -576,8 +603,14 @@ translations['fr'] =
          "Click %s this link, in order to test the connection manually.</a>The link will be opened in a new window.</li> <li>Solve the problem,</li> <li>close the window and </li><li>click afterwards on %s try again</button>": [
             "Cliquez %ssur ce lien, afin de tester la connexion manuellement, </a>le lien s'ouvrira dans une nouvelle fenêtre.</li> <li>Résolvez le problème,</li><li> fermez la fenêtre </li> et <li>cliquez ensuite sur %sessayer à nouveau.</button>"
          ],
+         "sent to server": [
+            ""
+         ],
          "Received from: ": [
             "Reçu de : "
+         ],
+         "Received error: ": [
+            ""
          ],
          "2<sup>nd</sup> Authorize": [
             "2<sup>e</sup> Autoriser"
@@ -593,9 +626,6 @@ translations['fr'] =
          ],
          "Fetch voting properties": [
             "Aller chercher les propriétés de vote"
-         ],
-         "I already have a voting certificate": [
-            "Je possède déjà un certificat de vote"
          ],
          "Take part in voting": [
             "Participez a la votation"

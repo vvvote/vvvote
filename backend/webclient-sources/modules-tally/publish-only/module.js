@@ -16,7 +16,7 @@ var PublishOnlyTally = function (election, config) { // TODO store config also
  **********************************/
 
 PublishOnlyTally.GetEnterQuestionsHtml = function() {
-	return '<label for="question1Input">' + i18n.gettext('Question to be voted on') + '</label><br><textarea rows="10" cols="50" placeholder="Wer soll Koordinator der AG Wirtschaft werden?" id="question1Input" /></textarea><br>';
+	return '<label for="question1Input">' + i18n.gettext('Question to be voted on') + '</label><br><textarea rows="10" cols="50" placeholder="' + i18n.gettext('Who shell become the coordinator of the working group?') + '" id="question1Input" /></textarea><br>';
 };
 
 

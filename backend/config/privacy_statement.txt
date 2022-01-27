@@ -2,7 +2,15 @@ Privacy Statement
 In case of using a single sign on server (SSO), Vvvote contacts that to check the eligibility. 
 Vvvote stores an identifier obtained from the SSO server in order to make sure that no voter
 are given more than one voting certificate.
-Voting using the voring certificate is anonymouse - the certificate is encrypted before the Vvvote
-servers sign it, so that the Vvvote servers cannot do a match from the vote to the voter.
-In order to make sure that an evil admin cannot do that, the vote is sent encrypted through 
+Voting using the voting certificate is anonymouse - the certificate is encrypted by the device you are using 
+before the Vvvote servers sign it, so that the Vvvote servers cannot do a match from the vote to the voter.
+In order to make sure that even an evil admin cannot do that, the vote is sent encrypted through 
 an anonymising service which changes the sender IP and removes the browser's fingerprint.
+
+Cookies are not used.
+
+In the localStorage of the web browser, it will be saved for which partial voting you already sent a vote
+(but not the content of your vote). This is done in order to disable (grey out) the partial voting.
+This is just for comfort - you can delete the localStorage without real harm. In this case no partial 
+voting will be disabled, and you can try sending another vote and receive an according error message from 
+the server.

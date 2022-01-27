@@ -58,10 +58,10 @@ NewElectionPage.prototype.setLanguage = function() {
 		'<!--- in this div the different inputs needed for the different auth methods are displayed --->' +
 		'</div>' +
 		'<br>' +
-		'<label for="endDate">' + i18n.gettext('End of voting:') +'</label> ' +
+		'<label for="endDate">' + i18n.gettext('End of voting at') +'</label> ' +
 		'<input name="endDate" id="endDate" value="' + enddateStr + '" type="datetime-local"></td>' + 
 		'<br>' +
-		'<label for="prohibitInterval">' + i18n.gettext('Prohibit voting interval (minutes):') +'</label> ' +
+		'<label for="prohibitInterval">' + i18n.gettext('Interval duration during which the vote is prevented from being sent, in minutes from the start of voting:') +'</label> ' +
 		'<input name="prohibitInterval" id="prohibitInterval" value="' + interval + '" type="text"></td>' + 
 		'<br>' +
 		'<input type="submit" onclick="page.handleNewElectionButton(); return false;" value="' + i18n.gettext('Create new voting') + '">' +
@@ -107,6 +107,14 @@ NewElectionPage.prototype.setQuestions = function (which) {
 };
 
 NewElectionPage.prototype.handleNewElectionButton = function () {
+	if (! ('getNewElectionData' in this.authModule) ) {
+		aalert.openTextOk(i18n.gettext('Error: No authenithication method set'));
+		return
+	}
+	if (! ('tally' in this) ) {
+		aalert.openTextOk(i18n.gettext('Error: No voting method set'));
+		return
+	}
 	var start = new Date();
 	var element = document.getElementById('prohibitInterval');
 	var interval = element.value * 60 * 1000;

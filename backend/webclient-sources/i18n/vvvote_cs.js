@@ -21,6 +21,9 @@ translations['cs'] =
             "%d Kontrolních serverů",
             "%d Kontrolní servery"
          ],
+         "Error number:": [
+            ""
+         ],
          "Please enter a valid voting link. Valid voting links start with \"http://\" oder \"https://\".": [
             "Zadejte prosím platný odkaz pro hlasování. Platné hlasovací odkazy začínají na \"http://\" nebo \"https://\"."
          ],
@@ -55,7 +58,7 @@ translations['cs'] =
             "1.<sup></sup> Zadejte odkaz pro hlasování"
          ],
          "2<sup>nd</sup> Show the result": [
-            "2.<sup></sup> Zobrazit výsledek"
+            "2.<sup></sup> Zobrazte výsledek"
          ],
          "<p>Enter the link of the voting for which you want to see the results<br></p>": [
             "<p>Zadejte odkaz na hlasování, jehož výsledky chcete zobrazit.<br></p>"
@@ -139,7 +142,7 @@ translations['cs'] =
             "Autorizace hlasovacího serveru"
          ],
          "Authorize checking server": [
-            "Autorizační kontrolní server"
+            "Autorizace kontrolního serveru"
          ],
          "Create voting certificate": [
             "Vytvořit hlasovací certifikát"
@@ -182,6 +185,9 @@ translations['cs'] =
          ],
          "Voting password": [
             "Heslo pro hlasování"
+         ],
+         "Error: The prohibit voting interval is too long: it must be shorter then the duration between start and end of voting.": [
+            ""
          ],
          "Verification of server signature failed. Aborted.": [
             "Ověření podpisu serveru se nezdařilo. Přerušeno."
@@ -382,10 +388,10 @@ translations['cs'] =
             "Ano"
          ],
          "No": [
-            "No"
+            "Ne"
          ],
          "Abst.": [
-            "Abst."
+            "Zdržel se"
          ],
          " - my vote": [
             " - můj hlas"
@@ -400,7 +406,7 @@ translations['cs'] =
             "Počet NE"
          ],
          "Number of absten.": [
-            "Počet absten."
+            "Počet Zdržel se"
          ],
          "Sum of scores": [
             "Součet výsledků"
@@ -419,6 +425,9 @@ translations['cs'] =
          ],
          "Question to be voted on": [
             "Otázka, o které se bude hlasovat"
+         ],
+         "Who shell become the coordinator of the working group?": [
+            ""
          ],
          "Tally servers accepted the vote!": [
             "Sčítací servery přijaly hlasování!"
@@ -478,7 +487,7 @@ translations['cs'] =
             "Chyba: Očekávaná chyba >verifyCountVotes<"
          ],
          "Error: unexpected var type": [
-            "Chyba: neočekávaný typ var"
+            "Chyba: neočekávaný typ proměnné"
          ],
          "details: %s": [
             "detaily: %s"
@@ -493,13 +502,13 @@ translations['cs'] =
             "Celkem"
          ],
          "1<sup>st</sup> Set voting preferences": [
-            "1.<sup></sup> Nastavení hlasovacích preferencí"
+            "1.<sup></sup> Nastavte hlasovací předvolby"
          ],
          "2<sup>nd</sup> Save voting link": [
-            "2.<sup></sup> odkaz Uložit hlasování"
+            "2.<sup></sup> Uložte odkaz hlasování"
          ],
          "Here you can create a new voting. In order to do so, fill in the name of the voting and set the preferences for the authorization mechanism. <br><br>": [
-            "Zde můžete vytvořit nové hlasování. Za tímto účelem vyplňte název hlasování a nastavte preference mechanismu autorizace. <br><br>"
+            "Zde můžete vytvořit nové hlasování. Za tímto účelem vyplňte název hlasování a nastavte předvolby mechanismu autorizace. <br><br>"
          ],
          "Name of voting": [
             "Název hlasování"
@@ -508,7 +517,7 @@ translations['cs'] =
             "Hlasovat o"
          ],
          "predefined test voting items": [
-            "předdefinované položky pro testovací hlasování"
+            "Přednastavené položky pro testovací hlasování"
          ],
          "Enter a question to vote on": [
             "Zadejte otázku, o které chcete hlasovat"
@@ -522,11 +531,23 @@ translations['cs'] =
          "Upload a list of usernames and passwords": [
             "Nahrání seznamu uživatelských jmen a hesel"
          ],
+         "End of voting at": [
+            ""
+         ],
+         "Interval duration during which the vote is prevented from being sent, in minutes from the start of voting:": [
+            ""
+         ],
          "Create new voting": [
             "Vytvořit nové hlasování"
          ],
          "Open a new voting": [
-            "Otevřít nové hlasování"
+            "Zahájit nové hlasování"
+         ],
+         "Error: No authenithication method set": [
+            ""
+         ],
+         "Error: No voting method set": [
+            ""
          ],
          "Waiting for the servers": [
             "Čekání na servery"
@@ -567,6 +588,12 @@ translations['cs'] =
          "Privacy statement": [
             "Prohlášení o ochraně soukromí"
          ],
+         "Powered by": [
+            "Běží na "
+         ],
+         "Log:": [
+            ""
+         ],
          "Ok": [
             "Ok"
          ],
@@ -582,14 +609,20 @@ translations['cs'] =
          "Click %s this link, in order to test the connection manually.</a>The link will be opened in a new window.</li> <li>Solve the problem,</li> <li>close the window and </li><li>click afterwards on %s try again</button>": [
             "Kliknutím na tento %s odkaz můžete připojení otestovat ručně.</a>Odkaz se otevře v novém okně.</li> <li>Vyřešte problém,</li> <li>zavřete okno a poté </li><li>klikněte na %s a zkusite to znovu.</button>"
          ],
+         "sent to server": [
+            ""
+         ],
          "Received from: ": [
             "Přijato od:"
          ],
+         "Received error: ": [
+            ""
+         ],
          "2<sup>nd</sup> Authorize": [
-            "2.<sup></sup> autorizace"
+            "2.<sup></sup> Autorizujte"
          ],
          "3<sup>rd</sup> Vote": [
-            "3.<sup></sup> hlasování"
+            "3.<sup></sup> Hlasujte"
          ],
          "Enter Voting Link": [
             "Zadejte hlasovací odkaz"
@@ -598,10 +631,7 @@ translations['cs'] =
             "<p><ul><li>Zatím nemám hlasovací certifikát</li><li>Pro toto hlasování není potřeba žádný hlasovací certifikát</li><li>Nevím, zda je hlasovací certifikát potřeba.</li></ul>"
          ],
          "Fetch voting properties": [
-            "Načtení hlasovacích vlastností"
-         ],
-         "I already have a voting certificate": [
-            "Již mám hlasovací certifikát"
+            "Načíst hlasovací odkaz"
          ],
          "Take part in voting": [
             "Zapojte se do hlasování"

@@ -150,8 +150,8 @@ echo "var privacy_statement = [];\r\n";
 foreach ($available_lang_ids as $lang_id) {
 	// use default privacy statement if not available in the requested language
     if (file_exists(dirname($configFilepath) . '/privacy_statement_' . $lang_id . '.txt')) 
-             $fn = dirname($configFilepath) . '/privacy_statement_' . $lang_id . '.txt';
-        else $fn = dirname($configFilepath) . '/privacy_statement.txt';
+             $fn = dirname($configFilepath)  . '/privacy_statement_' . $lang_id . '.txt';
+        else $fn = dirname($configFilepath)  . '/privacy_statement.txt';
 	$ps = file_get_contents($fn);
 	echo 'privacy_statement["' . $lang_id .'"] = ' . json_encode($ps) . ";\r\n"; 
 }
@@ -246,7 +246,7 @@ echo <<<EOT
 									<a href="$linkToHostingOrganisation" class="navbar-brand" id="logo" tabindex="-1">
 EOT;
 
-if (file_exists(__DIR__ . '/config/logo_brand_47x51.svg'))									
+if (file_exists(__DIR__ . '/config/logo_brand_47x51.svg'))
  	   readfile(__DIR__ . '/config/logo_brand_47x51.svg');
 else   readfile(__DIR__ . '/config/logo_brand_47x51_example.svg');
 
@@ -316,7 +316,7 @@ echo <<<EOT
 		<div id="techinfos" style="display:none;">
 			<div id="additiontechinfos"></div>
 			<div id="log">
-				<h1>Log:</h1>
+				<h1 id="logLabelId">Log:</h1>
 				<textarea id="logtextarea" name="log"></textarea>
 			</div>
 		</div>
@@ -350,7 +350,7 @@ readfile($pathToClientSource . 'logo_auto.svg');
 
 echo <<<EOT
 								</div>
-							<span>powered by <a href="https://www.vvvote.de/">VVVote</a></span>
+							    <span><span id="PoweredById">Powered by</span> <a href="https://www.vvvote.de/">VVVote</a></span>
 							</div>
 						</div>
 					</div>

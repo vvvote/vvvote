@@ -65,7 +65,7 @@ SharedPasswAuth.getNewElectionData = function (serverId, startdate, intervall, e
 		DelayUntilStr.push(tmp.toISOString());
 	}
 	if (DelayUntilStr.length < 2) { // only start date
-		ret.errorTxt = i18n.gettext("Error: There prohibit voting interval is too long: there must be at least one between start and end of voting.");
+		ret.errorTxt = i18n.gettext("Error: The prohibit voting interval is too long: it must be shorter then the duration between start and end of voting.");
 		ret.erroNo = 87474395;
 		return ret;
 	}

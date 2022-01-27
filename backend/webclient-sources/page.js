@@ -19,6 +19,8 @@ Page.prototype.setLanguage = function() {
 	this.aboutLinkText = i18n.gettext('About');
 	this.privacyStatementText = i18n.gettext('Privacy statement');
 	this.privacyStatementLink = 'javascript:aalert.openTextOk(privacy_statement[i18n.options.locale_data.messages[""].lang])';
+	this.poweredByText = i18n.gettext('Powered by');
+	this.logLabelText = i18n.gettext('Log:');
 };
 
 
@@ -32,6 +34,8 @@ Page.prototype.display = function() {
 	document.getElementById('aboutUrlId').textContent = this.aboutLinkText;
 	document.getElementById('privacyStatementId').textContent = this.privacyStatementText;
 	document.getElementById('privacyStatementId').href = this.privacyStatementLink;
+	document.getElementById('PoweredById').textContent = this.poweredByText;
+	document.getElementById('logLabelId').textContent = this.logLabelText;
 	this.showSteps();
 	Page.loadMainContent(this.mainContent);
 	this.setStep(1);

@@ -19,6 +19,9 @@ translations['de'] =
             "Kontrollserver",
             "Kontrollserver %d"
          ],
+         "Error number:": [
+            ""
+         ],
          "Please enter a valid voting link. Valid voting links start with \"http://\" oder \"https://\".": [
             "Bitte geben Sie einen gültigen Wahl-Link ein. Gültige Wahl-Links beginnen mit 'http://' oder 'https://'"
          ],
@@ -180,6 +183,9 @@ translations['de'] =
          ],
          "Voting password": [
             "Abstimmungspasswort"
+         ],
+         "Error: The prohibit voting interval is too long: it must be shorter then the duration between start and end of voting.": [
+            "Fehler: Die Intervalldauer der Stimmsendeverhinderung muss kürzer sein als die Zeitspanne zwischen Beginn und Ende der Abstimmung."
          ],
          "Verification of server signature failed. Aborted.": [
             "Die Überprüfung einer Unterschrift von einem Server ist fehlgeschlagen. Abbruch."
@@ -414,6 +420,9 @@ translations['de'] =
          "Question to be voted on": [
             "Frage, über die abgestimmt werden soll"
          ],
+         "Who shell become the coordinator of the working group?": [
+            "Wer soll Koordinator der Arbeitsgruppe werden?"
+         ],
          "Tally servers accepted the vote!": [
             "Die Stimmserver haben die Stimme akzeptiert."
          ],
@@ -516,11 +525,23 @@ translations['de'] =
          "Upload a list of usernames and passwords": [
             "Liste mit Benuzernamen und Passwörtern hochladen"
          ],
+         "End of voting at": [
+            "Die Abstimmung endet am/um"
+         ],
+         "Interval duration during which the vote is prevented from being sent, in minutes from the start of voting:": [
+            "Intervalldauer in Minuten ab Start der Abstimmung, in der das Senden der Stimme verhindert wird"
+         ],
          "Create new voting": [
             "Neue Abstimmung anlegen"
          ],
          "Open a new voting": [
             "Neue Abstimmung anlegen"
+         ],
+         "Error: No authenithication method set": [
+            "Fehler: Es wurde keine Autorisierungsmethode eingestellt"
+         ],
+         "Error: No voting method set": [
+            "Fehler: Es wurde keine Abstimmungsmethode eingestellt"
          ],
          "Waiting for the servers": [
             "Auf Server warten"
@@ -561,6 +582,12 @@ translations['de'] =
          "Privacy statement": [
             "Datenschutzerklärung"
          ],
+         "Powered by": [
+            "Software:"
+         ],
+         "Log:": [
+            "Protokoll:"
+         ],
          "Ok": [
             "Ok"
          ],
@@ -576,8 +603,14 @@ translations['de'] =
          "Click %s this link, in order to test the connection manually.</a>The link will be opened in a new window.</li> <li>Solve the problem,</li> <li>close the window and </li><li>click afterwards on %s try again</button>": [
             "Klicken Sie %sauf diesen Link, um die Verbindung manuell zu testen. </a>Der Link öffnet sich in einem neuen Fenster</li><li>Lösen Sie das Problem</li><li>Schließen Sie das Fenster und</li><li>Klicken Sie anschließend auf %serneut versuchen</button>"
          ],
+         "sent to server": [
+            "gesendet an den Server"
+         ],
          "Received from: ": [
             "Empfangen von: "
+         ],
+         "Received error: ": [
+            "Fehler empfangen:"
          ],
          "2<sup>nd</sup> Authorize": [
             "2. Autorisieren"
@@ -593,9 +626,6 @@ translations['de'] =
          ],
          "Fetch voting properties": [
             "Wahlunterlagen holen"
-         ],
-         "I already have a voting certificate": [
-            "Ich habe bereits einen Wahlschein"
          ],
          "Take part in voting": [
             "An Abstimmung teilnehmen"

@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-02-12 23:34+0100\n"
+"POT-Creation-Date: 2022-01-27 23:32+0100\n"
 "PO-Revision-Date: 2016-01-01 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,9 +10,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.7\n"
-"X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: tests\n"
@@ -35,6 +35,10 @@ msgid_plural "Checking server %d"
 msgstr[0] ""
 msgstr[1] ""
 
+#: exception.js:22
+msgid "Error number:"
+msgstr ""
+
 #: getelectionconfig.js:14
 msgid ""
 "Please enter a valid voting link. Valid voting links start with \"http://\" "
@@ -47,38 +51,38 @@ msgid ""
 "'confighash=' resp. 'electionUrl=')"
 msgstr ""
 
-#: getelectionconfig.js:45 getelectionconfig.js:53
+#: getelectionconfig.js:45 getelectionconfig.js:54
 msgid ""
 "The given voting URL is not in the expected format (missing 'confighash=')."
 msgstr ""
 
-#: getelectionconfig.js:46
+#: getelectionconfig.js:47
 msgid ""
 "The voting configuration obtained from the server does not match the "
 "checksum. The server is trying to cheat you. Aborted."
 msgstr ""
 
-#: getelectionconfig.js:56
+#: getelectionconfig.js:57
 msgid "The voting configuration could not be loaded from the provided URL"
 msgstr ""
 
-#: getelectionconfig.js:72
+#: getelectionconfig.js:73
 msgid "Error: The config does not contain the questions"
 msgstr ""
 
-#: getelectionconfig.js:79
+#: getelectionconfig.js:80
 msgid "Error: The config does not contain the blinder Data"
 msgstr ""
 
-#: getelectionconfig.js:80
+#: getelectionconfig.js:81
 msgid "Error: The config does not contain the permission server keys"
 msgstr ""
 
-#: getelectionconfig.js:81
+#: getelectionconfig.js:82
 msgid "Error: The config does not contain the permission server key"
 msgstr ""
 
-#: getelectionconfig.js:165
+#: getelectionconfig.js:166
 msgid "Voting link: "
 msgstr ""
 
@@ -296,6 +300,12 @@ msgstr ""
 
 #: modules-auth/shared-passw/module.js:40 newelection.js:41
 msgid "Voting password"
+msgstr ""
+
+#: modules-auth/shared-passw/module.js:68
+msgid ""
+"Error: The prohibit voting interval is too long: it must be shorter then "
+"the duration between start and end of voting."
 msgstr ""
 
 #: modules-election/blinded-voter/module-backend.js:170
@@ -754,6 +764,10 @@ msgstr ""
 msgid "Question to be voted on"
 msgstr ""
 
+#: modules-tally/publish-only/module.js:19
+msgid "Who shell become the coordinator of the working group?"
+msgstr ""
+
 #: modules-tally/publish-only/module.js:114
 msgid "Tally servers accepted the vote!"
 msgstr ""
@@ -924,37 +938,55 @@ msgstr ""
 msgid "Upload a list of usernames and passwords"
 msgstr ""
 
-#: newelection.js:58
+#: newelection.js:61
+msgid "End of voting at"
+msgstr ""
+
+#: newelection.js:64
+msgid ""
+"Interval duration during which the vote is prevented from being sent, in "
+"minutes from the start of voting:"
+msgstr ""
+
+#: newelection.js:67
 msgid "Create new voting"
 msgstr ""
 
-#: newelection.js:67 page.js:14
+#: newelection.js:76 page.js:14
 msgid "Open a new voting"
 msgstr ""
 
-#: newelection.js:121
+#: newelection.js:111
+msgid "Error: No authenithication method set"
+msgstr ""
+
+#: newelection.js:115
+msgid "Error: No voting method set"
+msgstr ""
+
+#: newelection.js:148
 msgid "Waiting for the servers"
 msgstr ""
 
-#: newelection.js:134
+#: newelection.js:161
 msgid ""
 "The hash obtained from the server does not match the hash from another "
 "server. The server is trying to cheat you. Aborted."
 msgstr ""
 
-#: newelection.js:154
+#: newelection.js:181
 msgid "Save the link and distribute it to all eligable people. "
 msgstr ""
 
-#: newelection.js:157
+#: newelection.js:184
 msgid "This is the voting link: "
 msgstr ""
 
-#: newelection.js:168
+#: newelection.js:195
 msgid "Server reports error: \n"
 msgstr ""
 
-#: newelection.js:172
+#: newelection.js:199
 msgid "Unknown command from Server: \n"
 msgstr ""
 
@@ -986,6 +1018,14 @@ msgstr ""
 msgid "Privacy statement"
 msgstr ""
 
+#: page.js:22
+msgid "Powered by"
+msgstr ""
+
+#: page.js:23
+msgid "Log:"
+msgstr ""
+
 #: tools/aalert.js:9
 msgid "Ok"
 msgstr ""
@@ -1014,8 +1054,16 @@ msgid ""
 "the window and </li><li>click afterwards on %s try again</button>"
 msgstr ""
 
+#: tools/mixed.js:229
+msgid "sent to server"
+msgstr ""
+
 #: tools/mixed.js:248
 msgid "Received from: "
+msgstr ""
+
+#: tools/mixed.js:267
+msgid "Received error: "
 msgstr ""
 
 #: vote.js:24
@@ -1039,10 +1087,6 @@ msgstr ""
 
 #: vote.js:31
 msgid "Fetch voting properties"
-msgstr ""
-
-#: vote.js:33
-msgid "I already have a voting certificate"
 msgstr ""
 
 #: vote.js:35

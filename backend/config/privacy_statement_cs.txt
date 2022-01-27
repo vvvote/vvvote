@@ -1,0 +1,11 @@
+Prohlášení o ochraně osobních údajů
+V případě použití jednotného přihlašovacího serveru (SSO) kontaktuje Vvvote 
+tento server, aby zkontroloval způsobilost. Vvvote ukládá identifikátor získaný
+ze serveru SSO, aby bylo zajištěno, že žádný volič nedostane více než jeden
+hlasovací certifikát. 
+Hlasování pomocí hlasovacího certifikátu je anonymní - certifikát je zašifrován
+zařízením, které používáte, předtím, než jej podepíší servery Vvvote, takže
+servery Vvvote nemohou provést porovnání z hlasování s voličem. Aby to nemohl
+udělat ani nějaký nepoctivý administrátor, je hlasování odesláno šifrovaně přes
+anonymizační službu, která změní IP adresu odesílatele a odstraní otisk 
+prohlížeče.

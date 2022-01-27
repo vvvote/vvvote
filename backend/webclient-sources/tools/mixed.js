@@ -226,7 +226,7 @@ myXmlSend_.prototype.send = function () {
 		} */
 		if ((me.data === null) || typeof me.data === 'undefined')	xml2.send();
 		else 														xml2.send(me.data);
-		if (me.log) userlog("\r\n\r\n--> gesendet an Server " + me.url + ': ' + me.data + "\r\n\r\n");
+		if (me.log) userlog("\r\n\r\n--> " + i18n.gettext("sent to server") + " " + me.url + ': ' + me.data + "\r\n\r\n");
 		var errorDiv = document.getElementById("errorDiv");
 		// var diagnosisControlDiv = document.getElementById("diagnosisControlDiv");
 		errorDiv.style.display = "none";
@@ -264,7 +264,7 @@ function parseServerAnswer(xml, jsonDecode) {
 }
 
 function httpError(xml) {
-	userlog("\n<--- empfangen Fehler " + xml.status + ": " + xml.statusText);
+	userlog("\n<---" + i18n.gettext('Received error: ') +  xml.status + ": " + xml.statusText);
 	aalert.openTextOk("ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (" + xml.status + ") " + xml.statusText);
 	throw new ErrorInServerAnswer(2000, 'Error: Server did not sent an answer', 'Got HTTP status: (' + xml.status + ') ' + xml.statusText);
 }
