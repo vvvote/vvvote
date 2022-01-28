@@ -22,7 +22,7 @@ translations['cs'] =
             "%d Kontrolní servery"
          ],
          "Error number:": [
-            ""
+            "Chyba číslo:"
          ],
          "Please enter a valid voting link. Valid voting links start with \"http://\" oder \"https://\".": [
             "Zadejte prosím platný odkaz pro hlasování. Platné hlasovací odkazy začínají na \"http://\" nebo \"https://\"."
@@ -187,7 +187,7 @@ translations['cs'] =
             "Heslo pro hlasování"
          ],
          "Error: The prohibit voting interval is too long: it must be shorter then the duration between start and end of voting.": [
-            ""
+            "Chyba: Interval zákazu hlasování je příliš dlouhý: musí být kratší než doba mezi začátkem a koncem hlasování."
          ],
          "Verification of server signature failed. Aborted.": [
             "Ověření podpisu serveru se nezdařilo. Přerušeno."
@@ -427,7 +427,7 @@ translations['cs'] =
             "Otázka, o které se bude hlasovat"
          ],
          "Who shell become the coordinator of the working group?": [
-            ""
+            "Kdo se stane koordinátorem pracovní skupiny?"
          ],
          "Tally servers accepted the vote!": [
             "Sčítací servery přijaly hlasování!"
@@ -532,10 +532,10 @@ translations['cs'] =
             "Nahrání seznamu uživatelských jmen a hesel"
          ],
          "End of voting at": [
-            ""
+            "Konec hlasování v"
          ],
          "Interval duration during which the vote is prevented from being sent, in minutes from the start of voting:": [
-            ""
+            "Délka intervalu, během něhož je zabráněno odeslání hlasování, v minutách od začátku hlasování:"
          ],
          "Create new voting": [
             "Vytvořit nové hlasování"
@@ -544,10 +544,10 @@ translations['cs'] =
             "Zahájit nové hlasování"
          ],
          "Error: No authenithication method set": [
-            ""
+            "Chyba: Není nastavena žádná metoda autorizace"
          ],
          "Error: No voting method set": [
-            ""
+            "Chyba: Není nastavena žádná metoda hlasování"
          ],
          "Waiting for the servers": [
             "Čekání na servery"
@@ -592,7 +592,7 @@ translations['cs'] =
             "Běží na "
          ],
          "Log:": [
-            ""
+            "Protokol:"
          ],
          "Ok": [
             "Ok"
@@ -610,13 +610,13 @@ translations['cs'] =
             "Kliknutím na tento %s odkaz můžete připojení otestovat ručně.</a>Odkaz se otevře v novém okně.</li> <li>Vyřešte problém,</li> <li>zavřete okno a poté </li><li>klikněte na %s a zkusite to znovu.</button>"
          ],
          "sent to server": [
-            ""
+            "odesláno na server"
          ],
          "Received from: ": [
             "Přijato od:"
          ],
          "Received error: ": [
-            ""
+            "Přijatá chyba: "
          ],
          "2<sup>nd</sup> Authorize": [
             "2.<sup></sup> Autorizujte"
