@@ -62,6 +62,9 @@ switch ($cmd) {
 	case 'modules-auth/oauth2/callback' :
 		require_once $pathToBackend . 'modules-auth/oauth/callback.php';
 		break;
+	case 'service_worker.js';
+	readfile('../../webclient/service_worker.js');
+	   break;
 	default :
 		;
 		break;
