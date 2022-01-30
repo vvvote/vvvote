@@ -9,3 +9,10 @@ servery Vvvote nemohou provést porovnání z hlasování s voličem. Aby to nem
 udělat ani nějaký nepoctivý administrátor, je hlasování odesláno šifrovaně přes
 anonymizační službu, která změní IP adresu odesílatele a odstraní otisk 
 prohlížeče.
+Soubory cookie se nepoužívají.
+Do úložiště localStorage webového prohlížeče se uloží, pro které dílčí hlasování 
+jste již hlas poslali (nikoli však obsah vašeho hlasování). To se provádí za 
+účelem deaktivace (zašednutí) příslušného dílčího hlasování. Je to jen pro 
+pohodlí - localStorage můžete bez skutečné újmy smazat. V takovém případě nebude 
+zakázáno žádné částečné hlasování a můžete se pokusit odeslat další hlasování 
+(a obdržet odpovídající chybové hlášení ze serveru).
