@@ -129,7 +129,11 @@ $includeCssFiles = Array('standard.css', 'substeps.css', 'working-animation.css'
 
 // print HTML-Header 
 $tmp = file_get_contents($pathToClientSource . 'manifest.json');
-$tmp = str_replace(array('{{base_url}}'), $pServerUrlBases[0], $tmp);
+$tmp = str_replace(array('{{api_url}}'      ), $pServerUrlBases[$serverNo - 1], $tmp);
+if (PHP_SAPI === 'cli') // if called from cli, the static html is generated --> use the link there
+             $rplwith = $pServerUrlBases[$serverNo - 1] . $webclientUrlbase . 'index2.html';
+    else     $rplwith = $pServerUrlBases[$serverNo - 1] . 'getclient';
+$tmp = str_replace(array('{{my_url}}'), $rplwith, $tmp);
 $tmp = base64_encode($tmp);
 echo '
 		<!DOCTYPE html>

@@ -63,7 +63,8 @@ switch ($cmd) {
 		require_once $pathToBackend . 'modules-auth/oauth/callback.php';
 		break;
 	case 'service_worker.js';
-	readfile('../../webclient/service_worker.js');
+	   header('Content-type: application/javascript');
+	   readfile('../../webclient/service_worker.js');
 	   break;
 	default :
 		;
