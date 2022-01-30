@@ -108,7 +108,7 @@
 		}
 
 		if ('serviceWorker' in navigator) {
-			  navigator.serviceWorker.register('https://localhost/service_worker.js')
+			  navigator.serviceWorker.register('service_worker.js')
 			  .then(function(registration) {
 			    console.log('Registration successful, scope is:', registration.scope);
 			  })
