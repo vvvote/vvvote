@@ -128,13 +128,18 @@ $includeJsFiles = array_merge($includeJsFiles, Array(
 $includeCssFiles = Array('standard.css', 'substeps.css', 'working-animation.css', 'style_new.css', 'style_doc.css');
 
 // print HTML-Header 
+$tmp = file_get_contents($pathToClientSource . 'manifest.json');
+$tmp = str_replace(array('{{base_url}}'), $pServerUrlBases[0], $tmp);
+$tmp = base64_encode($tmp);
 echo '
 		<!DOCTYPE html>
 		<html>
 			<head>
 				<meta charset="utf-8">
 				<meta name="viewport" content="width=device-width,initial-scale=1.0">
-				<title>VVVote</title>';
+				<title>VVVote</title>
+                <link rel="manifest" href=\'data:application/manifest+json;base64,' . $tmp . '\'>' . "\n";
+
 // print all Javascript files 
 echo '<script>';
 foreach ($includeJsFiles as $f) {
