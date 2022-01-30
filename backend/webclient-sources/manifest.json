@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "Vvvote",
+  "short_name": "Vvvote",
+  "start_url": "{{base_url}}/api/v1/getclient",
+  "display": "standalone",
+  "description": "Voting traceable and anonymously",
+    "icons": [
+    {
+    "src": "https://www.robert-arnold.de/logo_big144x144.png",
+    "sizes": "144x144",
+    "type": "image/png"
+  	}]
+}
