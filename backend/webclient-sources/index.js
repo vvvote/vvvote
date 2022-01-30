@@ -49,7 +49,7 @@
 				|| (browsName.indexOf('EDGE')     >= 0 && browser.major < 12)	// Edge is working completely
 				|| (os === 'IOS') // on iPad and iPhone (iOS) no browser can save the return envelope as download
 			   ) {
-				showPopup(html2Fragm(i18n.sprintf(i18n.gettext('Your web browser %s %s is on %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. iPad and iPhone (iOS) does not work at all. MacOS works.'), browsName, browser.major, os)));
+	//			showPopup(html2Fragm(i18n.sprintf(i18n.gettext('Your web browser %s %s is on %s not supported. Please use FireFox at least version 34, Chrome at least version 38 (except on Android) or Edge. iPad and iPhone (iOS) does not work at all. MacOS works.'), browsName, browser.major, os)));
 			}
 		}
 	}
