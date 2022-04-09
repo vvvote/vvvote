@@ -251,11 +251,13 @@ if (isset ( $config ['oauth2Config'] )) {
 				// the following only needed for the webclient provided throu getserverinfos.php
 				$curOauthConfig ['authorize_url'] = $oauthUrlTrimmed . '/oauth2/authorize/?'; // must end with ?
 				$curOauthConfig ['login_url'] = $oauthUrlTrimmed . '/';
-				for ($i = 0; $i < count($pServerUrlBases); $i++) {
-					$curOauthConfig ['redirectUris'][$pServerKeys[$i]['name']] = rtrim ($pServerUrlBases[$i],'/') . '/modules-auth/oauth2/callback';
-					$curOauthConfig ['clientIds']   [$pServerKeys[$i]['name']] = $curOauthConfig['client_ids'][$i];
+				if (! isset ( $DO_NOT_LOAD_PUB_KEYS )) { // this will be set during key generation
+				    for ($i = 0; $i < count($pServerUrlBases); $i++) {
+    					$curOauthConfig ['redirectUris'][$pServerKeys[$i]['name']] = rtrim ($pServerUrlBases[$i],'/') . '/modules-auth/oauth2/callback';
+    					$curOauthConfig ['clientIds']   [$pServerKeys[$i]['name']] = $curOauthConfig['client_ids'][$i];
+    				}
+				    $curOauthConfig ['redirect_uri'] = $curOauthConfig ['redirectUris'][$pServerKeys[$serverNo -1]['name']];
 				}
-				$curOauthConfig ['redirect_uri'] = $curOauthConfig ['redirectUris'][$pServerKeys[$serverNo -1]['name']];
 				$oauthConfig[$curOauthConfig['serverId']] = $curOauthConfig;
 				break;
 			case "keycloak":
@@ -270,12 +272,14 @@ if (isset ( $config ['oauth2Config'] )) {
 				// the following only needed for the webclient provided throu getserverinfos.php
 				$curOauthConfig ['authorize_url'] = $oauthUrlTrimmed . '/auth?'; // must end with ? or & // umgestellt
 				$curOauthConfig ['login_url'] = $oauthUrlTrimmed . '/';
-				for ($i = 0; $i < count($pServerUrlBases); $i++) {
-					$curOauthConfig ['redirectUris'][$pServerKeys[$i]['name']] = rtrim ($pServerUrlBases[$i],'/') . '/modules-auth/oauth2/callback';
-					$curOauthConfig ['clientIds']   [$pServerKeys[$i]['name']] = $curOauthConfig['client_ids'][$i];
+				if (! isset ( $DO_NOT_LOAD_PUB_KEYS )) { // this will be set during key generation
+				    for ($i = 0; $i < count($pServerUrlBases); $i++) {
+    					$curOauthConfig ['redirectUris'][$pServerKeys[$i]['name']] = rtrim ($pServerUrlBases[$i],'/') . '/modules-auth/oauth2/callback';
+    					$curOauthConfig ['clientIds']   [$pServerKeys[$i]['name']] = $curOauthConfig['client_ids'][$i];
+    				}
+				    $curOauthConfig ['redirect_uri'] = $curOauthConfig ['redirectUris'][$pServerKeys[$serverNo -1]['name']];
+				    $curOauthConfig ['logout_url'] = $oauthUrlTrimmed . '/logout?redirect_uri=' . urlencode($curOauthConfig ['redirect_uri'] . '?logged_out');
 				}
-				$curOauthConfig ['redirect_uri'] = $curOauthConfig ['redirectUris'][$pServerKeys[$serverNo -1]['name']];
-				$curOauthConfig ['logout_url'] = $oauthUrlTrimmed . '/logout?redirect_uri=' . urlencode($curOauthConfig ['redirect_uri'] . '?logged_out');
 				if ( array_key_exists('serverUsageNote', $curOauthConfig) )
 					 $curOauthConfig['server_usage_note'] = $curOauthConfig['serverUsageNote'];
 				else $curOauthConfig['server_usage_note'] = array('en_US' => '');
