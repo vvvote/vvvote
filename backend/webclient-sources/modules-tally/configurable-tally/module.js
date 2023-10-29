@@ -941,7 +941,7 @@ ConfigurableTally.prototype.handleServerAnswerShowWinners = function (xml) {
 				var questionID = this.config.questions[question].questionID;
 				html = html + '<p>' + this.getWinnersHtml(questionID);
 				if (typeof(questionID) === 'string') questionID = "'" + questionID + "'"; 
-				html = html + '<button onclick="page.tally.handleUserClickGetAllVotes(' + questionID + ')">' + i18n.gettext('Show all votes') + '</button></p>';
+				html = html + ' <button onclick="page.tally.handleUserClickGetAllVotes(' + questionID + ')">' + i18n.gettext('Show all votes') + '</button></p>';
 			}
 			break;
 		case 'error':
@@ -1200,7 +1200,8 @@ ConfigurableTally.prototype.processVerifyCountVotes = function (answ) {
 	htmlcode2 = htmlcode2 + '</table></div>';
 
 	var htmlcode0 = '<h3>' + i18n.sprintf(i18n.gettext('Motion group: %s'), this.curQuestionID) + '</h3>';
-	htmlcode0 = htmlcode0 + '<p>' + this.getWinnersHtml(this.curQuestionID) + '</p>';
+	htmlcode0 = htmlcode0 + '<p>' + this.getWinnersHtml(this.curQuestionID);
+	htmlcode0 = htmlcode0 + ' <button onclick="page.showResult()">' + i18n.gettext('Back to overview') + '</button></p>';
 
 	var ret = htmlcode0 + '<br>\n\n' + htmlcode2 + '<br> <br>\n\n' + htmlcode;
 	this.onGotVotesMethod.call(this.onGotVotesObj, ret);

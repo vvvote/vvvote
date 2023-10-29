@@ -107,13 +107,13 @@ fieldset.optionFieldSet {
   margin-bottom: 0;
 }
 #loadedmaincontent button {
-  padding: 3px 35px 3px 20px;
+  padding: 3px 20px 3px 20px;
   line-height: 18px;
   height: 42px;    /*width: 148px;*/
   position: relative;
 }
 #idstepstitle {
-  font-size: 25px;
+  font-size: 24px;
 }
 .votingQuestionsTable .evenTableRow:nth-child(3) button, .votingQuestionsTable .unevenTableRow:nth-child(3) button {
   position: relative;
@@ -173,7 +173,7 @@ fieldset.optionFieldSet {
     width: 284px;
   }
   h1#pagetitle {
-    font-size: 21px;
+    font-size: 19px;
   }
 }
 @media (max-width:1199px) {

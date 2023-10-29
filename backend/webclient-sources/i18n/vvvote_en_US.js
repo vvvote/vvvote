@@ -659,6 +659,9 @@ translations['en_US'] =
          ],
          "List_of_Votes\u0004Vote": [
             "Vote"
+         ],
+         "Back to overview": [
+            "Back to overview"
          ]
       }
    }

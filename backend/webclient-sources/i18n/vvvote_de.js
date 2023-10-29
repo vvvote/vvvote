@@ -342,8 +342,8 @@ translations['de'] =
             " und "
          ],
          "In motion group %s, %s won. ": [
-            "Bei Antragsgruppe %s wurde %s angemommen.",
-            "Bei Antragsgruppe %s wurden %s angemommen."
+            "Bei Antragsgruppe %s wurde %s angenommen.",
+            "Bei Antragsgruppe %s wurden %s angenommen."
          ],
          "Close": [
             "Schließen"
@@ -496,7 +496,7 @@ translations['de'] =
             "Gesamt"
          ],
          "1<sup>st</sup> Set voting preferences": [
-            "1. Abstimmungseinstellungen festlegen"
+            "1. Abstimmungseinstellungen"
          ],
          "2<sup>nd</sup> Save voting link": [
             "2. Abstimmungslink speichern"
@@ -689,6 +689,9 @@ translations['de'] =
          ],
          "List_of_Votes\u0004Vote": [
             "Stimme"
+         ],
+         "Back to overview": [
+            "Zurück zur Übersicht"
          ]
       }
    }

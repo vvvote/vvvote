@@ -28,6 +28,10 @@ div#logoimg {
 	float: right;
 }
 
+img#logoimg {
+	max-height: 70px;
+}
+
 div#ci h1 {
 	font-size: 3em;
 	color: black;
