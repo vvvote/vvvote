@@ -695,6 +695,9 @@ translations['cs'] =
          ],
          "List_of_Votes\u0004Vote": [
             "Hlas"
+         ],
+         "Back to overview": [
+            "Zpět na přehled"
          ]
       }
    }

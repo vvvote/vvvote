@@ -5612,6 +5612,11 @@ tbody.collapse.in {
   height: 50px;
 }
 
+.navbar-brand svg {
+  max-width: 75px;
+  max-height: 50px;
+}
+
 /* line 170, ../sass/bootstrap/_navbar.scss */
 .navbar-brand:hover, .navbar-brand:focus {
   text-decoration: none;
@@ -12147,7 +12152,7 @@ p {
 h1 {
   font-family: 'Oswald', sans-serif;
   color: #f39200;
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 400;
   padding-top: 0;
   margin-top: 20px;
